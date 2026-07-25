@@ -57,6 +57,19 @@ export const SCOPE_ROUTE = "/scope";
 /** Where the journey lets out: the resolved, priced blueprint. */
 export const BLUEPRINT_ROUTE = "/blueprint";
 
+/** The other way in: build it yourself rather than answer questions about it. */
+export const BUILDER_ROUTE = "/builder";
+
+/**
+ * The nav's second door. The journey asks what you want and works the rest out;
+ * the Builder hands you the blocks and lets you put it together yourself. Two
+ * temperaments, so both get a button rather than one being buried.
+ */
+export const BUILDER_CTA: CallToAction = {
+  label: "Builder",
+  href: BUILDER_ROUTE,
+};
+
 export const NEWSLETTER = {
   heading: "Join the newsletter",
   body: "Occasional, practical notes on getting found and getting enquiries. No filler.",
@@ -108,6 +121,7 @@ export const FOOTER_NAV: readonly { title: string; items: NavItem[] }[] = [
     title: "Get started",
     items: [
       { label: "Scope your website", href: "/scope" },
+      { label: "Builder", href: BUILDER_ROUTE },
       { label: "Book a call", href: "#contact" },
       { label: "Contact", href: "#contact" },
       { label: "FAQ", href: "#faq" },

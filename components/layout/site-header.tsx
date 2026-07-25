@@ -14,9 +14,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import {
+  BUILDER_CTA,
   PRIMARY_CTA,
   PRIMARY_NAV,
-  SECONDARY_CTA,
   SITE,
 } from "@/lib/content/site";
 
@@ -66,13 +66,16 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          {/* The Builder, not "Book a call": the two doors in the nav are the
+              two ways of getting a website out of us, and the call is still one
+              tap away in the footer and on the closing block. */}
           <ActionButton
             variant="secondary"
             size="sm"
-            href={SECONDARY_CTA.href}
+            href={BUILDER_CTA.href}
             className="hidden sm:inline-flex"
           >
-            {SECONDARY_CTA.label}
+            {BUILDER_CTA.label}
           </ActionButton>
 
           {/* Dark, not purple: 2a keeps the brand colour for the hero's call to
@@ -135,10 +138,10 @@ export function SiteHeader() {
                 <SheetClose asChild>
                   <ActionButton
                     variant="secondary"
-                    href={SECONDARY_CTA.href}
+                    href={BUILDER_CTA.href}
                     size="lg"
                   >
-                    {SECONDARY_CTA.label}
+                    {BUILDER_CTA.label}
                   </ActionButton>
                 </SheetClose>
                 <a

@@ -21,9 +21,8 @@ import { useScopingSession } from "./scoping-context";
  * and the list is the choices, held apart by spacing alone.
  *
  * Every signal sits in the tick and the type. The box fills with the option's own
- * effort colour, the label goes from grey to bold ink, and the effort number appears
- * on the right. Three signals in the space a background would have taken, and it
- * ties the row to the dial: a heavy choice burns amber here and amber out there.
+ * effort colour and the label goes from grey to bold ink, which ties the row to the
+ * dial: a heavy choice burns amber here and amber out there.
  *
  * Single choice groups get a round tick box, multi choice a square, which is the
  * radio and checkbox convention without nesting either inside a button.
@@ -76,17 +75,16 @@ export function OptionRow({
         <span className="text-faint">{option.desc}</span>
       </span>
 
-      {chosen ? (
-        <span
-          className="mt-0.5 flex shrink-0 items-center gap-0.5 font-mono text-[9.5px] font-bold tracking-[0.06em] tabular-nums"
+      {/* Only on the row whose detail is open, pointing at the panel it opened
+          in. The effort itself is already in the colour of the tick, so a number
+          beside it was the same fact twice. */}
+      {focused ? (
+        <ChevronRight
+          aria-hidden
+          className="mt-1 size-3 shrink-0"
+          strokeWidth={3}
           style={{ color: colour }}
-          title={`Effort ${effort} out of 10`}
-        >
-          {effort}
-          {focused ? (
-            <ChevronRight aria-hidden className="size-3" strokeWidth={3} />
-          ) : null}
-        </span>
+        />
       ) : null}
     </button>
   );

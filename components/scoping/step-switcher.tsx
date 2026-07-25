@@ -23,11 +23,11 @@ import { useScopingSession } from "./scoping-context";
  *
  * Every row says three things without a legend. The ring fills once the section is
  * answered, the number takes that section's RAG colour, and the row in play is the
- * only one with a fill behind it. That makes this the dial's information in the
- * form you can actually read, which is why the two sit side by side.
+ * one in bold ink. That makes this the dial's information in the form you can
+ * actually read, which is why the two sit side by side.
  *
- * A white panel inside the stage's soft slab, so it separates from the dial by
- * fill rather than by yet another outline.
+ * It sits straight on the stage rather than in a panel of its own. Three zones on
+ * one slab is already three groups; boxing one of them off makes it a fourth.
  */
 export function StepSwitcher() {
   const { index, goTo, complete, answers } = useScopingSession();
@@ -35,7 +35,7 @@ export function StepSwitcher() {
   const done = STEPS.filter((_, at) => complete(at)).length;
 
   return (
-    <div className="rounded-card bg-bg p-3.5 sm:p-4">
+    <div>
       <div className="flex items-center justify-between gap-3">
         <p className="font-mono text-[9.5px] font-bold tracking-[0.14em] text-faint uppercase">
           The eight sections
