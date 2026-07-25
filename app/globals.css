@@ -41,9 +41,12 @@
   --color-body: #5b6675;
   --color-faint: #9aa2ae;
 
-  /* Surfaces and lines */
-  --color-bg: #f4f6fa;
+  /* Surfaces and lines.
+     One background for the whole page: white. Sections do not alternate, so the
+     only things drawing structure are hairlines, spacing and type. */
+  --color-bg: #ffffff;
   --color-line: #e4e8ee;
+  /* Pale blue tint, for icon tiles, hovers and quiet callouts. */
   --color-soft: #eaf2fb;
 
   /* Brand */
@@ -81,6 +84,9 @@
   --shadow-cta: 0 4px 14px rgba(47, 111, 176, 0.28);
   --shadow-cta-hover: 0 6px 18px rgba(47, 111, 176, 0.35);
   --shadow-featured: 0 6px 20px rgba(47, 111, 176, 0.14);
+
+  /* The sticky nav's height, so anchored sections can clear it. */
+  --nav-height: 62px;
 }
 
 /* ---------------------------------------------------------------------------
@@ -132,7 +138,7 @@
 :root {
   --radius: 0.75rem;
 
-  --background: #f4f6fa;
+  --background: #ffffff;
   --foreground: #12233b;
   --card: #ffffff;
   --card-foreground: #12233b;
@@ -194,6 +200,14 @@
     text-align: left;
   }
 
+  /* One scrollable page, so every nav link is an in page anchor. This keeps a
+     jumped to section clear of the sticky nav. */
+  :target,
+  section[id],
+  [data-anchor] {
+    scroll-margin-top: var(--nav-height);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -209,9 +223,3 @@
   }
 }
 
-@layer utilities {
-  /* The pale vertical wash the artifacts use behind a closing panel. */
-  .bg-wash {
-    background-image: linear-gradient(180deg, #f7f9fc, #eef3fa);
-  }
-}

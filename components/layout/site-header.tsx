@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { ArrowRight, Menu } from "lucide-react";
 
 import { ActionButton, Container } from "@/components/shared";
@@ -14,30 +13,33 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { PRIMARY_CTA, PRIMARY_NAV, SECONDARY_CTA, SITE } from "@/lib/content/site";
+import {
+  PRIMARY_CTA,
+  PRIMARY_NAV,
+  SECONDARY_CTA,
+  SITE,
+} from "@/lib/content/site";
 
 import { BrandMark } from "./brand-mark";
 
 /**
- * The global nav from the artifacts: white bar on a hairline, quiet text links
- * that tint on hover, and the two doors on the right. The journey is the primary
- * one; "Book a call" is the escape hatch that has to stay visible everywhere.
+ * The global nav. One scrollable page, so every link is an in page anchor.
+ *
+ * No bottom border: the page is white throughout and the separation comes from
+ * spacing rather than rules.
  */
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-card">
-      {/* Wider than the 1000px reading column so the nav is not squeezed, but
-          still contained: on a large monitor the brand and the two doors stay
-          within sight of each other. */}
+    <header className="sticky top-0 z-40 bg-white">
       <Container
         width="wide"
-        className="flex min-h-[62px] items-center gap-[18px] py-3"
+        className="flex min-h-[var(--nav-height)] items-center gap-[18px] py-3"
       >
-        <Link href="/" aria-label={`${SITE.name}, home`} className="shrink-0">
+        <a href="#top" aria-label={`${SITE.name}, top of page`} className="shrink-0">
           <BrandMark />
-        </Link>
+        </a>
 
         {/* flex-1 so the links centre in the space between the wordmark and the
             two doors, rather than sitting up against the wordmark. */}
@@ -46,7 +48,7 @@ export function SiteHeader() {
           className="hidden flex-1 flex-wrap justify-center gap-0.5 lg:flex"
         >
           {PRIMARY_NAV.map((item) => (
-            <Link
+            <a
               key={item.href}
               href={item.href}
               /* 13.5px at 600 is the weight the prototype pairs with Manrope.
@@ -54,7 +56,7 @@ export function SiteHeader() {
               className="rounded-nav px-2.5 py-1.5 text-[13.5px] font-semibold text-body transition-colors hover:bg-soft hover:text-ink"
             >
               {item.label}
-            </Link>
+            </a>
           ))}
         </nav>
 
@@ -102,12 +104,12 @@ export function SiteHeader() {
               >
                 {PRIMARY_NAV.map((item) => (
                   <SheetClose asChild key={item.href}>
-                    <Link
+                    <a
                       href={item.href}
                       className="rounded-nav px-2 py-2.5 text-[15px] font-semibold text-ink transition-colors hover:bg-soft"
                     >
                       {item.label}
-                    </Link>
+                    </a>
                   </SheetClose>
                 ))}
               </nav>
@@ -130,7 +132,7 @@ export function SiteHeader() {
                 </SheetClose>
                 <a
                   href={`mailto:${SITE.email}`}
-                  className="pt-1 text-center text-[13px] text-body"
+                  className="pt-1 text-center text-[13px] font-medium text-body"
                 >
                   {SITE.email}
                 </a>

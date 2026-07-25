@@ -56,6 +56,16 @@ export function ActionButton({
 }: ActionButtonProps) {
   const classes = cn(BASE, VARIANTS[variant], SIZES[size], className);
 
+  /* In page anchors stay plain anchors: there is no route to prefetch, and the
+     browser's own hash handling is what scrolls the page. */
+  if (href?.startsWith("#")) {
+    return (
+      <a href={href} className={classes}>
+        {children}
+      </a>
+    );
+  }
+
   if (href) {
     return (
       <Link href={href} className={classes}>

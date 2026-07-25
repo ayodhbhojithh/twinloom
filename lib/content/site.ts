@@ -24,29 +24,30 @@ export const SITE = {
 } as const;
 
 /**
- * The primary journey and the escape hatch. Every call to action on the site
- * points at one of these two.
+ * The primary journey and the escape hatch. Every call to action points at one
+ * of these two.
  */
 export const PRIMARY_CTA: CallToAction = {
   label: "Scope your website",
-  href: "/scope",
+  href: "#scope",
 };
 
 export const SECONDARY_CTA: CallToAction = {
   label: "Book a call",
-  href: "/contact",
+  href: "#contact",
 };
 
 /**
- * Top nav, from TCT_Sitemap.md. Pages are being built one at a time, so some of
- * these routes do not exist yet.
+ * Top nav, from TCT_Sitemap.md. One scrollable page, so these are in page
+ * anchors rather than routes. Sections are being built one at a time, so some of
+ * these targets do not exist yet.
  */
 export const PRIMARY_NAV: readonly NavItem[] = [
-  { label: "Work", href: "/work" },
-  { label: "About", href: "/about" },
-  { label: "Partners", href: "/partners" },
-  { label: "Care", href: "/care" },
-  { label: "Insights", href: "/insights" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "Contact", href: "/contact" },
+  { label: "Work", href: "#work" },
+  { label: "About", href: "#about" },
+  { label: "Partners", href: "#partners" },
+  { label: "Care", href: "#care" },
+  { label: "Insights", href: "#insights" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Contact", href: "#contact" },
 ] as const;
