@@ -113,10 +113,6 @@ export function StepSwitcher() {
           );
         })}
       </ol>
-
-      <p className="mt-2.5 px-2 font-script text-[15px] leading-tight text-faint">
-        this list and the dial are the same thing, click either
-      </p>
     </div>
   );
 }

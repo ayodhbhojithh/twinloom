@@ -3,6 +3,7 @@
 import { ASSETS, type AssetState } from "@/lib/scoping";
 import { cn } from "@/lib/utils";
 
+import { lit } from "./lit";
 import { useScopingSession } from "./scoping-context";
 
 const CHOICES: { state: AssetState; label: string }[] = [
@@ -29,11 +30,10 @@ export function AssetAudit() {
         return (
           <li
             key={asset}
+            style={state ? lit("var(--color-brand)") : undefined}
             className={cn(
-              "flex flex-col gap-2.5 rounded-btn-sm px-3.5 py-3 transition-colors sm:flex-row sm:items-center sm:justify-between",
-              state
-                ? "bg-soft ring-1 ring-brand/35 ring-inset"
-                : "bg-panel-bg",
+              "flex flex-col gap-2.5 rounded-btn-sm px-3.5 py-3 transition-all duration-300 sm:flex-row sm:items-center sm:justify-between",
+              !state && "bg-panel-bg",
             )}
           >
             <span className="text-[13.5px] font-bold">{asset}</span>

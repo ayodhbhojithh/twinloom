@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 
 import { EffortCard } from "./effort-card";
+import { lit, litTick } from "./lit";
 import { EffortSlider } from "./effort-slider";
 import { useScopingSession } from "./scoping-context";
 
@@ -90,20 +91,20 @@ export function FocusPanel({ className }: { className?: string }) {
                 role="checkbox"
                 aria-checked={on}
                 onClick={() => choose(drivers.key, driver.value, "multi")}
+                style={on ? lit("var(--color-brand)") : undefined}
                 className={cn(
-                  "flex w-full items-start gap-2 rounded-btn-sm px-2.5 py-2 text-left transition-all",
-                  on
-                    ? "bg-card ring-1 ring-brand/40 ring-inset"
-                    : "bg-card/55 hover:bg-card",
+                  "flex w-full items-start gap-2 rounded-btn-sm px-2.5 py-2 text-left transition-all duration-300",
+                  !on && "bg-card/55 hover:bg-card",
                 )}
               >
                 <span
                   aria-hidden
+                  style={on ? litTick("var(--color-brand)") : undefined}
                   className={cn(
-                    "mt-px flex size-4 shrink-0 items-center justify-center rounded-[5px] border-[1.5px]",
+                    "mt-px flex size-4 shrink-0 items-center justify-center rounded-[5px] transition-all duration-300",
                     on
-                      ? "border-brand bg-brand text-white"
-                      : "border-faint/55 text-transparent",
+                      ? "text-white"
+                      : "bg-white text-transparent ring-1 ring-faint/35 ring-inset",
                   )}
                 >
                   <Check className="size-2.5" strokeWidth={3.5} />
