@@ -25,8 +25,13 @@ export function FinalCtaSection() {
   return (
     <Section
       id="contact"
+      aside={FINAL_CTA.aside}
       heading={FINAL_CTA.heading}
+      accent={FINAL_CTA.accent}
+      accentTone="gradient"
       lead={FINAL_CTA.lead}
+      align="center"
+      size="large"
       revealBody={false}
     >
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

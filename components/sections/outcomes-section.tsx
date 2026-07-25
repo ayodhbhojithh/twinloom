@@ -34,6 +34,9 @@ export function OutcomesSection() {
     <Section
       id="services"
       heading={OUTCOMES.heading}
+      accent={OUTCOMES.accent}
+      accentTone="blue"
+      micro={OUTCOMES.micro}
       lead={OUTCOMES.lead}
       revealBody={false}
     >

@@ -15,6 +15,9 @@ export function AboutSection() {
     <Section
       id="about"
       heading={WHO_IS_BEHIND.heading}
+      accent={WHO_IS_BEHIND.accent}
+      accentTone="brand"
+      micro={WHO_IS_BEHIND.micro}
       lead={WHO_IS_BEHIND.lead}
       revealBody={false}
     >

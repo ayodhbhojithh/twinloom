@@ -2,6 +2,7 @@ import { SiteFooter, SiteHeader } from "@/components/layout";
 import {
   AboutSection,
   CareSection,
+  FaqSection,
   FeaturedWorkSection,
   FinalCtaSection,
   HeroSection,
@@ -26,6 +27,7 @@ export default function Home() {
         <FeaturedWorkSection />
         <AboutSection />
         <CareSection />
+        <FaqSection />
         <FinalCtaSection />
       </main>
 

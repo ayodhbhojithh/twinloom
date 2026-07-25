@@ -1,5 +1,6 @@
 import {
   CARE_TEASER,
+  FAQ,
   FEATURED_WORK,
   FINAL_CTA,
   HOW_WE_WORK,
@@ -21,7 +22,6 @@ export interface CallToAction {
   href: string;
 }
 
-
 export const SITE = {
   name: "TwinCoreTech",
   /** The wordmark is set in three parts so the middle one can take the brand colour. */
@@ -37,10 +37,6 @@ export const SITE = {
   ownership: "You own everything. No lock-in.",
 } as const;
 
-/**
- * The primary journey and the escape hatch. Every call to action points at one
- * of these two.
- */
 /**
  * The journey is the primary door; "Book a call" is the escape hatch that has to
  * stay visible everywhere.
@@ -83,6 +79,7 @@ export const PRIMARY_NAV: readonly NavItem[] = [
   { label: "Work", href: "#work", count: FEATURED_WORK.items.length },
   { label: "About", href: "#about" },
   { label: "Care", href: "#care", count: CARE_TEASER.plans.length },
+  { label: "FAQ", href: "#faq", count: FAQ.items.length },
   { label: "Contact", href: "#contact", count: FINAL_CTA.doors.length },
 ] as const;
 
@@ -101,6 +98,7 @@ export const FOOTER_NAV: readonly { title: string; items: NavItem[] }[] = [
       { label: "Work", href: "#work" },
       { label: "About", href: "#about" },
       { label: "Care", href: "#care" },
+      { label: "FAQ", href: "#faq" },
     ],
   },
   {
@@ -109,6 +107,7 @@ export const FOOTER_NAV: readonly { title: string; items: NavItem[] }[] = [
       { label: "Scope your website", href: "/scope" },
       { label: "Book a call", href: "#contact" },
       { label: "Contact", href: "#contact" },
+      { label: "FAQ", href: "#faq" },
     ],
   },
   {

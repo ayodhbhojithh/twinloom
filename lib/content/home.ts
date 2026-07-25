@@ -4,6 +4,12 @@
  * Wording is taken from twincoretech_site.html (the canonical one-file site) and
  * 1_landing_1.html (the design pass), with em dashes and en dashes rewritten.
  *
+ * Every section carries an `accent` word and a line of `micro` copy. That pairing
+ * is the signature of turn 2a, The Portal Grid: a bold heading with one word in a
+ * different colour, and a quiet mono aside sitting on the same baseline. The
+ * accent colour rotates section to section so the page has a pulse without ever
+ * needing a coloured background.
+ *
  * Figures, quotes and case studies all come from the artifacts, which are the
  * client's own drafts. Confirm or replace them before launch: there is no
  * placeholder wording on the page to signal that they are unconfirmed.
@@ -54,8 +60,10 @@ export interface OutcomeItem {
 }
 
 export const OUTCOMES = {
-  heading: "What we can do for you",
-  lead: "Whatever stage you're at, pick the bits you need.",
+  heading: "What we can",
+  accent: "do for you",
+  micro: "pick the bits you need",
+  lead: "Whatever stage you're at, start with the outcome rather than the technology.",
   items: [
     {
       icon: "Rocket",
@@ -95,56 +103,109 @@ export const OUTCOMES = {
   ] satisfies readonly OutcomeItem[],
 } as const;
 
+/** The mono tag and tile colour for each step of the process ledger. */
+export interface WorkStep {
+  name: string;
+  body: string;
+  tag: string;
+  tone: "pink" | "violet" | "blue" | "emerald" | "amber";
+}
+
 export const HOW_WE_WORK = {
-  heading: "How we work, five simple steps",
-  lead: "Milestone based, with a quick update every week, so you always know where it is up to.",
+  heading: "From hello",
+  accent: "to launch",
+  micro: "five steps · no surprises",
   steps: [
     {
       name: "Discover",
-      body: "A conversation, and a simple plan built together.",
+      body: "a conversation, then a simple plan built together",
+      tag: "SCOPE",
+      tone: "pink",
     },
     {
       name: "Design",
-      body: "Strategy, storyboard, your brand, the look and feel.",
+      body: "every screen signed off before we build a thing",
+      tag: "DESIGN",
+      tone: "violet",
     },
-    { name: "Build", body: "In milestones, with a quick update every week." },
-    { name: "Launch", body: "Tested, handed over, with a walkthrough." },
-    { name: "Care", body: "We keep it running and improving after launch." },
-  ],
+    {
+      name: "Build",
+      body: "in milestones, with a quick update every week",
+      tag: "BUILD",
+      tone: "blue",
+    },
+    {
+      name: "Launch",
+      body: "tested, handed over, with a walkthrough",
+      tag: "SHIP",
+      tone: "emerald",
+    },
+    {
+      name: "Care",
+      body: "we keep it running and improving after launch",
+      tag: "CARE",
+      tone: "amber",
+    },
+  ] satisfies readonly WorkStep[],
   reassurances: [
     "You decide how involved you want to be.",
     "We can set up every account for you: domain, hosting, shop, analytics.",
   ],
 } as const;
 
+/**
+ * Case cards.
+ *
+ * `preview` picks one of three abstract wireframes rather than a screenshot. 2a
+ * makes the same call: a suggestion of a layout reads as work without claiming to
+ * be a photograph of it, and it never goes stale or renders badly at card size.
+ */
+export interface WorkItem {
+  client: string;
+  sector: string;
+  body: string;
+  result: string;
+  preview: "shop" | "booking" | "dashboard";
+  tone: "emerald" | "blue" | "violet";
+}
+
 export const FEATURED_WORK = {
-  heading: "Featured work",
-  lead: "A few recent builds, and what changed for the business afterwards.",
+  heading: "Things we've",
+  accent: "shipped",
+  micro: "3 of 40+ · results measured, not vibes",
   items: [
     {
-      sector: "Hospitality",
       client: "Bella's Café",
+      sector: "hospitality site + table booking",
       body: "Mobile-first redesign and table booking.",
-      result: "Enquiries up",
+      result: "ENQUIRIES UP",
+      preview: "booking",
+      tone: "blue",
     },
     {
-      sector: "Retail",
       client: "Nord Home Goods",
+      sector: "retail e-commerce",
       body: "New Shopify-backed store, 200+ products.",
-      result: "Selling online",
+      result: "SELLING ONLINE",
+      preview: "shop",
+      tone: "emerald",
     },
     {
-      sector: "Professional",
       client: "Sterling Consulting",
+      sector: "professional site + blog",
       body: "Lead generation upgrade and a self-managed blog.",
-      result: "More enquiries",
+      result: "MORE ENQUIRIES",
+      preview: "dashboard",
+      tone: "violet",
     },
-  ],
+  ] satisfies readonly WorkItem[],
 } as const;
 
 export const WHO_IS_BEHIND = {
-  heading: "Who's behind it",
-  lead: "TwinCoreTech is a UK studio focused on small and growing businesses. We make sites that help people find you, trust you and get in touch, and we look after them afterwards.",
+  heading: "Who's",
+  accent: "behind it",
+  micro: "a UK studio, SME focused",
+  lead: "We make sites that help people find you, trust you and get in touch, and we look after them afterwards.",
   story:
     "We started because too many SMEs were sold expensive sites that did not bring in work. We do the opposite: scope honestly, build to a clear plan, and price it plainly.",
   beliefs: [
@@ -158,34 +219,115 @@ export const WHO_IS_BEHIND = {
   },
 } as const;
 
+/**
+ * Care plans.
+ *
+ * `body` is the one-line descriptor under the price and `points` are the dotted
+ * bullets, each with its own colour. Splitting them that way is what lets the
+ * card be read in two seconds or in ten, depending on how much the visitor cares.
+ *
+ * Contents per plan follow TCT_Sitemap.md §7.
+ */
+export interface CarePlan {
+  name: string;
+  price: number;
+  body: string;
+  points: readonly { label: string; tone: string }[];
+  featured?: boolean;
+}
+
 export const CARE_TEASER = {
-  heading: "We keep it running, and improving",
-  lead: "Proactive care, not break-fix. Hosting, security and backups as standard, plus ongoing improvements so your site keeps working for you.",
+  heading: "We keep it running,",
+  accent: "and improving",
+  micro: "proactive care · not break-fix",
   plans: [
     {
       name: "Care Lite",
       price: 39,
-      body: "Hosting, SSL, security, backups, uptime monitoring and small fixes.",
+      body: "The essentials, always on",
+      points: [
+        { label: "Hosting, SSL and security", tone: "emerald" },
+        { label: "Backups and uptime monitoring", tone: "blue" },
+        { label: "Small fixes included", tone: "teal" },
+      ],
     },
     {
       name: "Care Plus",
       price: 99,
-      body: "Everything in Lite, plus content updates, a monthly report and minor improvements.",
+      body: "Care, plus a bit of momentum",
+      points: [
+        { label: "Everything in Lite", tone: "violet" },
+        { label: "Content updates when you need them", tone: "blue" },
+        { label: "A monthly report and minor improvements", tone: "teal" },
+      ],
       featured: true,
     },
     {
       name: "Care Pro",
       price: 249,
-      body: "Everything in Plus, plus an SEO and CRO retainer, priority support and a growth roadmap.",
+      body: "Growth, actively worked on",
+      points: [
+        { label: "Everything in Plus", tone: "amber" },
+        { label: "SEO and CRO retainer", tone: "pink" },
+        { label: "Priority support and a growth roadmap", tone: "violet" },
+      ],
     },
-  ],
+  ] satisfies readonly CarePlan[],
   responseTimes:
     "Urgent, site down: same day. Standard changes: 2 to 3 working days. Care Pro: priority queue.",
   note: "Prices illustrative, to be confirmed. You own the site and every account, and you can cancel any time.",
 } as const;
 
+/**
+ * The questions that come up on every enquiry, answered before they are asked.
+ *
+ * Wording is the one-file site's own FAQ, which TCT_Sitemap.md §12 groups under
+ * process, ownership, hosting, data and payment. Six here, one per group, with
+ * the rest living on the FAQ page.
+ */
+export const FAQ = {
+  heading: "Fair",
+  accent: "questions",
+  micro: "the ones everyone asks",
+  items: [
+    {
+      question: "How long does a website take?",
+      answer:
+        "Most SME sites launch in 2 to 6 weeks depending on scope. You get a date with your quote, and a live preview link from week one.",
+    },
+    {
+      question: "Do I own the website?",
+      answer:
+        "Yes. The site, the domain and every account, from day one, care plan or not. No lock-in.",
+    },
+    {
+      question: "Is the estimate binding?",
+      answer:
+        "It is a guide. After a quick call we confirm a fixed quote in writing, and that one does not move.",
+    },
+    {
+      question: "Do you host it?",
+      answer:
+        "We can. Hosting, security and backups come with every care plan. Or we hand it to your host and walk them through it.",
+    },
+    {
+      question: "How do payments work?",
+      answer:
+        "A deposit to start, the balance at launch, and the care plan monthly. Bigger builds can be spread out, just ask.",
+    },
+    {
+      question: "What about my data?",
+      answer:
+        "Draft scoping submissions are kept for three days and covered by our privacy policy. Please do not upload personal data in the panel.",
+    },
+  ],
+} as const;
+
 export const FINAL_CTA = {
-  heading: "Ready when you are.",
+  /** The handwritten nudge above the closing headline, straight from 2a. */
+  aside: "go on then,",
+  heading: "Let's price",
+  accent: "yours.",
   lead: "Three ways to start, whatever suits you.",
   doors: [
     {
