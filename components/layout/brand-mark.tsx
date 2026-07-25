@@ -2,19 +2,36 @@ import { SITE } from "@/lib/content/site";
 import { cn } from "@/lib/utils";
 
 /**
- * Wordmark placeholder. Swap the glyph for the real logo once brand assets land;
- * nothing else on the page reads the brand name directly.
+ * The wordmark. The gradient square is the prototype's brand device, tilted at
+ * 135 degrees and running amber to pink to violet to emerald.
+ *
+ * Swap the square for the real logo once brand assets land; nothing else on the
+ * page reads the brand name or mark directly.
  */
-export function BrandMark({ className }: { className?: string }) {
+export function BrandMark({
+  className,
+  size = "default",
+}: {
+  className?: string;
+  size?: "default" | "large";
+}) {
+  const large = size === "large";
+
   return (
     <span className={cn("flex items-center gap-2.5", className)}>
       <span
         aria-hidden
-        className="grid size-8 shrink-0 place-items-center rounded-[9px] bg-ink font-mono text-[13px] font-semibold text-white"
+        className={cn(
+          "bg-rainbow-tilt shrink-0 rounded-[8px]",
+          large ? "size-8" : "size-[26px]",
+        )}
+      />
+      <span
+        className={cn(
+          "font-extrabold tracking-[-0.01em]",
+          large ? "text-[21px]" : "text-[19px]",
+        )}
       >
-        T
-      </span>
-      <span className="text-[15px] font-extrabold tracking-[-0.01em]">
         {SITE.name}
       </span>
     </span>
