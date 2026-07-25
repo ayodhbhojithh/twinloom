@@ -52,7 +52,7 @@ function Journey() {
         {/* Questions left, detail right. Neither is a card: the left column sits
             on the page and the right one is a soft fill, so the only outlines on
             this screen belong to things you can actually click. */}
-        <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,400px)] lg:gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,470px)]">
+        <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,450px)] lg:gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,540px)]">
           <div className="min-w-0">
             {/* Keyed on the step, so moving section replays the spring rather
                 than swapping the text in place. */}
