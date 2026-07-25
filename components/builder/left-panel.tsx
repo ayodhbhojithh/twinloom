@@ -16,6 +16,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { KIND_NAME } from "@/lib/builder/tokens";
 import { isContainer } from "@/lib/builder/tree";
 import type { BuilderNode, NodeKind } from "@/lib/builder/types";
 import type { BuilderController } from "@/lib/hooks/use-builder";
@@ -31,18 +32,6 @@ const KIND_ICON: Record<NodeKind, LucideIcon> = {
   image: ImageIcon,
   divider: Minus,
   spacer: MoveVertical,
-};
-
-const KIND_NAME: Record<NodeKind, string> = {
-  section: "Section",
-  container: "Container",
-  grid: "Grid",
-  heading: "Heading",
-  text: "Text",
-  button: "Button",
-  image: "Image",
-  divider: "Divider",
-  spacer: "Spacer",
 };
 
 /** What the palette offers, in the order people reach for it. */
@@ -70,28 +59,32 @@ export function LeftPanel({ builder }: { builder: BuilderController }) {
 
   return (
     <>
-      <div className="flex shrink-0 gap-0.5 p-3">
-        {(["Layers", "Components"] as const).map((entry) => (
-          <button
-            key={entry}
-            type="button"
-            onClick={() => setTab(entry)}
-            className={cn(
-              "flex flex-1 items-center justify-center gap-1.5 rounded-[6px] py-1.5 font-mono text-[9px] font-bold tracking-[0.12em] uppercase transition-colors",
-              entry === tab ? "bg-brand text-white" : "text-faint hover:text-ink",
-            )}
-          >
-            {entry}
-            {entry === "Layers" ? (
-              <span className="font-normal opacity-70 tabular-nums">
-                {builder.count}
-              </span>
-            ) : null}
-          </button>
-        ))}
+      <div className="shrink-0 p-3 pb-2">
+        <div className="flex gap-0.5 rounded-[8px] bg-panel-bg p-0.5">
+          {(["Layers", "Components"] as const).map((entry) => (
+            <button
+              key={entry}
+              type="button"
+              onClick={() => setTab(entry)}
+              className={cn(
+                "flex flex-1 items-center justify-center gap-1.5 rounded-[6px] py-1.5 font-mono text-[9px] font-bold tracking-[0.12em] uppercase transition-colors",
+                entry === tab
+                  ? "bg-white text-ink"
+                  : "text-faint hover:text-ink",
+              )}
+            >
+              {entry}
+              {entry === "Layers" ? (
+                <span className="font-normal text-faint tabular-nums">
+                  {builder.count}
+                </span>
+              ) : null}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="panel-scroll min-h-0 flex-1 overflow-y-auto px-2 pb-6">
+      <div className="panel-scroll min-h-0 flex-1 overflow-y-auto px-1.5 pb-6">
         {tab === "Layers" ? (
           <LayerRow node={builder.root} builder={builder} depth={0} />
         ) : (
@@ -161,7 +154,7 @@ function LayerRow({
           "group flex items-center rounded-[6px] transition-colors",
           selected ? "bg-soft" : hovered ? "bg-panel-bg" : "hover:bg-panel-bg",
         )}
-        style={{ paddingLeft: `${depth * 12}px` }}
+        style={{ marginLeft: `${depth * 11}px` }}
         onMouseEnter={() => builder.hover(node.id)}
         onMouseLeave={() => builder.hover(null)}
       >

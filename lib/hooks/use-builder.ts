@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
+  cloneNode,
   duplicateNode,
   exportComponent,
   findNode,
@@ -26,6 +27,36 @@ import type {
 
 const LIMIT = 60;
 
+const STORAGE_KEY = "tct.builder.v1";
+
+/** The zoom stops the canvas offers. Percentages, because that is how people ask. */
+export const ZOOM_STOPS = [50, 75, 90, 100, 125, 150];
+
+/**
+ * Reads a saved document, or falls back to the starter.
+ *
+ * Called as `useState`'s initialiser rather than in an effect, so the first paint
+ * is already the restored document and there is no flash of the starter over the
+ * top of somebody's work.
+ */
+function initialDoc(): BuilderNode {
+  if (typeof window === "undefined") return starterDoc();
+
+  try {
+    const raw = window.sessionStorage.getItem(STORAGE_KEY);
+    if (!raw) return starterDoc();
+
+    const parsed = JSON.parse(raw) as BuilderNode;
+    /* Trust it only as far as the shape: a session written by an older build must
+       not be able to crash the tool it is read into. */
+    return parsed && typeof parsed === "object" && Array.isArray(parsed.children)
+      ? parsed
+      : starterDoc();
+  } catch {
+    return starterDoc();
+  }
+}
+
 export interface BuilderController {
   root: BuilderNode;
   selected: BuilderNode | null;
@@ -35,16 +66,27 @@ export interface BuilderController {
   path: BuilderNode[];
   device: Device;
   count: number;
+  /** Canvas zoom, as a percentage. */
+  zoom: number;
+  /** Chrome off, so the design can be read without outlines over it. */
+  preview: boolean;
+  /** True once something has been copied, so paste can be offered honestly. */
+  hasCopy: boolean;
 
   select: (id: string | null) => void;
   hover: (id: string | null) => void;
   setDevice: (device: Device) => void;
+  setZoom: (zoom: number) => void;
+  setPreview: (preview: boolean) => void;
+  nudgeZoom: (direction: -1 | 1) => void;
 
   add: (kind: NodeKind) => void;
   remove: (id: string) => void;
   duplicate: (id: string) => void;
   move: (id: string, direction: -1 | 1) => void;
   wrap: (id: string) => void;
+  copy: (id: string) => void;
+  paste: () => void;
 
   setContent: (id: string, content: string) => void;
   setStyle: (id: string, change: Partial<NodeStyle>) => void;
@@ -93,12 +135,26 @@ function chainTo(root: BuilderNode, id: string | null): BuilderNode[] {
  * thing it is undoing.
  */
 export function useBuilder(): BuilderController {
-  const [root, setRoot] = useState<BuilderNode>(starterDoc);
+  const [root, setRoot] = useState<BuilderNode>(initialDoc);
   const [past, setPast] = useState<BuilderNode[]>([]);
   const [future, setFuture] = useState<BuilderNode[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [device, setDevice] = useState<Device>("desktop");
+  const [zoom, setZoom] = useState(100);
+  const [preview, setPreview] = useState(false);
+  const clipboard = useRef<BuilderNode | null>(null);
+  const [hasCopy, setHasCopy] = useState(false);
+
+  /* Saved on every change rather than on a timer: a document is small, the write
+     is synchronous and cheap, and a tab closed mid-thought should not cost work. */
+  useEffect(() => {
+    try {
+      window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(root));
+    } catch {
+      /* Storage can be full or blocked. The session still works in memory. */
+    }
+  }, [root]);
 
   const commit = useCallback(
     (next: BuilderNode) => {
@@ -249,6 +305,41 @@ export function useBuilder(): BuilderController {
     [commit, root],
   );
 
+  const copy = useCallback(
+    (id: string) => {
+      const node = findNode(root, id);
+      if (!node) return;
+
+      clipboard.current = node;
+      setHasCopy(true);
+    },
+    [root],
+  );
+
+  /**
+   * Pastes into the selection, or beside it when the selection cannot hold
+   * children. Fresh ids all the way down, so pasting twice gives two nodes rather
+   * than two references to one.
+   */
+  const paste = useCallback(() => {
+    if (!clipboard.current) return;
+
+    const copyOf = cloneNode(clipboard.current);
+    commit(insertNode(root, selectedId ?? root.id, copyOf));
+    setSelectedId(copyOf.id);
+  }, [commit, root, selectedId]);
+
+  const nudgeZoom = useCallback((direction: -1 | 1) => {
+    setZoom((current) => {
+      const at = ZOOM_STOPS.indexOf(current);
+      const next =
+        ZOOM_STOPS[
+          Math.min(ZOOM_STOPS.length - 1, Math.max(0, (at === -1 ? 3 : at) + direction))
+        ];
+      return next ?? current;
+    });
+  }, []);
+
   const reset = useCallback(() => {
     commit(starterDoc());
     setSelectedId(null);
@@ -279,8 +370,45 @@ export function useBuilder(): BuilderController {
         return;
       }
 
+      if (meta && event.key.toLowerCase() === "c" && selectedId) {
+        copy(selectedId);
+        return;
+      }
+
+      if (meta && event.key.toLowerCase() === "v") {
+        event.preventDefault();
+        paste();
+        return;
+      }
+
+      /* Cmd and a bracket zooms, which is what every canvas tool binds it to. */
+      if (meta && (event.key === "=" || event.key === "+")) {
+        event.preventDefault();
+        nudgeZoom(1);
+        return;
+      }
+
+      if (meta && event.key === "-") {
+        event.preventDefault();
+        nudgeZoom(-1);
+        return;
+      }
+
+      if (meta && event.key === "0") {
+        event.preventDefault();
+        setZoom(100);
+        return;
+      }
+
+      if (event.key.toLowerCase() === "p" && !meta) {
+        event.preventDefault();
+        setPreview((current) => !current);
+        return;
+      }
+
       if (event.key === "Escape") {
-        setSelectedId(null);
+        if (preview) setPreview(false);
+        else setSelectedId(null);
         return;
       }
 
@@ -314,7 +442,19 @@ export function useBuilder(): BuilderController {
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [duplicate, move, redo, remove, root, selectedId, undo]);
+  }, [
+    copy,
+    duplicate,
+    move,
+    nudgeZoom,
+    paste,
+    preview,
+    redo,
+    remove,
+    root,
+    selectedId,
+    undo,
+  ]);
 
   const selected = useMemo(
     () => (selectedId ? findNode(root, selectedId) : null),
@@ -329,16 +469,24 @@ export function useBuilder(): BuilderController {
     path: useMemo(() => chainTo(root, selectedId), [root, selectedId]),
     device,
     count: useMemo(() => countNodes(root), [root]),
+    zoom,
+    preview,
+    hasCopy,
 
     select: setSelectedId,
     hover: setHoveredId,
     setDevice,
+    setZoom,
+    setPreview,
+    nudgeZoom,
 
     add,
     remove,
     duplicate,
     move,
     wrap,
+    copy,
+    paste,
 
     setContent,
     setStyle,

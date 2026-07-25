@@ -32,14 +32,15 @@ function Journey() {
 
         {/* The stage. The dial is the thing people come to this page for, so it
             gets the full width and the top of the page rather than a sidebar.
-            One soft slab, no outline: the fill is what groups it, which keeps the
-            page from reading as a stack of boxes.
 
-            Three zones, in the order the eye needs them. The dial is the shape of
-            the whole brief, the readout says what the section in play amounts to,
-            and the section list is how you move. Same information, three levels of
-            zoom, none of it in a different place on the page. */}
-        <div className="mt-3 grid gap-6 rounded-[22px] bg-panel-bg p-4 sm:p-5 lg:grid-cols-[minmax(0,240px)_minmax(0,1fr)_minmax(0,264px)] lg:gap-7 lg:p-6 xl:grid-cols-[minmax(0,290px)_minmax(0,1fr)_minmax(0,290px)] xl:gap-8">
+            No slab under it. Three zones, in the order the eye needs them: the dial
+            is the shape of the whole brief, the readout says what the section in
+            play amounts to, and the section list is how you move. The three columns
+            are what group them, so a fill behind was only drawing the group twice.
+
+            Same information, three levels of zoom, none of it in a different place
+            on the page. */}
+        <div className="mt-5 grid gap-8 lg:grid-cols-[minmax(0,240px)_minmax(0,1fr)_minmax(0,264px)] lg:gap-7 xl:grid-cols-[minmax(0,290px)_minmax(0,1fr)_minmax(0,290px)] xl:gap-10">
           <EffortDial className="mx-auto w-full max-w-[210px] sm:max-w-[240px] xl:max-w-[290px] lg:self-center" />
 
           <div className="lg:self-center">
@@ -49,10 +50,10 @@ function Journey() {
           <StepSwitcher />
         </div>
 
-        {/* Questions left, detail right. Neither is a card: the left column sits
-            on the page and the right one is a soft fill, so the only outlines on
-            this screen belong to things you can actually click. */}
-        <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,450px)] lg:gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,540px)]">
+        {/* Questions left, detail right. The detail keeps a faint tint, since it
+            is the one thing on the page that appears and changes in response to a
+            click and needs to look like a different kind of surface. */}
+        <div className="mt-11 grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,450px)] lg:gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,540px)]">
           <div className="min-w-0">
             {/* Keyed on the step, so moving section replays the spring rather
                 than swapping the text in place. */}
@@ -92,9 +93,10 @@ function Journey() {
 /**
  * The scoping journey, from TCT_Scope_Spec.md §2.
  *
- * Orientation across the top, work underneath. The stage is one wide slab holding
- * the dial, the readout for the section in play, and the list of all eight; below
- * it the questions take the width they need and their detail sits beside them.
+ * Orientation across the top, work underneath. Three columns hold the dial, the
+ * readout for the section in play and the list of all eight; below them the
+ * questions take the width they need and their detail sits beside them. No fills
+ * behind any of it: the columns and the space are the grouping.
  *
  * Nothing here asks for a page count or a site size: both are derived from the
  * answers and confirmed in the Blueprint.

@@ -1,5 +1,7 @@
 "use client";
 
+import { usePathname } from "next/navigation";
+
 import { cn } from "@/lib/utils";
 
 import { ColourStudio } from "./studio";
@@ -14,9 +16,16 @@ import { ThoughtsPanel } from "./thoughts-panel";
  * left instead of covering it, which is the behaviour the spec is specific about.
  * Below the panel breakpoint the panel is full width, so there is nothing to
  * shift and the padding is dropped.
+ *
+ * The Builder is the one route that opts out of the launcher. It owns the whole
+ * viewport and has its own panels on both edges, so a tab floating over the
+ * inspector is in the way rather than to hand. The session and the panel itself
+ * stay mounted, so anything captured elsewhere survives a visit here.
  */
 export function ThoughtsProvider({ children }: { children: React.ReactNode }) {
   const controller = useThoughts();
+  const pathname = usePathname();
+  const isTool = pathname?.startsWith("/builder") ?? false;
 
   return (
     <ThoughtsContext.Provider value={controller}>
@@ -29,7 +38,7 @@ export function ThoughtsProvider({ children }: { children: React.ReactNode }) {
         {children}
       </div>
 
-      <ThoughtsLauncher />
+      {isTool ? null : <ThoughtsLauncher />}
       <ThoughtsPanel />
 
       {/* Outside the panel deliberately: the panel is transformed while it

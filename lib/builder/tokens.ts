@@ -297,6 +297,19 @@ export function classesFor(node: BuilderNode): string {
   return out.filter(Boolean).join(" ");
 }
 
+/** What each kind is called, everywhere it is named. */
+export const KIND_NAME: Record<NodeKind, string> = {
+  section: "Section",
+  container: "Container",
+  grid: "Grid",
+  heading: "Heading",
+  text: "Text",
+  button: "Button",
+  image: "Image",
+  divider: "Divider",
+  spacer: "Spacer",
+};
+
 /** The tag each kind exports as, and what the canvas renders it with. */
 export const TAG: Record<NodeKind, string> = {
   section: "section",

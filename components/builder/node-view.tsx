@@ -2,24 +2,11 @@
 
 import { useEffect, useRef } from "react";
 
-import { styleFor, TAG } from "@/lib/builder/tokens";
+import { KIND_NAME, styleFor, TAG } from "@/lib/builder/tokens";
 import { isContainer } from "@/lib/builder/tree";
 import type { BuilderNode } from "@/lib/builder/types";
 import type { BuilderController } from "@/lib/hooks/use-builder";
 import { cn } from "@/lib/utils";
-
-/** The label on the outline, so a selected empty box still says what it is. */
-const KIND_LABEL: Record<BuilderNode["kind"], string> = {
-  section: "Section",
-  container: "Container",
-  grid: "Grid",
-  heading: "Heading",
-  text: "Text",
-  button: "Button",
-  image: "Image",
-  divider: "Divider",
-  spacer: "Spacer",
-};
 
 const EDITABLE = new Set(["heading", "text", "button"]);
 
@@ -45,10 +32,14 @@ export function NodeView({
   builder: BuilderController;
   depth?: number;
 }) {
-  const { selectedId, hoveredId, select, hover, setContent } = builder;
+  const { selectedId, hoveredId, select, hover, setContent, preview } = builder;
 
-  const selectedHere = selectedId === node.id;
-  const hoveredHere = hoveredId === node.id && !selectedHere;
+  /* In preview every one of these is false, so the node renders as the plain
+     element it will export as: no ring, no label, no pointer, nothing to click.
+     That is the point of preview, and it costs one condition rather than a second
+     renderer. */
+  const selectedHere = !preview && selectedId === node.id;
+  const hoveredHere = !preview && hoveredId === node.id && !selectedHere;
   const editable = EDITABLE.has(node.kind);
 
   /* The editable text lives in a span of its own rather than directly in the
@@ -72,23 +63,29 @@ export function NodeView({
   const common = {
     style: styleFor(node),
     "data-kind": node.kind,
-    onClick: (event: React.MouseEvent) => {
-      event.stopPropagation();
-      select(node.id);
-    },
-    onMouseEnter: (event: React.MouseEvent) => {
-      event.stopPropagation();
-      hover(node.id);
-    },
-    onMouseLeave: () => hover(null),
+    onClick: preview
+      ? undefined
+      : (event: React.MouseEvent) => {
+          event.stopPropagation();
+          select(node.id);
+        },
+    onMouseEnter: preview
+      ? undefined
+      : (event: React.MouseEvent) => {
+          event.stopPropagation();
+          hover(node.id);
+        },
+    onMouseLeave: preview ? undefined : () => hover(null),
     className: cn(
       "relative outline-none transition-[box-shadow] duration-150",
       /* Rings, not borders: they are drawn outside the box and cost no layout. */
       selectedHere && "ring-2 ring-brand ring-offset-0",
       hoveredHere && "ring-1 ring-brand/40",
-      !selectedHere && "cursor-pointer",
-      /* An empty container has nothing to click, so give it a minimum. */
-      isContainer(node.kind) &&
+      !preview && !selectedHere && "cursor-pointer",
+      /* An empty container has nothing to click, so give it a minimum. Not in
+         preview: an outline round an empty box is chrome. */
+      !preview &&
+        isContainer(node.kind) &&
         !node.children.length &&
         "min-h-16 ring-1 ring-line ring-dashed",
     ),
@@ -102,7 +99,7 @@ export function NodeView({
         selectedHere ? "bg-brand text-white" : "bg-brand/40 text-white",
       )}
     >
-      {KIND_LABEL[node.kind]}
+      {KIND_NAME[node.kind]}
     </span>
   ) : null;
 

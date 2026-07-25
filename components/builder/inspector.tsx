@@ -17,6 +17,7 @@ import {
   WEIGHT,
   WIDTH,
 } from "@/lib/builder/tokens";
+import { KIND_NAME } from "@/lib/builder/tokens";
 import { isContainer } from "@/lib/builder/tree";
 import type { BuilderNode } from "@/lib/builder/types";
 import type { BuilderController } from "@/lib/hooks/use-builder";
@@ -55,7 +56,7 @@ export function Inspector({ builder }: { builder: BuilderController }) {
 
   if (!node) {
     return (
-      <div className="px-4 py-6">
+      <div className="px-3 py-5">
         <p className="font-mono text-[9px] font-bold tracking-[0.14em] text-faint uppercase">
           Nothing selected
         </p>
@@ -67,10 +68,13 @@ export function Inspector({ builder }: { builder: BuilderController }) {
         <dl className="mt-5 flex flex-col gap-2">
           {[
             ["Undo, redo", "Cmd Z, Shift Cmd Z"],
+            ["Copy, paste", "Cmd C, Cmd V"],
             ["Duplicate", "Cmd D"],
             ["Delete", "Backspace"],
             ["Walk siblings", "Up, Down"],
             ["Reorder", "Alt Up, Alt Down"],
+            ["Zoom", "Cmd +, Cmd -, Cmd 0"],
+            ["Preview", "P"],
             ["Deselect", "Esc"],
           ].map(([what, keys]) => (
             <div
@@ -98,34 +102,44 @@ export function Inspector({ builder }: { builder: BuilderController }) {
 
   return (
     <>
-      <div className="px-4 pt-4">
+      <div className="px-3 pt-3">
         <p className="font-mono text-[9px] font-bold tracking-[0.14em] text-brand uppercase">
-          {node.kind}
+          Selected
         </p>
-        <h2 className="mt-1 truncate text-[15px] font-extrabold tracking-[-0.01em]">
-          {node.content?.trim() || node.kind}
+        <h2 className="mt-1 truncate text-[14px] font-extrabold tracking-[-0.01em]">
+          {KIND_NAME[node.kind]}
         </h2>
+        {node.content?.trim() ? (
+          <p className="mt-0.5 truncate text-[11px] text-faint">
+            {node.content.trim()}
+          </p>
+        ) : null}
       </div>
 
-      <div className="mt-3 flex gap-0.5 px-4">
-        {tabs.map((entry) => (
-          <button
-            key={entry}
-            type="button"
-            onClick={() => setTab(entry)}
-            className={cn(
-              "flex-1 rounded-[6px] py-1.5 font-mono text-[9px] font-bold tracking-[0.12em] uppercase transition-colors",
-              entry === active
-                ? "bg-brand text-white"
-                : "text-faint hover:text-ink",
-            )}
-          >
-            {entry}
-          </button>
-        ))}
+      {/* The same segmented control the left panel and the bar use: a track with
+          the active segment lifted out of it, rather than three loose buttons one
+          of which happens to be filled. */}
+      <div className="mt-3 px-3">
+        <div className="flex gap-0.5 rounded-[8px] bg-panel-bg p-0.5">
+          {tabs.map((entry) => (
+            <button
+              key={entry}
+              type="button"
+              onClick={() => setTab(entry)}
+              className={cn(
+                "flex-1 rounded-[6px] py-1.5 font-mono text-[9px] font-bold tracking-[0.12em] uppercase transition-colors",
+                entry === active
+                  ? "bg-white text-ink"
+                  : "text-faint hover:text-ink",
+              )}
+            >
+              {entry}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="panel-scroll min-h-0 flex-1 overflow-y-auto px-4 pt-5 pb-8">
+      <div className="panel-scroll min-h-0 flex-1 overflow-y-auto px-3 pt-5 pb-8">
         {active === "Style" ? <StyleTab node={node} builder={builder} /> : null}
         {active === "Layout" ? <LayoutTab node={node} builder={builder} /> : null}
         {active === "Spacing" ? (
