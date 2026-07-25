@@ -22,7 +22,23 @@ export {
   RAG_COLOUR,
   RAG_LABEL,
 } from "./effort";
+export {
+  deriveSitemap,
+  estimate,
+  formatPrice,
+  PRICING_NOTE,
+  readiness,
+  resolveComponents,
+} from "./estimate";
+export type { Estimate, PackageTier, ScopeComponent } from "./estimate";
 export { ASSETS, EFFORT_GENERIC, STEP_COUNT, STEPS } from "./steps";
+export {
+  EMPTY_ANSWERS,
+  getServerSnapshot,
+  getSnapshot,
+  subscribe,
+  updateAnswers,
+} from "./store";
 export type {
   AssetState,
   DeepenDial,

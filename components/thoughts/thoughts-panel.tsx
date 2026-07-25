@@ -108,15 +108,15 @@ export function ThoughtsPanel() {
         aria-label="Thoughts and inspiration"
         aria-hidden={!open}
         className={cn(
-          "fixed inset-y-0 right-0 z-50 flex w-full flex-col bg-bg transition-[transform,box-shadow] duration-[420ms] ease-[var(--ease-out-soft)] panel:w-panel",
+          "fixed inset-y-0 right-0 z-50 flex w-full flex-col bg-panel-bg transition-[transform,box-shadow] duration-[420ms] ease-[var(--ease-out-soft)] panel:w-panel",
           open
             ? "translate-x-0 shadow-[-18px_0_56px_rgba(18,35,59,0.16)]"
             : "pointer-events-none translate-x-full shadow-none",
         )}
       >
-        {/* One white surface. The sections divide themselves with hairlines and
-            every control is a recessed grey fill, which is the same arrangement
-            the page uses: nothing is outlined unless you can click it. */}
+        {/* No outlines anywhere. The surface is tinted, the sections are white
+            cards on it, and every control is a recessed fill inside those. Depth
+            does the dividing that borders used to. */}
         <Rise open={open} delay={90} className="shrink-0 px-3.5 pt-3.5 pb-2.5">
           <div className="flex items-center gap-2">
             <span
@@ -148,7 +148,7 @@ export function ThoughtsPanel() {
 
         <div className="panel-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-3.5 pt-0 pb-1">
           <Rise open={open} delay={140}>
-            <p className="flex gap-2 text-[11.5px] leading-[1.5] text-faint">
+            <p className="flex gap-2 rounded-card bg-soft p-3 text-[11.5px] leading-[1.55] text-body">
               <Lightbulb
                 aria-hidden
                 className="mt-px size-3.5 shrink-0 text-brand"
@@ -162,7 +162,7 @@ export function ThoughtsPanel() {
           {errors.length ? (
             <div
               role="alert"
-              className="mt-3 rounded-btn-sm bg-destructive/6 p-3"
+              className="mt-2.5 rounded-card bg-destructive/6 p-3"
             >
               <div className="flex items-center gap-2">
                 <AlertCircle
@@ -194,7 +194,7 @@ export function ThoughtsPanel() {
             </div>
           ) : null}
 
-          <div className="mt-1 flex flex-col divide-y divide-line">
+          <div className="mt-2.5 flex flex-col gap-2.5">
             <Rise open={open} delay={190}>
               <FilesSection />
             </Rise>

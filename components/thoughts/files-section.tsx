@@ -7,7 +7,6 @@ import {
   Files,
   Image as ImageIcon,
   Presentation,
-  Upload,
   X,
   type LucideIcon,
 } from "lucide-react";

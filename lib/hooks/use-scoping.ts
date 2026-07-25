@@ -1,32 +1,26 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
 
 import {
   conditionMet,
   deepenActive,
   findOption,
+  getServerSnapshot,
+  getSnapshot,
   isComplete,
   optionKey,
   overallEffort,
   sectionSummary,
   STEP_COUNT,
   STEPS,
+  subscribe,
+  updateAnswers,
   type AssetState,
   type ScopeAnswers,
   type ScopeStep,
   type SectionSummary,
 } from "@/lib/scoping";
-
-const EMPTY: ScopeAnswers = {
-  single: {},
-  multi: {},
-  effort: {},
-  touched: [],
-  assets: {},
-  budget: 5000,
-  free: "",
-};
 
 /** Group key and option value, joined. Identifies what the focus panel shows. */
 export type FocusKey = string | null;
@@ -73,12 +67,22 @@ export interface ScopingController {
 /**
  * The scoping session.
  *
- * Held in component state rather than the session store: the journey is one
- * sitting, and the answers only need to outlive it once they are posted to the
- * server. Wiring persistence in later is one call site.
+ * The answers live in the session store rather than in component state, because
+ * the journey and the Blueprint are two routes and the Blueprint has to be able to
+ * read what the journey collected. Reading through `useSyncExternalStore` also
+ * means a reload mid-journey picks up where it left off.
+ *
+ * Where you are in the journey is not stored. That is a property of this visit to
+ * this page, not of the brief, and coming back to a fresh first section with every
+ * answer still in place is the behaviour people expect.
  */
 export function useScoping(): ScopingController {
-  const [answers, setAnswers] = useState<ScopeAnswers>(EMPTY);
+  const answers = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
+  const setAnswers = updateAnswers;
   const [index, setIndex] = useState(0);
   const [visited, setVisited] = useState<number[]>([0]);
   const [focus, setFocus] = useState<FocusKey>(null);

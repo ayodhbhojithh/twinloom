@@ -54,6 +54,9 @@ export const SECONDARY_CTA: CallToAction = {
 /** The scoping journey. */
 export const SCOPE_ROUTE = "/scope";
 
+/** Where the journey lets out: the resolved, priced blueprint. */
+export const BLUEPRINT_ROUTE = "/blueprint";
+
 export const NEWSLETTER = {
   heading: "Join the newsletter",
   body: "Occasional, practical notes on getting found and getting enquiries. No filler.",

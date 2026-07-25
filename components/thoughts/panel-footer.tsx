@@ -25,7 +25,7 @@ export function PanelFooter() {
   const captured = parts.length > 0;
 
   return (
-    <div className="flex items-center gap-2 border-t border-line px-3.5 py-2.5 text-[10.5px]">
+    <div className="flex items-center gap-2 px-3.5 pt-2.5 pb-3.5 text-[10.5px]">
       <span className="shrink-0 font-mono font-bold tracking-[0.1em] text-faint uppercase">
         Captured
       </span>

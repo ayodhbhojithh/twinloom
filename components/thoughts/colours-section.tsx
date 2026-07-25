@@ -18,14 +18,10 @@ import { WeightSlider } from "./weight-slider";
  * Three ways in: the Colour Studio for picking from images, a screen or anywhere
  * on screen; the system picker; or a typed code.
  *
- * The Studio used to be a full width filled button carrying the primary call to
- * action's own glow, which made it the loudest thing in the panel and a rival to
- * the page's real CTA. It is tinted now: still the first thing in the section, no
- * longer shouting.
- *
- * The paragraph explaining that order sets the role is gone. Every row already
- * says PRIMARY or SECONDARY above its hex, so the rule was stated twice and only
- * the paragraph could fall out of date.
+ * Nothing in here is outlined. The entry row is a recessed fill, the rows below
+ * are divided by hairlines, and the Studio button only takes its glow on hover so
+ * that it does not sit on the panel shouting louder than the page's own call to
+ * action.
  */
 export function ColoursSection() {
   const {
@@ -58,13 +54,13 @@ export function ColoursSection() {
       <button
         type="button"
         onClick={openStudio}
-        className="flex h-8 w-full items-center justify-center gap-1.5 rounded-btn-sm bg-soft text-[11.5px] font-bold text-brand transition-colors hover:bg-brand hover:text-white"
+        className="flex h-9 w-full items-center justify-center gap-1.5 rounded-btn-sm bg-brand text-[12px] font-bold text-white transition-all hover:-translate-y-px hover:shadow-cta"
       >
         <Palette aria-hidden className="size-3.5" />
         Colour Studio
       </button>
 
-      <div className="mt-1.5 flex items-center gap-1.5">
+      <div className="mt-2 flex items-center gap-2">
         {/* flex, not inline: an inline colour input sits on the text baseline and
             picks up descender space, which nudges the swatch out of line with
             the field and button beside it. */}
@@ -74,7 +70,7 @@ export function ColoursSection() {
             type="color"
             value={picked}
             onChange={(event) => setPicked(event.target.value)}
-            className="swatch-input size-8 rounded-full"
+            className="swatch-input size-9 rounded-full"
           />
         </label>
 
@@ -90,7 +86,7 @@ export function ColoursSection() {
           placeholder="2563eb"
           aria-label="Colour code"
           spellCheck={false}
-          className="h-8 min-w-0 flex-1 rounded-btn-sm bg-panel-bg px-2.5 font-mono text-[11.5px] outline-none ring-inset transition-shadow placeholder:text-faint focus:ring-1 focus:ring-brand/45"
+          className="h-9 min-w-0 flex-1 rounded-btn-sm bg-panel-bg px-3 font-mono text-[12px] outline-none ring-inset transition-shadow placeholder:text-faint focus:ring-1 focus:ring-brand/45"
         />
 
         <button
@@ -98,9 +94,9 @@ export function ColoursSection() {
           onClick={() => submit(typed || picked)}
           disabled={full}
           aria-label="Add colour"
-          className="flex size-8 shrink-0 items-center justify-center rounded-btn-sm bg-brand text-white transition-all hover:opacity-90 disabled:opacity-35"
+          className="flex size-9 shrink-0 items-center justify-center rounded-btn-sm bg-brand text-white transition-all hover:opacity-90 disabled:opacity-35"
         >
-          <Plus className="size-3.5" />
+          <Plus className="size-4" />
         </button>
       </div>
 
@@ -182,10 +178,15 @@ export function ColoursSection() {
           </ul>
         </>
       ) : (
-        <p className="mt-2 font-mono text-[10px] leading-[1.5] text-faint">
-          none yet · order sets the role, weights rebalance to 100%
+        <p className="mt-2.5 rounded-btn-sm bg-panel-bg px-3 py-2.5 text-[11.5px] leading-[1.5] text-faint">
+          No colours yet. Open the Colour Studio, pick one, or type a code.
         </p>
       )}
+
+      <p className="mt-2.5 text-[10.5px] leading-[1.5] text-faint">
+        Order sets the role: Primary, Secondary, Tertiary. Drag a weight and the
+        rest rebalance to 100%.
+      </p>
     </PanelSection>
   );
 }

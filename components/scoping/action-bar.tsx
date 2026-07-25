@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 
+import { BLUEPRINT_ROUTE } from "@/lib/content/site";
 import { STEPS } from "@/lib/scoping";
 import { cn } from "@/lib/utils";
 
@@ -80,24 +82,28 @@ export function ActionBar() {
           </button>
         ) : null}
 
-        <button
-          type="button"
-          onClick={next}
-          disabled={isLast}
-          className="flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-brand px-4 text-[13px] font-bold whitespace-nowrap text-white shadow-cta transition-all hover:-translate-y-px hover:shadow-cta-hover disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-35 disabled:shadow-none"
-        >
-          {isLast ? (
-            <>
-              <Check aria-hidden className="size-4" strokeWidth={3} />
-              Build my blueprint
-            </>
-          ) : (
-            <>
-              Next
-              <ArrowRight aria-hidden className="size-4" />
-            </>
-          )}
-        </button>
+        {/* On the last section this is the way out of the journey, not a dead
+            end. It used to be `disabled={isLast}`, which meant the one button
+            people were being walked towards for eight sections could never be
+            pressed. */}
+        {isLast ? (
+          <Link
+            href={BLUEPRINT_ROUTE}
+            className="flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-brand px-4 text-[13px] font-bold whitespace-nowrap text-white shadow-cta transition-all hover:-translate-y-px hover:shadow-cta-hover"
+          >
+            <Check aria-hidden className="size-4" strokeWidth={3} />
+            Build my blueprint
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={next}
+            className="flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-brand px-4 text-[13px] font-bold whitespace-nowrap text-white shadow-cta transition-all hover:-translate-y-px hover:shadow-cta-hover"
+          >
+            Next
+            <ArrowRight aria-hidden className="size-4" />
+          </button>
+        )}
       </div>
     </div>
   );

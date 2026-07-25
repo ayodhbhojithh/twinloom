@@ -23,9 +23,9 @@ export function NotesSection() {
         value={notes}
         onChange={(event) => setNotes(event.target.value)}
         aria-label="Notes"
-        rows={3}
+        rows={4}
         placeholder="Anything else you'd like us to know. The more detail about your business, your customers and your taste, the better."
-        className="field-sizing-content max-h-56 min-h-[74px] w-full resize-none rounded-btn-sm bg-panel-bg p-2.5 text-[11.5px] leading-[1.55] outline-none ring-inset transition-shadow placeholder:text-faint focus:ring-1 focus:ring-brand/45"
+        className="field-sizing-content max-h-60 min-h-[88px] w-full resize-none rounded-btn-sm bg-panel-bg p-3 text-[12px] leading-[1.55] outline-none ring-inset transition-shadow placeholder:text-faint focus:ring-1 focus:ring-brand/45"
       />
     </PanelSection>
   );
