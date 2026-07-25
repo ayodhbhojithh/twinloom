@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Menu } from "lucide-react";
 
-import { ActionButton } from "@/components/shared";
+import { ActionButton, Container } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -28,10 +28,13 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-card">
-      {/* Full bleed, not inside a Container. The artifacts cap page content at
-          1000px but let the nav run the full width on 22px of padding, so the
-          brand sits at one edge and the two doors at the other. */}
-      <div className="flex min-h-[62px] items-center gap-[18px] px-5 py-3 sm:px-[22px]">
+      {/* Wider than the 1000px reading column so the nav is not squeezed, but
+          still contained: on a large monitor the brand and the two doors stay
+          within sight of each other. */}
+      <Container
+        width="wide"
+        className="flex min-h-[62px] items-center gap-[18px] py-3"
+      >
         <Link href="/" aria-label={`${SITE.name}, home`} className="shrink-0">
           <BrandMark />
         </Link>
@@ -133,7 +136,7 @@ export function SiteHeader() {
             </SheetContent>
           </Sheet>
         </div>
-      </div>
+      </Container>
     </header>
   );
 }

@@ -60,9 +60,12 @@
   /* The Thoughts and inspiration panel */
   --color-panel: #141414;
 
-  /* Content widths: 820 for the landing, 1000 for the site pages */
+  /* Content widths: 820 for the landing, 1000 for the site pages, and a wider
+     1280 for full width furniture like the nav, which should not be squeezed
+     into the reading column. */
   --container-landing: 820px;
   --container-page: 1000px;
+  --container-wide: 1280px;
 
   /* Radii */
   --radius-card: 14px;

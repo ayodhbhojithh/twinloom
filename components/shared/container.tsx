@@ -1,26 +1,27 @@
 import { cn } from "@/lib/utils";
 
-/**
- * The page's horizontal rhythm. Two widths, both from the artifacts: `landing`
- * is the narrow 820px column used by the scoping entry page, `page` is the
- * 1000px column every other page uses.
- */
+const WIDTHS = {
+  /** 820px. The narrow reading column the scoping entry page uses. */
+  landing: "max-w-landing",
+  /** 1000px. Body content on the site pages. */
+  page: "max-w-page",
+  /** 1280px. Furniture that should not sit in the reading column, like the nav. */
+  wide: "max-w-wide",
+} as const;
+
+/** The page's horizontal rhythm. Every width on the site comes from here. */
 export function Container({
   width = "page",
   className,
   children,
 }: {
-  width?: "page" | "landing";
+  width?: keyof typeof WIDTHS;
   className?: string;
   children: React.ReactNode;
 }) {
   return (
     <div
-      className={cn(
-        "mx-auto w-full px-5 sm:px-[22px]",
-        width === "landing" ? "max-w-landing" : "max-w-page",
-        className,
-      )}
+      className={cn("mx-auto w-full px-5 sm:px-[22px]", WIDTHS[width], className)}
     >
       {children}
     </div>
