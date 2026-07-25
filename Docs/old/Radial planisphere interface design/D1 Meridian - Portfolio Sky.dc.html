@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<template id="__bundler_thumbnail" data-bg-color="#ffffff">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="600" cy="400" r="300" fill="none" stroke="#E5E7EB" stroke-width="6"></circle>
+    <path d="M600 400 L600 130 A270 270 0 0 1 833 265 Z" fill="#6366F1"></path>
+    <path d="M600 400 L833 265 A270 270 0 0 1 833 535 Z" fill="#2563EB"></path>
+    <path d="M600 400 L833 535 A270 270 0 0 1 600 670 Z" fill="#059669"></path>
+    <path d="M600 400 L600 670 A270 270 0 0 1 367 535 Z" fill="#D97706"></path>
+    <path d="M600 400 L367 535 A270 270 0 0 1 367 265 Z" fill="#E9EBEF"></path>
+    <path d="M600 400 L367 265 A270 270 0 0 1 600 130 Z" fill="#7C3AED"></path>
+    <circle cx="600" cy="400" r="118" fill="#ffffff"></circle>
+    <circle cx="600" cy="400" r="96" fill="#111827"></circle>
+    <line x1="600" y1="400" x2="905" y2="295" stroke="#111827" stroke-width="8" stroke-linecap="round"></line>
+  </svg>
+</template>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="novabank-data.js"></script>
+<style>
+body{margin:0;background:#fff}
+a{color:#2563EB}a:hover{color:#1D4ED8}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes spinRev{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
+@keyframes pulseW{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}}
+</style>
+</helmet>
+<div data-screen-label="D1 Meridian — Portfolio Sky" style="position:relative;width:1440px;height:900px;background:#FFFFFF;overflow:hidden;font-family:'Archivo',sans-serif;color:#111827">
+  <svg viewBox="0 0 1440 900" style="position:absolute;inset:0;width:1440px;height:900px" onClick="{{ bgClick }}" onDoubleClick="{{ bgDbl }}">
+    <sc-if value="{{ showGrat }}" hint-placeholder-val="{{ true }}">
+      <g>
+        <sc-for list="{{ gratRings }}" as="gr" hint-placeholder-count="2">
+          <circle cx="{{ gr.cx }}" cy="{{ gr.cy }}" r="{{ gr.r }}" fill="none" style="{{ gr.style }}"></circle>
+        </sc-for>
+        <circle cx="{{ todayDot.cx }}" cy="{{ todayDot.cy }}" r="3" fill="#111827"></circle>
+      </g>
+    </sc-if>
+    <sc-for list="{{ threads }}" as="th" hint-placeholder-count="2">
+      <path d="{{ th.d }}" fill="none" style="{{ th.style }}"></path>
+    </sc-for>
+
+    <sc-for list="{{ dialSpokes }}" as="sp" hint-placeholder-count="2">
+      <line x1="{{ sp.x1 }}" y1="{{ sp.y1 }}" x2="{{ sp.x2 }}" y2="{{ sp.y2 }}" style="{{ sp.style }}"></line>
+    </sc-for>
+    <sc-for list="{{ dialTracks }}" as="tk" hint-placeholder-count="2">
+      <path d="{{ tk.d }}" fill="none" style="{{ tk.style }}" onClick="{{ tk.click }}" onMouseEnter="{{ tk.enter }}" onMouseLeave="{{ tk.leave }}"></path>
+    </sc-for>
+    <sc-for list="{{ dialItems }}" as="it" hint-placeholder-count="4">
+      <circle cx="{{ it.cx }}" cy="{{ it.cy }}" r="{{ it.r }}" style="{{ it.style }}" onClick="{{ it.click }}" onMouseEnter="{{ it.enter }}" onMouseLeave="{{ it.leave }}"></circle>
+    </sc-for>
+    <sc-for list="{{ dialDiamonds }}" as="dd" hint-placeholder-count="2">
+      <path d="{{ dd.d }}" style="{{ dd.style }}" onClick="{{ dd.click }}" onMouseEnter="{{ dd.enter }}" onMouseLeave="{{ dd.leave }}"></path>
+    </sc-for>
+    <sc-if value="{{ showHand }}" hint-placeholder-val="{{ false }}">
+      <line x1="{{ hand.x1 }}" y1="{{ hand.y1 }}" x2="{{ hand.x2 }}" y2="{{ hand.y2 }}" style="{{ hand.style }}"></line>
+    </sc-if>
+    <sc-for list="{{ systems }}" as="sys" hint-placeholder-count="3">
+      <g style="{{ sys.style }}" style-hover="animation-play-state: paused">
+        <sc-for list="{{ sys.wedges }}" as="w" hint-placeholder-count="8">
+          <path d="{{ w.d }}" style="{{ w.style }}" style-hover="filter: brightness(1.07)" onClick="{{ w.click }}" onDoubleClick="{{ w.dbl }}" onMouseEnter="{{ w.enter }}" onMouseLeave="{{ w.leave }}"></path>
+        </sc-for>
+        <sc-for list="{{ sys.bands }}" as="bd" hint-placeholder-count="2">
+          <path d="{{ bd.d }}" style="{{ bd.style }}"></path>
+        </sc-for>
+        <sc-for list="{{ sys.dots }}" as="dt" hint-placeholder-count="2">
+          <circle cx="{{ dt.cx }}" cy="{{ dt.cy }}" r="{{ dt.r }}" style="{{ dt.style }}"></circle>
+        </sc-for>
+        <sc-for list="{{ sys.diamonds }}" as="dm" hint-placeholder-count="2">
+          <path d="{{ dm.d }}" style="{{ dm.style }}" onClick="{{ dm.click }}" onMouseEnter="{{ dm.enter }}" onMouseLeave="{{ dm.leave }}"></path>
+        </sc-for>
+      </g>
+    </sc-for>
+    <sc-for list="{{ orbs }}" as="o" hint-placeholder-count="4">
+      <g onClick="{{ o.click }}" onDoubleClick="{{ o.dbl }}" onMouseEnter="{{ o.enter }}" onMouseLeave="{{ o.leave }}" style="cursor:pointer">
+        <circle cx="{{ o.cx }}" cy="{{ o.cy }}" r="{{ o.r }}" style="{{ o.style }}"></circle>
+        <sc-if value="{{ o.hasArc }}" hint-placeholder-val="{{ false }}">
+          <path d="{{ o.arc }}" fill="none" style="{{ o.arcStyle }}"></path>
+        </sc-if>
+      </g>
+    </sc-for>
+  </svg>
+  <div style="position:absolute;inset:0;pointer-events:none">
+    <sc-for list="{{ labels }}" as="lb" hint-placeholder-count="6">
+      <div style="{{ lb.style }}">{{ lb.text }}</div>
+    </sc-for>
+    <sc-for list="{{ rotors }}" as="ro" hint-placeholder-count="1">
+      <div style="{{ ro.style }}">
+        <sc-for list="{{ ro.labels }}" as="rl" hint-placeholder-count="2">
+          <div style="{{ rl.wrapStyle }}"><div style="{{ rl.innerStyle }}">{{ rl.text }}</div></div>
+        </sc-for>
+      </div>
+    </sc-for>
+  </div>
+  <div style="position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:18px 24px 0;pointer-events:none">
+    <div style="pointer-events:auto">
+      <div style="font:600 9.5px 'JetBrains Mono',monospace;letter-spacing:.14em;color:#9CA3AF">OMADEAS › PROJECTOPS › PORTFOLIO</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+        <div style="font:800 22px/1 'Archivo',sans-serif;letter-spacing:-.02em">Portfolio Sky</div>
+        <div style="font:600 8.5px 'JetBrains Mono',monospace;letter-spacing:.1em;color:#6366F1;background:#EEF2FF;border-radius:999px;padding:4px 10px;white-space:nowrap;flex:none">ONE SKY · EVERY ROOT LINEAGE</div>
+      </div>
+      <div style="margin-top:7px;font:500 11px/1.5 'Archivo',sans-serif;color:#6B7280;max-width:530px">{{ subtitle }}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:9px;pointer-events:auto">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font:600 8.5px 'JetBrains Mono',monospace;letter-spacing:.12em;color:#6B7280;border:1px dashed #D1D5DB;border-radius:999px;padding:5px 11px">DIRECTION 1 · MERIDIAN</div>
+        <button onClick="{{ newPlan }}" style="background:#111827;color:#fff;border:none;border-radius:8px;padding:9px 15px;font:700 12px 'Archivo',sans-serif;cursor:pointer" style-focus="outline: 2px solid #2563EB; outline-offset: 2px">＋ New Plan</button>
+      </div>
+      <div style="display:flex;gap:8px">
+        <div style="display:flex;border:1px solid #E5E7EB;border-radius:999px;overflow:hidden">
+          <sc-for list="{{ viewBtns }}" as="vb" hint-placeholder-count="2">
+            <button onClick="{{ vb.click }}" style="{{ vb.style }}" style-focus="outline: 2px solid #2563EB; outline-offset: -2px">{{ vb.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:flex;border:1px solid #E5E7EB;border-radius:999px;overflow:hidden">
+          <sc-for list="{{ lensBtns }}" as="lb" hint-placeholder-count="3">
+            <button onClick="{{ lb.click }}" style="{{ lb.style }}" style-focus="outline: 2px solid #2563EB; outline-offset: -2px">{{ lb.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;top:104px;left:24px;right:360px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+    <sc-if value="{{ focusMode }}" hint-placeholder-val="{{ false }}">
+      <sc-for list="{{ crumbs }}" as="cr" hint-placeholder-count="2">
+        <button onClick="{{ cr.click }}" style="{{ cr.style }}" style-focus="outline: 2px solid #2563EB; outline-offset: 1px">{{ cr.label }}</button>
+      </sc-for>
+      <div style="width:1px;height:16px;background:#E5E7EB;margin:0 4px"></div>
+    </sc-if>
+    <sc-for list="{{ typeChips }}" as="tc" hint-placeholder-count="6">
+      <button onClick="{{ tc.click }}" style="{{ tc.style }}" style-focus="outline: 2px solid #2563EB; outline-offset: 1px"><span style="{{ tc.dotStyle }}"></span>{{ tc.label }}<span style="color:#9CA3AF;margin-left:5px">{{ tc.count }}</span></button>
+    </sc-for>
+  </div>
+  <div style="position:absolute;left:24px;bottom:20px;width:430px;pointer-events:none">
+    <div style="font:600 8.5px 'JetBrains Mono',monospace;letter-spacing:.16em;color:#B3B8C2">READOUT</div>
+    <div style="margin-top:5px;font:700 12.5px 'Archivo',sans-serif;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ readName }}</div>
+    <div style="margin-top:3px;font:400 9.5px 'JetBrains Mono',monospace;color:#6B7280;letter-spacing:.04em">{{ readMeta }}</div>
+  </div>
+  <div style="{{ legendStyle }}">
+    <sc-for list="{{ legend }}" as="lg" hint-placeholder-count="4">
+      <div style="display:flex;align-items:center;gap:5px"><span style="{{ lg.dot }}"></span><span style="font:600 8.5px 'JetBrains Mono',monospace;letter-spacing:.1em;color:#6B7280">{{ lg.label }}</span></div>
+    </sc-for>
+  </div>
+  <sc-if value="{{ selOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;top:96px;right:16px;bottom:16px;width:298px;background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:16px;overflow:auto">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="font:600 9.5px 'JetBrains Mono',monospace;color:#9CA3AF;letter-spacing:.06em">{{ sel.id }}</div>
+        <button onClick="{{ closeSel }}" style="border:none;background:none;color:#9CA3AF;font:600 12px 'Archivo',sans-serif;cursor:pointer;padding:0" style-focus="outline: 2px solid #2563EB">✕</button>
+      </div>
+      <div style="margin-top:6px;font:700 14px/1.35 'Archivo',sans-serif">{{ sel.name }}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
+        <span style="{{ sel.typeStyle }}">{{ sel.typeLabel }}</span>
+        <span style="{{ sel.statusStyle }}">{{ sel.statusLabel }}</span>
+        <sc-if value="{{ sel.hasRag }}" hint-placeholder-val="{{ false }}">
+          <span style="{{ sel.ragStyle }}">{{ sel.ragLabel }}</span>
+        </sc-if>
+      </div>
+      <div style="margin-top:10px;font:400 9.5px 'JetBrains Mono',monospace;color:#6B7280">{{ sel.meta }}</div>
+      <sc-if value="{{ sel.hasNote }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:10px;padding:9px 11px;background:#FAFAFA;border:1px solid #F0F1F4;border-radius:8px;font:500 10.5px/1.55 'Archivo',sans-serif;color:#4B5563">{{ sel.note }}</div>
+      </sc-if>
+      <div style="margin-top:14px;font:700 9px 'Archivo',sans-serif;letter-spacing:.09em;color:#9CA3AF">LINEAGE</div>
+      <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px">
+        <sc-for list="{{ sel.lineage }}" as="anc" hint-placeholder-count="2">
+          <button onClick="{{ anc.click }}" style="display:flex;align-items:center;gap:6px;border:none;background:none;padding:2px 0;cursor:pointer;text-align:left;font:500 10.5px 'Archivo',sans-serif;color:#374151" style-focus="outline: 2px solid #2563EB"><span style="{{ anc.dot }}"></span><span style="font:600 9px 'JetBrains Mono',monospace;color:#9CA3AF">{{ anc.code }}</span><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ anc.name }}</span></button>
+        </sc-for>
+      </div>
+      <sc-if value="{{ sel.hasKids }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:14px;font:700 9px 'Archivo',sans-serif;letter-spacing:.09em;color:#9CA3AF">{{ sel.kidsLabel }}</div>
+        <div style="display:flex;flex-direction:column;margin-top:4px">
+          <sc-for list="{{ sel.kids }}" as="kd" hint-placeholder-count="3">
+            <button onClick="{{ kd.click }}" style="display:flex;align-items:center;gap:7px;border:none;background:none;border-bottom:1px solid #F4F5F7;padding:6px 0;cursor:pointer;text-align:left" style-focus="outline: 2px solid #2563EB"><span style="{{ kd.dot }}"></span><span style="flex:1;font:500 10.5px 'Archivo',sans-serif;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ kd.name }}</span><span style="font:400 8.5px 'JetBrains Mono',monospace;color:#9CA3AF">{{ kd.status }}</span></button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ sel.hasMore }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:6px;font:400 9px 'JetBrains Mono',monospace;color:#9CA3AF">{{ sel.moreLabel }}</div>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{ sel.canReroot }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ sel.reroot }}" style="margin-top:14px;width:100%;background:#fff;border:1px solid #111827;border-radius:8px;padding:8px 0;font:700 11px 'Archivo',sans-serif;color:#111827;cursor:pointer" style-focus="outline: 2px solid #2563EB; outline-offset: 2px">◎ Re-root here</button>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;bottom:26px;transform:translateX(-50%);background:#111827;color:#fff;border-radius:8px;padding:9px 16px;font:600 11px 'Archivo',sans-serif;letter-spacing:.01em">{{ toast }}</div>
+  </sc-if>
+  <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:600 10px 'JetBrains Mono',monospace;letter-spacing:.18em;color:#9CA3AF;background:#fff">LOADING PORTFOLIO…</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1440, &quot;height&quot;: 900}, &quot;drift&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Motion&quot;}, &quot;pulseRisks&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Motion&quot;}, &quot;graticule&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Canvas&quot;}, &quot;wedgeBands&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Wedge features&quot;}, &quot;ragDots&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Wedge features&quot;}, &quot;wedgeLabels&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Wedge features&quot;}}">
+class Component extends DCLogic {
+  state = { ready:false, bloom:false, settled:false, view:'sky', lens:'structure', layer:'Deliverable', sprint:null, hover:null, sel:null, root:null, off:{}, toast:'' };
+  componentDidMount(){
+    this._iv = setInterval(()=>{ if (window.NOVABANK){ clearInterval(this._iv); this.prep(); this.setState({ready:true}); this.startBloom(); } }, 90);
+  }
+  componentWillUnmount(){ clearInterval(this._iv); clearTimeout(this._t1); clearTimeout(this._t2); clearTimeout(this._t3); }
+  startBloom(){
+    clearTimeout(this._t1); clearTimeout(this._t2);
+    this.setState({bloom:false, settled:false});
+    this._t1 = setTimeout(()=>this.setState({bloom:true}), 70);
+    this._t2 = setTimeout(()=>this.setState({settled:true}), 2400);
+  }
+  say(msg){ clearTimeout(this._t3); this.setState({toast:msg}); this._t3 = setTimeout(()=>this.setState({toast:''}), 3200); }
+  cat(s){ return ({Completed:'done',Released:'done',Validated:'done',Fixed:'done',Confirmed:'done',Approved:'done','In Progress':'active','In Delivery':'active','In Development':'active','In Testing':'active','In Review':'active',Tracking:'active',Active:'active',Monitored:'active','Mitigation Planned':'active',Escalated:'blocked',Blocked:'blocked'})[s] || 'planned'; }
+  prep(){
+    const N = window.NOVABANK.nodes, byId = {}, kids = {};
+    N.forEach(n=>{ byId[n.id] = n; });
+    N.forEach(n=>{ if (n.parent && byId[n.parent]) (kids[n.parent] = kids[n.parent] || []).push(n); });
+    const leafW = {}, desc = {}, doneC = {}, activeC = {};
+    const walk = (id)=>{
+      const ks = kids[id] || [];
+      if (!ks.length){ leafW[id] = byId[id].t === 'Milestone' ? 0.55 : 1; desc[id] = 0; doneC[id] = 0; activeC[id] = 0; return; }
+      let w = 0, d = 0, dc = 0, ac = 0;
+      ks.forEach(k=>{ walk(k.id); w += leafW[k.id]; d += desc[k.id] + 1; dc += doneC[k.id] + (this.cat(k.status) === 'done' ? 1 : 0); ac += activeC[k.id] + (this.cat(k.status) === 'active' ? 1 : 0); });
+      leafW[id] = w; desc[id] = d; doneC[id] = dc; activeC[id] = ac;
+    };
+    walk('INI-NB');
+    const roots = (kids['INI-NB'] || []).slice().sort((a,b)=>desc[b.id]-desc[a.id]);
+    this.D = { byId, kids, leafW, desc, doneC, activeC, roots, N };
+    const start = Date.UTC(2025,9,1), end = Date.UTC(2027,2,31), today = Date.UTC(2026,6,14);
+    const todayF = (today - start) / (end - start);
+    const order = []; const dfs = (id)=>{ (kids[id]||[]).forEach(k=>{ order.push(k.id); dfs(k.id); }); }; dfs('INI-NB');
+    const cats = { done:[], active:[], planned:[] };
+    order.forEach(id=>{ const c = this.cat(byId[id].status); cats[c==='blocked'?'active':c].push(id); });
+    const f = {};
+    const spread = (arr,lo,hi)=>arr.forEach((id,i)=>{ f[id] = lo + (i+0.5)/arr.length*(hi-lo); });
+    spread(cats.done, 0.04, todayF-0.04); spread(cats.active, todayF-0.10, todayF+0.10); spread(cats.planned, todayF+0.05, 0.97);
+    const mf = {}, minF = {}, maxF = {};
+    const walkT = (id)=>{
+      const ks = kids[id] || [];
+      if (!ks.length){ mf[id] = f[id] ?? 0.5; minF[id] = maxF[id] = mf[id]; return; }
+      let s = 0, w = 0, mn = 9, mx = -9;
+      ks.forEach(k=>{ walkT(k.id); const ww = leafW[k.id] || 1; s += mf[k.id]*ww; w += ww; mn = Math.min(mn, minF[k.id]); mx = Math.max(mx, maxF[k.id]); });
+      mf[id] = w ? s/w : (f[id] ?? 0.5); minF[id] = mn; maxF[id] = mx;
+    };
+    walkT('INI-NB');
+    this.SCHED = { start, span:end-start, todayF, f, mf, minF, maxF };
+    this.AC = { Vision:'#7C3AED', 'Strategic Initiative':'#6D28D9', Initiative:'#6D28D9', Programme:'#6366F1', Project:'#2563EB', Deliverable:'#059669', 'Work Item':'#D97706', Task:'#64748B', 'Control Item':'#DC2626', 'Quality Item':'#DB2777', Brain:'#0EA5E9', Objective:'#0D9488', Milestone:'#111827' };
+    this.CAT = { done:'#059669', active:'#2563EB', planned:'#DBDFE6', blocked:'#DC2626' };
+    this.PASTEL = { done:['#ECFDF5','#059669'], active:['#EFF6FF','#2563EB'], planned:['#F4F4F5','#6B7280'], blocked:['#FEF2F2','#DC2626'] };
+  }
+  P(cx,cy,r,a){ return [cx + r*Math.cos(a), cy + r*Math.sin(a)]; }
+  ringPath(cx,cy,r0,r1,a0,a1){
+    const PAD = 0.006; a0 += PAD; a1 -= PAD; if (a1 <= a0) a1 = a0 + 0.003;
+    if (a1 - a0 >= Math.PI*2 - 0.02) a1 = a0 + Math.PI*2 - 0.02;
+    const lg = (a1-a0) > Math.PI ? 1 : 0;
+    const [x0,y0]=this.P(cx,cy,r1,a0), [x1,y1]=this.P(cx,cy,r1,a1), [x2,y2]=this.P(cx,cy,r0,a1), [x3,y3]=this.P(cx,cy,r0,a0);
+    return `M${x0.toFixed(1)} ${y0.toFixed(1)}A${r1} ${r1} 0 ${lg} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}L${x2.toFixed(1)} ${y2.toFixed(1)}A${r0} ${r0} 0 ${lg} 0 ${x3.toFixed(1)} ${y3.toFixed(1)}Z`;
+  }
+  arcPath(cx,cy,r,a0,a1){
+    if (a1 - a0 >= Math.PI*2 - 0.02) a1 = a0 + Math.PI*2 - 0.02;
+    const lg = (a1-a0) > Math.PI ? 1 : 0;
+    const [x0,y0]=this.P(cx,cy,r,a0), [x1,y1]=this.P(cx,cy,r,a1);
+    return `M${x0.toFixed(1)} ${y0.toFixed(1)}A${r} ${r} 0 ${lg} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+  }
+  diamondPath(x,y,s){ return `M${x.toFixed(1)} ${(y-s).toFixed(1)}L${(x+s*0.78).toFixed(1)} ${y.toFixed(1)}L${x.toFixed(1)} ${(y+s).toFixed(1)}L${(x-s*0.78).toFixed(1)} ${y.toFixed(1)}Z`; }
+  ancestors(id){ const out = []; let p = this.D.byId[id] && this.D.byId[id].parent; while (p){ out.push(p); p = this.D.byId[p] && this.D.byId[p].parent; } return out; }
+  related(hover, id){ if (!hover) return true; if (hover === id) return true; if (this.ancestors(id).includes(hover)) return true; if (this.ancestors(hover).includes(id)) return true; return false; }
+  colFor(n, depth){
+    const { lens } = this.state;
+    if (lens === 'progress') return this.CAT[this.cat(n.status)];
+    if (lens === 'health') return n.rag === 'R' ? '#DC2626' : n.rag === 'A' ? '#D97706' : n.rag === 'G' ? '#059669' : '#E9EBEF';
+    const base = this.AC[n.t] || '#64748B';
+    const mix = [0, 8, 22, 38, 52][Math.min(depth,4)];
+    return mix ? `color-mix(in oklab, ${base} ${100-mix}%, white)` : base;
+  }
+  wrap(name, max){
+    const words = String(name).split(' '); const lines = ['']; let li = 0;
+    for (const w of words){ if ((lines[li] + ' ' + w).trim().length > max && lines[li]){ if (li === 1){ lines[li] = lines[li].slice(0, max-1) + '…'; return lines; } li++; lines[li] = w; } else lines[li] = (lines[li] + ' ' + w).trim(); }
+    return lines;
+  }
+  goRoot(id){ if (id && !(this.D.kids[id]||[]).length) return; this.setState({root:id, sel:null, hover:null}); this.startBloom(); }
+  chip(bg, c){ return { background:bg, color:c, borderRadius:'999px', padding:'4px 9px', font:"600 8.5px 'JetBrains Mono',monospace", letterSpacing:'.06em' }; }
+  buildSel(){
+    const { sel } = this.state; if (!sel || !this.D.byId[sel]) return { sel:{}, selOpen:false };
+    const n = this.D.byId[sel], D = this.D, cat = this.cat(n.status), pastel = this.PASTEL[cat];
+    const depth = this.ancestors(sel).length;
+    const lineage = [...this.ancestors(sel)].reverse().concat([sel]).map(id=>{
+      const a = D.byId[id];
+      return { code:a.id, name:a.name, dot:{ width:'7px', height:'7px', borderRadius:'999px', background:this.AC[a.t]||'#64748B', flex:'none' }, click:(e)=>{ e.stopPropagation(); this.setState({sel:id}); } };
+    });
+    const ks = (D.kids[sel]||[]);
+    const kids = ks.slice(0,8).map(k=>({ name:k.name, status:k.status.toUpperCase(), dot:{ width:'7px', height:'7px', borderRadius:'999px', background:this.CAT[this.cat(k.status)], flex:'none' }, click:(e)=>{ e.stopPropagation(); this.setState({sel:k.id}); } }));
+    const ac = this.AC[n.t] || '#64748B';
+    return { selOpen:true, sel:{
+      id:n.id, name:n.name,
+      typeLabel:n.t.toUpperCase(), typeStyle:this.chip(`color-mix(in oklab, ${ac} 10%, white)`, ac),
+      statusLabel:n.status.toUpperCase(), statusStyle:this.chip(pastel[0], pastel[1]),
+      hasRag:!!n.rag, ragLabel:'RAG ' + (n.rag||''), ragStyle:this.chip(n.rag==='R'?'#FEF2F2':n.rag==='A'?'#FFFBEB':'#ECFDF5', n.rag==='R'?'#DC2626':n.rag==='A'?'#D97706':'#059669'),
+      meta:`L${depth+1} · ${D.desc[sel]||0} descendants · ${D.desc[sel]?Math.round(100*(D.doneC[sel]||0)/D.desc[sel]):0}% done`,
+      hasNote:!!n.note, note:n.note||'',
+      lineage, hasKids:!!ks.length, kidsLabel:`CHILDREN · ${ks.length}`, kids,
+      hasMore:ks.length>8, moreLabel:`+ ${ks.length-8} more in this lineage`,
+      canReroot:!!ks.length, reroot:(e)=>{ e.stopPropagation(); this.goRoot(sel); }
+    }};
+  }
+  layoutSystem(rootN, cx, cy, R, sysIdx, opts){
+    const chrono = !!(opts && opts.chrono);
+    const D = this.D, { bloom, settled, hover, sel, off, lens } = this.state;
+    const drift = this.props.drift ?? true, pulse = this.props.pulseRisks ?? true;
+    const bandsOn = this.props.wedgeBands ?? true, dotsOn = this.props.ragDots ?? true, labelsOn = this.props.wedgeLabels ?? true;
+    const orbR = Math.max(44, R*0.26);
+    const angles = {}; const items = [];
+    const assign = (id, a0, a1, depth)=>{
+      angles[id] = [a0, a1, depth];
+      let ks = D.kids[id] || []; if (!ks.length || depth >= 4) return;
+      if (chrono) ks = ks.slice().sort((a,b)=>((this.SCHED.mf[a.id] ?? 0.5) - (this.SCHED.mf[b.id] ?? 0.5)));
+      const total = ks.reduce((s,k)=>s+D.leafW[k.id], 0) || 1;
+      let a = a0;
+      for (const k of ks){ const span = (a1-a0) * (D.leafW[k.id]/total); assign(k.id, a, a+span, depth+1); a += span; }
+    };
+    const start = chrono ? -Math.PI/2 : -Math.PI/2 + sysIdx*0.5;
+    assign(rootN.id, start, start + Math.PI*2, 0);
+    let maxD = 0; Object.values(angles).forEach(v=>{ maxD = Math.max(maxD, v[2]); });
+    maxD = Math.max(maxD, 1);
+    const t = (R - orbR - 12) / maxD;
+    const wedges = [], diamonds = [], bands = [], dots = [], cLabels = [];
+    const collapse = `translate(${cx}px,${cy}px) scale(.55) translate(${-cx}px,${-cy}px)`;
+    for (const id in angles){
+      const [a0, a1, depth] = angles[id]; if (!depth) continue;
+      const n = D.byId[id];
+      const offType = off[n.t];
+      const dim = offType ? 0.07 : (this.related(hover, id) ? 1 : 0.18);
+      const delay = sysIdx*160 + depth*150;
+      const handlers = {
+        click:(e)=>{ e.stopPropagation(); this.setState({sel:id}); },
+        enter:()=>this.setState({hover:id}), leave:()=>this.setState({hover:null})
+      };
+      if (n.t === 'Milestone'){
+        const mid = (a0+a1)/2, [dx,dy] = this.P(cx,cy,R+7,mid);
+        const done = this.cat(n.status) === 'done';
+        diamonds.push({ d:this.diamondPath(dx,dy,5.5),
+          style:{ fill:done?'#111827':'#fff', stroke:'#111827', strokeWidth:1.2, opacity:dim, cursor:'pointer',
+            transition:settled?'opacity .18s ease':`opacity .8s cubic-bezier(.22,1,.36,1) ${delay+300}ms`,
+            ...(settled?{}:{opacity:bloom?dim:0}) },
+          click:handlers.click, enter:handlers.enter, leave:handlers.leave });
+        continue;
+      }
+      const inner = orbR + 5 + (depth-1)*t, outer = inner + t - 2.5;
+      const isSel = sel === id;
+      const style = {
+        fill:this.colFor(n, depth), stroke:isSel?'#111827':'#fff', strokeWidth:isSel?2:1.3, cursor:'pointer',
+        opacity:settled?dim:(bloom?dim:0),
+        transform:settled?'none':(bloom?'none':collapse),
+        transition:settled?'opacity .18s ease, fill .35s ease':`opacity .85s cubic-bezier(.22,1,.36,1) ${delay}ms, transform 1s cubic-bezier(.22,1,.36,1) ${delay}ms`
+      };
+      if (settled && pulse && n.rag === 'R' && !offType) style.animation = 'pulseW 2.4s ease-in-out infinite';
+      wedges.push({ d:this.ringPath(cx,cy,inner,outer,a0,a1), style, click:handlers.click, dbl:(e)=>{ e.stopPropagation(); this.goRoot(id); }, enter:handlers.enter, leave:handlers.leave });
+      if (bandsOn && D.desc[id] > 0){
+        const share = D.doneC[id]/D.desc[id];
+        if (share > 0.03 && (a1-a0) > 0.05) bands.push({ d:this.arcPath(cx, cy, outer-2, a0+0.006, a0+0.006+(a1-a0-0.012)*share), style:{ stroke:'#059669', strokeWidth:2.4, fill:'none', opacity:style.opacity, transition:style.transition, pointerEvents:'none' } });
+      }
+      if (dotsOn && (n.rag === 'R' || n.rag === 'A')){
+        const mid = (a0+a1)/2, rr = (inner+outer)/2, [px,py] = this.P(cx,cy,rr,mid);
+        dots.push({ cx:px, cy:py, r:2.7, style:{ fill:n.rag==='R'?'#DC2626':'#D97706', stroke:'#fff', strokeWidth:1, opacity:style.opacity, transition:style.transition, pointerEvents:'none' } });
+      }
+      if (labelsOn && depth === 1 && (a1-a0) > 0.42 && D.desc[id] > 0){
+        const pct = `${Math.round(100*D.doneC[id]/D.desc[id])}%`;
+        let text = `${n.name.length>15?n.name.slice(0,14)+'…':n.name} · ${pct}`;
+        let halfW = text.length * 2.4;
+        let rr = Math.max((inner+outer)/2, orbR + halfW + 12);
+        if (rr > outer + 4){ text = pct; halfW = text.length * 2.4; rr = Math.max((inner+outer)/2, orbR + halfW + 12); }
+        if (rr <= outer + 4){
+          const mid = (a0+a1)/2, [px,py] = this.P(cx,cy,rr,mid);
+          const pale = (lens === 'progress' && this.cat(n.status) === 'planned') || (lens === 'health' && !n.rag);
+          cLabels.push({ x:px, y:py, text, color:pale?'#374151':'#fff', dim:offType?0.07:(this.related(hover,id)?1:0.18) });
+        }
+      }
+    }
+    const activeShare = D.desc[rootN.id] ? (D.activeC[rootN.id]/D.desc[rootN.id]) : 0;
+    const rotDur = Math.round(360 / (0.25 + activeShare*2.2));
+    const sysStyle = { animation:(settled && drift && activeShare > 0.02) ? `spin ${rotDur}s linear infinite` : 'none', transformOrigin:`${cx}px ${cy}px` };
+    const doneP = D.desc[rootN.id] ? (D.doneC[rootN.id]/D.desc[rootN.id]) : 0;
+    const nameLines = this.wrap(rootN.name, Math.max(10, Math.round(orbR/3.6)));
+    const lines = nameLines.map((txt,i)=>({ x:cx, y:cy - 5 - (nameLines.length-1)*7 + i*14, text:txt, css:{ font:`700 ${orbR>60?13:11.5}px 'Archivo',sans-serif`, color:'#fff' } }));
+    lines.push({ x:cx, y:cy + (nameLines.length>1?24:16), text:`${D.desc[rootN.id]} NODES · ${Math.round(doneP*100)}%${rootN.rag?' · RAG '+rootN.rag:''}`, css:{ font:`600 8.5px 'JetBrains Mono',monospace`, color:'rgba(255,255,255,.78)', letterSpacing:'.05em' } });
+    const orb = {
+      cx, cy, r:orbR - 8,
+      style:{ fill:this.AC[rootN.t]||'#64748B', opacity:this.state.bloom?1:0, transition:'opacity .7s ease .1s' },
+      hasArc:doneP > 0.01,
+      arc:this.arcPath(cx, cy, orbR - 2, -Math.PI/2, -Math.PI/2 + doneP*Math.PI*2),
+      arcStyle:{ stroke:'#059669', strokeWidth:2.5, strokeLinecap:'round', opacity:this.state.bloom?1:0, transition:'opacity .7s ease .5s' },
+      click:(e)=>{ e.stopPropagation(); this.setState({sel:rootN.id}); },
+      dbl:(e)=>{ e.stopPropagation(); this.goRoot(rootN.id); },
+      enter:()=>this.setState({hover:rootN.id}), leave:()=>this.setState({hover:null})
+    };
+    return { wedges, diamonds, bands, dots, sysStyle, orb, lines, cLabels, rotDur, active:activeShare > 0.02 };
+  }
+  lab(x, y, text, css){
+    return { text, style:{ position:'absolute', left:x+'px', top:y+'px', transform:'translate(-50%,-50%)', whiteSpace:'nowrap', opacity:this.state.bloom?1:0, transition:'opacity .7s ease .25s', ...css } };
+  }
+  dOf(f){ const MOs=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']; const d = new Date(this.SCHED.start + f*this.SCHED.span); return `${d.getUTCDate()} ${MOs[d.getUTCMonth()]} ${String(d.getUTCFullYear()).slice(2)}`; }
+  buildDial(base, focus){
+    const D = this.D, st = this.state, S = this.SCHED, tau = Math.PI*2, A0 = -Math.PI/2;
+    const cx = 700, cy = 478, R = 300, dialR = 326;
+    const dialRoot = focus || D.roots[0];
+    const f0 = Math.max(0, (S.minF[dialRoot.id] ?? 0) - 0.012), f1 = Math.min(1, (S.maxF[dialRoot.id] ?? 1) + 0.018);
+    const mapA = fv => A0 + (Math.min(f1, Math.max(f0, fv)) - f0)/(f1 - f0)*tau;
+    base.focusMode = true;
+    base.subtitle = `One root plan, end-to-end: ${this.dOf(f0).toUpperCase()} → ${this.dOf(f1).toUpperCase()} once around the dial. Inside each block, its children run clockwise as chronological steps. Hover to read · double-click to re-root · switch roots below.`;
+    base.showGrat = true;
+    const counts = {}; D.N.forEach(n=>{ if (n.t !== 'Initiative' && (n.id === dialRoot.id || this.ancestors(n.id).includes(dialRoot.id))) counts[n.t] = (counts[n.t]||0)+1; });
+    base.typeChips = Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).map(t=>{
+      const on = !st.off[t];
+      return { label:t.toUpperCase(), count:String(counts[t]),
+        dotStyle:{ display:'inline-block', width:'7px', height:'7px', borderRadius:'999px', background:this.AC[t]||'#64748B', marginRight:'6px', verticalAlign:'0' },
+        style:{ display:'inline-flex', alignItems:'center', whiteSpace:'nowrap', flex:'none', border:`1px ${on?'solid #E5E7EB':'dashed #D1D5DB'}`, background:'#fff', borderRadius:'999px', padding:'5px 10px', font:"600 8.5px 'JetBrains Mono',monospace", letterSpacing:'.07em', color:on?'#374151':'#9CA3AF', opacity:on?1:0.55, cursor:'pointer' },
+        click:()=>this.setState(s=>({ off:{...s.off, [t]:!s.off[t]} })) };
+    });
+    const { wedges, diamonds, bands, dots, orb, lines, cLabels } = this.layoutSystem(dialRoot, cx, cy, R, 0, { chrono:true });
+    base.systems = [{ style:{ animation:'none' }, wedges, diamonds, bands, dots }];
+    base.orbs = [orb];
+    lines.forEach(l=>base.labels.push(this.lab(l.x, l.y, l.text, l.css)));
+    base.rotors.push(this.rotor(cx, cy, 0, false, cLabels));
+    base.gratRings = [{ cx, cy, r:dialR, style:{ stroke:'#E5E7EB', strokeWidth:1.2, fill:'none' } }];
+    const eMs = S.start + f1*S.span;
+    const sd = new Date(S.start + f0*S.span);
+    let mTick = Date.UTC(sd.getUTCFullYear(), sd.getUTCMonth()+1, 1);
+    const monthsArr = [];
+    while (mTick < eMs){ monthsArr.push(mTick); const d2 = new Date(mTick); mTick = Date.UTC(d2.getUTCFullYear(), d2.getUTCMonth()+1, 1); }
+    const MOs = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    const angDist = (a, ref)=>Math.abs(Math.atan2(Math.sin(a-ref), Math.cos(a-ref)));
+    monthsArr.forEach((tm,i)=>{
+      const a = mapA((tm - S.start)/S.span);
+      const [x1,y1] = this.P(cx,cy,dialR,a), [x2,y2] = this.P(cx,cy,dialR+6,a);
+      base.dialSpokes.push({ x1,y1,x2,y2, style:{ stroke:'#D1D5DB', strokeWidth:1 } });
+      if (monthsArr.length > 14 && i%2) return;
+      if (angDist(a, Math.PI/2) < 0.22 || angDist(a, A0) < 0.16) return;
+      const d3 = new Date(tm);
+      const txt = d3.getUTCMonth() === 0 ? `JAN ${String(d3.getUTCFullYear()).slice(2)}` : MOs[d3.getUTCMonth()];
+      const [lx,ly] = this.P(cx,cy,dialR+20,a);
+      base.labels.push(this.lab(lx, ly, txt, { font:"600 8px 'JetBrains Mono',monospace", color:'#9CA3AF', letterSpacing:'.1em' }));
+    });
+    const taF = (S.todayF >= f0 && S.todayF <= f1) ? mapA(S.todayF) : null;
+    const nearBottom = taF != null && angDist(taF, Math.PI/2) < 0.7;
+    base.labels.push(this.lab(cx, cy + dialR + (nearBottom ? 42 : 24), `${this.dOf(f0).toUpperCase()} → ONCE AROUND → ${this.dOf(f1).toUpperCase()}`, { font:"700 8px 'JetBrains Mono',monospace", color:'#6B7280', letterSpacing:'.09em', background:'#fff', border:'1px solid #E5E7EB', borderRadius:'999px', padding:'3px 10px' }));
+    if (taF != null){
+      const ta = taF;
+      const [hx1,hy1] = this.P(cx,cy,orb.r+10,ta), [hx2,hy2] = this.P(cx,cy,dialR-3,ta);
+      base.showHand = true;
+      base.hand = { x1:hx1, y1:hy1, x2:hx2, y2:hy2, style:{ stroke:'#111827', strokeWidth:1.75, opacity:st.bloom?1:0, transition:'opacity .8s ease .8s' } };
+      base.todayDot = { cx:hx2, cy:hy2 };
+      const [tlx,tly] = this.P(cx,cy,dialR + (nearBottom ? 26 : 32), ta);
+      base.labels.push(this.lab(tlx, tly, '⬤ TODAY · 14 JUL 2026', { font:"700 8.5px 'JetBrains Mono',monospace", color:'#111827', letterSpacing:'.08em', background:'#fff', padding:'2px 6px' }));
+    }
+    if (st.hover && D.byId[st.hover]){
+      const hv = D.byId[st.hover];
+      const w0 = S.minF[hv.id] ?? S.f[hv.id], w1 = S.maxF[hv.id] ?? S.f[hv.id];
+      base.readName = hv.name;
+      base.readMeta = `${hv.id} · ${hv.t.toUpperCase()} · ${hv.status.toUpperCase()}${hv.rag?' · RAG '+hv.rag:''}${w0!=null?' · '+this.dOf(w0).toUpperCase()+(w1>w0+0.004?' → '+this.dOf(w1).toUpperCase():''):''}`;
+    } else {
+      base.readName = dialRoot.name;
+      base.readMeta = `${dialRoot.id} · ${D.desc[dialRoot.id]} NODES · ${this.dOf(f0).toUpperCase()} → ${this.dOf(f1).toUpperCase()} · DERIVED SCHEDULE — SAMPLE`;
+    }
+    base.legend.push({ label:'ANGLE = WHEN · CLOCKWISE = ORDER', dot:{ display:'inline-block', width:'9px', height:'9px', borderRadius:'999px', border:'2px solid #111827', background:'#fff' } });
+    base.legend.push({ label:'HAND = TODAY', dot:{ display:'inline-block', width:'10px', height:'2px', background:'#111827' } });
+    const crumbStyle = { display:'inline-flex', alignItems:'center', whiteSpace:'nowrap', flex:'none', gap:'6px', border:'1px solid #E5E7EB', background:'#fff', borderRadius:'999px', padding:'5px 11px', font:"600 8.5px 'JetBrains Mono',monospace", letterSpacing:'.07em', color:'#111827', cursor:'pointer' };
+    if (!focus){
+      base.crumbs = D.roots.map(r=>{
+        const on = r.id === dialRoot.id;
+        return { label:(on?'● ':'◌ ') + r.id, style: on ? {...crumbStyle, background:'#111827', color:'#fff', borderColor:'#111827'} : {...crumbStyle, color:'#6B7280', borderStyle:'dashed'}, click:()=>{ if (!on) this.goRoot(r.id); } };
+      });
+    } else {
+      base.crumbs = [{ label:'⌂ ALL ROOTS', style:crumbStyle, click:()=>this.goRoot(null) }];
+      [...this.ancestors(focus.id)].reverse().forEach(id=>{ if (id !== 'INI-NB') base.crumbs.push({ label:'› ' + id, style:crumbStyle, click:()=>this.goRoot(id) }); });
+      D.roots.forEach(r=>{ if (r.id !== focus.id && !this.ancestors(focus.id).includes(r.id)) base.crumbs.push({ label:'◌ ' + r.id, style:{...crumbStyle, color:'#6B7280', borderStyle:'dashed'}, click:()=>this.goRoot(r.id) }); });
+    }
+  }
+  rotor(cx, cy, dur, active, cl){
+    const on = this.state.settled && (this.props.drift ?? true) && active;
+    return { style:{ position:'absolute', inset:0, pointerEvents:'none', transformOrigin:`${cx}px ${cy}px`, animation:on?`spin ${dur}s linear infinite`:'none' },
+      labels:cl.map(l=>({ text:l.text,
+        wrapStyle:{ position:'absolute', left:l.x+'px', top:l.y+'px', transform:'translate(-50%,-50%)', opacity:this.state.bloom?l.dim:0, transition:'opacity .5s ease .6s' },
+        innerStyle:{ whiteSpace:'nowrap', font:"600 9px 'Archivo',sans-serif", letterSpacing:'.02em', color:l.color, animation:on?`spinRev ${dur}s linear infinite`:'none' } })) };
+  }
+  renderVals(){
+    const st = this.state;
+    const base = {
+      loading:!st.ready, subtitle:'The year dial is fixed time — today is marked. Lineages turn at the pace of their in-flight work: busy plans move, dormant ones stand still. Hover to read · click to inspect · double-click to re-root.',
+      newPlan:()=>this.say('＋ New Plan — the journey becomes a step orbit; designed next in Direction 1'),
+      bgClick:()=>this.setState({sel:null}), bgDbl:()=>{ if (this.state.root) this.goRoot(null); },
+      hasToast:!!st.toast, toast:st.toast, showGrat:false, focusMode:false,
+      gratRings:[], todayDot:{}, threads:[], labels:[], rotors:[], systems:[], orbs:[], crumbs:[], typeChips:[], lensBtns:[], viewBtns:[], legend:[],
+      dialSpokes:[], dialTracks:[], dialItems:[], dialDiamonds:[], showHand:false, hand:{},
+      readName:'', readMeta:'', legendStyle:{position:'absolute',right:'24px',bottom:'20px',display:'flex',gap:'12px'}, selOpen:false, sel:{}, closeSel:()=>this.setState({sel:null})
+    };
+    if (!st.ready) return base;
+    const D = this.D;
+    const focus = st.root ? D.byId[st.root] : null;
+    const centre = focus ? [700, 478] : [742, 468];
+    base.focusMode = !!focus;
+    const seg = (on)=>({ border:'none', background:on?'#111827':'#fff', color:on?'#fff':'#6B7280', padding:'6px 13px', font:"600 8.5px 'JetBrains Mono',monospace", letterSpacing:'.1em', cursor:'pointer' });
+    base.viewBtns = [['sky','SKY'],['dial','TIME DIAL']].map(([id,label],i)=>({ label,
+      click:()=>{ if (this.state.view !== id){ this.setState({view:id, hover:null, sprint:null, sel:null}); this.startBloom(); } },
+      style:{ ...seg(st.view===id), borderLeft:i?'1px solid #E5E7EB':'none' } }));
+    base.lensBtns = [['structure','STRUCTURE'],['progress','PROGRESS'],['health','HEALTH']].map(([id,label],i)=>({ label, click:()=>this.setState({lens:id}), style:{ ...seg(st.lens===id), borderLeft:i?'1px solid #E5E7EB':'none' } }));
+    const dot = c=>({ display:'inline-block', width:'8px', height:'8px', borderRadius:'999px', background:c });
+    base.legend = st.lens==='structure'
+      ? [['PROGRAMME','#6366F1'],['PROJECT','#2563EB'],['DELIVERABLE','#059669'],['WORK ITEM','#D97706'],['TASK','#64748B'],['CONTROL','#DC2626'],['MILESTONE ◇','#111827']].map(([l,c])=>({label:l,dot:dot(c)}))
+      : st.lens==='progress'
+      ? [['DONE','#059669'],['ACTIVE','#2563EB'],['PLANNED','#DBDFE6'],['BLOCKED','#DC2626']].map(([l,c])=>({label:l,dot:dot(c)}))
+      : [['RED — ATTENTION','#DC2626'],['AMBER — WATCH','#D97706'],['GREEN','#059669'],['UNRATED','#E9EBEF']].map(([l,c])=>({label:l,dot:dot(c)}));
+    base.legendStyle = { position:'absolute', right:(st.sel?'332px':'24px'), bottom:'20px', display:'flex', flexWrap:'wrap', justifyContent:'flex-end', maxWidth:'540px', gap:'6px 12px', transition:'right .25s ease' };
+    if (st.view === 'dial'){
+      this.buildDial(base, focus);
+      Object.assign(base, this.buildSel());
+      return base;
+    }
+    base.showGrat = this.props.graticule ?? true;
+    const hairline = { stroke:'#F1F2F5', strokeWidth:1, fill:'none' };
+    base.gratRings = (focus ? [150, 270, 390] : [140, 260, 380]).map(r=>({ cx:centre[0], cy:centre[1], r, style:hairline }));
+    const monthR = focus ? 404 : 408;
+    const MO = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    base.gratRings.push({ cx:centre[0], cy:centre[1], r:monthR, style:hairline });
+    if (base.showGrat) MO.forEach((m,i)=>{ const a = (i+0.5)/12*Math.PI*2 - Math.PI/2; const [x,y] = this.P(centre[0], centre[1], monthR+15, a); base.labels.push(this.lab(x, y, m, { font:`${m==='JUL'?700:500} 8px 'JetBrains Mono',monospace`, color:m==='JUL'?'#111827':'#C4C8D0', letterSpacing:'.1em' })); });
+    const ta = (6 + 14/31 + 0.5)/12*Math.PI*2 - Math.PI/2;
+    const [tx,ty] = this.P(centre[0], centre[1], monthR, ta); const [lx,ly] = this.P(centre[0], centre[1], monthR-26, ta);
+    base.todayDot = { cx:tx, cy:ty };
+    if (base.showGrat) base.labels.push(this.lab(lx, ly, 'STATUS · 14 JUL 2026', { font:"600 8px 'JetBrains Mono',monospace", color:'#9CA3AF', letterSpacing:'.08em' }));
+    const counts = {}; D.N.forEach(n=>{ if (n.t !== 'Initiative') counts[n.t] = (counts[n.t]||0)+1; });
+    base.typeChips = Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).map(t=>{
+      const on = !st.off[t];
+      return { label:t.toUpperCase(), count:String(counts[t]), dotStyle:{ display:'inline-block', width:'7px', height:'7px', borderRadius:'999px', background:this.AC[t]||'#64748B', marginRight:'6px', verticalAlign:'0' },
+        style:{ display:'inline-flex', alignItems:'center', whiteSpace:'nowrap', flex:'none', border:`1px ${on?'solid #E5E7EB':'dashed #D1D5DB'}`, background:'#fff', borderRadius:'999px', padding:'5px 10px', font:"600 8.5px 'JetBrains Mono',monospace", letterSpacing:'.07em', color:on?'#374151':'#9CA3AF', opacity:on?1:0.55, cursor:'pointer' },
+        click:()=>this.setState(s=>({ off:{...s.off, [t]:!s.off[t]} })) };
+    });
+    if ((this.props.wedgeBands ?? true) && st.lens !== 'progress') base.legend.push({ label:'BAND = % DONE', dot:{ display:'inline-block', width:'10px', height:'3px', borderRadius:'2px', background:'#059669' } });
+    if (this.props.drift ?? true) base.legend.push({ label:'ROTATION ∝ IN-FLIGHT WORK', dot:{ display:'inline-block', width:'8px', height:'8px', borderRadius:'999px', background:'conic-gradient(#2563EB 0 38%, #E5E7EB 38% 100%)' } });
+    if (st.hover && D.byId[st.hover]){
+      const h = D.byId[st.hover];
+      base.readName = h.name;
+      base.readMeta = `${h.id} · ${h.t.toUpperCase()} · ${h.status.toUpperCase()}${h.rag?' · RAG '+h.rag:''}${D.desc[h.id]?' · '+D.desc[h.id]+' DESC':''}`;
+    } else {
+      base.readName = focus ? focus.name : 'NovaBank Digital — FY27 build-out';
+      base.readMeta = focus ? `${focus.id} · ${D.desc[focus.id]} NODES IN LINEAGE · ${Math.round(100*D.doneC[focus.id]/Math.max(1,D.desc[focus.id]))}% DONE` : `${D.N.length-1} NODES · ${D.roots.length} ROOT LINEAGES · ${D.activeC['INI-NB']} IN FLIGHT · SYNTHETIC SAMPLE`;
+    }
+    if (!focus){
+      const spots = [ {x:452, y:474, s:1}, {x:1042, y:626, s:1}, {x:1058, y:280, s:1} ];
+      const systems = [], orbs = [];
+      D.roots.forEach((r,i)=>{
+        const R = Math.min(276, Math.max(120, 88 + Math.sqrt(D.desc[r.id])*19));
+        const { wedges, diamonds, bands, dots, sysStyle, orb, lines, cLabels, rotDur, active } = this.layoutSystem(r, spots[i].x, spots[i].y, R, i);
+        systems.push({ style:sysStyle, wedges, diamonds, bands, dots }); orbs.push(orb);
+        lines.forEach(l=>base.labels.push(this.lab(l.x, l.y, l.text, l.css)));
+        base.rotors.push(this.rotor(spots[i].x, spots[i].y, rotDur, active, cLabels));
+      });
+      const core = { cx:742, cy:468, r:23,
+        style:{ fill:'#111827', opacity:st.bloom?1:0, transition:'opacity .6s ease' },
+        hasArc:false, arc:'', arcStyle:{},
+        click:(e)=>{ e.stopPropagation(); this.setState({sel:'INI-NB'}); }, dbl:(e)=>e.stopPropagation(),
+        enter:()=>this.setState({hover:'INI-NB'}), leave:()=>this.setState({hover:null}) };
+      orbs.push(core);
+      base.labels.push(this.lab(742, 468, 'NB', { font:"700 10px 'JetBrains Mono',monospace", color:'#fff', letterSpacing:'.08em' }));
+      base.labels.push(this.lab(742, 507, 'INI-NB · INITIATIVE · L1', { font:"600 8px 'JetBrains Mono',monospace", color:'#9CA3AF', letterSpacing:'.1em' }));
+      const th = (x1,y1,x2,y2,dash)=>{
+        const mx=(x1+x2)/2, my=(y1+y2)/2, nx=-(y2-y1), ny=(x2-x1), len=Math.hypot(nx,ny)||1;
+        return { d:`M${x1} ${y1}Q${mx+nx/len*34} ${my+ny/len*34} ${x2} ${y2}`, style:{ stroke:dash?'#CBD0D9':'#D9DCE3', strokeWidth:1.2, strokeDasharray:dash?'3 6':'none', opacity:st.bloom?1:0, transition:'opacity .9s ease .4s' } };
+      };
+      const pos = {}; D.roots.forEach((r,i)=>{ pos[r.id] = spots[i]; });
+      base.threads = D.roots.map((r,i)=>th(742, 468, spots[i].x, spots[i].y, false));
+      const eng = D.roots.find(r=>r.id==='PRG-200');
+      if (eng){ D.roots.forEach(r=>{ if (r.id !== 'PRG-200'){ base.threads.push(th(pos['PRG-200'].x, pos['PRG-200'].y, pos[r.id].x, pos[r.id].y, true)); const mx=(pos['PRG-200'].x+pos[r.id].x)/2, my=(pos['PRG-200'].y+pos[r.id].y)/2; base.labels.push(this.lab(mx, my-8, 'SUPPORTS', { font:"600 8px 'JetBrains Mono',monospace", color:'#B3B8C2', letterSpacing:'.12em' })); } }); }
+      base.systems = systems; base.orbs = orbs;
+    } else {
+      const R = 330;
+      const { wedges, diamonds, bands, dots, sysStyle, orb, lines, cLabels, rotDur, active } = this.layoutSystem(focus, centre[0], centre[1], R, 0);
+      base.systems = [{ style:sysStyle, wedges, diamonds, bands, dots }]; base.orbs = [orb];
+      lines.forEach(l=>base.labels.push(this.lab(l.x, l.y, l.text, l.css)));
+      base.rotors.push(this.rotor(centre[0], centre[1], rotDur, active, cLabels));
+      const crumbStyle = { display:'inline-flex', alignItems:'center', whiteSpace:'nowrap', flex:'none', gap:'6px', border:'1px solid #E5E7EB', background:'#fff', borderRadius:'999px', padding:'5px 11px', font:"600 8.5px 'JetBrains Mono',monospace", letterSpacing:'.07em', color:'#111827', cursor:'pointer' };
+      base.crumbs = [{ label:'⌂ PORTFOLIO SKY', style:crumbStyle, click:()=>this.goRoot(null) }];
+      [...this.ancestors(focus.id)].reverse().forEach(id=>{ if (id !== 'INI-NB') base.crumbs.push({ label:'› ' + id, style:crumbStyle, click:()=>this.goRoot(id) }); });
+      D.roots.forEach(r=>{ if (r.id !== focus.id && !this.ancestors(focus.id).includes(r.id)) base.crumbs.push({ label:'◌ ' + r.id, style:{...crumbStyle, color:'#6B7280', borderStyle:'dashed'}, click:()=>this.goRoot(r.id) }); });
+    }
+    Object.assign(base, this.buildSel());
+    return base;
+  }
+}
+</script>
+</body>
+</html>

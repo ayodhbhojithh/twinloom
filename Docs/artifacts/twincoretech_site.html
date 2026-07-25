@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TwinCoreTech — websites for growing UK businesses</title>
+<style>
+  :root{
+    --ink:#1c1c1c; --muted:#565656; --faint:#9a9a9a; --line:#e3e3e3; --bg:#f5f5f5; --card:#fff;
+    --accent:#1c1c1c; --soft:#f0f0f0; --panel:#141414;
+    --green:#2fa36b; --amber:#e8a13a; --red:#e2574c; --todo:#e3e3e3; --curgrey:#c4c4c4; --panelW:340px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; transition:padding-right .26s ease;}
+  body.cap-open{padding-right:var(--panelW);}
+  a{color:inherit;}
+
+  /* nav */
+  .nav{position:sticky; top:0; z-index:40; background:#fff; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:18px; padding:12px 22px; flex-wrap:wrap;}
+  .brand{font-weight:800; font-size:16px; cursor:pointer; text-decoration:none;}
+  .navlinks{display:flex; gap:2px; flex-wrap:wrap;}
+  .navlinks a{font-size:13px; color:var(--muted); text-decoration:none; padding:6px 10px; border-radius:7px; cursor:pointer;}
+  .navlinks a:hover{background:var(--soft); color:var(--ink);}
+  .navcta{margin-left:auto; display:flex; gap:8px; align-items:center;}
+  .b1{background:var(--accent); color:#fff; border:none; border-radius:9px; padding:10px 18px; font-size:14px; font-weight:700; cursor:pointer;}
+  .b2{background:#fff; color:var(--ink); border:1px solid var(--line); border-radius:9px; padding:10px 16px; font-size:14px; font-weight:600; cursor:pointer;}
+  .b1.sm,.b2.sm{padding:8px 13px; font-size:13px;}
+
+  .page{max-width:1000px; margin:0 auto; padding:30px 22px 70px; display:none;}
+  .page.on{display:block;}
+  .wide{max-width:1040px;}
+
+  h1{font-size:34px; line-height:1.15; margin:6px 0 10px;} h2{font-size:22px; margin:30px 0 8px;} h3{font-size:16px; margin:16px 0 4px;}
+  .eyebrow{font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); font-family:ui-monospace,monospace;}
+  .lead{font-size:16px; color:var(--muted); max-width:680px;}
+  p{margin:8px 0;} .muted{color:var(--muted);} .small{font-size:13px;}
+  .center{text-align:center;}
+  .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin:16px 0;}
+  .btnrow.center{justify-content:center;}
+  .grid{display:grid; gap:14px;} .g2{grid-template-columns:1fr 1fr;} .g3{grid-template-columns:1fr 1fr 1fr;} .g4{grid-template-columns:repeat(4,1fr);}
+  @media(max-width:760px){ .g2,.g3,.g4{grid-template-columns:1fr;} h1{font-size:27px;} }
+  .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px;}
+  .card h3{margin-top:0;}
+  .tag{display:inline-block; font-size:11px; border:1px solid var(--line); background:var(--soft); border-radius:16px; padding:4px 11px; margin:3px 4px 0 0;}
+  .block{border-top:1px solid var(--line); margin-top:34px; padding-top:24px;}
+  .kpi{font-size:26px; font-weight:800;} .kpi small{font-size:12px; color:var(--faint); font-weight:600; display:block;}
+  table{width:100%; border-collapse:collapse; margin:10px 0; font-size:13px;}
+  th,td{border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top;} th{background:var(--soft); font-size:11.5px; text-transform:uppercase; letter-spacing:.03em; color:var(--muted);}
+  ul{margin:8px 0; padding-left:20px;} li{margin:3px 0; font-size:14px;}
+  .journeybar{display:flex; gap:6px; font-size:12px; color:var(--faint); font-family:ui-monospace,monospace; margin-bottom:14px;}
+  .journeybar b{color:var(--ink);}
+
+  /* footer */
+  .foot{background:#fff; border-top:1px solid var(--line); margin-top:40px;}
+  .footin{max-width:1000px; margin:0 auto; padding:26px 22px; display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:20px;}
+  @media(max-width:760px){ .footin{grid-template-columns:1fr 1fr;} }
+  .foot .fh{font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin-bottom:8px; font-family:ui-monospace,monospace;}
+  .foot a{display:block; font-size:13px; color:var(--muted); text-decoration:none; padding:3px 0; cursor:pointer;} .foot a:hover{color:var(--ink);}
+  .footbar{border-top:1px solid var(--line); padding:12px 22px; font-size:12px; color:var(--faint); text-align:center;}
+
+  /* ===== scoping dial (kept; RAG is semantic) ===== */
+  .scopehead{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;}
+  .kick2{font-size:11px; font-weight:800; letter-spacing:.14em; color:var(--faint); font-family:ui-monospace,monospace;}
+  .stepct{font-size:11px; font-weight:700; color:var(--muted); font-family:ui-monospace,monospace;}
+  .dialzone{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:16px; display:grid; grid-template-columns:auto 1fr; gap:22px; align-items:center;}
+  @media(max-width:720px){ .dialzone{grid-template-columns:1fr; justify-items:center;} }
+  svg.dial{display:block;} .seg{transition:opacity .2s, fill .35s;} .seg.click{cursor:pointer;}
+  .hubc{fill:#fafafa;} .hub .pc{font-size:25px; font-weight:800; fill:var(--ink);} .hub .lb{font-size:8px; font-weight:700; letter-spacing:.16em; fill:var(--faint);} .hub .ef{font-size:9px; font-weight:800;}
+  .dside{min-width:0; width:100%;}
+  .keys{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:11px; color:var(--muted); margin-bottom:10px;} .keys .k{display:inline-flex; align-items:center; gap:5px;} .keys .sw{width:11px; height:11px; border-radius:3px;}
+  .sw.g{background:var(--green);} .sw.a{background:var(--amber);} .sw.r{background:var(--red);} .sw.t{background:var(--todo);}
+  .readtitle{font-size:10px; font-weight:700; letter-spacing:.12em; color:var(--faint); font-family:ui-monospace,monospace;}
+  .readname{font-size:16px; font-weight:800; margin:2px 0 8px; display:flex; align-items:center; gap:9px;}
+  .effpill,.epc{font-size:9.5px; font-weight:800; letter-spacing:.04em; color:#fff; border-radius:6px; padding:2px 8px;}
+  .effpill.g,.epc.g{background:var(--green);} .effpill.a,.epc.a{background:var(--amber);} .effpill.r,.epc.r{background:var(--red);} .effpill.t{background:var(--todo); color:var(--muted);}
+  .runits{display:flex; flex-direction:column; gap:5px;} .runit .ul{font-weight:700; font-size:11.5px;} .runit .uo{color:var(--muted); font-size:11.5px;}
+  .rnone{font-size:12px; color:var(--faint); font-style:italic;}
+  .captured{margin-top:11px; padding-top:9px; border-top:1px dashed var(--line);}
+  .captured .cl{font-size:10px; font-weight:700; letter-spacing:.1em; color:var(--faint); font-family:ui-monospace,monospace; margin-right:8px;}
+  .capchip{display:inline-block; background:var(--soft); border:1px solid var(--line); border-radius:12px; padding:2px 9px; font-size:11px; font-weight:600; margin-right:5px;}
+  .capnone{font-size:11px; color:var(--faint); font-style:italic;}
+  .workzone{display:grid; grid-template-columns:1.5fr 1fr; gap:16px; align-items:start;}
+  @media(max-width:820px){ .workzone{grid-template-columns:1fr;} }
+  .kicker{font-size:10px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--faint); font-family:ui-monospace,monospace;}
+  .sh{font-size:19px; font-weight:800; margin:4px 0 2px;} .sp{font-size:13px; color:var(--muted); margin:0;}
+  .qg{margin-top:18px;} .qt{font-size:13.5px; font-weight:800; margin-bottom:4px;}
+  .qt .new{font-size:8.5px; font-weight:800; color:var(--muted); border:1px solid var(--line); background:var(--soft); border-radius:5px; padding:1px 5px; margin-left:6px; text-transform:uppercase;}
+  .opt{display:flex; gap:11px; align-items:center; padding:6px 6px; border-bottom:1px solid #f0f0f0; cursor:pointer;}
+  .opt:hover{background:#fafafa;} .opt.foc{background:var(--soft);}
+  .cb{width:18px; height:18px; border-radius:5px; border:1.6px solid #c4c4c4; flex:none; display:flex; align-items:center; justify-content:center; color:#fff; font-size:11px; font-weight:800;}
+  .opt.round .cb{border-radius:50%;} .opt.on .cb{background:var(--accent); border-color:var(--accent);}
+  .otln{font-size:13px; line-height:1.3; min-width:0;} .ot{font-weight:700;} .od{color:var(--muted);}
+  .tri{display:flex; align-items:center; gap:10px; padding:8px 4px; border-bottom:1px solid #f0f0f0;} .tri .tl{flex:1; font-size:13px; font-weight:600;}
+  .tg{display:inline-flex; border:1px solid var(--line); border-radius:8px; overflow:hidden;} .tg button{border:none; background:#fff; padding:5px 9px; font-size:11px; font-weight:600; color:var(--muted); cursor:pointer; border-left:1px solid var(--line);} .tg button:first-child{border-left:none;}
+  .tg button.on.yes{background:var(--green); color:#fff;} .tg button.on.no{background:var(--accent); color:#fff;} .tg button.on.na{background:var(--faint); color:#fff;}
+  .budget input[type=range]{width:100%; accent-color:var(--accent);} .bval{font-size:17px; font-weight:800;} .brow{display:flex; justify-content:space-between; font-size:10.5px; color:var(--faint);} .rns{font-size:12px; color:var(--muted); margin-top:6px; display:inline-flex; gap:6px; cursor:pointer;}
+  textarea.free{width:100%; border:1px solid var(--line); border-radius:8px; padding:9px 11px; font-size:13px; font-family:inherit; min-height:76px; resize:vertical; margin-top:8px;}
+  .snav{display:flex; align-items:center; gap:9px; margin-top:20px; padding-top:14px; border-top:1px solid var(--line);}
+  .btn{border:1px solid var(--accent); background:#fff; color:var(--ink); border-radius:9px; padding:10px 18px; font-size:13.5px; font-weight:700; cursor:pointer;} .btn.pri{background:var(--accent); color:#fff;} .btn:disabled{opacity:.4; cursor:default;}
+  .snav .skip{margin-left:auto; font-size:12px; color:var(--faint); cursor:pointer;}
+  .rpanel{position:sticky; top:74px;}
+  .rlbl{font-size:10px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--faint); font-family:ui-monospace,monospace;}
+  .rname{font-size:17px; font-weight:800; margin:3px 0 6px;} .rex{font-size:12.5px; color:var(--muted); margin:0 0 14px;}
+  .esl-lab{font-size:12px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); font-family:ui-monospace,monospace; display:flex; align-items:center; gap:8px; margin-bottom:6px;}
+  .esl input[type=range]{width:100%; accent-color:var(--accent);} .esl .row{display:flex; justify-content:space-between; font-size:10px; color:var(--faint); margin-top:1px;}
+  .rsub{font-size:12px; font-weight:800; margin:16px 0 6px;}
+  .rlist .li{display:flex; gap:10px; align-items:flex-start; padding:7px 4px; border-bottom:1px solid #f0f0f0; cursor:pointer;} .rlist .li:hover{background:#fafafa;} .rlist .li.on .cb{background:var(--accent); border-color:var(--accent);}
+  .rblock{border-top:1px solid var(--line); margin-top:14px; padding-top:12px;} .rblock .bl{font-size:12.5px; font-weight:700;} .rblock .bx{font-size:11.5px; color:var(--muted); margin:2px 0 6px;}
+  .rhint{font-size:12.5px; color:var(--muted);}
+
+  /* Thoughts panel */
+  .capstrip{position:fixed; top:0; right:0; bottom:0; width:var(--panelW); background:#fff; border-left:1px solid var(--line); box-shadow:-10px 0 34px rgba(0,0,0,.08); transform:translateX(100%); transition:transform .26s; z-index:70; display:flex; flex-direction:column;}
+  .capstrip.open{transform:none;}
+  .cap-tab{position:absolute; top:120px; right:100%; background:var(--panel); color:#fff; border:none; border-radius:12px 0 0 12px; cursor:pointer; padding:16px 11px; display:flex; flex-direction:column; align-items:center; gap:9px;}
+  .capstrip.open .cap-tab{display:none;} .cap-tab .cs{font-size:17px;} .cap-tab .cl{writing-mode:vertical-rl; transform:rotate(180deg); font-weight:700; font-size:13px;}
+  .cap-tab .badge{background:#fff; color:var(--ink); font-weight:800; font-size:10px; border-radius:10px; padding:1px 6px; min-width:16px;}
+  .caphead{background:var(--panel); color:#fff; padding:13px 15px; display:flex; align-items:center; gap:8px;} .caphead .l{font-weight:700; font-size:13.5px;} .caphead .ls{font-size:11.5px; color:#bbb;} .caphead .x{margin-left:auto; background:none; border:none; color:#ddd; font-size:17px; cursor:pointer;}
+  .capbody{flex:1; overflow-y:auto; overflow-x:hidden; padding:14px 15px;}
+  .capbody .ci{font-size:12px; color:var(--muted); background:var(--soft); border:1px solid var(--line); border-radius:9px; padding:10px 12px; margin-bottom:14px;}
+  .csec{margin-bottom:16px;} .csec .ch{font-size:10.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:8px;}
+  .dz{border:2px dashed #c4c4c4; border-radius:9px; padding:16px; text-align:center; color:var(--muted); font-size:12px; cursor:pointer; background:#fff;}
+  .crow{display:flex; gap:6px; flex-wrap:wrap; align-items:center;}
+  .crow button.studio{border:none; background:var(--accent); color:#fff; border-radius:7px; padding:8px 11px; font-weight:700; cursor:pointer; font-size:12px;}
+  .crow input[type=color]{width:34px; height:32px; border:1px solid var(--line); border-radius:7px; background:#fff; cursor:pointer;}
+  .crow input[type=text]{flex:1; min-width:90px; border:1px solid var(--line); border-radius:7px; padding:7px 9px; font-size:12px; font-family:inherit;}
+  .crow button.add{border:1px solid var(--accent); background:#fff; color:var(--ink); border-radius:7px; padding:7px 11px; font-weight:700; cursor:pointer; font-size:12px;}
+  .chint{font-size:11px; color:var(--faint); margin-top:8px;}
+  .pal{margin-top:8px;} .palrow{display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid #f0f0f0;} .palrow .role{font-size:9px; font-weight:800; text-transform:uppercase; color:var(--faint); width:58px;} .palrow .sw2{width:22px; height:22px; border-radius:5px; border:1px solid rgba(0,0,0,.1);} .palrow .hx{font-family:ui-monospace,monospace; font-size:12px; flex:1;} .palrow .rm{border:none; background:none; color:var(--muted); cursor:pointer;}
+  .lrow{margin-bottom:6px;} .lrow input{width:100%; border:1px solid var(--line); border-radius:7px; padding:7px 9px; font-size:12px; font-family:inherit;}
+  .laddrow{display:flex; gap:6px;} .laddrow input{flex:1;} .laddrow button{border:none; background:var(--accent); color:#fff; border-radius:7px; padding:0 13px; font-weight:700; cursor:pointer; font-size:12px;}
+  .linkitem{display:flex; gap:8px; align-items:flex-start; border:1px solid var(--line); border-radius:8px; padding:7px 9px; margin-top:6px; font-size:12px;} .linkitem .rm{border:none; background:none; color:var(--muted); cursor:pointer; margin-left:auto;}
+  textarea.cnotes{width:100%; border:1px solid var(--line); border-radius:8px; padding:9px 11px; font-size:13px; font-family:inherit; min-height:96px; resize:vertical;}
+  @media(max-width:820px){ :root{--panelW:100vw;} body.cap-open{padding-right:0;} }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <a class="brand" onclick="showPage('home')">TwinCoreTech</a>
+  <div class="navlinks">
+    <a onclick="showPage('work')">Work</a><a onclick="showPage('about')">About</a><a onclick="showPage('partners')">Partners</a><a onclick="showPage('care')">Care</a><a onclick="showPage('insights')">Insights</a><a onclick="showPage('pricing')">Pricing</a><a onclick="showPage('contact')">Contact</a>
+  </div>
+  <div class="navcta"><button class="b2 sm" onclick="showPage('contact')">Book a call</button><button class="b1 sm" onclick="showPage('scope')">Scope your website →</button></div>
+</div>
+
+<!-- ===== HOME ===== -->
+<section class="page" id="pg-home">
+  <div class="center" style="padding:20px 0">
+    <div class="eyebrow">Websites for growing UK businesses</div>
+    <h1>A website that helps people find you, trust you, and get in touch.</h1>
+    <p class="lead" style="margin:0 auto">We build, refresh and look after your website and everything around it — so you can get on with running your business.</p>
+    <div class="btnrow center"><button class="b1" onclick="showPage('scope')">Scope your website — a few simple steps →</button><button class="b2" onclick="showPage('contact')">Book a call</button><button class="b2" onclick="openPanel()">✨ Thoughts &amp; inspiration</button></div>
+    <div class="small muted">Takes about 3 minutes · No sign-up needed to explore</div>
+  </div>
+  <div class="block">
+    <div class="grid g4 center">
+      <div><div class="kpi">40+<small>SITES LAUNCHED</small></div></div>
+      <div><div class="kpi">4.9<small>AVERAGE RATING</small></div></div>
+      <div><div class="kpi">12 yrs<small>EXPERIENCE</small></div></div>
+      <div><div class="kpi">UK<small>SME FOCUSED</small></div></div>
+    </div>
+    <p class="center muted small" style="margin-top:14px">"They rebuilt our site in three weeks and enquiries doubled." — a happy client <span class="muted">(placeholder proof — swap for real logos &amp; testimonials)</span></p>
+  </div>
+  <div class="block">
+    <h2>What we can do for you</h2>
+    <p class="muted small">Whatever stage you're at, pick the bits you need.</p>
+    <div>
+      <span class="tag">A brand-new website</span><span class="tag">A redesign or upgrade</span><span class="tag">Being found — SEO &amp; AI visibility</span><span class="tag">Selling online</span><span class="tag">A blog you run yourself</span><span class="tag">Bookings &amp; payments</span><span class="tag">Someone to keep it running</span>
+    </div>
+  </div>
+  <div class="block">
+    <h2>How we work — five simple steps</h2>
+    <div class="grid g4">
+      <div class="card"><h3>Discover</h3><p class="small muted">A conversation, and a simple plan built together.</p></div>
+      <div class="card"><h3>Design</h3><p class="small muted">Strategy, storyboard, your brand, the look &amp; feel.</p></div>
+      <div class="card"><h3>Build</h3><p class="small muted">In milestones, with a quick update every week.</p></div>
+      <div class="card"><h3>Launch</h3><p class="small muted">Tested, handed over, with a walkthrough.</p></div>
+    </div>
+    <p class="small" style="margin-top:10px">✓ You decide how involved you want to be. &nbsp; ✓ We can set up every account for you — domain, hosting, shop, analytics. &nbsp; ✓ <a onclick="showPage('care')" style="cursor:pointer;text-decoration:underline">And we keep it running &amp; improving after launch.</a></p>
+  </div>
+  <div class="block">
+    <h2>Featured work</h2>
+    <div class="grid g3">
+      <div class="card"><div class="eyebrow">Hospitality</div><h3>Bella's Café</h3><p class="small muted">Mobile-first redesign + table booking. Enquiries up.</p><a class="small" onclick="showPage('work')" style="cursor:pointer;text-decoration:underline">View</a></div>
+      <div class="card"><div class="eyebrow">Retail</div><h3>Nord Home Goods</h3><p class="small muted">New Shopify-backed store, 200+ products.</p><a class="small" onclick="showPage('work')" style="cursor:pointer;text-decoration:underline">View</a></div>
+      <div class="card"><div class="eyebrow">Professional</div><h3>Sterling Consulting</h3><p class="small muted">Lead-gen upgrade + self-managed blog.</p><a class="small" onclick="showPage('work')" style="cursor:pointer;text-decoration:underline">View</a></div>
+    </div>
+  </div>
+  <div class="block center">
+    <h2>Ready when you are.</h2>
+    <div class="btnrow center"><button class="b1" onclick="showPage('scope')">Scope your website →</button><button class="b2" onclick="showPage('contact')">Book a call</button></div>
+  </div>
+</section>
+
+<!-- ===== SCOPING ===== -->
+<section class="page wide" id="pg-scope">
+  <div class="journeybar"><b>Scoping</b> · Blueprint · Your plan</div>
+  <div class="scopehead"><span class="kick2">SCOPE YOUR WEBSITE</span><span class="stepct" id="stepct">STEP 1 / 8</span></div>
+  <div class="dialzone">
+    <svg class="dial" id="dial" width="280" height="280" viewBox="0 0 260 260"></svg>
+    <div class="dside">
+      <div class="keys"><span class="k"><span class="sw t"></span>Not complete</span><span class="k"><span class="sw g"></span>Light</span><span class="k"><span class="sw a"></span>Medium</span><span class="k"><span class="sw r"></span>Heavy</span></div>
+      <div id="readout"></div><div class="captured" id="captured"></div>
+    </div>
+  </div>
+  <div class="workzone">
+    <div class="card">
+      <div class="kicker" id="kicker"></div><div class="sh" id="sh"></div><p class="sp" id="sp"></p>
+      <div id="stepbody"></div>
+      <div class="snav"><button class="btn" id="backBtn" onclick="sBack()" disabled>← Back</button><button class="btn pri" id="nextBtn" onclick="sNext()">Next →</button><span class="skip" id="skipLink" onclick="sNext()" style="display:none">Skip this</span></div>
+    </div>
+    <div class="card rpanel" id="rpanel"></div>
+  </div>
+</section>
+
+<!-- ===== BLUEPRINT ===== -->
+<section class="page" id="pg-blueprint">
+  <div class="journeybar">Scoping · <b>Blueprint</b> · Your plan</div>
+  <div id="bpbody"></div>
+</section>
+
+<!-- ===== PLAN ===== -->
+<section class="page" id="pg-plan">
+  <div class="journeybar">Scoping · Blueprint · <b>Your plan</b></div>
+  <div id="planbody"></div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section class="page" id="pg-about">
+  <div class="eyebrow">About us</div><h1>We build websites that earn their keep.</h1>
+  <p class="lead">TwinCoreTech is a UK studio focused on small and growing businesses. We make sites that help people find you, trust you and get in touch — and we look after them afterwards.</p>
+  <div class="block"><h2>Our story</h2><p class="muted">We started because too many SMEs were sold expensive sites that didn't bring in work. We do the opposite: scope honestly, build to a clear plan, and price it plainly.</p></div>
+  <div class="block"><h2>What we believe</h2><ul><li>You own everything — the site, the domain, every account. No lock-in.</li><li>Plain English over jargon. You always know what you're getting and what it costs.</li><li>Proof over promises — we show results, not buzzwords.</li></ul></div>
+  <div class="block"><h2>How we work</h2><p class="muted">Discover → Design → Build → Launch → Care. Milestone-based, weekly updates, a walkthrough at handover, and ongoing support. See our <a onclick="showPage('partners')" style="cursor:pointer;text-decoration:underline">partners</a> for SEO/AI, brand and social.</p></div>
+  <div class="btnrow"><button class="b1" onclick="showPage('scope')">Scope your website →</button><button class="b2" onclick="showPage('contact')">Book a call</button></div>
+</section>
+
+<!-- ===== PARTNERS ===== -->
+<section class="page" id="pg-partners">
+  <div class="eyebrow">Partners</div><h1>The extended team behind your site.</h1>
+  <p class="lead">SEO/AI, brand design and social are delivered with trusted partners who are part of the offer — and you can talk to them directly.</p>
+  <div class="block grid g3">
+    <div class="card"><h3>SEO &amp; AI visibility</h3><p class="small muted">Get found on Google and show up in AI answers. Keyword &amp; technical SEO, content, local SEO, and monthly reporting.</p><p class="small">Maps to: scoping "getting found" · plan deliverable · Care Pro retainer.</p></div>
+    <div class="card"><h3>Brand design</h3><p class="small muted">Logo, identity and guidelines — for when the "do you have a brand?" answer is "no", or it needs a refresh.</p><p class="small">Maps to: scoping gap audit + look &amp; feel · plan deliverable.</p></div>
+    <div class="card"><h3>Social media</h3><p class="small muted">Set-up or ongoing management across the channels that suit your business.</p><p class="small">Maps to: scoping "social" · one-off setup or monthly.</p></div>
+  </div>
+  <div class="btnrow"><button class="b1" onclick="showPage('scope')">Scope your website →</button></div>
+</section>
+
+<!-- ===== CARE ===== -->
+<section class="page" id="pg-care">
+  <div class="eyebrow">Care &amp; Support</div><h1>We keep it running — and improving.</h1>
+  <p class="lead">Proactive care, not break-fix. Hosting, security and backups as standard, plus ongoing improvements so your site keeps working for you.</p>
+  <div class="block">
+    <table>
+      <tr><th>Plan</th><th>Per month</th><th>Includes</th></tr>
+      <tr><td>Care Lite</td><td>£39</td><td>Hosting, SSL, security, backups, uptime monitoring, small fixes</td></tr>
+      <tr><td>Care Plus</td><td>£99</td><td>+ content updates, monthly report, minor improvements</td></tr>
+      <tr><td>Care Pro</td><td>£249</td><td>+ SEO/CRO retainer, priority support, a growth roadmap</td></tr>
+    </table>
+    <p class="small muted">Prices illustrative — to be confirmed. You own the site and every account; cancel any time.</p>
+  </div>
+  <div class="block"><h2>Response times</h2><p class="muted small">Urgent (site down): same day. Standard changes: 2–3 working days. Care Pro: priority queue.</p></div>
+  <div class="btnrow"><button class="b1" onclick="showPage('scope')">Scope your website →</button><button class="b2" onclick="showPage('contact')">Ask about care</button></div>
+</section>
+
+<!-- ===== WORK ===== -->
+<section class="page" id="pg-work">
+  <div class="eyebrow">Work</div><h1>Proof, not promises.</h1>
+  <p class="lead">A few recent projects. <span class="muted">(Placeholders — swap for real case studies.)</span></p>
+  <div class="block grid g2">
+    <div class="card"><div class="eyebrow">Hospitality · Redesign</div><h3>Bella's Café</h3><p class="small muted"><b>Challenge:</b> dated, hard to use on mobile. <b>Approach:</b> mobile-first redesign + table booking. <b>Result:</b> enquiries up, bookings online.</p></div>
+    <div class="card"><div class="eyebrow">Retail · New build</div><h3>Nord Home Goods</h3><p class="small muted"><b>Challenge:</b> no online store. <b>Approach:</b> Shopify-backed store, 200+ products, subscriptions. <b>Result:</b> selling online in 6 weeks.</p></div>
+    <div class="card"><div class="eyebrow">Professional · Upgrade</div><h3>Sterling Consulting</h3><p class="small muted"><b>Challenge:</b> low visibility. <b>Approach:</b> lead-gen upgrade + SEO + blog. <b>Result:</b> reaching new audiences.</p></div>
+    <div class="card"><div class="eyebrow">Health · Redesign</div><h3>BrightSmile Clinic</h3><p class="small muted"><b>Challenge:</b> manual admin. <b>Approach:</b> booking + member area + reminders. <b>Result:</b> hours saved weekly.</p></div>
+  </div>
+  <div class="btnrow"><button class="b1" onclick="showPage('scope')">Scope your website →</button></div>
+</section>
+
+<!-- ===== INSIGHTS ===== -->
+<section class="page" id="pg-insights">
+  <div class="eyebrow">Insights</div><h1>Practical advice for SME websites.</h1>
+  <p class="lead">The blog we run ourselves — and the kind we can set up for you. <span class="muted">(Placeholder articles.)</span></p>
+  <div class="block grid g3">
+    <div class="card"><div class="eyebrow">SEO · 5 min</div><h3>Getting found locally on Google</h3><p class="small muted">The five things every local business should do first.</p></div>
+    <div class="card"><div class="eyebrow">Ecommerce · 6 min</div><h3>Shopify vs a custom store</h3><p class="small muted">When each makes sense for an SME.</p></div>
+    <div class="card"><div class="eyebrow">AI · 4 min</div><h3>Showing up in AI answers</h3><p class="small muted">How AI visibility differs from classic SEO.</p></div>
+  </div>
+  <div class="btnrow"><button class="b2" onclick="showPage('contact')">Get our newsletter</button></div>
+</section>
+
+<!-- ===== PRICING ===== -->
+<section class="page" id="pg-pricing">
+  <div class="eyebrow">Pricing</div><h1>Plain-English packages.</h1>
+  <p class="lead">The scoping journey gives you the most accurate answer in 3 minutes. If you'd rather browse, here's the shape of it.</p>
+  <div class="block">
+    <table>
+      <tr><th>Package</th><th>From</th><th>Best for</th></tr>
+      <tr><td>Launch Lite</td><td>£750</td><td>Sole trader, a simple credible presence</td></tr>
+      <tr><td>SME Launch</td><td>£1,500</td><td>Established SME, a solid foundation</td></tr>
+      <tr><td>SME Growth</td><td>£3,500</td><td>Content, SEO and conversion focus</td></tr>
+      <tr><td>SME Operating</td><td>£7,500</td><td>Bookings, payments, automation</td></tr>
+      <tr><td>Bespoke</td><td>£12,500+</td><td>Custom platform / high ambition</td></tr>
+    </table>
+    <p class="small muted">Plus a care plan from £39/mo. Prices illustrative — confirmed in your plan.</p>
+  </div>
+  <div class="btnrow"><button class="b1" onclick="showPage('scope')">Not sure? Scope it in 3 minutes →</button></div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section class="page" id="pg-contact">
+  <div class="eyebrow">Contact</div><h1>Rather just talk to us?</h1>
+  <p class="lead">Book a call, drop us a message, or start the journey — whatever suits you.</p>
+  <div class="block grid g2">
+    <div class="card"><h3>Book a call</h3><p class="small muted">A 20-minute chat, no obligation.</p><div class="dz">[ Calendar embed ]</div></div>
+    <div class="card"><h3>Message us</h3><div class="lrow"><input placeholder="Your name" style="width:100%"></div><div class="lrow"><input placeholder="Email" style="width:100%"></div><div class="lrow"><textarea class="free" placeholder="How can we help?"></textarea></div><button class="b1 sm">Send</button></div>
+  </div>
+  <p class="small muted">hello@twincoretech.com · we reply within one working day.</p>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="page" id="pg-faq">
+  <div class="eyebrow">FAQ</div><h1>Common questions.</h1>
+  <div class="block"><h3>Do I own the website?</h3><p class="muted small">Yes — the site, domain and every account. No lock-in.</p>
+  <h3>How long does it take?</h3><p class="muted small">Most SME sites launch in 2–6 weeks depending on scope.</p>
+  <h3>What about my data (GDPR)?</h3><p class="muted small">Draft scoping submissions are kept for 3 days and covered by our <a onclick="showPage('privacy')" style="cursor:pointer;text-decoration:underline">Privacy Policy</a>. Please don't upload personal data in the panel.</p>
+  <h3>Do you host it?</h3><p class="muted small">We can — hosting, security and backups come with every care plan. Or we hand it to your host.</p>
+  <h3>How do payments work?</h3><p class="muted small">A deposit to start, the balance at launch, and the care plan monthly.</p></div>
+</section>
+
+<!-- ===== LEGAL ===== -->
+<section class="page" id="pg-privacy"><div class="eyebrow">Legal</div><h1>Privacy Policy</h1><p class="muted small"><b>What we collect:</b> your scoping answers, any files/colours/links/notes you add, and your contact details. <b>Why:</b> to prepare your website plan and respond to you. <b>Retention:</b> draft submissions for 3 days; enquiries as needed to serve you. <b>Lawful basis:</b> legitimate interest / your consent. <b>Your rights:</b> access, correction, deletion — email us. <b>Sub-processors:</b> hosting and our named partners. Registered with the ICO (Tier 1). Contact: hello@twincoretech.com. <span class="muted">(Placeholder — to be finalised with legal.)</span></p></section>
+<section class="page" id="pg-terms"><div class="eyebrow">Legal</div><h1>Terms of Service</h1><p class="muted small">Covers the services, intellectual property and ownership (you own the finished site), payment terms, care-plan terms, liability and governing law (England &amp; Wales). <span class="muted">(Placeholder — to be finalised with legal.)</span></p></section>
+<section class="page" id="pg-cookie"><div class="eyebrow">Legal</div><h1>Cookie Policy</h1><p class="muted small">We use essential cookies to run the site and, with your consent, analytics cookies to improve it. No non-essential cookies are set before you consent. You can change your choice any time. <span class="muted">(Placeholder.)</span></p></section>
+<section class="page" id="pg-accessibility"><div class="eyebrow">Legal</div><h1>Accessibility statement</h1><p class="muted small">We aim for WCAG 2.2 AA across our sites. If you find a barrier, tell us and we'll fix it. <span class="muted">(Placeholder.)</span></p></section>
+
+<!-- ===== FOOTER ===== -->
+<div class="foot"><div class="footin">
+  <div><div class="brand" style="font-size:15px">TwinCoreTech</div><p class="small muted">Websites for growing UK businesses. You own everything — no lock-in.</p></div>
+  <div><div class="fh">Explore</div><a onclick="showPage('work')">Work</a><a onclick="showPage('about')">About</a><a onclick="showPage('partners')">Partners</a><a onclick="showPage('care')">Care</a><a onclick="showPage('insights')">Insights</a><a onclick="showPage('pricing')">Pricing</a></div>
+  <div><div class="fh">Get started</div><a onclick="showPage('scope')">Scope your website</a><a onclick="showPage('contact')">Book a call</a><a onclick="showPage('contact')">Contact</a><a onclick="showPage('faq')">FAQ</a></div>
+  <div><div class="fh">Legal</div><a onclick="showPage('privacy')">Privacy</a><a onclick="showPage('terms')">Terms</a><a onclick="showPage('cookie')">Cookies</a><a onclick="showPage('accessibility')">Accessibility</a></div>
+</div><div class="footbar">© 2026 TwinCoreTech · illustrative baseline · mono</div></div>
+
+<!-- ===== Thoughts panel ===== -->
+<div class="capstrip" id="capstrip">
+  <button class="cap-tab" onclick="openPanel()"><span class="cs">✨</span><span class="cl">Thoughts &amp; inspiration</span><span class="badge" id="capBadge" style="display:none">0</span></button>
+  <div class="caphead"><span><span class="l">✨ Thoughts &amp; inspiration</span> <span class="ls">— add as you go</span></span><button class="x" onclick="closePanel()">✕</button></div>
+  <div class="capbody" id="capbody"></div>
+</div>
+
+<script>
+/* ===== ROUTER ===== */
+const ALLPAGES=["home","scope","blueprint","plan","about","partners","care","work","insights","pricing","contact","faq","privacy","terms","cookie","accessibility"];
+function showPage(p){ ALLPAGES.forEach(x=>{const el=document.getElementById("pg-"+x); if(el) el.classList.toggle("on",x===p);}); window.scrollTo({top:0,behavior:'smooth'}); if(p==="blueprint") renderBlueprint(); if(p==="plan") renderPlan(); }
+
+/* ===== SCOPING DATA (sharpened) ===== */
+const GEN="Light = a simpler build · Heavy = more custom work and polish.";
+const STEPS=[
+ { key:"about", kicker:"About you & your goal", sh:"Let's start with the basics.", sp:"Pick on the left — the one you click opens on the right to focus on.",
+   groups:[
+     {q:"What are we building?", key:"build", type:"single", opts:[
+       {v:"new",label:"Brand new",desc:"Blank canvas.",eff:2,ex:"More effort = more custom pages and bespoke design vs a template start."},
+       {v:"redesign",label:"Redesign",desc:"Rework an existing site.",eff:2,ex:"Tell us what's driving it, then push each area as far as you like."},
+       {v:"upgrade",label:"Upgrade",desc:"Improve parts.",eff:1,ex:"Keep the base, improve the bits that matter."}]},
+     {q:"Where's your business right now?", key:"stage", type:"single", opts:[
+       {v:"starting",label:"Just starting up",desc:"People need to find you.",eff:1,ex:"A clean, credible start to get you found."},
+       {v:"established",label:"Established",desc:"Look the part.",eff:1,ex:"Polish and trust for an established name."},
+       {v:"growing",label:"Growing rapidly",desc:"Keep up with growth.",eff:2,ex:"More pages, features and scale as you grow."}]},
+     {q:"What kind of business are you in?", key:"industry", type:"single", isnew:true, opts:[
+       {v:"trades",label:"Trades",desc:"Construction & trades.",eff:1,ex:"Tailors wording and imagery to your world."},
+       {v:"prof",label:"Professional",desc:"Services & consulting.",eff:1,ex:"Tailors wording and imagery to your world."},
+       {v:"health",label:"Health",desc:"Clinics & wellbeing.",eff:1,ex:"Tailors wording and imagery to your world."},
+       {v:"hosp",label:"Hospitality",desc:"Food & drink.",eff:1,ex:"Tailors wording and imagery to your world."},
+       {v:"retail",label:"Retail",desc:"Shops & products.",eff:1,ex:"Tailors wording and imagery to your world."},
+       {v:"creative",label:"Creative",desc:"Studios & events.",eff:1,ex:"Tailors wording and imagery to your world."},
+       {v:"other",label:"Something else",desc:"Tell us more later.",eff:1,ex:"Tailors wording and imagery to your world."}]},
+     {q:"If your site nailed one thing?", key:"goal", type:"single", opts:[
+       {v:"enquiries",label:"More enquiries",desc:"Visits into contacts.",eff:1,ex:"Everything nudged towards getting in touch."},
+       {v:"sell",label:"Sell online",desc:"Orders & payments.",eff:2,ex:"Selling adds a shop, checkout and order handling."},
+       {v:"credible",label:"Look credible",desc:"Win trust.",eff:1,ex:"Design and proof that build confidence fast."},
+       {v:"admin",label:"Save admin time",desc:"Automate the manual.",eff:2,ex:"Automation and integrations take more setup up front."},
+       {v:"reach",label:"Reach new areas",desc:"Find new people.",eff:2,ex:"Reaching new audiences leans on SEO and content."}]}
+   ],
+   deepen:{ when:{key:"build",val:"redesign"},
+     drivers:{q:"What's driving it?", key:"rdrivers", opts:[
+       {v:"dated",label:"Looks dated",desc:"Style has aged."},{v:"mobile",label:"Poor on mobile",desc:"Hard on a phone."},{v:"slow",label:"Too slow",desc:"Loads slowly."},{v:"rank",label:"Not ranking",desc:"Hard to find."},{v:"leads",label:"Too few sales",desc:"Not converting."},{v:"update",label:"Hard to update",desc:"Can't self-edit."}]},
+     dials:[
+       {key:"look",label:"Look & feel",ex:"How far to push the visual redesign — a light refresh to a whole new look."},
+       {key:"perf",label:"Performance & speed",ex:"From basic tidy-up to chasing top Core Web Vitals."},
+       {key:"seo",label:"SEO visibility",ex:"From tidy basics to a serious visibility push."},
+       {key:"conv",label:"Conversion",ex:"From clear CTAs to tested, optimised journeys."},
+       {key:"mob",label:"Mobile experience",ex:"From responsive to mobile-first bespoke."}]}
+ },
+ { key:"have", kicker:"What you've got already", sh:"What's in place today?", sp:"Every “No” quietly adds the right help to your brief.", special:"have" },
+ { key:"does", kicker:"What your website needs to do", sh:"What should your site actually do?", sp:"Tell us the outcomes — we work out the pages and size for you. “Online shop” unlocks selling questions.",
+   groups:[
+     {q:"What type(s) fit best?", key:"type", type:"multi", isnew:true, opts:[
+       {v:"brochure",label:"Simple presence / brochure",desc:"A credible presence.",eff:1,ex:"A clean, credible presence — a few key pages, no complexity."},
+       {v:"lead",label:"Lead generation",desc:"Built for enquiries.",eff:2,ex:"More effort = tuned landing pages and stronger lead capture."},
+       {v:"shop",label:"Online shop",desc:"Sell products.",eff:3,ex:"More effort = more products, variants, payment methods and automation."},
+       {v:"booking",label:"Bookings",desc:"Book time.",eff:2,ex:"More effort = availability, staff, deposits and reminders."},
+       {v:"blog",label:"Blog / content",desc:"Publish yourself.",eff:1,ex:"A simple, self-managed blog to keep content fresh."},
+       {v:"members",label:"Membership",desc:"Login area.",eff:3,ex:"More effort = richer member features, roles and gated content."},
+       {v:"portfolio",label:"Portfolio / showcase",desc:"Showcase work.",eff:1,ex:"A gallery or case-study showcase of your work."}]},
+     {q:"What should visitors be able to do?", key:"visitor", type:"multi", opts:[
+       {v:"understand",label:"Find & understand you",desc:"Get what you offer.",eff:1,ex:"Clear services and messaging."},
+       {v:"enquire",label:"Get in touch / enquire",desc:"Contact you.",eff:1,ex:"Enquiry form with alerts."},
+       {v:"book",label:"Book an appointment",desc:"Pick a time.",eff:2,ex:"Booking system."},
+       {v:"buy",label:"Buy / pay online",desc:"Checkout.",eff:2,ex:"Shop & checkout."},
+       {v:"read",label:"Read your blog",desc:"Articles.",eff:1,ex:"Blog feed."},
+       {v:"login",label:"Log into a members area",desc:"Private area.",eff:2,ex:"Accounts & gated content."}]},
+     {q:"What should you be able to do?", key:"owner", type:"multi", opts:[
+       {v:"edit",label:"Edit content myself",desc:"No developer needed.",eff:1,ex:"Easy CMS."},
+       {v:"stats",label:"See visitor stats",desc:"Traffic dashboard.",eff:1,ex:"Analytics."},
+       {v:"alerts",label:"Get enquiry alerts",desc:"Instant notifications.",eff:1,ex:"Enquiry notifications."},
+       {v:"manage",label:"Manage bookings / orders",desc:"Admin view.",eff:2,ex:"Bookings/orders admin."},
+       {v:"news",label:"Send newsletters",desc:"Email your list.",eff:1,ex:"Email tools."}]}
+   ]
+ },
+ { key:"sell", kicker:"Selling online", sh:"The detail that sizes a shop.", sp:"Only relevant if you're selling.", cond:{key:"type",val:"shop"},
+   groups:[
+     {q:"How many products?", key:"prod", type:"single", isnew:true, opts:[
+       {v:"10",label:"1–10",desc:"A few lines.",eff:1,ex:"A handful of products — simple to set up."},{v:"50",label:"10–50",desc:"Modest.",eff:1,ex:"A modest catalogue."},
+       {v:"250",label:"50–250",desc:"Fuller.",eff:2,ex:"A fuller catalogue takes more setup and management."},{v:"250+",label:"250+",desc:"Large.",eff:3,ex:"A large catalogue — heavy setup, imports and structure."},{v:"ns",label:"Not sure",desc:"Deciding.",eff:1,ex:"We'll plan for flexibility."}]},
+     {q:"What are you selling?", key:"selling", type:"multi", opts:[
+       {v:"phys",label:"Physical goods",desc:"Shipped.",eff:1,ex:"Physical items that need shipping."},{v:"dig",label:"Digital downloads",desc:"Instant.",eff:1,ex:"Files delivered instantly."},
+       {v:"serv",label:"Services",desc:"Bookable.",eff:1,ex:"Services sold or quoted online."},{v:"sub",label:"Subscriptions",desc:"Recurring.",eff:2,ex:"Subscriptions add recurring billing and account logic."}]},
+     {q:"Payments & delivery", key:"pay", type:"multi", opts:[
+       {v:"card",label:"Card / Apple Pay",desc:"Card checkout.",eff:1,ex:"Standard card checkout."},{v:"paypal",label:"PayPal",desc:"PayPal option.",eff:1,ex:"PayPal as a payment option."},
+       {v:"uk",label:"UK shipping",desc:"UK only.",eff:1,ex:"Deliver within the UK."},{v:"intl",label:"International",desc:"Worldwide.",eff:2,ex:"International adds tax, currency and logistics."},{v:"cc",label:"Click & collect",desc:"In person.",eff:1,ex:"Collect in person."}]}
+   ]
+ },
+ { key:"found", kicker:"Getting found & growing", sh:"The digital-services wrap.", sp:"Click a service to open it and set how hard to push. Delivered with our partners.",
+   groups:[
+     {q:"Services", key:"services", type:"multi", opts:[
+       {v:"seo",label:"SEO",desc:"Rank on Google.",eff:2,ex:"More effort = deeper keyword, content and technical SEO."},
+       {v:"ai",label:"AI visibility",desc:"AI answers.",eff:2,ex:"More effort = structured content tuned for AI answers."},
+       {v:"blog",label:"Blog",desc:"Run yourself.",eff:1,ex:"A blog you publish to yourself."},{v:"email",label:"Email marketing",desc:"Newsletters.",eff:1,ex:"Newsletters and simple campaigns."},
+       {v:"social",label:"Social media",desc:"Setup & mgmt.",eff:2,ex:"More effort = more channels and ongoing management."},
+       {v:"ads",label:"Paid ads",desc:"Google / Meta.",eff:2,ex:"More effort = more campaigns, budget and optimisation."},
+       {v:"local",label:"Local SEO",desc:"Business Profile.",eff:1,ex:"Get found locally on Google."},{v:"report",label:"Reporting",desc:"Monthly.",eff:1,ex:"Monthly performance reporting."}]}
+   ]
+ },
+ { key:"look", kicker:"Look & feel", sh:"The direction.", sp:"Pick a style; add colours & reference sites in the Thoughts panel.",
+   groups:[
+     {q:"Style", key:"style", type:"multi", opts:[
+       {v:"min",label:"Clean & minimal",desc:"Spacious.",eff:1,ex:"Simple, lots of space."},{v:"bold",label:"Bold & modern",desc:"Strong colour.",eff:1,ex:"Strong colour and type."},
+       {v:"warm",label:"Warm & friendly",desc:"Approachable.",eff:1,ex:"Approachable and human."},{v:"classic",label:"Classic",desc:"Timeless.",eff:1,ex:"Timeless and established."},
+       {v:"premium",label:"Premium",desc:"High-end.",eff:2,ex:"A premium look needs more bespoke design and polish."},{v:"playful",label:"Playful",desc:"Characterful.",eff:1,ex:"Fun and characterful."}]},
+     {q:"Tone of voice", key:"tone", type:"single", opts:[
+       {v:"prof",label:"Professional",desc:"Polished.",eff:1,ex:"Polished and measured."},{v:"friendly",label:"Friendly",desc:"Conversational.",eff:1,ex:"Warm and conversational."},
+       {v:"straight",label:"Straight-talking",desc:"Direct.",eff:1,ex:"Plain and direct."},{v:"auth",label:"Authoritative",desc:"Expert.",eff:1,ex:"Expert and confident."}]}
+   ]
+ },
+ { key:"time", kicker:"Timeline & budget", sh:"A couple of practicalities.", sp:"How soon, who does content, who looks after it — and a soft budget.",
+   groups:[
+     {q:"How quickly do you want it live?", key:"speed", type:"single", isnew:true, opts:[
+       {v:"asap",label:"ASAP",desc:"Fastest route.",eff:3,ex:"A fast turnaround compresses the schedule — more intensive."},
+       {v:"month",label:"Within a month",desc:"Tight.",eff:2,ex:"A one-month build is tight and needs focus."},
+       {v:"13",label:"1–3 months",desc:"Comfortable.",eff:1,ex:"A comfortable pace."},{v:"36",label:"3–6 months",desc:"Roomy.",eff:1,ex:"Plenty of room."},{v:"norush",label:"No rush",desc:"Right over fast.",eff:1,ex:"Getting it right over speed."}]},
+     {q:"Who provides words & images?", key:"content", type:"single", opts:[
+       {v:"you",label:"You",desc:"You supply it.",eff:1,ex:"You'll supply the content."},{v:"us",label:"Us",desc:"We create it.",eff:2,ex:"Us writing and sourcing content is more work than you supplying it."},{v:"mix",label:"A mix",desc:"Shared.",eff:1,ex:"Shared between us."}]},
+     {q:"After launch, who looks after it?", key:"aftercare", type:"single", isnew:true, opts:[
+       {v:"you",label:"You",desc:"You'll manage it.",eff:1,ex:"We hand over and you take the reins."},{v:"us",label:"Us — a care plan",desc:"We keep it running.",eff:1,ex:"Ongoing care, security and improvements."},{v:"ns",label:"Not sure",desc:"Decide later.",eff:1,ex:"We'll recommend an option."}]}
+   ],
+   special:"budget"
+ },
+ { key:"else", kicker:"Anything else", sh:"Last thing — anything special?", sp:"In your own words. The panel saves with all of this.", special:"free" }
+];
+const N=STEPS.length, DEF={1:2,2:5,3:8};
+let cur=0, focus=null; const done=new Set();
+const ans={ single:{}, multi:{}, effort:{}, touched:new Set(), have:{}, budget:5000, free:"", notes:"", cap:{files:0, colours:[], links:[]} };
+const HAVE=["Domain name","Hosting","Brand — logo & colours","Photography","Written copy","An existing website","Social media accounts"];
+const ROLES=["Primary","Secondary","Tertiary","Colour 4","Colour 5","Colour 6","Colour 7","Colour 8","Colour 9","Colour 10"];
+
+const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
+function deepenOn(i){ const s=STEPS[i]; return s.deepen && ans.single[s.deepen.when.key]===s.deepen.when.val; }
+function condMet(i){ const s=STEPS[i]; if(!s.cond) return true; return (ans.multi[s.cond.key]||[]).includes(s.cond.val); }
+function effRag(v){ return v<=3.5?"g":v<=6.6?"a":"r"; }
+function ragColor(r){ return r==="g"?"var(--green)":r==="a"?"var(--amber)":r==="r"?"var(--red)":"var(--todo)"; }
+function optEff(gk,o){ const k=`o:${gk}:${o.v}`; return ans.effort[k]!=null?ans.effort[k]:DEF[o.eff||1]; }
+function dialEff(dk){ return ans.effort[`d:${dk}`]!=null?ans.effort[`d:${dk}`]:0; }
+function findOpt(gk,ov){ for(const s of STEPS){ for(const g of (s.groups||[])){ if(g.key===gk){ const o=g.opts.find(x=>x.v===ov); if(o) return {g,o}; } } } return null; }
+function sectionData(i){
+  const s=STEPS[i], units=[];
+  if(s.special==="have"){ const opts=[]; HAVE.forEach((h,k)=>{const v=ans.have[k]; if(v) opts.push({label:h, eff:v==='yes'?2:6});}); if(opts.length) units.push({label:"Your assets", opts, eff:avg(opts.map(o=>o.eff))}); }
+  else {
+    (s.groups||[]).forEach(g=>{ const sel = g.type==='single' ? (ans.single[g.key]?[g.opts.find(o=>o.v===ans.single[g.key])]:[]) : (ans.multi[g.key]||[]).map(v=>g.opts.find(o=>o.v===v)).filter(Boolean);
+      if(sel.length){ const opts=sel.map(o=>({label:o.label, eff:optEff(g.key,o)})); units.push({label:g.q.replace(/\?$/,""), opts, eff:avg(opts.map(o=>o.eff))}); } });
+    if(deepenOn(i)){ s.deepen.dials.forEach(d=>{ if(ans.touched.has(`d:${d.key}`)){ const e=dialEff(d.key); units.push({label:d.label, opts:[{label:e+"/10", eff:e}], eff:e}); } }); }
+    if(s.special==="budget" && ans.budget!=null) units.push({label:"Budget", opts:[{label:'£'+(+ans.budget).toLocaleString(), eff:2}], eff:2});
+    if(s.special==="free" && ans.free.trim()) units.push({label:"Notes", opts:[{label:'Added', eff:2}], eff:2});
+  }
+  const all=units.flatMap(u=>u.opts.map(o=>o.eff));
+  return {units, eff: all.length? avg(all): null};
+}
+function overallEff(){ const all=[]; for(let i=0;i<N;i++){ if(done.has(i)){ const d=sectionData(i); if(d.eff!=null) all.push(d.eff); } } return all.length? avg(all): null; }
+
+/* DIAL */
+const CX=130,CY=130,GAP=2.4,R=[[46,72],[77,97],[101,123]];
+function polar(r,deg){ const a=(deg-90)*Math.PI/180; return [CX+r*Math.cos(a), CY+r*Math.sin(a)]; }
+function seg(ri,ro,a0,a1){ if(a1<=a0) return ""; const [x1,y1]=polar(ro,a1),[x2,y2]=polar(ro,a0),[x3,y3]=polar(ri,a0),[x4,y4]=polar(ri,a1); const large=(a1-a0)<=180?0:1; return `<path class="seg click" d="M${x1} ${y1} A${ro} ${ro} 0 ${large} 0 ${x2} ${y2} L${x3} ${y3} A${ri} ${ri} 0 ${large} 1 ${x4} ${y4} Z"`; }
+function renderDial(){
+  const stepA=360/N; let s="";
+  for(let i=0;i<N;i++){ const a0=i*stepA+GAP/2,a1=(i+1)*stepA-GAP/2,data=sectionData(i),focusS=i===cur,op=focusS?1:0.42;
+    let f1=done.has(i)?(data.eff!=null?ragColor(effRag(data.eff)):"var(--todo)"):(focusS?"var(--curgrey)":"var(--todo)");
+    s+=`${seg(R[0][0],R[0][1],a0,a1)} fill="${f1}" stroke="#fff" stroke-width="1.5" opacity="${done.has(i)||focusS?1:0.75}" onclick="sJump(${i})"><title>${i+1}. ${STEPS[i].kicker}</title></path>`;
+    if(data.units.length){ const uStep=(a1-a0)/data.units.length;
+      data.units.forEach((u,ui)=>{ const u0=a0+ui*uStep,u1=a0+(ui+1)*uStep;
+        s+=`${seg(R[1][0],R[1][1],u0+0.6,u1-0.6)} fill="${ragColor(effRag(u.eff))}" stroke="#fff" stroke-width="1" opacity="${op}" onclick="sJump(${i})"><title>${u.label}</title></path>`;
+        const oStep=(u1-u0)/u.opts.length; u.opts.forEach((o,oi)=>{ const b0=u0+oi*oStep,b1=u0+(oi+1)*oStep;
+          s+=`${seg(R[2][0],R[2][1],b0+0.5,b1-0.5)} fill="${ragColor(effRag(o.eff))}" stroke="#fff" stroke-width="0.8" opacity="${op}"><title>${o.label} · effort ${Math.round(o.eff)}/10</title></path>`; }); });
+    } else { s+=`${seg(R[1][0],R[1][1],a0,a1)} fill="var(--todo)" stroke="#fff" stroke-width="1" opacity="${focusS?0.6:0.3}"></path>${seg(R[2][0],R[2][1],a0,a1)} fill="var(--todo)" stroke="#fff" stroke-width="1" opacity="${focusS?0.45:0.25}"></path>`; }
+  }
+  const pc=Math.round(done.size/N*100),oe=overallEff(),oer=oe!=null?effRag(oe):"t",oeTxt={g:"LIGHT",a:"MEDIUM",r:"HEAVY",t:"—"}[oer],oeCol={g:"var(--green)",a:"var(--amber)",r:"var(--red)",t:"var(--faint)"}[oer];
+  s+=`<circle class="hubc" cx="130" cy="130" r="44"></circle><g class="hub"><text class="lb" x="130" y="118" text-anchor="middle">COMPLETE</text><text class="pc" x="130" y="140" text-anchor="middle">${pc}%</text><text class="ef" x="130" y="154" text-anchor="middle" fill="${oeCol}">EFFORT ${oeTxt}</text></g>`;
+  document.getElementById("dial").innerHTML=s; renderReadout(); renderCaptured();
+}
+function renderReadout(){ const i=cur,data=sectionData(i),eff=data.eff!=null?effRag(data.eff):"t",effTxt={g:"LIGHT",a:"MEDIUM",r:"HEAVY",t:"—"}[eff];
+  let h=`<div class="readtitle">READOUT · SECTION ${i+1} / ${N}</div><div class="readname">${STEPS[i].kicker}<span class="effpill ${eff}">EFFORT ${effTxt}</span></div>`;
+  if(data.units.length){ h+=`<div class="runits">`+data.units.map(u=>`<div class="runit"><span class="ul">${u.label}:</span> <span class="uo">${u.opts.map(o=>o.label).join(", ")}</span></div>`).join("")+`</div>`; }
+  else h+=`<div class="rnone">Nothing answered here yet.</div>`;
+  document.getElementById("readout").innerHTML=h;
+}
+function renderCaptured(){ const c=ans.cap,chips=[]; const total=c.files+c.colours.length+c.links.length+(ans.notes.trim()?1:0);
+  const bd=document.getElementById("capBadge"); if(bd){ bd.style.display=total?"inline-block":"none"; bd.textContent=total; }
+  const el=document.getElementById("captured"); if(!el) return;
+  if(c.files) chips.push(`<span class="capchip">📄 ${c.files} file${c.files>1?'s':''}</span>`);
+  if(c.colours.length) chips.push(`<span class="capchip">🎨 ${c.colours.length} colour${c.colours.length>1?'s':''}</span>`);
+  if(c.links.length) chips.push(`<span class="capchip">🔗 ${c.links.length} link${c.links.length>1?'s':''}</span>`);
+  if(ans.notes.trim()) chips.push(`<span class="capchip">✎ notes</span>`);
+  el.innerHTML=`<span class="cl">✨ CAPTURED</span>`+(chips.length?chips.join(""):`<span class="capnone">nothing added to your panel yet</span>`);
+}
+/* LEFT */
+function optRow(g,o){ const sel=g.type==="single"?ans.single[g.key]===o.v:(ans.multi[g.key]||[]).includes(o.v); const foc=focus===`${g.key}:${o.v}`;
+  return `<div class="opt ${g.type==='single'?'round':''} ${sel?'on':''} ${foc?'foc':''}" onclick="sPick('${g.key}','${o.v}','${g.type}')"><div class="cb">${sel?'✓':''}</div><div class="otln"><span class="ot">${o.label}</span> <span class="od">— ${o.desc}</span></div></div>`; }
+function groupHTML(g){ return `<div class="qg"><div class="qt">${g.q}${g.isnew?' <span class="new">new</span>':''}</div>${g.opts.map(o=>optRow(g,o)).join("")}</div>`; }
+function renderStep(){
+  const s=STEPS[cur];
+  document.getElementById("kicker").textContent=s.kicker; document.getElementById("sh").textContent=s.sh;
+  document.getElementById("sp").textContent=(s.cond && !condMet(cur))?"Only applies if you chose an online shop — skip it, or add one.":s.sp;
+  document.getElementById("stepct").textContent=`STEP ${cur+1} / ${N}`;
+  document.getElementById("backBtn").disabled=cur===0; document.getElementById("nextBtn").textContent=cur===N-1?"Build my blueprint →":"Next →";
+  document.getElementById("skipLink").style.display=(s.cond && !condMet(cur))?"inline":"none";
+  let body="";
+  if(s.cond && !condMet(cur)){ body=`<p class="sp" style="margin-top:14px">Nothing to size here yet.</p><button class="btn" onclick="sJump(2)">← Add an online shop</button>`; }
+  else if(s.special==="have"){ body=HAVE.map((h,k)=>`<div class="tri"><span class="tl">${h}</span><span class="tg"><button class="yes ${ans.have[k]==='yes'?'on':''}" onclick="setHave(${k},'yes')">Yes</button><button class="no ${ans.have[k]==='no'?'on':''}" onclick="setHave(${k},'no')">No — help me</button><button class="na ${ans.have[k]==='na'?'on':''}" onclick="setHave(${k},'na')">Not sure</button></span></div>`).join(""); }
+  else {
+    body=(s.groups||[]).map(groupHTML).join("");
+    if(s.special==="budget"){ body+=`<div class="qg"><div class="qt">Budget comfort <span class="new">soft · optional</span></div><div class="budget"><div class="bval" id="bval">£${(+ans.budget).toLocaleString()}</div><input type="range" min="1000" max="25000" step="500" value="${ans.budget||5000}" oninput="onBudget(this.value)"><div class="brow"><span>£1k</span><span>£25k+</span></div><label class="rns"><input type="checkbox" onchange="onRns(this.checked)"> Rather not say</label></div></div>`; }
+    if(s.special==="free") body+=`<textarea class="free" placeholder="Anything unusual or specific…" oninput="ans.free=this.value; renderDial();">${ans.free}</textarea>`;
+  }
+  document.getElementById("stepbody").innerHTML=body;
+}
+/* RIGHT */
+function effSliderHTML(key,val,ex){ const rag=effRag(val);
+  return `<div class="esl"><div class="esl-lab">Effort <span class="epc ${rag}">${val}/10</span></div><div class="rex">${ex||GEN}</div><input type="range" min="0" max="10" step="1" value="${val}" oninput="setEffort('${key}',this.value)"><div class="row"><span>light</span><span>heavy</span></div></div>`; }
+function renderRight(){
+  const s=STEPS[cur]; let h="";
+  if(s.special==="have"){ h=`<div class="rlbl">Detail</div><div class="rname">What you've got</div><div class="rhint">These tell us what to provide — every “No” adds the matching help to your brief. Nothing to tune here.</div>`; }
+  else if(s.special==="budget"||s.special==="free"){ h=`<div class="rlbl">Detail</div><div class="rname">${s.kicker}</div><div class="rhint">Fill this in on the left — it feeds your brief directly.</div>`; }
+  else if(!focus){ h=`<div class="rlbl">Detail</div><div class="rname">Nothing focused yet</div><div class="rhint">Click a choice on the left and it opens here — just that one — so you can read what it means and set its effort.</div>`; }
+  else if(focus==="build:redesign"){ const dp=STEPS[0].deepen;
+    h=`<div class="rlbl">Focused</div><div class="rname">Redesign</div><div class="rex">Tell us what's driving it, then push each area as far as you like.</div>
+       <div class="rsub">${dp.drivers.q}</div><div class="rlist">${dp.drivers.opts.map(o=>{const on=(ans.multi.rdrivers||[]).includes(o.v); return `<div class="li ${on?'on':''}" onclick="toggleDriver('${o.v}')"><div class="cb">${on?'✓':''}</div><div class="otln"><span class="ot">${o.label}</span> <span class="od">— ${o.desc}</span></div></div>`;}).join("")}</div>
+       <div class="rsub">How far to push each area</div>${dp.dials.map(d=>`<div class="rblock"><div class="bl">${d.label}</div><div class="bx">${d.ex}</div>${effSliderHTML('d:'+d.key,dialEff(d.key),'')}</div>`).join("")}`;
+  }
+  else { const [gk,ov]=focus.split(":"); const f=findOpt(gk,ov); if(f){ const {g,o}=f; const key=`o:${gk}:${ov}`; const val=optEff(gk,o);
+    h=`<div class="rlbl">Focused · ${g.q.replace(/\?$/,"")}</div><div class="rname">${o.label}</div>${effSliderHTML(key,val,o.ex)}`;
+  } else h=`<div class="rhint">Click a choice on the left to focus it here.</div>`; }
+  document.getElementById("rpanel").innerHTML=h;
+}
+/* THOUGHTS */
+function renderThoughts(){
+  const c=ans.cap;
+  const pal = c.colours.length ? `<div class="pal">${c.colours.map((hex,i)=>`<div class="palrow"><span class="role">${ROLES[i]||('#'+(i+1))}</span><span class="sw2" style="background:${hex}"></span><span class="hx">${hex}</span><button class="rm" onclick="rmColour(${i})">×</button></div>`).join("")}</div>` : `<div class="chint">No colours yet — open the Colour Studio or type a code.</div>`;
+  const links = c.links.length ? c.links.map((l,i)=>`<div class="linkitem"><span>🔗</span><div>${l.url}${l.note?'<br><span style="color:var(--muted)">'+l.note+'</span>':''}</div><button class="rm" onclick="rmLink(${i})">×</button></div>`).join("") : "";
+  document.getElementById("capbody").innerHTML=`
+    <div class="ci">💡 Add anything that helps us picture what you have in mind — a brief, screenshots, your colours, or websites you like. Keep adding as you go. Nothing here is required. (Please don't upload personal data.)</div>
+    <div class="csec"><div class="ch">📄 Files &amp; screenshots</div><div class="dz" onclick="addFile()">⬆️ Drag files here<br><span style="font-size:11px">click to browse · or paste a screenshot</span></div>${c.files?`<div class="chint">${c.files} file(s) added — each gets a row + an "explain this file" note.</div>`:""}</div>
+    <div class="csec"><div class="ch">🎨 Colours</div>
+      <div class="crow"><button class="studio" onclick="addColourFromPicker()">🎨 Colour Studio</button><input type="color" id="cpick" value="#1c1c1c"><input type="text" id="chex" placeholder="#hex / code"><button class="add" onclick="addColourHex()">Add</button></div>
+      <div class="chint">Studio: pick from images, a screen snapshot, or anywhere on screen; magnify to the pixel; set how heavy each colour is. Order sets the role — Primary, Secondary, Tertiary. Up to 10.</div>${pal}</div>
+    <div class="csec"><div class="ch">🔗 Websites you like</div>
+      <div class="lrow"><input id="lurl" placeholder="https://a-site-you-like.com"></div>
+      <div class="laddrow"><input id="lnote" placeholder="What do you like about it?"><button onclick="addLink()">Add</button></div>${links}</div>
+    <div class="csec"><div class="ch">✎ Notes</div><textarea class="cnotes" placeholder="Anything else you'd like us to know — the more detail about your business, your customers and your taste, the better." oninput="ans.notes=this.value; renderCaptured();">${ans.notes}</textarea></div>`;
+}
+/* handlers */
+function sRender(){ renderStep(); renderRight(); renderDial(); }
+function sPick(gk,ov,type){ const key=`${gk}:${ov}`; const selected = type==='single'?ans.single[gk]===ov:(ans.multi[gk]||[]).includes(ov);
+  if(selected && focus!==key){ focus=key; sRender(); return; }
+  if(type==="single"){ ans.single[gk]=(ans.single[gk]===ov?undefined:ov); } else { const a=ans.multi[gk]||(ans.multi[gk]=[]); const idx=a.indexOf(ov); idx>=0?a.splice(idx,1):a.push(ov); }
+  const nowSel = type==='single'?ans.single[gk]===ov:(ans.multi[gk]||[]).includes(ov);
+  focus = nowSel?key:(focus===key?null:focus); sRender();
+}
+function toggleDriver(v){ const a=ans.multi.rdrivers||(ans.multi.rdrivers=[]); const i=a.indexOf(v); i>=0?a.splice(i,1):a.push(v); renderRight(); renderDial(); }
+function setEffort(key,v){ ans.effort[key]=+v; ans.touched.add(key); renderRight(); renderDial(); }
+function setHave(k,v){ ans.have[k]=v; sRender(); }
+function onBudget(v){ ans.budget=+v; const b=document.getElementById("bval"); if(b)b.textContent="£"+(+v).toLocaleString(); renderDial(); }
+function onRns(c){ ans.budget=c?null:5000; const b=document.getElementById("bval"); if(b)b.textContent=c?"Rather not say":"£5,000"; renderDial(); }
+function sNext(){ done.add(cur); if(cur<N-1){ cur++; focus=null; sRender(); window.scrollTo({top:0,behavior:'smooth'}); } else { done.add(cur); renderDial(); showPage('blueprint'); } }
+function sBack(){ if(cur>0){ cur--; focus=null; sRender(); } }
+function sJump(i){ done.add(cur); cur=i; focus=null; sRender(); }
+/* Thoughts actions */
+function openPanel(){ document.getElementById("capstrip").classList.add("open"); document.body.classList.add("cap-open"); renderThoughts(); }
+function closePanel(){ document.getElementById("capstrip").classList.remove("open"); document.body.classList.remove("cap-open"); }
+function addFile(){ ans.cap.files++; renderThoughts(); renderCaptured(); }
+function addColourHex(){ const el=document.getElementById("chex"); const v=(el&&el.value.trim())||""; if(v && ans.cap.colours.length<10){ ans.cap.colours.push(v); el.value=""; renderThoughts(); renderCaptured(); } }
+function addColourFromPicker(){ const el=document.getElementById("cpick"); if(el && ans.cap.colours.length<10){ ans.cap.colours.push(el.value); renderThoughts(); renderCaptured(); } }
+function rmColour(i){ ans.cap.colours.splice(i,1); renderThoughts(); renderCaptured(); }
+function addLink(){ const u=document.getElementById("lurl"), n=document.getElementById("lnote"); if(u&&u.value.trim()){ ans.cap.links.push({url:u.value.trim(), note:(n&&n.value.trim())||""}); u.value=""; if(n)n.value=""; renderThoughts(); renderCaptured(); } }
+function rmLink(i){ ans.cap.links.splice(i,1); renderThoughts(); renderCaptured(); }
+
+/* ===== DERIVE (blueprint + plan read the session) ===== */
+const BUILD={new:"a brand-new website",redesign:"a redesign of your existing site",upgrade:"an upgrade to your current site"};
+const STAGE={starting:"As a new venture, the priority is getting found and looking credible from day one.",established:"As an established name, the priority is looking the part and reinforcing trust.",growing:"Growing fast, the priority is a site that keeps up — more pages, features and scale."};
+const GOAL={enquiries:"turning visitors into enquiries",sell:"selling online",credible:"looking credible and winning trust",admin:"saving you admin time",reach:"reaching new audiences"};
+const TIERS=[["Launch Lite",750,1500],["SME Launch",1500,3500],["SME Growth",3500,7500],["SME Operating",7500,12500],["Bespoke",12500,20000]];
+const CARE={0:"Care Lite (£39/mo)",1:"Care Plus (£99/mo)",2:"Care Pro (£249/mo)"};
+function groupOf(gk){ for(const s of STEPS) for(const g of (s.groups||[])) if(g.key===gk) return g; return null; }
+function selectedOf(gk){ const g=groupOf(gk); if(!g) return []; return g.type==='single'?(ans.single[gk]?[ans.single[gk]]:[]):(ans.multi[gk]||[]); }
+function deriveSitemap(){ const t=ans.multi.type||[]; const sv=ans.multi.services||[]; const p=["Home","About","Contact"];
+  if(t.includes("brochure")||t.includes("lead")) p.splice(2,0,"Services");
+  if(t.includes("shop")) p.push("Shop");
+  if(t.includes("blog")||sv.includes("blog")) p.push("Blog");
+  if(t.includes("booking")||(ans.multi.visitor||[]).includes("book")) p.push("Book");
+  if(t.includes("portfolio")) p.push("Portfolio");
+  if(t.includes("members")||(ans.multi.visitor||[]).includes("login")) p.push("Members");
+  return [...new Set(p)]; }
+function computeDerived(){
+  let pts=0;
+  ["type","services","selling","pay","visitor","owner"].forEach(gk=>{ const g=groupOf(gk); selectedOf(gk).forEach(v=>{ const o=g.opts.find(x=>x.v===v); if(o) pts += 2*(1+optEff(gk,o)/10); }); });
+  if(deepenOn(0)) STEPS[0].deepen.dials.forEach(d=>{ if(ans.touched.has('d:'+d.key)) pts += dialEff(d.key)/2; });
+  const sitemap=deriveSitemap(); pts += sitemap.length*1.3;
+  if(ans.single.prod==="250"||ans.single.prod==="250+") pts+=10;
+  const tier = pts<20?0:pts<45?1:pts<85?2:pts<140?3:4;
+  const readyYes=Object.values(ans.have).filter(v=>v==="yes").length; const readiness=Math.round(readyYes/HAVE.length*100);
+  const care = ans.single.aftercare==="us"? (tier>=3?2:tier>=2?1:0) : (tier>=3?2:tier>=1?1:0);
+  return {pts:Math.round(pts), tier, tierName:TIERS[tier][0], low:TIERS[tier][1], high:TIERS[tier][2], sitemap, readiness, care};
+}
+function speedWeeks(){ return {asap:"2–3",month:"~4",13:"6–8",36:"10–12",norush:"flexible"}[ans.single.speed]||"4–6"; }
+
+/* ===== BLUEPRINT ===== */
+function chosenComponents(){ const out=[]; (ans.multi.type||[]).forEach(v=>{const o=groupOf("type").opts.find(x=>x.v===v); out.push({label:o.label, eff:optEff("type",o)});}); (ans.multi.services||[]).forEach(v=>{const o=groupOf("services").opts.find(x=>x.v===v); out.push({label:o.label, eff:optEff("services",o)});}); return out; }
+function renderBlueprint(){
+  const answered = Object.keys(ans.single).length || (ans.multi.type||[]).length;
+  const d=computeDerived();
+  let comps = chosenComponents();
+  const compRows = comps.length? comps.map(c=>`<tr><td>${c.label}</td><td><span class="epc ${effRag(c.eff)}">${Math.round(c.eff)}/10</span></td><td class="small muted">deliverable level scales with effort</td></tr>`).join("") : `<tr><td colspan="3" class="muted small">No components chosen yet — go back to Scoping.</td></tr>`;
+  document.getElementById("bpbody").innerHTML=`
+    <div class="eyebrow">Blueprint</div><h1>Your blueprint.</h1>
+    <p class="lead">Resolved from your answers — a starting point, so nudge anything. ${answered?"":"<b>Tip:</b> run the Scoping journey first and this fills in."}</p>
+    <div class="block grid g3">
+      <div class="card center"><div class="kpi">${d.tierName}<small>SUGGESTED PACKAGE</small></div></div>
+      <div class="card center"><div class="kpi">£${d.low.toLocaleString()}–${d.high.toLocaleString()}<small>INDICATIVE BUILD</small></div></div>
+      <div class="card center"><div class="kpi">${d.readiness}/100<small>READINESS</small></div></div>
+    </div>
+    <div class="block"><h2>Your site map (we worked this out)</h2><p class="small muted">Derived from what your site needs to do — confirm or edit.</p><div>${d.sitemap.map(p=>`<span class="tag">${p}</span>`).join("")}</div></div>
+    <div class="block"><h2>Your components &amp; scope</h2><table><tr><th>Component</th><th>Effort</th><th>Deliverable</th></tr>${compRows}</table><p class="small muted">Each component's deliverable level (Template → Bespoke) unlocks as its effort rises.</p></div>
+    <div class="block"><h2>Timeline &amp; care</h2><p class="small muted">Target live: ${speedWeeks()} weeks · Suggested aftercare: ${CARE[d.care]}.</p></div>
+    <div class="btnrow"><button class="btn" onclick="showPage('scope')">← Back to scoping</button><button class="b1" onclick="showPage('plan')">See my full plan →</button></div>`;
+}
+
+/* ===== PLAN ===== */
+function renderPlan(){
+  const d=computeDerived();
+  const build=ans.single.build, stage=ans.single.stage, goal=ans.single.goal;
+  const haveList=HAVE.map((h,k)=>({h,v:ans.have[k]})).filter(x=>x.v);
+  const gaps=haveList.filter(x=>x.v!=="yes").map(x=>x.h);
+  const services=(ans.multi.services||[]).map(v=>groupOf("services").opts.find(o=>o.v===v).label);
+  const cols=ans.cap.colours, links=ans.cap.links;
+  document.getElementById("planbody").innerHTML=`
+    <div class="eyebrow">Your website plan</div><h1>Your website plan.</h1>
+    <p class="small muted">Reference TCT-2026-0725 · valid 3 days · produced instantly from your session.</p>
+    <div class="block"><h2>What we're building &amp; why</h2>
+      <p>We're delivering <b>${BUILD[build]||"your website"}</b>, focused on <b>${GOAL[goal]||"your goal"}</b>. ${STAGE[stage]||""}</p></div>
+    <div class="block"><h2>What you have → where we help</h2>
+      ${haveList.length? `<table><tr><th>Item</th><th>Status</th></tr>${haveList.map(x=>`<tr><td>${x.h}</td><td>${x.v==="yes"?"You have it":x.v==="no"?"We provide":"We'll advise"}</td></tr>`).join("")}</table>` : `<p class="muted small">Complete the "what you've got" step to populate this.</p>`}
+      ${gaps.length?`<p class="small">We'll provide: ${gaps.join(", ")}.</p>`:""}
+      <p class="small muted">Readiness: ${d.readiness}/100.</p></div>
+    <div class="block"><h2>Your site map</h2><div>${d.sitemap.map(p=>`<span class="tag">${p}</span>`).join("")}</div><p class="small muted">A ${d.sitemap.length}-page site, worked out from your goals.</p></div>
+    <div class="block"><h2>Scope &amp; deliverables</h2><table><tr><th>Component</th><th>Effort</th></tr>${chosenComponents().map(c=>`<tr><td>${c.label}</td><td><span class="epc ${effRag(c.eff)}">${Math.round(c.eff)}/10</span></td></tr>`).join("")||'<tr><td colspan=2 class="muted small">Add types/services in scoping.</td></tr>'}</table></div>
+    ${services.length?`<div class="block"><h2>Getting found &amp; growing</h2><p class="small">Delivered with our partners: ${services.join(", ")}.</p></div>`:""}
+    <div class="block"><h2>Timeline &amp; investment</h2>
+      <p><b>Target live:</b> ${speedWeeks()} weeks.</p>
+      <p><b>Build:</b> ${d.tierName} — <b>£${d.low.toLocaleString()}–£${d.high.toLocaleString()}</b> (indicative). <b>Care:</b> ${CARE[d.care]}.</p>
+      <p class="small muted">You own the site and every account. No lock-in.</p></div>
+    <div class="block"><h2>Your inspiration</h2>
+      ${cols.length?`<p class="small"><b>Colours:</b> ${cols.map((c,i)=>`${ROLES[i]||'#'+(i+1)} ${c}`).join(" · ")}</p>`:""}
+      ${links.length?`<p class="small"><b>Sites you liked:</b> ${links.map(l=>l.url+(l.note?` (${l.note})`:"")).join(" · ")}</p>`:""}
+      ${ans.cap.files?`<p class="small"><b>Files:</b> ${ans.cap.files} added.</p>`:""}
+      ${ans.notes.trim()?`<p class="small"><b>Notes:</b> ${ans.notes}</p>`:""}
+      ${(!cols.length&&!links.length&&!ans.cap.files&&!ans.notes.trim())?`<p class="muted small">Nothing added — open the ✨ panel to include colours, sites and notes.</p>`:""}</div>
+    <div class="block"><h2>Three ways to finish</h2><div class="btnrow"><button class="b1" onclick="showPage('contact')">Book a call to walk through it</button><button class="b2" onclick="showPage('contact')">Send it to us</button><button class="b2" onclick="showPage('contact')">Email a copy to myself</button></div></div>`;
+}
+
+/* INIT */
+showPage('home'); sRender(); renderCaptured();
+</script>
+</body>
+</html>

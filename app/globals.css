@@ -2,107 +2,79 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* The prototype is light only. Keeping the class based dark variant means the
-   `dark:` utilities inside shadcn components still compile, but never match,
-   because `.dark` is never applied. */
+/* Light only. Keeping the class based dark variant means the `dark:` utilities
+   inside shadcn components still compile, but never match, because `.dark` is
+   never applied. */
 @custom-variant dark (&:is(.dark *));
 
 /* ---------------------------------------------------------------------------
-   Portal Grid tokens
+   TwinCoreTech design tokens
 
-   Lifted from option 2a of the design canvas in Docs/: light SaaS surfaces,
-   gradient accents, mono microcopy, a handwritten aside. The prototype carried
-   every value as an inline style; they live here instead so a brand change is a
-   one file change.
+   Lifted from Docs/artifacts/1_landing_1.html, whose :root block is marked
+   "Shared design tokens - Claude Design can retheme from here". The RAG and
+   panel values come from Docs/artifacts/twincoretech_site.html, the mono
+   baseline that carries the real IA.
 
-   Reference: Docs/source/Web Studio Page.dc.html, lines 1385 to 1679.
+   Artifact name  ->  token here
+     --ink              --color-ink
+     --muted            --color-body      (renamed: shadcn owns "muted")
+     --faint            --color-faint
+     --line             --color-line
+     --bg               --color-bg
+     --card             use bg-card, mapped below
+     --accent           --color-brand     (renamed: shadcn owns "accent")
+     --soft             --color-soft
+     --green            --color-ok
 --------------------------------------------------------------------------- */
 @theme {
-  /* Type: Manrope carries the UI, IBM Plex Mono the microcopy, Caveat the
-     handwritten asides. */
-  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, Menlo, monospace;
-  --font-script: var(--font-caveat), ui-rounded, cursive;
+  /* System stack. The artifacts use no webfont, so neither do we: nothing to
+     download, nothing to shift on load. */
+  --font-sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial,
+    sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* Ink ramp, darkest to faintest */
-  --color-ink: #232733;
-  --color-ink-2: #1f2430;
-  --color-ink-3: #5b6472;
-  --color-ink-4: #98a0ad;
-  --color-ink-5: #a6aeba;
-  --color-ink-6: #b4bbc6;
-  --color-ink-7: #c0c7d2;
+  /* Ink and text */
+  --color-ink: #12233b;
+  --color-body: #5b6675;
+  --color-faint: #9aa2ae;
 
-  /* Microcopy grey and the handwriting grey, both specific to 2a */
-  --color-mono: #8b93a1;
-  --color-aside: #6b7280;
-
-  /* Surfaces */
-  --color-canvas: #f7f8fb;
-  --color-surface: #ffffff;
-  --color-sunken: #f6f8fb;
-  --color-chip: #f1f3f7;
-  /* Unlit portal circle */
-  --color-portal: #edf0f4;
-
-  /* Lines */
-  --color-hairline: #e7eaf0;
-  --color-hairline-soft: #eef1f6;
-  --color-hairline-dashed: #d9dee7;
-  --color-tick-border: #c9d0db;
-  /* Heavier edge used on secondary buttons and steppers */
-  --color-edge: #e0e4eb;
+  /* Surfaces and lines */
+  --color-bg: #f4f6fa;
+  --color-line: #e4e8ee;
+  --color-soft: #eaf2fb;
 
   /* Brand */
-  --color-brand: #7c3aed;
-  --color-brand-tint: #f5f1fe;
-  --color-brand-edge: #ded2fb;
-  /* The live pulse in the estimate card */
-  --color-live: #10b981;
+  --color-brand: #2f6fb0;
+  --color-ok: #22c55e;
 
-  /* Accent set the section headings and portal gradients draw from */
-  --color-accent-amber: #f59e0b;
-  --color-accent-pink: #ec4899;
-  --color-accent-violet: #8b5cf6;
-  --color-accent-emerald: #10b981;
-  --color-accent-blue: #3b82f6;
-  --color-accent-teal: #14b8a6;
-  --color-accent-orange: #f97316;
-  --color-accent-indigo: #6366f1;
-  --color-accent-sky: #0ea5e9;
-  --color-accent-fuchsia: #d946ef;
-  --color-accent-slate: #64748b;
+  /* Scoping dial, from the mono baseline. RAG here is semantic, not decorative:
+     it reads effort per component, so these keep their own names. */
+  --color-rag-green: #2fa36b;
+  --color-rag-amber: #e8a13a;
+  --color-rag-red: #e2574c;
+  --color-rag-todo: #e3e3e3;
 
-  /* Scope section accents */
-  --color-scope-structure: #7c3aed;
-  --color-scope-sections: #2563eb;
-  --color-scope-content: #0d9488;
-  --color-scope-legal: #64748b;
-  --color-scope-foundation: #f97316;
+  /* The Thoughts and inspiration panel */
+  --color-panel: #141414;
 
-  /* Radii: picker panel 20, cards 18, inner 14, buttons 12, rows 10, ticks 5 */
-  --radius-panel: 20px;
-  --radius-card: 18px;
-  --radius-inner: 14px;
-  --radius-cta: 12px;
-  --radius-row: 10px;
-  --radius-tick: 5px;
+  /* Content widths: 820 for the landing, 1000 for the site pages */
+  --container-landing: 820px;
+  --container-page: 1000px;
 
-  --ease-out-soft: cubic-bezier(0.32, 0.72, 0, 1);
+  /* Radii */
+  --radius-card: 14px;
+  --radius-card-sm: 12px;
+  --radius-btn: 12px;
+  --radius-btn-sm: 9px;
+  --radius-tile: 10px;
+  --radius-nav: 7px;
+  --radius-pill: 20px;
 
-  /* The prototype's one entrance animation */
-  --animate-rise: rise 0.6s ease both;
-
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(14px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
+  /* Elevation */
+  --shadow-card: 0 1px 3px rgba(16, 32, 60, 0.04);
+  --shadow-cta: 0 4px 14px rgba(47, 111, 176, 0.28);
+  --shadow-cta-hover: 0 6px 18px rgba(47, 111, 176, 0.35);
+  --shadow-featured: 0 6px 20px rgba(47, 111, 176, 0.14);
 }
 
 /* ---------------------------------------------------------------------------
@@ -110,7 +82,7 @@
    hand built ones never disagree about a colour.
 --------------------------------------------------------------------------- */
 @theme inline {
-  --font-heading: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -154,39 +126,39 @@
 :root {
   --radius: 0.75rem;
 
-  --background: #f7f8fb;
-  --foreground: #232733;
+  --background: #f4f6fa;
+  --foreground: #12233b;
   --card: #ffffff;
-  --card-foreground: #232733;
+  --card-foreground: #12233b;
   --popover: #ffffff;
-  --popover-foreground: #232733;
-  --primary: #7c3aed;
+  --popover-foreground: #12233b;
+  --primary: #2f6fb0;
   --primary-foreground: #ffffff;
-  --secondary: #f1f3f7;
-  --secondary-foreground: #232733;
-  --muted: #f1f3f7;
-  --muted-foreground: #5b6472;
-  --accent: #f5f1fe;
-  --accent-foreground: #7c3aed;
-  --destructive: #dc2626;
-  --border: #e7eaf0;
-  --input: #e7eaf0;
-  --ring: #7c3aed;
+  --secondary: #eaf2fb;
+  --secondary-foreground: #12233b;
+  --muted: #eaf2fb;
+  --muted-foreground: #5b6675;
+  --accent: #eaf2fb;
+  --accent-foreground: #2f6fb0;
+  --destructive: #e2574c;
+  --border: #e4e8ee;
+  --input: #e4e8ee;
+  --ring: #2f6fb0;
 
-  --chart-1: #f59e0b;
-  --chart-2: #ec4899;
-  --chart-3: #8b5cf6;
-  --chart-4: #10b981;
-  --chart-5: #3b82f6;
+  --chart-1: #2f6fb0;
+  --chart-2: #2fa36b;
+  --chart-3: #e8a13a;
+  --chart-4: #e2574c;
+  --chart-5: #9aa2ae;
 
   --sidebar: #ffffff;
-  --sidebar-foreground: #232733;
-  --sidebar-primary: #7c3aed;
+  --sidebar-foreground: #12233b;
+  --sidebar-primary: #2f6fb0;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f5f1fe;
-  --sidebar-accent-foreground: #7c3aed;
-  --sidebar-border: #e7eaf0;
-  --sidebar-ring: #7c3aed;
+  --sidebar-accent: #eaf2fb;
+  --sidebar-accent-foreground: #2f6fb0;
+  --sidebar-border: #e4e8ee;
+  --sidebar-ring: #2f6fb0;
 }
 
 @layer base {
@@ -211,13 +183,6 @@
     text-align: left;
   }
 
-  /* The mock-up jump assigns scrollTop directly and must stay instant. Smooth
-     scrolling inside the panel was tried and rejected as janky.
-     See Docs/README.md, "Row anchoring". */
-  [data-scope-scroller] {
-    scroll-behavior: auto;
-  }
-
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -234,78 +199,8 @@
 }
 
 @layer utilities {
-  /* The brand gradient, in the two angles the prototype uses. */
-  .bg-rainbow {
-    background-image: linear-gradient(
-      90deg,
-      #f59e0b,
-      #ec4899 40%,
-      #8b5cf6 72%,
-      #10b981
-    );
-  }
-
-  .bg-rainbow-tilt {
-    background-image: linear-gradient(
-      135deg,
-      #f59e0b,
-      #ec4899 45%,
-      #8b5cf6 75%,
-      #10b981
-    );
-  }
-
-  .text-rainbow {
-    background-image: linear-gradient(
-      90deg,
-      #f59e0b,
-      #ec4899 40%,
-      #8b5cf6 72%,
-      #10b981
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  .text-gradient-pink-violet {
-    background-image: linear-gradient(90deg, #ec4899, #8b5cf6);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  /* The lift under the primary call to action. */
-  .shadow-cta {
-    box-shadow: 0 10px 24px -10px rgba(124, 58, 237, 0.55);
-  }
-
-  /* The lift under the estimate card. */
-  .shadow-estimate {
-    box-shadow: 0 18px 40px -28px rgba(35, 39, 51, 0.35);
-  }
-
-  /* Slim scrollbar for the scope panel, which scrolls a lot */
-  .scrollbar-slim {
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-tick-border) transparent;
-  }
-
-  .scrollbar-slim::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  .scrollbar-slim::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .scrollbar-slim::-webkit-scrollbar-thumb {
-    background: var(--color-tick-border);
-    border-radius: 99px;
-  }
-
-  .scrollbar-slim::-webkit-scrollbar-thumb:hover {
-    background: var(--color-ink-5);
+  /* The pale vertical wash the artifacts use behind a closing panel. */
+  .bg-wash {
+    background-image: linear-gradient(180deg, #f7f9fc, #eef3fa);
   }
 }
