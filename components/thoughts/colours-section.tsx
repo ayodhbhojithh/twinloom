@@ -18,10 +18,9 @@ import { WeightSlider } from "./weight-slider";
  * Three ways in: the Colour Studio for picking from images, a screen or anywhere
  * on screen; the system picker; or a typed code.
  *
- * Nothing in here is outlined. The entry row is a recessed fill, the rows below
- * are divided by hairlines, and the Studio button only takes its glow on hover so
- * that it does not sit on the panel shouting louder than the page's own call to
- * action.
+ * Nothing in here is outlined and nothing is filled but the controls. The Studio
+ * button is tinted rather than solid: it is the first thing in the section without
+ * being the loudest thing on the panel, which a full blue slab was.
  */
 export function ColoursSection() {
   const {
@@ -54,7 +53,7 @@ export function ColoursSection() {
       <button
         type="button"
         onClick={openStudio}
-        className="flex h-9 w-full items-center justify-center gap-1.5 rounded-btn-sm bg-brand text-[12px] font-bold text-white transition-all hover:-translate-y-px hover:shadow-cta"
+        className="flex h-9 w-full items-center justify-center gap-1.5 rounded-btn-sm bg-soft text-[12px] font-bold text-brand transition-colors hover:bg-brand hover:text-white"
       >
         <Palette aria-hidden className="size-3.5" />
         Colour Studio
@@ -178,12 +177,12 @@ export function ColoursSection() {
           </ul>
         </>
       ) : (
-        <p className="mt-2.5 rounded-btn-sm bg-panel-bg px-3 py-2.5 text-[11.5px] leading-[1.5] text-faint">
+        <p className="mt-3 text-[11.5px] leading-[1.5] text-faint">
           No colours yet. Open the Colour Studio, pick one, or type a code.
         </p>
       )}
 
-      <p className="mt-2.5 text-[10.5px] leading-[1.5] text-faint">
+      <p className="mt-3 text-[10.5px] leading-[1.5] text-faint">
         Order sets the role: Primary, Secondary, Tertiary. Drag a weight and the
         rest rebalance to 100%.
       </p>

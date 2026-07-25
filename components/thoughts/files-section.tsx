@@ -92,7 +92,7 @@ export function FilesSection() {
                   ) : (
                     <span
                       aria-hidden
-                      className="flex size-8 shrink-0 items-center justify-center rounded-nav bg-white text-brand"
+                      className="flex size-8 shrink-0 items-center justify-center rounded-nav bg-soft text-brand"
                     >
                       <Icon className="size-3.5" />
                     </span>
@@ -122,7 +122,7 @@ export function FilesSection() {
                   onChange={(event) => explainFile(file.id, event.target.value)}
                   placeholder="Explain this file"
                   aria-label={`Explain ${file.name}`}
-                  className="mt-2 h-9 w-full rounded-btn-sm bg-white px-2.5 text-[11.5px] outline-none ring-inset transition-shadow placeholder:text-faint focus:ring-1 focus:ring-brand/45"
+                  className="mt-2 h-9 w-full rounded-btn-sm bg-white px-2.5 text-[11.5px] outline-none ring-1 ring-line ring-inset transition-shadow placeholder:text-faint focus:ring-brand/45"
                 />
               </li>
             );

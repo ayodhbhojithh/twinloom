@@ -80,7 +80,7 @@ export function LinksSection() {
             >
               <span
                 aria-hidden
-                className="mt-px flex size-6 shrink-0 items-center justify-center rounded-nav bg-white text-brand"
+                className="mt-px flex size-6 shrink-0 items-center justify-center rounded-nav bg-soft text-brand"
               >
                 <Link2 className="size-3" />
               </span>

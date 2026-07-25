@@ -76,7 +76,7 @@ export function DropZone({
       <span aria-hidden className="relative block h-[38px] w-[58px]">
         <span
           className={cn(
-            "absolute inset-y-0.5 left-2.5 w-9 rounded-[7px] bg-white transition-transform duration-300 ease-[var(--ease-out-soft)]",
+            "absolute inset-y-0.5 left-2.5 w-9 rounded-[7px] bg-bg ring-1 ring-line ring-inset transition-transform duration-300 ease-[var(--ease-out-soft)]",
             dragging
               ? "-translate-x-2.5 -rotate-[20deg]"
               : "-rotate-[11deg] group-hover/dz:-translate-x-1.5 group-hover/dz:-rotate-[17deg]",
@@ -84,7 +84,7 @@ export function DropZone({
         />
         <span
           className={cn(
-            "absolute inset-y-0.5 right-2.5 w-9 rounded-[7px] bg-white transition-transform duration-300 ease-[var(--ease-out-soft)]",
+            "absolute inset-y-0.5 right-2.5 w-9 rounded-[7px] bg-bg ring-1 ring-line ring-inset transition-transform duration-300 ease-[var(--ease-out-soft)]",
             dragging
               ? "translate-x-2.5 rotate-[20deg]"
               : "rotate-[11deg] group-hover/dz:translate-x-1.5 group-hover/dz:rotate-[17deg]",
@@ -94,7 +94,7 @@ export function DropZone({
           className={cn(
             "absolute inset-y-0 left-1/2 flex w-9 -translate-x-1/2 items-center justify-center rounded-[7px] text-white transition-all duration-300 ease-[var(--ease-out-soft)]",
             dragging
-              ? "-translate-y-1 bg-brand shadow-cta"
+              ? "-translate-y-1 bg-brand"
               : "bg-brand/90 group-hover/dz:-translate-y-0.5 group-hover/dz:bg-brand",
           )}
         >
