@@ -42,14 +42,12 @@ export const SITE = {
  * of these two.
  */
 /**
- * Both point at the three doors for now. The guided journey lives at /scope in
- * the artifacts (2_scoping.html) and is the next thing to build; until it
- * exists, sending people to the section that offers all three ways to start
- * beats a link that does nothing.
+ * The journey is the primary door; "Book a call" is the escape hatch that has to
+ * stay visible everywhere.
  */
 export const PRIMARY_CTA: CallToAction = {
   label: "Scope your website",
-  href: "#contact",
+  href: "/scope",
 };
 
 export const SECONDARY_CTA: CallToAction = {
@@ -57,7 +55,7 @@ export const SECONDARY_CTA: CallToAction = {
   href: "#contact",
 };
 
-/** The scoping journey. Not built yet. */
+/** The scoping journey. */
 export const SCOPE_ROUTE = "/scope";
 
 export const NEWSLETTER = {
@@ -108,7 +106,7 @@ export const FOOTER_NAV: readonly { title: string; items: NavItem[] }[] = [
   {
     title: "Get started",
     items: [
-      { label: "Scope your website", href: "#contact" },
+      { label: "Scope your website", href: "/scope" },
       { label: "Book a call", href: "#contact" },
       { label: "Contact", href: "#contact" },
     ],

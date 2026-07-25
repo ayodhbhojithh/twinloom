@@ -319,9 +319,10 @@
     border-radius: inherit;
   }
 
-  /* The weight slider. The track is filled inline with the colour being
-     weighted, so the control shows the value in the value's own colour. */
-  .weight-slider {
+  /* Range sliders: the palette weights, the studio zoom, the effort dials.
+     The track is filled inline by whatever uses it, so the control can show its
+     value in that value's own colour. */
+  .range-slider {
     appearance: none;
     -webkit-appearance: none;
     height: 6px;
@@ -330,7 +331,7 @@
     background: var(--color-line);
   }
 
-  .weight-slider::-webkit-slider-thumb {
+  .range-slider::-webkit-slider-thumb {
     appearance: none;
     -webkit-appearance: none;
     width: 14px;
@@ -342,7 +343,7 @@
     transition: transform 0.12s ease;
   }
 
-  .weight-slider::-moz-range-thumb {
+  .range-slider::-moz-range-thumb {
     width: 14px;
     height: 14px;
     border-radius: 50%;
@@ -351,11 +352,11 @@
     box-shadow: 0 1px 4px rgba(35, 39, 51, 0.28);
   }
 
-  .weight-slider:active::-webkit-slider-thumb {
+  .range-slider:active::-webkit-slider-thumb {
     transform: scale(1.15);
   }
 
-  .weight-slider:focus-visible {
+  .range-slider:focus-visible {
     outline: 2px solid var(--color-brand);
     outline-offset: 3px;
   }

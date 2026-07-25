@@ -29,7 +29,7 @@ export function WeightSlider({
       value={weight}
       aria-label={label}
       onChange={(event) => onChange(Number(event.target.value))}
-      className="weight-slider min-w-0 flex-1"
+      className="range-slider min-w-0 flex-1"
       style={{
         /* currentColor drives the thumb's ring. */
         color: hex,

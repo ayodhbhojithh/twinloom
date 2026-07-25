@@ -321,7 +321,7 @@ export function ImageStage({
           step={0.1}
           value={zoom}
           onChange={(event) => applyZoom(Number(event.target.value))}
-          className="weight-slider min-w-24 flex-1 text-brand"
+          className="range-slider min-w-24 flex-1 text-brand"
           style={{
             background: `linear-gradient(to right, var(--color-brand) 0%, var(--color-brand) ${((zoom - 1) / 7) * 100}%, var(--color-line) ${((zoom - 1) / 7) * 100}%, var(--color-line) 100%)`,
           }}
