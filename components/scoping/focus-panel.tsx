@@ -13,7 +13,7 @@ import {
 } from "@/lib/scoping";
 import { cn } from "@/lib/utils";
 
-import { EffortSlider } from "./effort-slider";
+import { EffortCard } from "./effort-card";
 import { useScopingSession } from "./scoping-context";
 
 function Shell({
@@ -121,22 +121,15 @@ export function FocusPanel({ className }: { className?: string }) {
           How far to push each area
         </p>
 
-        <div className="mt-3 grid gap-5 sm:grid-cols-2">
+        <div className="mt-3 grid grid-cols-2 gap-2.5">
           {dials.map((dial) => (
-            <div
+            <EffortCard
               key={dial.key}
-              className="rounded-btn-sm border border-line bg-card p-3.5"
-            >
-              <h4 className="text-[13.5px] font-bold">{dial.label}</h4>
-              <div className="mt-2">
-                <EffortSlider
-                  effortKey={dialKey(dial.key)}
-                  value={dialEffort(answers, dial.key)}
-                  explain={dial.explain}
-                  label={dial.label}
-                />
-              </div>
-            </div>
+              effortKey={dialKey(dial.key)}
+              value={dialEffort(answers, dial.key)}
+              explain={dial.explain}
+              label={dial.label}
+            />
           ))}
         </div>
       </Shell>
@@ -156,11 +149,12 @@ export function FocusPanel({ className }: { className?: string }) {
       className={className}
     >
       <div className="mt-3">
-        <EffortSlider
+        <EffortCard
           effortKey={optionKey(group.key, option.value)}
           value={optionEffort(answers, group.key, option)}
           explain={option.explain ?? EFFORT_GENERIC}
           label={option.label}
+          showLabel={false}
         />
       </div>
     </Shell>

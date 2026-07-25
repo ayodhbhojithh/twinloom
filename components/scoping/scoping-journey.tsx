@@ -52,7 +52,7 @@ function Journey() {
         {/* Questions left, detail right. Neither is a card: the left column sits
             on the page and the right one is a soft fill, so the only outlines on
             this screen belong to things you can actually click. */}
-        <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)] lg:gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,380px)]">
+        <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,400px)] lg:gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,470px)]">
           <div className="min-w-0">
             {/* Keyed on the step, so moving section replays the spring rather
                 than swapping the text in place. */}
@@ -92,10 +92,9 @@ function Journey() {
 /**
  * The scoping journey, from TCT_Scope_Spec.md §2.
  *
- * Three zones, stacked by importance rather than side by side. The dial and its
- * readout take the top as one wide slab, the eight sections sit under it as a row
- * of boxes you can jump between, and the questions and their detail share the
- * space below. Orientation first, then the work.
+ * Orientation across the top, work underneath. The stage is one wide slab holding
+ * the dial, the readout for the section in play, and the list of all eight; below
+ * it the questions take the width they need and their detail sits beside them.
  *
  * Nothing here asks for a page count or a site size: both are derived from the
  * answers and confirmed in the Blueprint.

@@ -20,7 +20,10 @@ export function DetailColumn() {
   const { focus } = useScopingSession();
 
   return (
-    <div className="hidden lg:sticky lg:top-[calc(var(--nav-height)+18px)] lg:block">
+    /* Capped to the viewport and scrolled internally. Five knob cards are taller
+       than a laptop screen, and a sticky column taller than the viewport hides its
+       own bottom rows however far you scroll. */
+    <div className="panel-scroll hidden lg:sticky lg:top-[calc(var(--nav-height)+18px)] lg:block lg:max-h-[calc(100svh-var(--nav-height)-36px)] lg:overflow-y-auto">
       {focus ? (
         <FocusPanel />
       ) : (

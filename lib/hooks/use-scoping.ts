@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState } from "react";
 import {
   conditionMet,
   deepenActive,
+  findOption,
   isComplete,
   optionKey,
   overallEffort,
@@ -108,16 +109,23 @@ export function useScoping(): ScopingController {
    * Clicking an option both chooses it and focuses it. Clicking one that is
    * already chosen but not focused only focuses it, so reading what something
    * means never costs you the answer.
+   *
+   * Not everything that calls this is a question in the list, though. The focus
+   * panel has controls of its own, and those must not steal the focus that is
+   * keeping the panel open, or it closes the moment you use it. `findOption` only
+   * knows about the eight sections' own groups, so anything it cannot place is a
+   * control inside a panel and is left to just toggle.
    */
   const choose = useCallback(
     (groupKey: string, optionValue: string, type: "single" | "multi") => {
       const key = `${groupKey}:${optionValue}`;
+      const focusable = findOption(groupKey, optionValue) !== null;
       const chosen =
         type === "single"
           ? answers.single[groupKey] === optionValue
           : (answers.multi[groupKey] ?? []).includes(optionValue);
 
-      if (chosen && focus !== key) {
+      if (focusable && chosen && focus !== key) {
         setFocus(key);
         return;
       }
@@ -142,7 +150,7 @@ export function useScoping(): ScopingController {
 
       /* Focus follows the selection: on when it goes on, cleared when it comes
          back off. */
-      setFocus(chosen ? null : key);
+      if (focusable) setFocus(chosen ? null : key);
     },
     [answers, focus],
   );
