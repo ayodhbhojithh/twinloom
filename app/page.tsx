@@ -1,7 +1,30 @@
+import { SiteFooter, SiteHeader } from "@/components/layout";
+import {
+  CtaSection,
+  EstimatorSection,
+  FaqSection,
+  HeroSection,
+  PackagesSection,
+  ProcessSection,
+  ServicesSection,
+} from "@/components/sections";
+
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <h1 className="text-4xl font-bold">Hello World</h1>
-    </div>
+    <>
+      <SiteHeader />
+
+      <main className="flex-1">
+        <HeroSection />
+        <ServicesSection />
+        <EstimatorSection />
+        <ProcessSection />
+        <PackagesSection />
+        <FaqSection />
+        <CtaSection />
+      </main>
+
+      <SiteFooter />
+    </>
   );
 }
