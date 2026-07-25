@@ -13,6 +13,8 @@ import {
 
 export interface ScopeController {
   totals: ScopeTotals;
+  /** Raw ticks. Needed only where the full breakdown has to be written out. */
+  selection: ScopeSelection;
 
   isOptionTicked: (optionId: string) => boolean;
   toggleOption: (optionId: string, componentId: string) => void;
@@ -22,6 +24,16 @@ export interface ScopeController {
 
   isComponentOpen: (componentId: string) => boolean;
   toggleComponent: (componentId: string) => void;
+
+  /** Any option ticked means the component is in the build. */
+  isComponentIncluded: (componentId: string) => boolean;
+  /**
+   * One tap in or out, used by the portal circles. Adding restores the
+   * component's pre ticked options, or its lightest option when it has none.
+   * Removing clears every option it owns.
+   */
+  setComponentIncluded: (componentId: string, included: boolean) => void;
+  toggleComponentInclusion: (componentId: string) => void;
 
   focusedComponentId: string | null;
   /**
@@ -34,7 +46,6 @@ export interface ScopeController {
   registerScroller: (node: HTMLElement | null) => void;
 
   resetToDefaults: () => void;
-  clearAll: () => void;
   isPristine: boolean;
 }
 
@@ -87,16 +98,30 @@ export function useScopeSelection(): ScopeController {
   const rows = useRef(new Map<string, HTMLElement>());
   const scroller = useRef<HTMLElement | null>(null);
 
+  /* Switching layout unmounts one tree and mounts another. React detaches the
+     old refs first, but guarding on `isConnected` means even a reversed order
+     cannot leave us holding nothing. */
   const registerRow = useCallback(
     (componentId: string, node: HTMLElement | null) => {
-      if (node) rows.current.set(componentId, node);
-      else rows.current.delete(componentId);
+      if (node) {
+        rows.current.set(componentId, node);
+        return;
+      }
+
+      if (!rows.current.get(componentId)?.isConnected) {
+        rows.current.delete(componentId);
+      }
     },
     [],
   );
 
   const registerScroller = useCallback((node: HTMLElement | null) => {
-    scroller.current = node;
+    if (node) {
+      scroller.current = node;
+      return;
+    }
+
+    if (!scroller.current?.isConnected) scroller.current = null;
   }, []);
 
   const totals = useMemo(() => computeScope(selection), [selection]);
@@ -139,6 +164,48 @@ export function useScopeSelection(): ScopeController {
     setFocusedComponentId(componentId);
   }, []);
 
+  const isComponentIncluded = useCallback(
+    (componentId: string) => (totals.componentTotals[componentId] ?? 0) > 0,
+    [totals],
+  );
+
+  const setComponentIncluded = useCallback(
+    (componentId: string, included: boolean) => {
+      const component = getComponent(componentId);
+      if (!component) return;
+
+      setSelection((prev) => {
+        const next = { ...prev };
+        for (const option of component.options) delete next[option.id];
+
+        if (included) {
+          const preTicked = component.options.filter(
+            (option) => option.defaultOn,
+          );
+          /* Options are ordered cheapest first, so a component with no defaults
+             comes in at its lightest sensible version. */
+          const toTick = preTicked.length
+            ? preTicked
+            : component.options.slice(0, 1);
+
+          for (const option of toTick) next[option.id] = true;
+        }
+
+        return next;
+      });
+
+      setFocusedComponentId(componentId);
+    },
+    [],
+  );
+
+  const toggleComponentInclusion = useCallback(
+    (componentId: string) => {
+      setComponentIncluded(componentId, !isComponentIncluded(componentId));
+    },
+    [isComponentIncluded, setComponentIncluded],
+  );
+
   const jumpToComponent = useCallback((componentId: string) => {
     const component = getComponent(componentId);
     if (!component) return;
@@ -176,11 +243,6 @@ export function useScopeSelection(): ScopeController {
     setFocusedComponentId(null);
   }, []);
 
-  const clearAll = useCallback(() => {
-    setSelection({});
-    setFocusedComponentId(null);
-  }, []);
-
   const isPristine = useMemo(
     () => sameSelection(selection, DEFAULT_SELECTION),
     [selection],
@@ -188,18 +250,21 @@ export function useScopeSelection(): ScopeController {
 
   return {
     totals,
+    selection,
     isOptionTicked,
     toggleOption,
     isSectionOpen,
     toggleSection,
     isComponentOpen,
     toggleComponent,
+    isComponentIncluded,
+    setComponentIncluded,
+    toggleComponentInclusion,
     focusedComponentId,
     jumpToComponent,
     registerRow,
     registerScroller,
     resetToDefaults,
-    clearAll,
     isPristine,
   };
 }

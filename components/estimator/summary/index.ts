@@ -1,3 +1,3 @@
 export { EstimateCard } from "./estimate-card";
-export { EstimateStack } from "./estimate-stack";
+export { EstimateRequestForm } from "./estimate-request-form";
 export { MobileEstimateBar } from "./mobile-estimate-bar";

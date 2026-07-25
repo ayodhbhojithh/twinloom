@@ -1,73 +1,43 @@
 "use client";
 
-import { useState } from "react";
-import { LayoutPanelLeft, Rows3 } from "lucide-react";
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-import { BlueprintLayout, LanesLayout } from "./layouts";
+import { LiveMockup } from "./mockup";
+import { PortalGrid } from "./portal-grid";
 import { ScopeProvider } from "./scope-context";
-
-export type EstimatorLayout = "blueprint" | "lanes";
-
-interface ScopeEstimatorProps {
-  defaultLayout?: EstimatorLayout;
-  /**
-   * Both layouts were signed off as candidates, so the switcher ships until one
-   * is chosen. Drop this to false and the estimator renders the default only.
-   */
-  allowLayoutSwitch?: boolean;
-}
+import { ScopeTable } from "./scope-table";
+import { EstimateCard, MobileEstimateBar } from "./summary";
 
 /**
- * The estimator. One scope provider wraps both layouts, so switching view keeps
- * every tick, every collapsed group and the running total exactly as they were.
+ * The estimator, as one scope shared by three views.
+ *
+ * The circles are the friendly way in: one tap adds or drops a whole component.
+ * The detail table is where a specific mix of options gets chosen. The wireframe
+ * shows what the site becomes, and clicking a block jumps the table to that
+ * component's row. Everything reads and writes the same selection, so no view
+ * can disagree with another.
  */
-export function ScopeEstimator({
-  defaultLayout = "blueprint",
-  allowLayoutSwitch = true,
-}: ScopeEstimatorProps) {
-  const [layout, setLayout] = useState<EstimatorLayout>(defaultLayout);
-
-  if (!allowLayoutSwitch) {
-    return (
-      <ScopeProvider>
-        {defaultLayout === "blueprint" ? <BlueprintLayout /> : <LanesLayout />}
-      </ScopeProvider>
-    );
-  }
-
+export function ScopeEstimator() {
   return (
     <ScopeProvider>
-      <Tabs
-        value={layout}
-        onValueChange={(value) => setLayout(value as EstimatorLayout)}
-        className="gap-3"
-      >
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <TabsList className="h-9">
-            <TabsTrigger value="blueprint" className="px-3">
-              <LayoutPanelLeft data-icon="inline-start" aria-hidden />
-              Blueprint
-            </TabsTrigger>
-            <TabsTrigger value="lanes" className="px-3">
-              <Rows3 data-icon="inline-start" aria-hidden />
-              Lanes
-            </TabsTrigger>
-          </TabsList>
+      <PortalGrid />
 
-          <p className="font-mono text-[10px] tracking-[0.04em] text-ink-5">
-            two layouts, one scope. Ticks carry across.
-          </p>
+      <div className="mt-5 grid gap-5 lg:mt-[22px] lg:grid-cols-[1.45fr_1fr] lg:items-start lg:gap-[22px]">
+        <ScopeTable
+          label="The detail"
+          hint="tick any mix · options are features, not tiers"
+          className="min-w-0"
+          scrollerClassName="max-h-[58svh] lg:max-h-[620px]"
+        />
+
+        <div className="flex min-w-0 flex-col gap-4">
+          <div className="rounded-card border border-hairline bg-surface p-4 sm:p-5">
+            <LiveMockup variant="rail" />
+          </div>
+
+          <EstimateCard />
         </div>
+      </div>
 
-        <TabsContent value="blueprint">
-          <BlueprintLayout />
-        </TabsContent>
-        <TabsContent value="lanes">
-          <LanesLayout />
-        </TabsContent>
-      </Tabs>
+      <MobileEstimateBar hideFrom="lg" />
     </ScopeProvider>
   );
 }

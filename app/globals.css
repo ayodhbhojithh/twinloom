@@ -2,69 +2,112 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* The prototype is light only. Keeping the class-based dark variant means the
+/* The prototype is light only. Keeping the class based dark variant means the
    `dark:` utilities inside shadcn components still compile, but never match,
    because `.dark` is never applied. */
 @custom-variant dark (&:is(.dark *));
 
 /* ---------------------------------------------------------------------------
-   Prototype tokens
-   Lifted from the design canvas in Docs/. The prototype carried every value as
-   an inline style; they live here instead so a brand change is a one file
-   change. Reference: Docs/Web Studio Page (standalone).html
+   Portal Grid tokens
+
+   Lifted from option 2a of the design canvas in Docs/: light SaaS surfaces,
+   gradient accents, mono microcopy, a handwritten aside. The prototype carried
+   every value as an inline style; they live here instead so a brand change is a
+   one file change.
+
+   Reference: Docs/source/Web Studio Page.dc.html, lines 1385 to 1679.
 --------------------------------------------------------------------------- */
 @theme {
-  /* Type: Manrope carries the UI, IBM Plex Mono the small uppercase labels,
-     Caveat the handwritten margin notes. */
+  /* Type: Manrope carries the UI, IBM Plex Mono the microcopy, Caveat the
+     handwritten asides. */
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, Menlo, monospace;
   --font-script: var(--font-caveat), ui-rounded, cursive;
 
   /* Ink ramp, darkest to faintest */
-  --color-ink: #1f2430;
-  --color-ink-2: #232733;
+  --color-ink: #232733;
+  --color-ink-2: #1f2430;
   --color-ink-3: #5b6472;
   --color-ink-4: #98a0ad;
   --color-ink-5: #a6aeba;
   --color-ink-6: #b4bbc6;
   --color-ink-7: #c0c7d2;
 
+  /* Microcopy grey and the handwriting grey, both specific to 2a */
+  --color-mono: #8b93a1;
+  --color-aside: #6b7280;
+
   /* Surfaces */
   --color-canvas: #f7f8fb;
   --color-surface: #ffffff;
-  --color-sunken: #fbfbfd;
+  --color-sunken: #f6f8fb;
   --color-chip: #f1f3f7;
+  /* Unlit portal circle */
+  --color-portal: #edf0f4;
 
   /* Lines */
   --color-hairline: #e7eaf0;
-  --color-hairline-soft: #eef1f5;
+  --color-hairline-soft: #eef1f6;
   --color-hairline-dashed: #d9dee7;
   --color-tick-border: #c9d0db;
+  /* Heavier edge used on secondary buttons and steppers */
+  --color-edge: #e0e4eb;
 
   /* Brand */
   --color-brand: #7c3aed;
-  --color-brand-tint: #f5f3ff;
+  --color-brand-tint: #f5f1fe;
+  --color-brand-edge: #ded2fb;
+  /* The live pulse in the estimate card */
+  --color-live: #10b981;
 
-  /* Scope section accents. Applied at runtime as CSS variables so a row can
-     tint itself from data; these exist so the palette is discoverable here. */
+  /* Accent set the section headings and portal gradients draw from */
+  --color-accent-amber: #f59e0b;
+  --color-accent-pink: #ec4899;
+  --color-accent-violet: #8b5cf6;
+  --color-accent-emerald: #10b981;
+  --color-accent-blue: #3b82f6;
+  --color-accent-teal: #14b8a6;
+  --color-accent-orange: #f97316;
+  --color-accent-indigo: #6366f1;
+  --color-accent-sky: #0ea5e9;
+  --color-accent-fuchsia: #d946ef;
+  --color-accent-slate: #64748b;
+
+  /* Scope section accents */
   --color-scope-structure: #7c3aed;
   --color-scope-sections: #2563eb;
   --color-scope-content: #0d9488;
   --color-scope-legal: #64748b;
   --color-scope-foundation: #f97316;
 
-  /* Radii: cards 18, inner 14, rows 10, ticks 5 */
+  /* Radii: picker panel 20, cards 18, inner 14, buttons 12, rows 10, ticks 5 */
+  --radius-panel: 20px;
   --radius-card: 18px;
   --radius-inner: 14px;
+  --radius-cta: 12px;
   --radius-row: 10px;
   --radius-tick: 5px;
 
   --ease-out-soft: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* The prototype's one entrance animation */
+  --animate-rise: rise 0.6s ease both;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
 
 /* ---------------------------------------------------------------------------
-   shadcn semantic tokens, mapped onto the prototype palette so shadcn
-   components and hand built ones share one set of colours.
+   shadcn semantic tokens, mapped onto the same palette so shadcn components and
+   hand built ones never disagree about a colour.
 --------------------------------------------------------------------------- */
 @theme inline {
   --font-heading: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
@@ -109,38 +152,38 @@
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 0.75rem;
 
   --background: #f7f8fb;
-  --foreground: #1f2430;
+  --foreground: #232733;
   --card: #ffffff;
-  --card-foreground: #1f2430;
+  --card-foreground: #232733;
   --popover: #ffffff;
-  --popover-foreground: #1f2430;
+  --popover-foreground: #232733;
   --primary: #7c3aed;
   --primary-foreground: #ffffff;
   --secondary: #f1f3f7;
-  --secondary-foreground: #1f2430;
+  --secondary-foreground: #232733;
   --muted: #f1f3f7;
   --muted-foreground: #5b6472;
-  --accent: #f5f3ff;
+  --accent: #f5f1fe;
   --accent-foreground: #7c3aed;
   --destructive: #dc2626;
   --border: #e7eaf0;
   --input: #e7eaf0;
   --ring: #7c3aed;
 
-  --chart-1: #7c3aed;
-  --chart-2: #2563eb;
-  --chart-3: #0d9488;
-  --chart-4: #f97316;
-  --chart-5: #64748b;
+  --chart-1: #f59e0b;
+  --chart-2: #ec4899;
+  --chart-3: #8b5cf6;
+  --chart-4: #10b981;
+  --chart-5: #3b82f6;
 
   --sidebar: #ffffff;
-  --sidebar-foreground: #1f2430;
+  --sidebar-foreground: #232733;
   --sidebar-primary: #7c3aed;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f5f3ff;
+  --sidebar-accent: #f5f1fe;
   --sidebar-accent-foreground: #7c3aed;
   --sidebar-border: #e7eaf0;
   --sidebar-ring: #7c3aed;
@@ -191,6 +234,57 @@
 }
 
 @layer utilities {
+  /* The brand gradient, in the two angles the prototype uses. */
+  .bg-rainbow {
+    background-image: linear-gradient(
+      90deg,
+      #f59e0b,
+      #ec4899 40%,
+      #8b5cf6 72%,
+      #10b981
+    );
+  }
+
+  .bg-rainbow-tilt {
+    background-image: linear-gradient(
+      135deg,
+      #f59e0b,
+      #ec4899 45%,
+      #8b5cf6 75%,
+      #10b981
+    );
+  }
+
+  .text-rainbow {
+    background-image: linear-gradient(
+      90deg,
+      #f59e0b,
+      #ec4899 40%,
+      #8b5cf6 72%,
+      #10b981
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-pink-violet {
+    background-image: linear-gradient(90deg, #ec4899, #8b5cf6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* The lift under the primary call to action. */
+  .shadow-cta {
+    box-shadow: 0 10px 24px -10px rgba(124, 58, 237, 0.55);
+  }
+
+  /* The lift under the estimate card. */
+  .shadow-estimate {
+    box-shadow: 0 18px 40px -28px rgba(35, 39, 51, 0.35);
+  }
+
   /* Slim scrollbar for the scope panel, which scrolls a lot */
   .scrollbar-slim {
     scrollbar-width: thin;
