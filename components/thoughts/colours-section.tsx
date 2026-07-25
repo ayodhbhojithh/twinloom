@@ -110,7 +110,7 @@ export function ColoursSection() {
             {colours.map((colour, index) => (
               <li
                 key={colour.id}
-                className="group border-b border-line/60 py-2.5 last:border-b-0"
+                className="group py-2"
               >
                 <div className="flex items-center gap-2">
                   <span

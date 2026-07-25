@@ -1,21 +1,20 @@
 "use client";
 
 import { useMemo, useSyncExternalStore } from "react";
-import {
-  ArrowLeft,
-  ArrowRight,
-  CalendarClock,
-  Check,
-  FileText,
-  Layers,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Sparkles } from "lucide-react";
 
-import { ActionButton, Container, Reveal, Rise } from "@/components/shared";
+import {
+  ActionButton,
+  Container,
+  CountUp,
+  GrowBar,
+  Reveal,
+  Rise,
+} from "@/components/shared";
 import { useThoughtsSession } from "@/components/thoughts";
 import { CARE_TEASER } from "@/lib/content/home";
 import { SITE } from "@/lib/content/site";
+import { pluralise } from "@/lib/format";
 import {
   ASSETS,
   estimate,
@@ -26,34 +25,71 @@ import {
   readiness,
   subscribe,
 } from "@/lib/scoping";
-import { pluralise } from "@/lib/format";
 
-/** One block of the Blueprint. Same label treatment as the panel and the journey. */
+import { PageGlyph } from "./page-glyph";
+
+/** A mono label, and nothing else. It is the only marker a block gets. */
+function Label({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="font-mono text-[9.5px] font-bold tracking-[0.14em] text-faint uppercase">
+      {children}
+    </h2>
+  );
+}
+
+/**
+ * One block. No fill, no outline, no shadow: a label, then the content, with space
+ * around it doing the work a card used to.
+ */
 function Block({
   label,
-  icon,
   meta,
   children,
 }: {
   label: string;
-  icon: React.ReactNode;
   meta?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-card bg-panel-bg p-4 sm:p-5">
-      <div className="flex items-center gap-2">
-        <span aria-hidden className="shrink-0 text-brand">
-          {icon}
-        </span>
-        <h2 className="font-mono text-[9.5px] font-bold tracking-[0.14em] text-faint uppercase">
-          {label}
-        </h2>
-        {meta ? <span className="ml-auto shrink-0">{meta}</span> : null}
+    <section>
+      <div className="flex items-baseline justify-between gap-3">
+        <Label>{label}</Label>
+        {meta ? (
+          <span className="shrink-0 font-mono text-[9.5px] text-faint tabular-nums">
+            {meta}
+          </span>
+        ) : null}
       </div>
 
       <div className="mt-3">{children}</div>
     </section>
+  );
+}
+
+/** One figure from the estimate: label above, number below, nothing around it. */
+function Figure({
+  label,
+  value,
+  suffix,
+}: {
+  label: string;
+  value: string;
+  suffix?: string;
+}) {
+  return (
+    <div>
+      <dt className="font-mono text-[9.5px] font-bold tracking-[0.12em] text-faint uppercase">
+        {label}
+      </dt>
+      <dd className="mt-2 text-[24px] leading-none font-extrabold tracking-[-0.025em] tabular-nums sm:text-[27px]">
+        {value}
+        {suffix ? (
+          <span className="ml-1 text-[13px] font-semibold text-faint">
+            {suffix}
+          </span>
+        ) : null}
+      </dd>
+    </div>
   );
 }
 
@@ -64,6 +100,12 @@ function Block({
  * the band, the page list, the timeline and the care recommendation all come out of
  * `estimate()` reading the answers, which is what makes it reproducible and what
  * will let the same figures be generated server side for the written plan.
+ *
+ * The page is a quiet one on purpose. Somebody has just answered eight sections of
+ * questions and is about to read a price, so there is one soft slab at the top to
+ * land on and then nothing but type and space: no cards, no rules, no shadows. The
+ * numbers are the only thing with any weight, which is exactly where the attention
+ * should go.
  *
  * It reads the answers from the session store rather than from props, because the
  * journey is a different route and this page has to survive being opened directly.
@@ -86,9 +128,7 @@ export function BlueprintView() {
     return (
       <Container width="page" className="py-16 text-center sm:py-24">
         <Rise>
-          <p className="font-mono text-[10.5px] font-bold tracking-[0.14em] text-faint uppercase">
-            Blueprint
-          </p>
+          <Label>Blueprint</Label>
 
           <h1 className="mt-3 text-[26px] font-extrabold tracking-[-0.02em] sm:text-[32px]">
             Nothing to build from yet.
@@ -113,267 +153,195 @@ export function BlueprintView() {
   const [fromWeeks, toWeeks] = result.weeks;
   const carePlan = CARE_TEASER.plans.find((plan) => plan.name === result.care);
 
+  const PHASES = [
+    { name: "Discover", detail: "A call, then a plan we both sign off" },
+    { name: "Design", detail: "Every screen approved before we build" },
+    { name: "Build", detail: "In milestones, preview link from week one" },
+    { name: "Launch", detail: "Tested, handed over, walked through" },
+  ];
+
   return (
-    <Container className="pt-4 pb-6">
+    <Container className="pt-4 pb-8">
       <div className="flex items-baseline justify-between gap-4">
-        <p className="font-mono text-[10.5px] font-bold tracking-[0.14em] text-faint uppercase">
-          Your blueprint
-        </p>
+        <Label>Your blueprint</Label>
 
         <a
           href="/scope"
-          className="flex items-center gap-1.5 font-mono text-[10.5px] font-bold tracking-[0.1em] text-faint uppercase transition-colors hover:text-ink"
+          className="flex items-center gap-1.5 font-mono text-[9.5px] font-bold tracking-[0.12em] text-faint uppercase transition-colors hover:text-ink"
         >
           <ArrowLeft aria-hidden className="size-3" />
           Change my answers
         </a>
       </div>
 
-      {/* Block 1. The package match, and why this one. */}
+      {/* The one surface on the page. Somewhere to land, and a frame for the two
+          numbers everybody scrolled here to read. */}
       <Rise className="mt-3">
-        <div className="rounded-[22px] bg-panel-bg p-5 sm:p-7">
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,300px)] lg:gap-8">
+        <div className="rounded-[22px] bg-panel-bg px-5 py-7 sm:px-8 sm:py-9">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,240px)] lg:gap-12">
             <div>
               <p className="font-mono text-[9.5px] font-bold tracking-[0.14em] text-brand uppercase">
                 Package match
               </p>
 
-              <h1 className="mt-2 text-[27px] font-extrabold tracking-[-0.02em] sm:text-[33px]">
-                {result.tier}
+              <h1 className="mt-2.5 text-[32px] leading-[1.05] font-extrabold tracking-[-0.03em] sm:text-[44px] lg:text-[52px]">
+                <span className="text-brand-gradient">{result.tier}</span>
               </h1>
 
-              <p className="mt-2 max-w-[520px] text-[14.5px] leading-[1.6] text-body">
+              <p className="mt-2.5 max-w-[500px] text-[14.5px] leading-[1.65] text-body">
                 {result.why}
               </p>
 
-              <dl className="mt-5 flex flex-wrap gap-x-8 gap-y-4">
-                <div>
-                  <dt className="font-mono text-[9.5px] font-bold tracking-[0.12em] text-faint uppercase">
-                    Build
-                  </dt>
-                  <dd className="mt-1 text-[21px] leading-none font-extrabold tracking-[-0.02em] tabular-nums">
-                    {formatPrice(result.low, result.high)}
-                  </dd>
-                </div>
-
-                <div>
-                  <dt className="font-mono text-[9.5px] font-bold tracking-[0.12em] text-faint uppercase">
-                    Timeline
-                  </dt>
-                  <dd className="mt-1 text-[21px] leading-none font-extrabold tracking-[-0.02em] tabular-nums">
-                    {fromWeeks} to {toWeeks} weeks
-                  </dd>
-                </div>
-
-                <div>
-                  <dt className="font-mono text-[9.5px] font-bold tracking-[0.12em] text-faint uppercase">
-                    Care
-                  </dt>
-                  <dd className="mt-1 text-[21px] leading-none font-extrabold tracking-[-0.02em] tabular-nums">
-                    £{carePlan?.price ?? CARE_TEASER.plans[0].price}
-                    <span className="ml-1 text-[13px] font-semibold text-faint">
-                      / month
-                    </span>
-                  </dd>
-                </div>
+              <dl className="mt-7 flex flex-wrap gap-x-10 gap-y-5">
+                <Figure
+                  label="Build"
+                  value={formatPrice(result.low, result.high)}
+                />
+                <Figure
+                  label="Timeline"
+                  value={`${fromWeeks} to ${toWeeks}`}
+                  suffix="weeks"
+                />
+                <Figure
+                  label="Care"
+                  value={`£${carePlan?.price ?? CARE_TEASER.plans[0].price}`}
+                  suffix="/ month"
+                />
               </dl>
 
-              <p className="mt-4 font-mono text-[10px] leading-[1.55] tracking-[0.03em] text-faint">
+              <p className="mt-6 font-mono text-[10px] leading-[1.6] tracking-[0.03em] text-faint">
                 {PRICING_NOTE}
               </p>
             </div>
 
-            {/* Block 2. Readiness, as a bar rather than a gauge: it is one number
-                out of one hundred and a gauge would only dress it up. */}
-            <div className="rounded-card bg-bg p-4 shadow-card lg:self-start">
+            {/* Readiness. A number and a line, not a gauge: it is one figure out
+                of a hundred and anything more would be dressing it up. */}
+            <div className="lg:self-start">
               <div className="flex items-baseline justify-between gap-3">
-                <p className="font-mono text-[9.5px] font-bold tracking-[0.14em] text-faint uppercase">
-                  Readiness
-                </p>
-                <p className="text-[19px] leading-none font-extrabold tabular-nums">
-                  {gaps.score}
+                <Label>Readiness</Label>
+                <p className="text-[22px] leading-none font-extrabold tabular-nums">
+                  <CountUp to={gaps.score} />
                   <span className="text-[12px] font-semibold text-faint">
                     /100
                   </span>
                 </p>
               </div>
 
-              <div
-                aria-hidden
-                className="mt-3 h-1.5 overflow-hidden rounded-pill bg-panel-bg"
-              >
-                <div
-                  className="h-full rounded-pill bg-brand transition-[width] duration-700 ease-[var(--ease-out-soft)]"
-                  style={{ width: `${gaps.score}%` }}
-                />
-              </div>
+              <GrowBar percent={gaps.score} trackClassName="mt-3" />
 
-              <ul className="mt-3 flex flex-col gap-1.5">
-                <li className="flex items-baseline justify-between gap-3 text-[12.5px]">
-                  <span className="text-body">You already have</span>
-                  <span className="font-mono font-bold tabular-nums">
-                    {gaps.have}
-                  </span>
-                </li>
-                <li className="flex items-baseline justify-between gap-3 text-[12.5px]">
-                  <span className="text-body">We will provide</span>
-                  <span className="font-mono font-bold tabular-nums">
-                    {gaps.missing}
-                  </span>
-                </li>
-                <li className="flex items-baseline justify-between gap-3 text-[12.5px]">
-                  <span className="text-body">To check together</span>
-                  <span className="font-mono font-bold tabular-nums">
-                    {gaps.unsure + gaps.outstanding}
-                  </span>
-                </li>
-              </ul>
+              <dl className="mt-4 flex flex-col gap-2">
+                {[
+                  { label: "You already have", value: gaps.have },
+                  { label: "We will provide", value: gaps.missing },
+                  {
+                    label: "To check together",
+                    value: gaps.unsure + gaps.outstanding,
+                  },
+                ].map((row) => (
+                  <div
+                    key={row.label}
+                    className="flex items-baseline justify-between gap-3 text-[12.5px]"
+                  >
+                    <dt className="text-body">{row.label}</dt>
+                    <dd className="font-mono font-bold tabular-nums">
+                      {row.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
             </div>
           </div>
         </div>
       </Rise>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        {/* Block 3. The derived sitemap. */}
+      {/* Everything below sits on the page. Two columns of type, held apart by
+          space, in the order the questions get asked: what are we building, how
+          much of it, how long, and who looks after it. */}
+      <div className="mt-12 grid gap-11 sm:mt-14 lg:grid-cols-2 lg:gap-x-14 lg:gap-y-14">
         <Reveal>
           <Block
             label="Derived sitemap"
-            icon={<FileText className="size-3.5" />}
-            meta={
-              <span className="font-mono text-[9.5px] font-bold text-faint tabular-nums">
-                {pluralise(result.sitemap.length, "page")}
-              </span>
-            }
+            meta={pluralise(result.sitemap.length, "page")}
           >
-            <p className="text-[12.5px] leading-[1.55] text-body">
-              We worked this out from what the site has to do. Confirm it or tell
-              us what is missing.
+            <p className="max-w-[420px] text-[13px] leading-[1.6] text-body">
+              Worked out from what the site has to do. Confirm it, or tell us what
+              is missing.
             </p>
 
-            <ul className="mt-3 grid gap-1.5 sm:grid-cols-2">
+            <ol className="mt-5 grid grid-cols-3 gap-x-3 gap-y-4 sm:grid-cols-4">
               {result.sitemap.map((page, at) => (
-                <li
-                  key={page}
-                  className="flex items-center gap-2 rounded-btn-sm bg-bg px-2.5 py-2 shadow-card"
-                >
-                  <span className="font-mono text-[9px] font-bold text-faint tabular-nums">
-                    {String(at + 1).padStart(2, "0")}
-                  </span>
-                  <span className="min-w-0 flex-1 truncate text-[12.5px] font-semibold">
-                    {page}
-                  </span>
-                </li>
+                <PageGlyph key={page} name={page} at={at} />
               ))}
-            </ul>
+            </ol>
           </Block>
         </Reveal>
 
-        {/* Block 4. Component scope, by section, with its share of the points. */}
         <Reveal index={1}>
           <Block
             label="Component scope"
-            icon={<Layers className="size-3.5" />}
-            meta={
-              <span className="font-mono text-[9.5px] font-bold text-faint tabular-nums">
-                {pluralise(result.components.length, "item")}
-              </span>
-            }
+            meta={`${pluralise(result.components.length, "item")} · ${result.points} pts`}
           >
-            <ul className="flex flex-col">
+            <ul className="flex flex-col gap-3.5">
               {result.bySection.map((section) => {
                 const share = result.points
                   ? (section.points / result.points) * 100
                   : 0;
 
                 return (
-                  <li
-                    key={section.step}
-                    className="py-2 not-last:border-b not-last:border-line/70"
-                  >
+                  <li key={section.step}>
                     <div className="flex items-baseline justify-between gap-3">
-                      <span className="min-w-0 flex-1 truncate text-[12.5px] font-bold">
+                      <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">
                         {section.step}
                       </span>
-                      <span className="font-mono text-[10px] text-faint tabular-nums">
-                        {section.count} · {section.points} pts
+                      <span className="font-mono text-[9.5px] text-faint tabular-nums">
+                        {section.count} · {section.points}
                       </span>
                     </div>
 
-                    <div
-                      aria-hidden
-                      className="mt-1.5 h-1 overflow-hidden rounded-pill bg-bg"
-                    >
-                      <div
-                        className="h-full rounded-pill bg-brand/55"
-                        style={{ width: `${share}%` }}
-                      />
-                    </div>
+                    <GrowBar
+                      percent={share}
+                      className="bg-brand/60"
+                      trackClassName="mt-1.5"
+                    />
                   </li>
                 );
               })}
             </ul>
-
-            <p className="mt-3 font-mono text-[10px] leading-[1.5] text-faint">
-              {result.points} build points · points set the tier and the band
-            </p>
           </Block>
         </Reveal>
 
-        {/* Block 8. The timeline, as the milestones of the home page's ledger. */}
         <Reveal index={2}>
-          <Block label="Timeline" icon={<CalendarClock className="size-3.5" />}>
-            <ol className="flex flex-col">
-              {[
-                { name: "Discover", detail: "A call, then a plan we both sign off" },
-                { name: "Design", detail: "Every screen approved before we build" },
-                { name: "Build", detail: "In milestones, preview link from week one" },
-                { name: "Launch", detail: "Tested, handed over, walked through" },
-              ].map((phase, at) => (
-                <li
-                  key={phase.name}
-                  className="flex items-center gap-3 py-2 not-last:border-b not-last:border-line/70"
-                >
-                  <span
-                    aria-hidden
-                    className="flex size-6 shrink-0 items-center justify-center rounded-full bg-bg font-mono text-[9.5px] font-bold text-brand shadow-card tabular-nums"
-                  >
+          <Block label="Timeline" meta={`${fromWeeks} to ${toWeeks} weeks`}>
+            <ol className="flex flex-col gap-3.5">
+              {PHASES.map((phase, at) => (
+                <li key={phase.name} className="flex items-baseline gap-3">
+                  <span className="font-mono text-[9.5px] font-bold text-brand tabular-nums">
                     {String(at + 1).padStart(2, "0")}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[12.5px] leading-tight font-bold">
-                      {phase.name}
-                    </span>
-                    <span className="mt-0.5 block text-[11.5px] leading-tight text-faint">
+                    <span className="text-[13px] font-bold">{phase.name}</span>
+                    <span className="ml-2 text-[12.5px] text-faint">
                       {phase.detail}
                     </span>
                   </span>
                 </li>
               ))}
             </ol>
-
-            <p className="mt-3 font-mono text-[10px] text-faint tabular-nums">
-              {fromWeeks} to {toWeeks} weeks end to end
-            </p>
           </Block>
         </Reveal>
 
-        {/* Block 9. Care, and what the panel picked up along the way. */}
         <Reveal index={3}>
-          <Block
-            label="Care recommendation"
-            icon={<ShieldCheck className="size-3.5" />}
-          >
-            <p className="text-[15px] font-extrabold">{result.care}</p>
-            <p className="mt-1 text-[12.5px] leading-[1.55] text-body">
+          <Block label="Care recommendation" meta={result.care}>
+            <p className="text-[13px] leading-[1.6] text-body">
               {carePlan?.body}
             </p>
 
             {carePlan ? (
-              <ul className="mt-3 flex flex-col gap-1.5">
+              <ul className="mt-4 flex flex-col gap-2">
                 {carePlan.points.map((point) => (
                   <li
                     key={point.label}
-                    className="flex items-start gap-2 text-[12.5px] leading-[1.5] text-body"
+                    className="flex items-start gap-2 text-[13px] leading-[1.5] text-body"
                   >
                     <Check
                       aria-hidden
@@ -386,7 +354,7 @@ export function BlueprintView() {
               </ul>
             ) : null}
 
-            <p className="mt-3 flex items-center gap-1.5 border-t border-line pt-3 font-mono text-[10px] tracking-[0.06em] text-faint uppercase">
+            <p className="mt-5 flex items-center gap-1.5 font-mono text-[9.5px] tracking-[0.08em] text-faint uppercase">
               <Sparkles aria-hidden className="size-3 text-accent-amber" />
               Captured
               <span className="font-medium normal-case">
@@ -399,31 +367,29 @@ export function BlueprintView() {
         </Reveal>
       </div>
 
-      {/* Block 9, the CTA. The written plan is the next artefact, so this hands
-          over by email rather than promising a page that is not built. */}
-      <Reveal delay={0.1} className="mt-4">
-        <div className="rounded-card bg-panel-bg p-5 text-center sm:p-7">
-          <h2 className="text-[19px] font-extrabold tracking-[-0.02em] sm:text-[23px]">
-            Happy with this? Let&rsquo;s make it a plan.
-          </h2>
+      {/* The written plan is the next artefact, so this hands over by email rather
+          than promising a page that is not built. */}
+      <Reveal delay={0.1} className="mt-14 text-center sm:mt-16">
+        <h2 className="text-[21px] font-extrabold tracking-[-0.02em] sm:text-[25px]">
+          Happy with this? Let&rsquo;s make it a plan.
+        </h2>
 
-          <p className="mx-auto mt-2 max-w-[520px] text-[14px] leading-[1.6] text-body">
-            Send it over and we will come back with your written website plan: the
-            same figures, in full, with what we would do and in what order.
-          </p>
+        <p className="mx-auto mt-3 max-w-[480px] text-[14px] leading-[1.65] text-body">
+          Send it over and we will come back with your written website plan: the
+          same figures, in full, with what we would do and in what order.
+        </p>
 
-          <div className="mt-5 flex flex-col items-stretch justify-center gap-2.5 sm:flex-row sm:items-center">
-            <ActionButton
-              href={`mailto:${SITE.email}?subject=My%20blueprint%20(${encodeURIComponent(result.tier)})`}
-            >
-              Send my blueprint
-              <ArrowRight aria-hidden className="size-4" />
-            </ActionButton>
+        <div className="mt-7 flex flex-col items-stretch justify-center gap-2.5 sm:flex-row sm:items-center sm:gap-3">
+          <ActionButton
+            href={`mailto:${SITE.email}?subject=My%20blueprint%20(${encodeURIComponent(result.tier)})`}
+          >
+            Send my blueprint
+            <ArrowRight aria-hidden className="size-4" />
+          </ActionButton>
 
-            <ActionButton variant="secondary" href="/scope">
-              Change my answers
-            </ActionButton>
-          </div>
+          <ActionButton variant="secondary" href="/scope">
+            Change my answers
+          </ActionButton>
         </div>
       </Reveal>
     </Container>

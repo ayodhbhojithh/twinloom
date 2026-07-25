@@ -13,7 +13,7 @@ export function Panel({
   return (
     <div
       className={cn(
-        "border border-line bg-card shadow-card",
+        "border border-line bg-card",
         radius === "sm" ? "rounded-card-sm" : "rounded-card",
         className,
       )}

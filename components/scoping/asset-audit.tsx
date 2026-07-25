@@ -3,7 +3,6 @@
 import { ASSETS, type AssetState } from "@/lib/scoping";
 import { cn } from "@/lib/utils";
 
-import { lit } from "./lit";
 import { useScopingSession } from "./scoping-context";
 
 const CHOICES: { state: AssetState; label: string }[] = [
@@ -30,13 +29,16 @@ export function AssetAudit() {
         return (
           <li
             key={asset}
-            style={state ? lit("var(--color-brand)") : undefined}
-            className={cn(
-              "flex flex-col gap-2.5 rounded-btn-sm px-3.5 py-3 transition-all duration-300 sm:flex-row sm:items-center sm:justify-between",
-              !state && "bg-panel-bg",
-            )}
+            className="flex flex-col gap-2 py-2.5 sm:flex-row sm:items-center sm:justify-between"
           >
-            <span className="text-[13.5px] font-bold">{asset}</span>
+            <span
+              className={cn(
+                "text-[13.5px] font-bold transition-colors",
+                state ? "text-ink" : "text-body",
+              )}
+            >
+              {asset}
+            </span>
 
             <div
               role="radiogroup"
@@ -57,7 +59,7 @@ export function AssetAudit() {
                       "rounded-nav px-2.5 py-1.5 text-[12px] font-semibold whitespace-nowrap transition-all",
                       on
                         ? "bg-brand text-white"
-                        : "bg-card text-body hover:text-ink",
+                        : "text-faint ring-1 ring-line ring-inset hover:text-ink hover:ring-brand/45",
                     )}
                   >
                     {choice.label}

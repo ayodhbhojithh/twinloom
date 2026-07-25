@@ -11,20 +11,19 @@ import {
 } from "@/lib/scoping";
 import { cn } from "@/lib/utils";
 
-import { lit, litTick } from "./lit";
 import { useScopingSession } from "./scoping-context";
 
 /**
  * One choice, on one line: the label, then what it means beside it.
  *
- * Nothing on this row is outlined, chosen or not. Unchosen is a flat soft fill;
- * chosen lights up in the effort's own colour (see `lit`). Colouring by effort
- * rather than by brand purple is what ties the row to the dial: a heavy choice
- * glows amber here and burns amber out there, and the two are the same fact
- * rendered twice.
+ * No fill, no rule and no shadow, chosen or not. Six rows with six rectangles
+ * behind them is six shapes to look at before you read a word. Take all of it away
+ * and the list is the choices, held apart by spacing alone.
  *
- * The chevron only appears on the row whose detail is open. It points at the panel
- * that detail is in, which is the one thing a fill cannot say.
+ * Every signal sits in the tick and the type. The box fills with the option's own
+ * effort colour, the label goes from grey to bold ink, and the effort number appears
+ * on the right. Three signals in the space a background would have taken, and it
+ * ties the row to the dial: a heavy choice burns amber here and amber out there.
  *
  * Single choice groups get a round tick box, multi choice a square, which is the
  * radio and checkbox convention without nesting either inside a button.
@@ -49,28 +48,29 @@ export function OptionRow({
       role={group.type === "single" ? "radio" : "checkbox"}
       aria-checked={chosen}
       onClick={() => choose(group.key, option.value, group.type)}
-      style={chosen ? lit(colour) : undefined}
-      className={cn(
-        "flex w-full items-start gap-2.5 rounded-btn-sm px-3 py-2.5 text-left transition-all duration-300",
-        !chosen && "bg-panel-bg hover:bg-soft/70",
-      )}
+      className="group/opt flex w-full items-start gap-2.5 rounded-btn-sm py-2.5 text-left transition-colors"
     >
       <span
         aria-hidden
-        style={chosen ? litTick(colour) : undefined}
+        style={chosen ? { background: colour } : undefined}
         className={cn(
           "mt-px flex size-[17px] shrink-0 items-center justify-center transition-all duration-300",
           group.type === "single" ? "rounded-full" : "rounded-[5px]",
           chosen
             ? "text-white"
-            : "bg-white text-transparent ring-1 ring-faint/35 ring-inset",
+            : "text-transparent ring-1 ring-faint/40 ring-inset group-hover/opt:ring-brand/60",
         )}
       >
         <Check className="size-2.5" strokeWidth={3.5} />
       </span>
 
       <span className="min-w-0 flex-1 text-[13.5px] leading-[1.45]">
-        <span className={cn("font-bold", chosen ? "text-ink" : "text-ink/90")}>
+        <span
+          className={cn(
+            "font-bold transition-colors",
+            chosen ? "text-ink" : "text-body group-hover/opt:text-ink",
+          )}
+        >
           {option.label}
         </span>{" "}
         <span className="text-faint">{option.desc}</span>

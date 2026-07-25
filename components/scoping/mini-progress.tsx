@@ -20,7 +20,7 @@ export function MiniProgress() {
   const rag = overall === null ? "todo" : effortRag(overall);
 
   return (
-    <div className="sticky top-[var(--nav-height)] z-30 border-b border-line bg-bg/95 backdrop-blur lg:hidden">
+    <div className="sticky top-[var(--nav-height)] z-30 bg-bg/95 backdrop-blur lg:hidden">
       <div className="mx-auto flex w-full max-w-wide items-center gap-3 px-5 py-2.5 sm:px-[22px]">
         <svg
           viewBox="0 0 36 36"

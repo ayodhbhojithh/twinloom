@@ -91,12 +91,12 @@ export function DialReadout() {
         )}
       </Rise>
 
-      {/* Divided by a hairline rather than boxed off: it belongs to the readout,
+      {/* Held apart by space rather than by a rule. It belongs to the readout,
           it is just a different kind of fact about it. */}
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="mt-5 flex w-full items-center gap-2 border-t border-line pt-3.5 text-left transition-colors hover:text-ink"
+        className="mt-6 flex w-full items-center gap-2 text-left transition-colors hover:text-ink"
       >
         <Sparkles aria-hidden className="size-3 shrink-0 text-accent-amber" />
 

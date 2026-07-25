@@ -87,12 +87,12 @@ export function FilesSection() {
                     <img
                       src={file.previewUrl}
                       alt=""
-                      className="size-8 shrink-0 rounded-nav object-cover shadow-card"
+                      className="size-8 shrink-0 rounded-nav object-cover"
                     />
                   ) : (
                     <span
                       aria-hidden
-                      className="flex size-8 shrink-0 items-center justify-center rounded-nav bg-white text-brand shadow-card"
+                      className="flex size-8 shrink-0 items-center justify-center rounded-nav bg-white text-brand"
                     >
                       <Icon className="size-3.5" />
                     </span>

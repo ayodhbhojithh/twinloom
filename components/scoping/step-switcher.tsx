@@ -61,20 +61,17 @@ export function StepSwitcher() {
                 type="button"
                 onClick={() => goTo(at)}
                 aria-current={current ? "step" : undefined}
-                className={cn(
-                  "flex w-full items-center gap-2.5 rounded-nav px-2 py-[7px] text-left transition-colors",
-                  current ? "bg-soft" : "hover:bg-soft/60",
-                )}
+                className="group/row flex w-full items-center gap-2.5 py-[7px] text-left transition-colors"
               >
                 <span
                   aria-hidden
                   className={cn(
-                    "flex size-[18px] shrink-0 items-center justify-center rounded-full transition-colors duration-300",
+                    "flex size-[18px] shrink-0 items-center justify-center rounded-full transition-all duration-300",
                     finished
                       ? "bg-brand text-white"
                       : current
-                        ? "border-[1.5px] border-brand bg-bg"
-                        : "border-[1.5px] border-line bg-bg",
+                        ? "ring-[1.5px] ring-brand ring-inset"
+                        : "ring-1 ring-line ring-inset group-hover/row:ring-brand/50",
                   )}
                 >
                   {finished ? (
@@ -90,7 +87,7 @@ export function StepSwitcher() {
                     current
                       ? "font-bold text-ink"
                       : applies
-                        ? "font-medium text-body"
+                        ? "font-medium text-body group-hover/row:text-ink"
                         : "font-medium text-faint line-through decoration-faint/45",
                   )}
                 >

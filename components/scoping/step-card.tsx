@@ -35,7 +35,7 @@ export function StepCard() {
         <button
           type="button"
           onClick={() => goTo(2)}
-          className="mt-4 inline-flex items-center gap-1.5 rounded-btn-sm border border-line bg-card px-3.5 py-2 text-[13px] font-semibold transition-colors hover:border-brand/40 hover:bg-soft"
+          className="mt-4 inline-flex items-center gap-1.5 rounded-btn-sm px-3.5 py-2 text-[13px] font-semibold ring-1 ring-line ring-inset transition-colors hover:ring-brand/45"
         >
           <ArrowLeft aria-hidden className="size-3.5" />
           Add an online shop
@@ -49,18 +49,16 @@ export function StepCard() {
   const focusedGroup = focus ? focus.split(":")[0] : null;
   const groups = step.groups ?? [];
 
-  /* The hairline only exists to separate one block from the block above it, so
-     the first thing on the page never gets one. */
-  const divider = groups.length
-    ? "mt-6 border-t border-line pt-6"
-    : undefined;
+  /* Space, not a rule. The gap only exists to separate one block from the one
+     above it, so the first thing on the page never gets one. */
+  const divider = groups.length ? "mt-8" : undefined;
 
   return (
     <div className="flex flex-col">
       {groups.map((group, at) => (
         <div
           key={group.key}
-          className={at > 0 ? "mt-6 border-t border-line pt-6" : undefined}
+          className={at > 0 ? "mt-8" : undefined}
         >
           <div
             role={group.type === "single" ? "radiogroup" : "group"}
@@ -75,7 +73,9 @@ export function StepCard() {
               ) : null}
             </h3>
 
-            <div className="mt-3 flex flex-col gap-1.5">
+            {/* Spacing only. No fill, no rule and no shadow between rows, so
+                the list is the choices and nothing else. */}
+            <div className="mt-2.5 flex flex-col gap-0.5">
               {group.options.map((option) => (
                 <OptionRow key={option.value} group={group} option={option} />
               ))}

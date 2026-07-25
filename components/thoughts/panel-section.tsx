@@ -3,10 +3,10 @@ import { cn } from "@/lib/utils";
 /**
  * One block inside the panel.
  *
- * A white card on the panel's tinted surface. The fill is what separates one
- * capture tool from the next, with a whisper of shadow under it; there is no
- * outline, because a white card on grey is already a card and a border round it
- * only draws the same edge twice.
+ * A white card on the panel's tinted surface. The fill is the only thing
+ * separating one capture tool from the next: no outline and no shadow, because a
+ * white card on grey is already a card and either one would draw the same edge
+ * twice.
  *
  * The panel runs on one spacing scale and this component owns two steps of it:
  * 14px of card padding, and 10px from the label row down to the content. Every
@@ -35,7 +35,7 @@ export function PanelSection({
   return (
     <section
       className={cn(
-        "rounded-card bg-card p-3.5 shadow-card transition-shadow",
+        "rounded-card bg-card p-3.5",
         className,
       )}
     >

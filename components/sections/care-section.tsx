@@ -48,9 +48,7 @@ export function CareSection() {
               <article
                 className={cn(
                   "relative h-full rounded-card border bg-card p-5 sm:p-6",
-                  featured
-                    ? "border-[1.5px] border-brand shadow-featured"
-                    : "border-line",
+                  featured ? "border-[1.5px] border-brand" : "border-line",
                 )}
               >
                 {featured ? (

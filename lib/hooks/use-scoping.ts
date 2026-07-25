@@ -82,7 +82,6 @@ export function useScoping(): ScopingController {
     getSnapshot,
     getServerSnapshot,
   );
-  const setAnswers = updateAnswers;
   const [index, setIndex] = useState(0);
   const [visited, setVisited] = useState<number[]>([0]);
   const [focus, setFocus] = useState<FocusKey>(null);
@@ -134,7 +133,7 @@ export function useScoping(): ScopingController {
         return;
       }
 
-      setAnswers((current) => {
+      updateAnswers((current) => {
         if (type === "single") {
           const single = { ...current.single };
           if (single[groupKey] === optionValue) delete single[groupKey];
@@ -160,7 +159,7 @@ export function useScoping(): ScopingController {
   );
 
   const setEffort = useCallback((key: string, effort: number) => {
-    setAnswers((current) => ({
+    updateAnswers((current) => ({
       ...current,
       effort: { ...current.effort, [key]: effort },
       touched: current.touched.includes(key)
@@ -175,18 +174,18 @@ export function useScoping(): ScopingController {
   );
 
   const setAsset = useCallback((asset: number, state: AssetState) => {
-    setAnswers((current) => ({
+    updateAnswers((current) => ({
       ...current,
       assets: { ...current.assets, [asset]: state },
     }));
   }, []);
 
   const setBudget = useCallback((budget: number | null) => {
-    setAnswers((current) => ({ ...current, budget }));
+    updateAnswers((current) => ({ ...current, budget }));
   }, []);
 
   const setFree = useCallback((free: string) => {
-    setAnswers((current) => ({ ...current, free }));
+    updateAnswers((current) => ({ ...current, free }));
   }, []);
 
   const complete = useCallback(

@@ -44,7 +44,7 @@ export function FinalCtaSection() {
               <Panel
                 className={cn(
                   "relative flex h-full flex-col p-5 sm:p-6",
-                  featured && "border-brand shadow-featured",
+                  featured && "border-brand",
                 )}
               >
                 {"badge" in door && door.badge ? (

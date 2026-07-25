@@ -28,7 +28,7 @@ export function ActionBar() {
      and there is nothing to avoid. */
   return (
     <div className="pointer-events-none sticky bottom-[76px] z-30 mt-8 flex justify-center panel:bottom-6">
-      <div className="pointer-events-auto flex items-center gap-2 rounded-full border border-line bg-card/95 p-1.5 shadow-[0_14px_36px_-12px_rgba(35,39,51,0.28)] backdrop-blur">
+      <div className="pointer-events-auto flex items-center gap-2 rounded-full bg-card/95 p-1.5 shadow-[0_14px_36px_-12px_rgba(35,39,51,0.28)] backdrop-blur">
         <button
           type="button"
           onClick={back}

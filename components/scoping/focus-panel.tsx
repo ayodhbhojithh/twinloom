@@ -14,7 +14,6 @@ import {
 import { cn } from "@/lib/utils";
 
 import { EffortCard } from "./effort-card";
-import { lit, litTick } from "./lit";
 import { EffortSlider } from "./effort-slider";
 import { useScopingSession } from "./scoping-context";
 
@@ -91,27 +90,29 @@ export function FocusPanel({ className }: { className?: string }) {
                 role="checkbox"
                 aria-checked={on}
                 onClick={() => choose(drivers.key, driver.value, "multi")}
-                style={on ? lit("var(--color-brand)") : undefined}
-                className={cn(
-                  "flex w-full items-start gap-2 rounded-btn-sm px-2.5 py-2 text-left transition-all duration-300",
-                  !on && "bg-card/55 hover:bg-card",
-                )}
+                className="group/drv flex w-full items-start gap-2 py-1.5 text-left transition-colors"
               >
                 <span
                   aria-hidden
-                  style={on ? litTick("var(--color-brand)") : undefined}
                   className={cn(
                     "mt-px flex size-4 shrink-0 items-center justify-center rounded-[5px] transition-all duration-300",
                     on
-                      ? "text-white"
-                      : "bg-white text-transparent ring-1 ring-faint/35 ring-inset",
+                      ? "bg-brand text-white"
+                      : "text-transparent ring-1 ring-faint/40 ring-inset group-hover/drv:ring-brand/60",
                   )}
                 >
                   <Check className="size-2.5" strokeWidth={3.5} />
                 </span>
 
                 <span className="min-w-0 flex-1 text-[12.5px] leading-[1.4]">
-                  <span className="font-bold">{driver.label}</span>{" "}
+                  <span
+                    className={cn(
+                      "font-bold transition-colors",
+                      on ? "text-ink" : "text-body group-hover/drv:text-ink",
+                    )}
+                  >
+                    {driver.label}
+                  </span>{" "}
                   <span className="text-faint">{driver.desc}</span>
                 </span>
               </button>

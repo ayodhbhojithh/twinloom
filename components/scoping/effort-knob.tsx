@@ -149,7 +149,7 @@ export function EffortKnob({
         aria-label={`Step effort for ${label}`}
         onClick={() => set(value >= EFFORT_MAX ? EFFORT_MIN : value + 2)}
         style={{ color: colour }}
-        className="absolute inset-[18px] flex cursor-pointer items-center justify-center rounded-full border border-line bg-white font-mono text-[15px] font-semibold tabular-nums shadow-[0_6px_16px_-8px_rgba(35,39,51,0.35)] select-none"
+        className="absolute inset-[18px] flex cursor-pointer items-center justify-center rounded-full bg-white ring-1 ring-line ring-inset font-mono text-[15px] font-semibold tabular-nums select-none"
       >
         {value}
       </button>
