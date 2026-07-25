@@ -108,28 +108,29 @@ export function ThoughtsPanel() {
         aria-label="Thoughts and inspiration"
         aria-hidden={!open}
         className={cn(
-          "fixed inset-y-0 right-0 z-50 flex w-full flex-col bg-panel-bg transition-[transform,box-shadow] duration-[420ms] ease-[var(--ease-out-soft)] panel:w-panel",
+          "fixed inset-y-0 right-0 z-50 flex w-full flex-col bg-bg transition-[transform,box-shadow] duration-[420ms] ease-[var(--ease-out-soft)] panel:w-panel",
           open
             ? "translate-x-0 shadow-[-18px_0_56px_rgba(18,35,59,0.16)]"
             : "pointer-events-none translate-x-full shadow-none",
         )}
       >
-        {/* No rules anywhere in the chrome. One surface, and the white cards do
-            all the dividing, the same way the page has no section dividers. */}
-        <Rise open={open} delay={90} className="shrink-0 px-4 pt-4 pb-3">
+        {/* One white surface. The sections divide themselves with hairlines and
+            every control is a recessed grey fill, which is the same arrangement
+            the page uses: nothing is outlined unless you can click it. */}
+        <Rise open={open} delay={90} className="shrink-0 px-3.5 pt-3.5 pb-2.5">
           <div className="flex items-center gap-2">
             <span
               aria-hidden
-              className="flex size-8 shrink-0 items-center justify-center rounded-nav bg-soft text-brand"
+              className="flex size-7 shrink-0 items-center justify-center rounded-nav bg-soft text-brand"
             >
-              <Sparkles className="size-4" />
+              <Sparkles className="size-3.5" />
             </span>
 
             <div className="min-w-0">
-              <h2 className="text-[14px] leading-tight font-extrabold tracking-[-0.01em]">
+              <h2 className="text-[13px] leading-tight font-extrabold tracking-[-0.01em]">
                 Thoughts &amp; inspiration
               </h2>
-              <p className="text-[11.5px] leading-tight text-faint">
+              <p className="mt-0.5 font-mono text-[9.5px] leading-tight tracking-[0.06em] text-faint uppercase">
                 add as you go
               </p>
             </div>
@@ -138,19 +139,19 @@ export function ThoughtsPanel() {
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close panel"
-              className="ml-auto flex size-8 shrink-0 items-center justify-center rounded-nav text-faint transition-colors hover:bg-soft hover:text-ink"
+              className="ml-auto flex size-7 shrink-0 items-center justify-center rounded-nav text-faint transition-colors hover:bg-soft hover:text-ink"
             >
               <X className="size-4" />
             </button>
           </div>
         </Rise>
 
-        <div className="panel-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pt-0 pb-1">
+        <div className="panel-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-3.5 pt-0 pb-1">
           <Rise open={open} delay={140}>
-            <p className="flex gap-2 rounded-card border border-brand/15 bg-soft p-4 text-[12px] leading-[1.55] text-body">
+            <p className="flex gap-2 text-[11.5px] leading-[1.5] text-faint">
               <Lightbulb
                 aria-hidden
-                className="mt-px size-4 shrink-0 text-brand"
+                className="mt-px size-3.5 shrink-0 text-brand"
               />
               <span>
                 {INTRO} <span className="font-semibold text-ink">{GDPR}</span>
@@ -161,7 +162,7 @@ export function ThoughtsPanel() {
           {errors.length ? (
             <div
               role="alert"
-              className="mt-3 rounded-card border border-destructive/25 bg-destructive/5 p-4"
+              className="mt-3 rounded-btn-sm bg-destructive/6 p-3"
             >
               <div className="flex items-center gap-2">
                 <AlertCircle
@@ -193,7 +194,7 @@ export function ThoughtsPanel() {
             </div>
           ) : null}
 
-          <div className="mt-3 flex flex-col gap-3">
+          <div className="mt-1 flex flex-col divide-y divide-line">
             <Rise open={open} delay={190}>
               <FilesSection />
             </Rise>

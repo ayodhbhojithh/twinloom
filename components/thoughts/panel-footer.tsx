@@ -25,8 +25,8 @@ export function PanelFooter() {
   const captured = parts.length > 0;
 
   return (
-    <div className="flex items-center gap-2 px-4 pt-2 pb-4 text-[11px]">
-      <span className="shrink-0 font-mono font-extrabold tracking-[0.08em] text-faint uppercase">
+    <div className="flex items-center gap-2 border-t border-line px-3.5 py-2.5 text-[10.5px]">
+      <span className="shrink-0 font-mono font-bold tracking-[0.1em] text-faint uppercase">
         Captured
       </span>
 
@@ -36,7 +36,7 @@ export function PanelFooter() {
 
       {captured ? (
         <span className="flex shrink-0 items-center gap-1 font-semibold text-ok">
-          <Check aria-hidden className="size-3.5" strokeWidth={3} />
+          <Check aria-hidden className="size-3" strokeWidth={3} />
           Saved
         </span>
       ) : null}

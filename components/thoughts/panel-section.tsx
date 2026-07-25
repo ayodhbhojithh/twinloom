@@ -3,48 +3,62 @@ import { cn } from "@/lib/utils";
 /**
  * One block inside the panel.
  *
- * The panel runs on one spacing scale, and this component owns two steps of it:
- * 16px of card padding, and 12px from the label row down to the content. Every
- * section inherits both, which is what makes four different capture tools read
- * as one set.
+ * A white card on the panel's tinted surface. The fill is what separates one
+ * capture tool from the next, with a whisper of shadow under it; there is no
+ * outline, because a white card on grey is already a card and a border round it
+ * only draws the same edge twice.
+ *
+ * The panel runs on one spacing scale and this component owns two steps of it:
+ * 14px of card padding, and 10px from the label row down to the content. Every
+ * section inherits both, which is what makes four different tools read as one set.
+ *
+ * The label's icon carries the brand colour once the section holds something and
+ * stays faint while it is empty. That is a running tally of what has been captured,
+ * read down the left edge without counting anything.
  */
 export function PanelSection({
   label,
   icon,
   meta,
+  active,
   className,
   children,
 }: {
   label: string;
   icon: React.ReactNode;
   meta?: React.ReactNode;
+  /** True once the section holds something. */
+  active?: boolean;
   className?: string;
   children: React.ReactNode;
 }) {
   return (
     <section
       className={cn(
-        "rounded-card border border-line bg-card p-4 transition-colors focus-within:border-brand/40",
+        "rounded-card bg-card p-3.5 shadow-card transition-shadow",
         className,
       )}
     >
       <div className="flex items-center gap-2">
         <span
           aria-hidden
-          className="flex size-6 shrink-0 items-center justify-center rounded-nav bg-soft text-brand"
+          className={cn(
+            "flex size-[22px] shrink-0 items-center justify-center rounded-nav transition-colors duration-300",
+            active ? "bg-soft text-brand" : "bg-panel-bg text-faint",
+          )}
         >
           {icon}
         </span>
 
         {/* Same eyebrow treatment as the site's own faint section labels. */}
-        <h3 className="font-mono text-[11px] font-extrabold tracking-[0.08em] text-faint uppercase">
+        <h3 className="font-mono text-[10.5px] font-bold tracking-[0.1em] text-faint uppercase">
           {label}
         </h3>
 
         {meta ? <span className="ml-auto shrink-0">{meta}</span> : null}
       </div>
 
-      <div className="mt-3">{children}</div>
+      <div className="mt-2.5">{children}</div>
     </section>
   );
 }

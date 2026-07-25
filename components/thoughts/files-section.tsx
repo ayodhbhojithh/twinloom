@@ -14,8 +14,8 @@ import {
 
 import { ACCEPT_ATTRIBUTE, formatBytes } from "@/lib/thoughts/files";
 import type { CapturedFileKind } from "@/lib/thoughts/types";
-import { cn } from "@/lib/utils";
 
+import { DropZone } from "./drop-zone";
 import { PanelSection } from "./panel-section";
 import { SectionCount } from "./section-count";
 import { useThoughtsSession } from "./thoughts-context";
@@ -34,6 +34,10 @@ const KIND_ICONS: Record<CapturedFileKind, LucideIcon> = {
  * browse, and paste a screenshot from the clipboard. Every file gets its own row
  * with an "explain this file" note, because the explanation is what ends up in
  * the plan next to the thumbnail.
+ *
+ * The drop target is its own component, in `drop-zone.tsx`. Captured files sit
+ * under it as recessed rows: a tinted fill inside the white card, so a file reads
+ * as something held rather than as another box drawn around it.
  */
 export function FilesSection() {
   const { files, addFiles, explainFile, removeFile } = useThoughtsSession();
@@ -44,47 +48,15 @@ export function FilesSection() {
     <PanelSection
       label="Files and screenshots"
       icon={<Files className="size-3.5" />}
+      active={files.length > 0}
       meta={<SectionCount value={files.length} />}
     >
-      <button
-        type="button"
-        onClick={() => input.current?.click()}
-        onDragOver={(event) => {
-          event.preventDefault();
-          setDragging(true);
-        }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={(event) => {
-          event.preventDefault();
-          setDragging(false);
-          addFiles(event.dataTransfer.files);
-        }}
-        className={cn(
-          "group/dz flex w-full flex-col items-center gap-2 rounded-card border-2 border-dashed p-5 text-center transition-all",
-          dragging
-            ? "scale-[1.01] border-brand bg-soft"
-            : "border-line bg-card hover:border-brand/45 hover:bg-soft/60",
-        )}
-      >
-        <span
-          aria-hidden
-          className={cn(
-            "flex size-9 items-center justify-center rounded-full transition-all",
-            dragging
-              ? "bg-brand text-white"
-              : "bg-soft text-brand group-hover/dz:scale-105",
-          )}
-        >
-          <Upload className="size-4" />
-        </span>
-
-        <span className="text-[12.5px] font-bold text-ink">
-          {dragging ? "Drop them here" : "Drag files here"}
-        </span>
-        <span className="text-[11px] leading-[1.45] text-faint">
-          click to browse · or paste a screenshot
-        </span>
-      </button>
+      <DropZone
+        dragging={dragging}
+        onOpen={() => input.current?.click()}
+        onDragStateChange={setDragging}
+        onFiles={addFiles}
+      />
 
       <input
         ref={input}
@@ -99,14 +71,14 @@ export function FilesSection() {
       />
 
       {files.length ? (
-        <ul className="mt-3 flex flex-col gap-2">
+        <ul className="mt-2.5 flex flex-col gap-2">
           {files.map((file) => {
             const Icon = KIND_ICONS[file.kind];
 
             return (
               <li
                 key={file.id}
-                className="group/file rounded-card border border-line bg-card p-3 transition-colors focus-within:border-brand/40"
+                className="group/file rounded-btn-sm bg-panel-bg p-2.5"
               >
                 <div className="flex items-center gap-2">
                   {file.previewUrl ? (
@@ -116,22 +88,22 @@ export function FilesSection() {
                     <img
                       src={file.previewUrl}
                       alt=""
-                      className="size-9 shrink-0 rounded-nav border border-line object-cover"
+                      className="size-8 shrink-0 rounded-nav object-cover shadow-card"
                     />
                   ) : (
                     <span
                       aria-hidden
-                      className="flex size-9 shrink-0 items-center justify-center rounded-nav bg-soft text-brand"
+                      className="flex size-8 shrink-0 items-center justify-center rounded-nav bg-white text-brand shadow-card"
                     >
-                      <Icon className="size-4" />
+                      <Icon className="size-3.5" />
                     </span>
                   )}
 
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-[12.5px] font-bold">
+                    <p className="truncate text-[11.5px] leading-tight font-bold">
                       {file.name}
                     </p>
-                    <p className="font-mono text-[10.5px] text-faint">
+                    <p className="mt-0.5 font-mono text-[10px] leading-tight text-faint">
                       {formatBytes(file.size)}
                     </p>
                   </div>
@@ -140,9 +112,9 @@ export function FilesSection() {
                     type="button"
                     onClick={() => removeFile(file.id)}
                     aria-label={`Remove ${file.name}`}
-                    className="flex size-7 shrink-0 items-center justify-center rounded-nav text-faint opacity-60 transition-all group-hover/file:opacity-100 hover:bg-destructive/10 hover:text-destructive"
+                    className="flex size-6 shrink-0 items-center justify-center rounded-nav text-faint opacity-60 transition-all group-hover/file:opacity-100 hover:bg-destructive/10 hover:text-destructive"
                   >
-                    <X className="size-3.5" />
+                    <X className="size-3" />
                   </button>
                 </div>
 
@@ -151,7 +123,7 @@ export function FilesSection() {
                   onChange={(event) => explainFile(file.id, event.target.value)}
                   placeholder="Explain this file"
                   aria-label={`Explain ${file.name}`}
-                  className="mt-2 h-9 w-full rounded-btn-sm border border-line bg-panel-bg px-3 text-[12px] outline-none transition-colors placeholder:text-faint focus:border-brand focus:bg-card"
+                  className="mt-2 h-9 w-full rounded-btn-sm bg-white px-2.5 text-[11.5px] outline-none ring-inset transition-shadow placeholder:text-faint focus:ring-1 focus:ring-brand/45"
                 />
               </li>
             );

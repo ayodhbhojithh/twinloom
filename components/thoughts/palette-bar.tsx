@@ -13,7 +13,7 @@ export function PaletteBar({ colours }: { colours: PaletteColour[] }) {
   return (
     <div
       aria-hidden
-      className="flex h-2.5 overflow-hidden rounded-pill border border-line"
+      className="flex h-2 overflow-hidden rounded-pill bg-panel-bg"
     >
       {colours.map((colour) => (
         <span
