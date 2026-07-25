@@ -18,7 +18,7 @@ function Journey() {
     <>
       <MiniProgress />
 
-      <Container className="pt-3 pb-10 sm:pt-4">
+      <Container className="pt-3 pb-4 sm:pt-4">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,300px)_minmax(0,1fr)] lg:gap-8">
           {/* Orientation. Sticky from lg up, so the dial, the readout and the
               section list stay put while the questions scroll past them. Its own
@@ -72,9 +72,11 @@ function Journey() {
             </div>
           </div>
         </div>
+        {/* Sits inside the container so the island sticks while the journey is
+            on screen and scrolls away with it, rather than floating over the
+            footer. */}
+        <ActionBar />
       </Container>
-
-      <ActionBar />
     </>
   );
 }
