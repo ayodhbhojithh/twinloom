@@ -18,15 +18,15 @@ function Journey() {
     <>
       <MiniProgress />
 
-      <Container className="pt-6 pb-10 sm:pt-8">
+      <Container className="pt-3 pb-10 sm:pt-4">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,300px)_minmax(0,1fr)] lg:gap-8">
           {/* Orientation. Sticky from lg up, so the dial, the readout and the
               section list stay put while the questions scroll past them. Its own
               height is capped to the viewport and scrolls internally, so a long
               readout can never push the list out of reach. */}
           <aside className="hidden lg:sticky lg:top-[calc(var(--nav-height)+20px)] lg:block lg:max-h-[calc(100svh-var(--nav-height)-40px)] lg:overflow-y-auto">
-            <div className="rounded-card border border-line bg-card p-5">
-              <EffortDial className="mx-auto w-[236px]" />
+            <div className="rounded-card border border-line bg-card p-4">
+              <EffortDial className="w-full" />
 
               <div className="mt-5 border-t border-line pt-4">
                 <DialReadout />
