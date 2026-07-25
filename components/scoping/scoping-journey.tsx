@@ -33,16 +33,19 @@ function Journey() {
         {/* The stage. The dial is the thing people come to this page for, so it
             gets the full width and the top of the page rather than a sidebar.
             One soft slab, no outline: the fill is what groups it, which keeps the
-            page from reading as a stack of boxes. */}
-        <div className="mt-3 grid gap-6 rounded-[22px] bg-panel-bg px-5 py-6 sm:px-7 lg:grid-cols-[minmax(0,300px)_minmax(0,1fr)] lg:gap-9 lg:px-8 lg:py-7 xl:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
-          <EffortDial className="mx-auto w-full max-w-[210px] sm:max-w-[300px] xl:max-w-[340px]" />
+            page from reading as a stack of boxes.
+
+            Three zones, in the order the eye needs them. The dial is the shape of
+            the whole brief, the readout says what the section in play amounts to,
+            and the section list is how you move. Same information, three levels of
+            zoom, none of it in a different place on the page. */}
+        <div className="mt-3 grid gap-6 rounded-[22px] bg-panel-bg p-4 sm:p-5 lg:grid-cols-[minmax(0,240px)_minmax(0,1fr)_minmax(0,264px)] lg:gap-7 lg:p-6 xl:grid-cols-[minmax(0,290px)_minmax(0,1fr)_minmax(0,290px)] xl:gap-8">
+          <EffortDial className="mx-auto w-full max-w-[210px] sm:max-w-[240px] xl:max-w-[290px] lg:self-center" />
 
           <div className="lg:self-center">
             <DialReadout />
           </div>
-        </div>
 
-        <div className="mt-3">
           <StepSwitcher />
         </div>
 

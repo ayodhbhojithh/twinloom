@@ -31,6 +31,7 @@ export type {
   Rag,
   ScopeAnswers,
   ScopeGroup,
+  ScopeIcon,
   ScopeOption,
   ScopeStep,
   SectionSummary,

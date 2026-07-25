@@ -49,6 +49,17 @@ export interface DeepenSpec {
   dials: DeepenDial[];
 }
 
+/** The glyph on a section's tile. One per section, in step order. */
+export type ScopeIcon =
+  | "Compass"
+  | "Boxes"
+  | "LayoutGrid"
+  | "ShoppingBag"
+  | "Search"
+  | "Palette"
+  | "CalendarClock"
+  | "PenLine";
+
 /** Sections that are not a list of questions. */
 export type StepSpecial = "assets" | "budget" | "free";
 
@@ -56,12 +67,8 @@ export interface ScopeStep {
   key: string;
   /** The small uppercase label. */
   kicker: string;
-  /**
-   * One or two words, for the switcher rail. Eight full kickers side by side wrap
-   * to three lines each and the row stops being scannable, which is the whole
-   * point of it.
-   */
-  short: string;
+  /** Names the lucide glyph for this section's tile. */
+  icon: ScopeIcon;
   heading: string;
   lead: string;
   groups?: ScopeGroup[];

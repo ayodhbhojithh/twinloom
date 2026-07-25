@@ -7,6 +7,7 @@ import { useThoughtsSession } from "@/components/thoughts";
 import { effortRag, RAG_COLOUR, RAG_LABEL, STEP_COUNT } from "@/lib/scoping";
 
 import { useScopingSession } from "./scoping-context";
+import { StepIcon } from "./step-icon";
 
 const LEGEND = [
   { rag: "todo", label: "Not set" },
@@ -55,17 +56,21 @@ export function DialReadout() {
           Readout · Section {index + 1} / {STEP_COUNT}
         </p>
 
-        <div className="mt-1.5 flex flex-wrap items-center gap-2.5">
-          <h2 className="text-[16px] font-extrabold tracking-[-0.01em] sm:text-[17px]">
-            {step.kicker}
-          </h2>
+        <div className="mt-2 flex items-center gap-3">
+          <StepIcon icon={step.icon} at={index} />
 
-          <span
-            className="rounded-nav px-1.5 py-0.5 font-mono text-[9px] font-extrabold tracking-[0.06em] text-white uppercase transition-colors duration-500"
-            style={{ background: RAG_COLOUR[rag] }}
-          >
-            Effort {summary.effort === null ? "not set" : RAG_LABEL[rag]}
-          </span>
+          <div className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1">
+            <h2 className="text-[16px] font-extrabold tracking-[-0.01em] sm:text-[17px]">
+              {step.kicker}
+            </h2>
+
+            <span
+              className="rounded-nav px-1.5 py-0.5 font-mono text-[9px] font-extrabold tracking-[0.06em] text-white uppercase transition-colors duration-500"
+              style={{ background: RAG_COLOUR[rag] }}
+            >
+              Effort {summary.effort === null ? "not set" : RAG_LABEL[rag]}
+            </span>
+          </div>
         </div>
 
         {summary.units.length ? (

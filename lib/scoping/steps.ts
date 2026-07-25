@@ -28,7 +28,7 @@ export const STEPS: readonly ScopeStep[] = [
   {
     key: "about",
     kicker: "About you and your goal",
-    short: "About you",
+    icon: "Compass",
     heading: "Let's start with the basics.",
     lead: "Pick a choice and it opens underneath, so you can read what it means and set how far to push it.",
     groups: [
@@ -199,7 +199,7 @@ export const STEPS: readonly ScopeStep[] = [
   {
     key: "assets",
     kicker: "What you've got already",
-    short: "What you have",
+    icon: "Boxes",
     heading: "What's in place today?",
     lead: "Every no quietly adds the right help to your brief. Nothing to tune here, just tell us what exists.",
     special: "assets",
@@ -208,7 +208,7 @@ export const STEPS: readonly ScopeStep[] = [
   {
     key: "does",
     kicker: "What your website needs to do",
-    short: "What it does",
+    icon: "LayoutGrid",
     heading: "What should your site actually do?",
     lead: "Tell us the outcomes and we work out the pages and the size for you. Choosing an online shop unlocks the selling questions.",
     groups: [
@@ -366,7 +366,7 @@ export const STEPS: readonly ScopeStep[] = [
   {
     key: "sell",
     kicker: "Selling online",
-    short: "Selling",
+    icon: "ShoppingBag",
     heading: "The detail that sizes a shop.",
     lead: "The questions that size a shop. Only relevant if you are selling.",
     condition: { key: "type", value: "shop" },
@@ -496,7 +496,7 @@ export const STEPS: readonly ScopeStep[] = [
   {
     key: "found",
     kicker: "Getting found and growing",
-    short: "Getting found",
+    icon: "Search",
     heading: "The digital services wrap.",
     lead: "Click a service to open it and set how hard to push. Delivered with our partners, and you talk to them directly.",
     groups: [
@@ -569,7 +569,7 @@ export const STEPS: readonly ScopeStep[] = [
   {
     key: "look",
     kicker: "Look and feel",
-    short: "Look and feel",
+    icon: "Palette",
     heading: "The direction.",
     lead: "Pick a style. Colours and reference sites go in the Thoughts panel, where you can show us rather than describe it.",
     groups: [
@@ -663,7 +663,7 @@ export const STEPS: readonly ScopeStep[] = [
   {
     key: "time",
     kicker: "Timeline and budget",
-    short: "Time and budget",
+    icon: "CalendarClock",
     heading: "A couple of practicalities.",
     lead: "How soon, who does the content, who looks after it afterwards, and a soft budget you can skip.",
     groups: [
@@ -773,7 +773,7 @@ export const STEPS: readonly ScopeStep[] = [
   {
     key: "else",
     kicker: "Anything else",
-    short: "Anything else",
+    icon: "PenLine",
     heading: "Last thing. Anything special?",
     lead: "In your own words. Calculators, integrations, member areas, anything unusual. The Thoughts panel saves alongside all of this.",
     special: "free",
