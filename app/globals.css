@@ -51,6 +51,8 @@
 
   /* Brand */
   --color-brand: #2f6fb0;
+  /* One step down from the brand, for pressed and hovered states. */
+  --color-brand-deep: #245785;
   --color-ok: #22c55e;
 
   /* Scoping dial, from the mono baseline. RAG here is semantic, not decorative:
@@ -189,6 +191,9 @@
   html {
     @apply font-sans;
     scroll-behavior: smooth;
+    /* Reserve the gutter always, so the page does not jump sideways when the
+       scrollbar appears, or when the Thoughts panel shortens the page. */
+    scrollbar-gutter: stable;
     /* Let each platform render text its own way. `-webkit-font-smoothing:
        antialiased` is a macOS habit, and on Windows Chromium it switches
        ClearType subpixel rendering off, which is what makes text look thin and
@@ -206,6 +211,44 @@
   button {
     cursor: pointer;
     text-align: left;
+  }
+
+  /* The page scrollbar, matching the panel's. Firefox and the modern standard
+     properties first; the webkit rules below do the same job in Chromium and
+     Safari, where `scrollbar-width` is ignored. */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-brand) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-brand);
+    border: 3px solid transparent;
+    background-clip: content-box;
+    border-radius: 99px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-brand-deep);
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background: var(--color-brand-deep);
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: transparent;
   }
 
   /* One scrollable page, so every nav link is an in page anchor. This keeps a
@@ -296,14 +339,18 @@
     outline-offset: 3px;
   }
 
-  /* The panel body scrolls a lot. A hairline scrollbar keeps it quiet. */
+  /* One scrollbar language, on the page and inside the panel.
+     A hairline thumb on no track, so the only thing on screen is the position
+     indicator itself. The transparent border keeps the thumb off the very edge,
+     which is what makes it read as a hairline rather than a bar. */
   .panel-scroll {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-line) transparent;
+    scrollbar-color: var(--color-brand) transparent;
   }
 
   .panel-scroll::-webkit-scrollbar {
-    width: 8px;
+    width: 10px;
+    height: 10px;
   }
 
   .panel-scroll::-webkit-scrollbar-track {
@@ -311,12 +358,24 @@
   }
 
   .panel-scroll::-webkit-scrollbar-thumb {
-    background: var(--color-line);
+    background: var(--color-brand);
+    border: 3px solid transparent;
+    background-clip: content-box;
     border-radius: 99px;
   }
 
   .panel-scroll::-webkit-scrollbar-thumb:hover {
-    background: var(--color-faint);
+    background: var(--color-brand-deep);
+    background-clip: content-box;
+  }
+
+  .panel-scroll::-webkit-scrollbar-thumb:active {
+    background: var(--color-brand-deep);
+    background-clip: content-box;
+  }
+
+  .panel-scroll::-webkit-scrollbar-corner {
+    background: transparent;
   }
 
   @media (prefers-reduced-motion: reduce) {
