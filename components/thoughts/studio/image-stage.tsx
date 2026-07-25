@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RotateCcw, Sparkles } from "lucide-react";
 
+import { TickSlider } from "@/components/shared";
 import { clamp, rgbToHex } from "@/lib/colour/convert";
 import { extractPalette } from "@/lib/colour/extract";
 import type { StudioController } from "@/lib/hooks/use-colour-studio";
@@ -313,19 +314,18 @@ export function ImageStage({
         >
           Zoom
         </label>
-        <input
-          id="studio-zoom"
-          type="range"
-          min={1}
-          max={8}
-          step={0.1}
-          value={zoom}
-          onChange={(event) => applyZoom(Number(event.target.value))}
-          className="range-slider min-w-24 flex-1 text-brand"
-          style={{
-            background: `linear-gradient(to right, var(--color-brand) 0%, var(--color-brand) ${((zoom - 1) / 7) * 100}%, var(--color-line) ${((zoom - 1) / 7) * 100}%, var(--color-line) 100%)`,
-          }}
-        />
+        <div className="min-w-24 flex-1">
+          <TickSlider
+            id="studio-zoom"
+            min={1}
+            max={8}
+            step={0.1}
+            value={zoom}
+            colour="var(--color-brand)"
+            label="Zoom"
+            onChange={applyZoom}
+          />
+        </div>
 
         <button
           type="button"

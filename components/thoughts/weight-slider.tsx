@@ -1,11 +1,13 @@
 "use client";
 
+import { TickSlider } from "@/components/shared";
+
 /**
  * The per colour weight control.
  *
- * Still a native range input, because that is what gives keyboard and screen
- * reader users a real slider. Everything visible is ours: the track fills with
- * the colour being weighted, so the control reads as that colour's share.
+ * The same stop slider the scoping journey uses, filled with the colour being
+ * weighted so the control reads as that colour's share. One slider mechanism
+ * across the whole site: a second one would only teach people to look twice.
  */
 export function WeightSlider({
   id,
@@ -21,20 +23,16 @@ export function WeightSlider({
   onChange: (weight: number) => void;
 }) {
   return (
-    <input
-      id={id}
-      type="range"
-      min={0}
-      max={100}
-      value={weight}
-      aria-label={label}
-      onChange={(event) => onChange(Number(event.target.value))}
-      className="range-slider min-w-0 flex-1"
-      style={{
-        /* currentColor drives the thumb's ring. */
-        color: hex,
-        background: `linear-gradient(to right, ${hex} 0%, ${hex} ${weight}%, var(--color-line) ${weight}%, var(--color-line) 100%)`,
-      }}
-    />
+    <div className="min-w-0 flex-1">
+      <TickSlider
+        id={id}
+        min={0}
+        max={100}
+        value={weight}
+        colour={hex}
+        label={label}
+        onChange={onChange}
+      />
+    </div>
   );
 }

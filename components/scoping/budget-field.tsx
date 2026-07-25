@@ -2,6 +2,8 @@
 
 import { cn } from "@/lib/utils";
 
+import { TickSlider } from "@/components/shared";
+
 import { useScopingSession } from "./scoping-context";
 
 const MIN = 1000;
@@ -20,7 +22,6 @@ export function BudgetField() {
 
   const declined = answers.budget === null;
   const value = answers.budget ?? 5000;
-  const filled = ((value - MIN) / (MAX - MIN)) * 100;
 
   return (
     <div className="rounded-card bg-panel-bg p-4 sm:p-5">
@@ -42,22 +43,18 @@ export function BudgetField() {
         </span>
       </div>
 
-      <input
-        type="range"
-        min={MIN}
-        max={MAX}
-        step={STEP}
-        value={value}
-        disabled={declined}
-        aria-label="Budget comfort"
-        onChange={(event) => setBudget(Number(event.target.value))}
-        className="range-slider mt-4 w-full text-brand disabled:opacity-40"
-        style={{
-          background: declined
-            ? "var(--color-line)"
-            : `linear-gradient(to right, var(--color-brand) 0%, var(--color-brand) ${filled}%, var(--color-line) ${filled}%, var(--color-line) 100%)`,
-        }}
-      />
+      <div className="mt-4">
+        <TickSlider
+          min={MIN}
+          max={MAX}
+          step={STEP}
+          value={value}
+          disabled={declined}
+          colour="var(--color-brand)"
+          label="Budget comfort"
+          onChange={setBudget}
+        />
+      </div>
 
       <div className="mt-1.5 flex justify-between font-mono text-[10px] tracking-[0.06em] text-faint">
         <span>£1k</span>

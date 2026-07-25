@@ -8,6 +8,8 @@ import {
   RAG_LABEL,
 } from "@/lib/scoping";
 
+import { TickSlider } from "@/components/shared";
+
 import { useScopingSession } from "./scoping-context";
 
 /**
@@ -31,7 +33,6 @@ export function EffortSlider({
 
   const rag = effortRag(value);
   const colour = RAG_COLOUR[rag];
-  const filled = (value / EFFORT_MAX) * 100;
 
   return (
     <div>
@@ -55,20 +56,16 @@ export function EffortSlider({
 
       <p className="mt-2 text-[12.5px] leading-[1.55] text-body">{explain}</p>
 
-      <input
-        type="range"
-        min={EFFORT_MIN}
-        max={EFFORT_MAX}
-        step={1}
-        value={value}
-        aria-label={`Effort for ${label}`}
-        onChange={(event) => setEffort(effortKey, Number(event.target.value))}
-        className="range-slider mt-3 w-full"
-        style={{
-          color: colour,
-          background: `linear-gradient(to right, ${colour} 0%, ${colour} ${filled}%, var(--color-line) ${filled}%, var(--color-line) 100%)`,
-        }}
-      />
+      <div className="mt-3">
+        <TickSlider
+          min={EFFORT_MIN}
+          max={EFFORT_MAX}
+          value={value}
+          colour={colour}
+          label={`Effort for ${label}`}
+          onChange={(next) => setEffort(effortKey, next)}
+        />
+      </div>
 
       <div className="mt-1.5 flex justify-between font-mono text-[10px] tracking-[0.06em] text-faint uppercase">
         <span>Light</span>

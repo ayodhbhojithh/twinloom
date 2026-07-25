@@ -4,3 +4,4 @@ export { Eyebrow } from "./eyebrow";
 export { Panel } from "./panel";
 export { Reveal, Rise } from "./reveal";
 export { Section } from "./section";
+export { TickSlider } from "./tick-slider";
