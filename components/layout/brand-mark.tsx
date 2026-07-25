@@ -1,14 +1,17 @@
+import { Brain } from "lucide-react";
+
 import { SITE } from "@/lib/content/site";
 import { cn } from "@/lib/utils";
 
 /**
- * The wordmark: a gradient tile, then the name with its middle syllable carrying
- * the same gradient. Manrope, extrabold, tight tracking.
+ * The wordmark: a brain glyph, then the name with its middle syllable carrying
+ * the brand gradient. Manrope, extrabold, tight tracking.
  *
- * The tile is 2a's brand device: the accent set at full strength on a 135 degree
- * sweep, in one small place, so the rest of the page can stay quiet.
+ * The glyph sits on nothing. With no tile behind it the gradient on `Core` is the
+ * only place the accent set appears at full strength, which is how 2a spends it:
+ * once per screen.
  *
- * Swap the tile for the real logo when brand assets land; nothing else on the
+ * Swap the glyph for the real logo when brand assets land; nothing else on the
  * site sets the brand name or mark.
  */
 export function BrandMark({
@@ -22,13 +25,11 @@ export function BrandMark({
   const large = size === "large";
 
   return (
-    <span className={cn("flex items-center gap-2.5", className)}>
-      <span
+    <span className={cn("flex items-center gap-2", className)}>
+      <Brain
         aria-hidden
-        className={cn(
-          "bg-brand-gradient-tilt shrink-0 rounded-[8px]",
-          large ? "size-8" : "size-[26px]",
-        )}
+        strokeWidth={2.1}
+        className={cn("shrink-0 text-brand", large ? "size-5" : "size-[18px]")}
       />
 
       <span
