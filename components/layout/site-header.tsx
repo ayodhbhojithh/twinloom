@@ -39,9 +39,11 @@ export function SiteHeader() {
           <BrandMark />
         </Link>
 
+        {/* flex-1 so the links centre in the space between the wordmark and the
+            two doors, rather than sitting up against the wordmark. */}
         <nav
           aria-label="Primary"
-          className="hidden flex-wrap gap-0.5 lg:flex"
+          className="hidden flex-1 flex-wrap justify-center gap-0.5 lg:flex"
         >
           {PRIMARY_NAV.map((item) => (
             <Link
