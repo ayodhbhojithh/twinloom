@@ -27,9 +27,15 @@ export const SITE = {
  * The primary journey and the escape hatch. Every call to action points at one
  * of these two.
  */
+/**
+ * Both point at the three doors for now. The guided journey lives at /scope in
+ * the artifacts (2_scoping.html) and is the next thing to build; until it
+ * exists, sending people to the section that offers all three ways to start
+ * beats a link that does nothing.
+ */
 export const PRIMARY_CTA: CallToAction = {
   label: "Scope your website",
-  href: "#scope",
+  href: "#contact",
 };
 
 export const SECONDARY_CTA: CallToAction = {
@@ -37,17 +43,58 @@ export const SECONDARY_CTA: CallToAction = {
   href: "#contact",
 };
 
+/** The scoping journey. Not built yet. */
+export const SCOPE_ROUTE = "/scope";
+
 /**
- * Top nav, from TCT_Sitemap.md. One scrollable page, so these are in page
- * anchors rather than routes. Sections are being built one at a time, so some of
- * these targets do not exist yet.
+ * Top nav. One scrollable page, so these are in page anchors, and every one of
+ * them resolves to a section that exists.
+ *
+ * TCT_Sitemap.md also lists Partners, Insights and Pricing. They are their own
+ * pages there, not Home blocks, so they join this list when they are built
+ * rather than sitting here as links that go nowhere.
  */
 export const PRIMARY_NAV: readonly NavItem[] = [
+  { label: "Services", href: "#services" },
+  { label: "How we work", href: "#how-we-work" },
   { label: "Work", href: "#work" },
   { label: "About", href: "#about" },
-  { label: "Partners", href: "#partners" },
   { label: "Care", href: "#care" },
-  { label: "Insights", href: "#insights" },
-  { label: "Pricing", href: "#pricing" },
   { label: "Contact", href: "#contact" },
+] as const;
+
+/**
+ * Footer columns, from TCT_Sitemap.md's footer spec. Explore and Get started
+ * point at sections that exist. The Legal column points at routes that do not:
+ * those four are "Required" artefacts and have to be real pages, so they stay
+ * listed and will resolve once written.
+ */
+export const FOOTER_NAV: readonly { title: string; items: NavItem[] }[] = [
+  {
+    title: "Explore",
+    items: [
+      { label: "Services", href: "#services" },
+      { label: "How we work", href: "#how-we-work" },
+      { label: "Work", href: "#work" },
+      { label: "About", href: "#about" },
+      { label: "Care", href: "#care" },
+    ],
+  },
+  {
+    title: "Get started",
+    items: [
+      { label: "Scope your website", href: "#contact" },
+      { label: "Book a call", href: "#contact" },
+      { label: "Contact", href: "#contact" },
+    ],
+  },
+  {
+    title: "Legal",
+    items: [
+      { label: "Privacy", href: "/privacy" },
+      { label: "Terms", href: "/terms" },
+      { label: "Cookies", href: "/cookies" },
+      { label: "Accessibility", href: "/accessibility" },
+    ],
+  },
 ] as const;
