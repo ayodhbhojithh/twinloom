@@ -3,6 +3,7 @@ import { Manrope } from "next/font/google";
 
 import "./globals.css";
 
+import { ThoughtsProvider } from "@/components/thoughts";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SITE } from "@/lib/content/site";
 
@@ -34,8 +35,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-GB" className={`${manrope.variable} h-full`}>
-      <body className="flex min-h-full flex-col">
-        <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
+      <body className="min-h-full">
+        <TooltipProvider delayDuration={200}>
+          {/* The panel lives above the page so it is present on every route, and
+              it owns the column layout because the page shifts when it opens. */}
+          <ThoughtsProvider>{children}</ThoughtsProvider>
+        </TooltipProvider>
       </body>
     </html>
   );
