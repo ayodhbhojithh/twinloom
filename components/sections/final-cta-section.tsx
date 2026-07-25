@@ -79,7 +79,7 @@ export function FinalCtaSection() {
         })}
       </ul>
 
-      <Panel className="mx-auto mt-6 max-w-[680px] p-5 text-center sm:p-6">
+      <Panel className="mx-auto mt-6 max-w-[860px] p-5 text-center sm:p-6">
         <h3 className="text-[16px] font-bold">{FINAL_CTA.next.title}</h3>
         <p className="mt-2 text-[14.5px] leading-[1.65] text-body">
           {FINAL_CTA.next.body}

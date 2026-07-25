@@ -13,7 +13,7 @@ export function SiteFooter() {
     <footer className="mt-auto border-t border-line">
       <Container width="wide" className="py-12">
         <div className="grid gap-9 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
-          <div className="max-w-[320px]">
+          <div className="max-w-[360px]">
             <BrandMark size="large" />
             <p className="mt-3 text-[13.5px] leading-[1.6] text-body">
               {SITE.description}

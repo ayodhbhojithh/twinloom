@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
+import { Caveat, Manrope } from "next/font/google";
 
 import "./globals.css";
 
@@ -11,6 +11,13 @@ import { SITE } from "@/lib/content/site";
    type scale runs from 400 body copy up to 800 headings and the wordmark. */
 const manrope = Manrope({
   variable: "--font-manrope",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+/* Caveat, for the one handwritten aside. Variable, so no weight list. */
+const caveat = Caveat({
+  variable: "--font-caveat",
   subsets: ["latin"],
   display: "swap",
 });
@@ -34,7 +41,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-GB" className={`${manrope.variable} h-full`}>
+    <html lang="en-GB" className={`${manrope.variable} ${caveat.variable} h-full`}>
       <body className="min-h-full">
         <TooltipProvider delayDuration={200}>
           {/* The panel lives above the page so it is present on every route, and

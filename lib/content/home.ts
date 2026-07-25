@@ -11,9 +11,17 @@
 
 export const HERO = {
   eyebrow: "Websites for growing UK businesses",
-  headline:
-    "A website that helps people find you, trust you, and get in touch.",
+  /**
+   * Split so the closing phrase can carry the brand gradient. 2a puts the
+   * gradient on exactly one span per screen, and this is that span.
+   */
+  headline: {
+    lead: "A website that helps people find you, trust you, and ",
+    accent: "get in touch.",
+  },
   sub: "We build, refresh and look after your website and everything around it, so you can get on with running your business.",
+  /** The handwritten aside, in the studio's own voice. */
+  aside: "this is where your website gets a price, in about ninety seconds...",
   /** The hero says the whole thing; the nav's button says the short version. */
   ctaLabel: "Scope your website, a few simple steps",
 } as const;

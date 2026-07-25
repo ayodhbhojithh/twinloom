@@ -56,6 +56,11 @@ export function SiteHeader() {
               className="rounded-nav px-2.5 py-1.5 text-[13.5px] font-semibold text-body transition-colors hover:bg-soft hover:text-ink"
             >
               {item.label}
+              {item.count === undefined ? null : (
+                <span className="ml-1 font-mono text-[11px] font-normal text-faint tabular-nums">
+                  {item.count}
+                </span>
+              )}
             </a>
           ))}
         </nav>
@@ -70,14 +75,15 @@ export function SiteHeader() {
             {SECONDARY_CTA.label}
           </ActionButton>
 
-          <ActionButton
-            size="sm"
+          {/* Dark, not purple: 2a keeps the brand colour for the hero's call to
+              action and lets the nav's sit quietly in ink. */}
+          <a
             href={PRIMARY_CTA.href}
-            className="hidden sm:inline-flex"
+            className="hidden items-center gap-1.5 rounded-btn-sm bg-ink px-[18px] py-2 text-[13px] font-bold text-white transition-opacity hover:opacity-85 sm:inline-flex"
           >
             {PRIMARY_CTA.label}
             <ArrowRight aria-hidden className="size-3.5" />
-          </ActionButton>
+          </a>
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -106,9 +112,14 @@ export function SiteHeader() {
                   <SheetClose asChild key={item.href}>
                     <a
                       href={item.href}
-                      className="rounded-nav px-2 py-2.5 text-[15px] font-semibold text-ink transition-colors hover:bg-soft"
+                      className="flex items-baseline justify-between rounded-nav px-2 py-2.5 text-[15px] font-semibold text-ink transition-colors hover:bg-soft"
                     >
                       {item.label}
+                      {item.count === undefined ? null : (
+                        <span className="font-mono text-[11px] font-normal text-faint tabular-nums">
+                          {item.count}
+                        </span>
+                      )}
                     </a>
                   </SheetClose>
                 ))}

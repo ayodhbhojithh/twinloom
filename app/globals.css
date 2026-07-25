@@ -10,21 +10,13 @@
 /* ---------------------------------------------------------------------------
    TwinCoreTech design tokens
 
-   Lifted from Docs/artifacts/1_landing_1.html, whose :root block is marked
-   "Shared design tokens - Claude Design can retheme from here". The RAG and
-   panel values come from Docs/artifacts/twincoretech_site.html, the mono
-   baseline that carries the real IA.
+   Colour theme from option 2a of the design canvas, "Riff on your product's
+   visual DNA: portal circles, mono microcopy, gradient accents"
+   (Docs/old/source/Web Studio Page.dc.html, turn 2). Values are the ones the
+   prototype actually uses, taken by frequency rather than by eye.
 
-   Artifact name  ->  token here
-     --ink              --color-ink
-     --muted            --color-body      (renamed: shadcn owns "muted")
-     --faint            --color-faint
-     --line             --color-line
-     --bg               --color-bg
-     --card             use bg-card, mapped below
-     --accent           --color-brand     (renamed: shadcn owns "accent")
-     --soft             --color-soft
-     --green            --color-ok
+   Structure, type and spacing are unchanged. This is a palette swap, which is
+   the whole reason every colour on the site comes from a token.
 --------------------------------------------------------------------------- */
 @theme {
   /* Manrope everywhere. The system stack sits behind it only as a fallback for
@@ -36,40 +28,59 @@
      small labels in it deliberately. */
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
+  /* Caveat, for the handwritten aside. 2a uses it once per screen, as an aside
+     in the designer's voice, never for anything load bearing. */
+  --font-script: var(--font-caveat), ui-rounded, cursive;
+
   /* Ink and text */
-  --color-ink: #12233b;
-  --color-body: #5b6675;
-  --color-faint: #9aa2ae;
+  --color-ink: #232733;
+  --color-body: #5b6472;
+  /* The mono microcopy grey. The most used colour in 2a after the hairline. */
+  --color-faint: #8b93a1;
 
   /* Surfaces and lines.
      One background for the whole page: white. Sections do not alternate, so the
      only things drawing structure are hairlines, spacing and type. */
   --color-bg: #ffffff;
-  --color-line: #e4e8ee;
-  /* Pale blue tint, for icon tiles, hovers and quiet callouts. */
-  --color-soft: #eaf2fb;
+  --color-line: #e7eaf0;
+  /* Brand tint, for icon tiles, hovers and quiet callouts. */
+  --color-soft: #f5f1fe;
 
   /* Brand */
-  --color-brand: #2f6fb0;
+  --color-brand: #7c3aed;
   /* One step down from the brand, for pressed and hovered states. */
-  --color-brand-deep: #245785;
-  --color-ok: #22c55e;
+  --color-brand-deep: #6d28d9;
+  --color-ok: #10b981;
+
+  /* The accent set the gradients draw from. 2a spends them on portal circles
+     and on one coloured word per heading, never on flat panels. */
+  --color-accent-amber: #f59e0b;
+  --color-accent-pink: #ec4899;
+  --color-accent-violet: #8b5cf6;
+  --color-accent-emerald: #10b981;
+  --color-accent-blue: #3b82f6;
+  --color-accent-teal: #14b8a6;
+  --color-accent-orange: #f97316;
+  --color-accent-indigo: #6366f1;
+  --color-accent-sky: #0ea5e9;
+  --color-accent-fuchsia: #d946ef;
+  --color-accent-slate: #64748b;
 
   /* Scoping dial, from the mono baseline. RAG here is semantic, not decorative:
      it reads effort per component, so these keep their own names. */
-  --color-rag-green: #2fa36b;
-  --color-rag-amber: #e8a13a;
+  --color-rag-green: #10b981;
+  --color-rag-amber: #f59e0b;
   --color-rag-red: #e2574c;
-  --color-rag-todo: #e3e3e3;
+  --color-rag-todo: #e7eaf0;
 
   /* The Thoughts and inspiration panel. It docks right and the page shifts by
      its width, so the width is a token both sides read. Below the `panel`
      breakpoint it goes full width and nothing shifts.
 
      Its body takes the faintest tint so the white capture cards lift off it.
-     Everything else in the panel is the site's own palette: same blue, same
+     Everything else in the panel is the site's own palette: same brand, same
      hairlines, same radii. */
-  --color-panel-bg: #f7f9fc;
+  --color-panel-bg: #f7f8fb;
   --spacing-panel: 400px;
   --breakpoint-panel: 820px;
 
@@ -89,11 +100,11 @@
   --radius-nav: 7px;
   --radius-pill: 20px;
 
-  /* Elevation */
-  --shadow-card: 0 1px 3px rgba(16, 32, 60, 0.04);
-  --shadow-cta: 0 4px 14px rgba(47, 111, 176, 0.28);
-  --shadow-cta-hover: 0 6px 18px rgba(47, 111, 176, 0.35);
-  --shadow-featured: 0 6px 20px rgba(47, 111, 176, 0.14);
+  /* Elevation. 2a throws the brand colour into its lifts rather than grey. */
+  --shadow-card: 0 1px 3px rgba(35, 39, 51, 0.05);
+  --shadow-cta: 0 10px 24px -10px rgba(124, 58, 237, 0.55);
+  --shadow-cta-hover: 0 14px 30px -10px rgba(124, 58, 237, 0.62);
+  --shadow-featured: 0 18px 40px -26px rgba(124, 58, 237, 0.5);
 
   /* The sticky nav's height, so anchored sections can clear it. */
   --nav-height: 62px;
@@ -149,38 +160,38 @@
   --radius: 0.75rem;
 
   --background: #ffffff;
-  --foreground: #12233b;
+  --foreground: #232733;
   --card: #ffffff;
-  --card-foreground: #12233b;
+  --card-foreground: #232733;
   --popover: #ffffff;
-  --popover-foreground: #12233b;
-  --primary: #2f6fb0;
+  --popover-foreground: #232733;
+  --primary: #7c3aed;
   --primary-foreground: #ffffff;
-  --secondary: #eaf2fb;
-  --secondary-foreground: #12233b;
-  --muted: #eaf2fb;
-  --muted-foreground: #5b6675;
-  --accent: #eaf2fb;
-  --accent-foreground: #2f6fb0;
+  --secondary: #f1f3f7;
+  --secondary-foreground: #232733;
+  --muted: #f1f3f7;
+  --muted-foreground: #5b6472;
+  --accent: #f5f1fe;
+  --accent-foreground: #7c3aed;
   --destructive: #e2574c;
-  --border: #e4e8ee;
-  --input: #e4e8ee;
-  --ring: #2f6fb0;
+  --border: #e7eaf0;
+  --input: #e7eaf0;
+  --ring: #7c3aed;
 
-  --chart-1: #2f6fb0;
-  --chart-2: #2fa36b;
-  --chart-3: #e8a13a;
-  --chart-4: #e2574c;
-  --chart-5: #9aa2ae;
+  --chart-1: #7c3aed;
+  --chart-2: #ec4899;
+  --chart-3: #f59e0b;
+  --chart-4: #10b981;
+  --chart-5: #3b82f6;
 
   --sidebar: #ffffff;
-  --sidebar-foreground: #12233b;
-  --sidebar-primary: #2f6fb0;
+  --sidebar-foreground: #232733;
+  --sidebar-primary: #7c3aed;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #eaf2fb;
-  --sidebar-accent-foreground: #2f6fb0;
-  --sidebar-border: #e4e8ee;
-  --sidebar-ring: #2f6fb0;
+  --sidebar-accent: #f5f1fe;
+  --sidebar-accent-foreground: #7c3aed;
+  --sidebar-border: #e7eaf0;
+  --sidebar-ring: #7c3aed;
 }
 
 @layer base {
@@ -268,6 +279,43 @@
    drag a weight. Both ship with chrome that cannot be reached from a class, so
    their pseudo elements are handled here and the rest is done with utilities.
 --------------------------------------------------------------------------- */
+@layer utilities {
+  /* The brand gradient, in the two angles 2a uses: 90deg across a wordmark,
+     135deg across a filled tile. Amber to pink to violet to emerald. */
+  .bg-brand-gradient {
+    background-image: linear-gradient(
+      90deg,
+      var(--color-accent-amber),
+      var(--color-accent-pink) 40%,
+      var(--color-accent-violet) 72%,
+      var(--color-accent-emerald)
+    );
+  }
+
+  .bg-brand-gradient-tilt {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-accent-amber),
+      var(--color-accent-pink) 45%,
+      var(--color-accent-violet) 75%,
+      var(--color-accent-emerald)
+    );
+  }
+
+  .text-brand-gradient {
+    background-image: linear-gradient(
+      90deg,
+      var(--color-accent-amber),
+      var(--color-accent-pink) 40%,
+      var(--color-accent-violet) 72%,
+      var(--color-accent-emerald)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
 @layer components {
   /* The colour swatch. Keeps the OS picker, loses the OS chrome.
      The radius inherits, so whatever rounding class sits on the element is what
@@ -317,7 +365,7 @@
     border-radius: 50%;
     background: #fff;
     border: 2px solid currentColor;
-    box-shadow: 0 1px 4px rgba(18, 35, 59, 0.28);
+    box-shadow: 0 1px 4px rgba(35, 39, 51, 0.28);
     transition: transform 0.12s ease;
   }
 
@@ -327,7 +375,7 @@
     border-radius: 50%;
     background: #fff;
     border: 2px solid currentColor;
-    box-shadow: 0 1px 4px rgba(18, 35, 59, 0.28);
+    box-shadow: 0 1px 4px rgba(35, 39, 51, 0.28);
   }
 
   .weight-slider:active::-webkit-slider-thumb {

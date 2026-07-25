@@ -1,6 +1,19 @@
+import {
+  CARE_TEASER,
+  FEATURED_WORK,
+  FINAL_CTA,
+  HOW_WE_WORK,
+  OUTCOMES,
+} from "./home";
+
 export interface NavItem {
   label: string;
   href: string;
+  /**
+   * The mono superscript beside the link, as 2a sets its nav. Derived from the
+   * content it points at, so it cannot drift out of step with the page.
+   */
+  count?: number;
 }
 
 export interface CallToAction {
@@ -55,12 +68,12 @@ export const SCOPE_ROUTE = "/scope";
  * rather than sitting here as links that go nowhere.
  */
 export const PRIMARY_NAV: readonly NavItem[] = [
-  { label: "Services", href: "#services" },
-  { label: "How we work", href: "#how-we-work" },
-  { label: "Work", href: "#work" },
+  { label: "Services", href: "#services", count: OUTCOMES.items.length },
+  { label: "How we work", href: "#how-we-work", count: HOW_WE_WORK.steps.length },
+  { label: "Work", href: "#work", count: FEATURED_WORK.items.length },
   { label: "About", href: "#about" },
-  { label: "Care", href: "#care" },
-  { label: "Contact", href: "#contact" },
+  { label: "Care", href: "#care", count: CARE_TEASER.plans.length },
+  { label: "Contact", href: "#contact", count: FINAL_CTA.doors.length },
 ] as const;
 
 /**

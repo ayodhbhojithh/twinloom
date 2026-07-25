@@ -28,7 +28,7 @@ export function Section({
   heading,
   lead,
   align = "center",
-  width = "page",
+  width = "wide",
   className,
   children,
 }: SectionProps) {
@@ -41,7 +41,7 @@ export function Section({
       className={cn("py-12 sm:py-16 lg:py-20", className)}
     >
       <Container width={width}>
-        <div className={cn("max-w-[680px]", centred && "mx-auto text-center")}>
+        <div className={cn("max-w-[880px]", centred && "mx-auto text-center")}>
           {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
 
           <h2

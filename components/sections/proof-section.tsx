@@ -31,7 +31,7 @@ export function ProofSection() {
             ))}
           </dl>
 
-          <figure className="mx-auto mt-8 max-w-[680px] text-center">
+          <figure className="mx-auto mt-8 max-w-[860px] text-center">
             <blockquote className="text-[15px] leading-[1.55] font-semibold text-balance sm:text-[16px]">
               &ldquo;{PROOF.quote}&rdquo;
             </blockquote>

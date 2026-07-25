@@ -50,7 +50,7 @@ export interface StudioController {
 export function useColourStudio(): StudioController {
   const [tray, setTray] = useState<TrayImage[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [hsv, setHsv] = useState<Hsv>({ h: 210, s: 0.6, v: 0.7 });
+  const [hsv, setHsv] = useState<Hsv>({ h: 262, s: 0.76, v: 0.93 });
   const [note, setNote] = useState<string | null>(null);
 
   const noteTimer = useRef<number | null>(null);

@@ -29,7 +29,7 @@ export function ColoursSection() {
     openStudio,
   } = useThoughtsSession();
 
-  const [picked, setPicked] = useState("#2f6fb0");
+  const [picked, setPicked] = useState("#7c3aed");
   const [typed, setTyped] = useState("");
   const full = colours.length >= colourLimit;
 
@@ -77,7 +77,7 @@ export function ColoursSection() {
               submit(typed);
             }
           }}
-          placeholder="#2f6fb0"
+          placeholder="#7c3aed"
           aria-label="Colour code"
           spellCheck={false}
           className="h-9 min-w-0 flex-1 rounded-btn-sm border border-line bg-card px-3 font-mono text-[12px] outline-none transition-colors placeholder:text-faint focus:border-brand"

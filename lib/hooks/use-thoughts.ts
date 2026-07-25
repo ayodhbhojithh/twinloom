@@ -165,7 +165,7 @@ export function useThoughts(): ThoughtsController {
     const hex = normaliseHex(input);
 
     if (!hex) {
-      setErrors([`"${input}" is not a colour code. Try something like #2f6fb0.`]);
+      setErrors([`"${input}" is not a colour code. Try something like #7c3aed.`]);
       return;
     }
 
