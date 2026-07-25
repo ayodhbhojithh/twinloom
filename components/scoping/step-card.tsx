@@ -75,7 +75,7 @@ export function StepCard() {
 
           {focusedGroup === group.key ||
           (step.deepen && focus === `${step.deepen.when.key}:${step.deepen.when.value}`) ? (
-            <FocusPanel className="mt-3 xl:hidden" />
+            <FocusPanel className="mt-3" />
           ) : null}
         </div>
       ))}

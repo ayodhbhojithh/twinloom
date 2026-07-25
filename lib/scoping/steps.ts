@@ -29,7 +29,7 @@ export const STEPS: readonly ScopeStep[] = [
     key: "about",
     kicker: "About you and your goal",
     heading: "Let's start with the basics.",
-    lead: "Pick on the left. Whatever you click opens on the right, so you can read what it means and set how far to push it.",
+    lead: "Pick a choice and it opens underneath, so you can read what it means and set how far to push it.",
     groups: [
       {
         question: "What are we building?",
@@ -199,7 +199,7 @@ export const STEPS: readonly ScopeStep[] = [
     key: "assets",
     kicker: "What you've got already",
     heading: "What's in place today?",
-    lead: "Every no quietly adds the right help to your brief. Nothing to tune here.",
+    lead: "Every no quietly adds the right help to your brief. Nothing to tune here, just tell us what exists.",
     special: "assets",
   },
 
@@ -364,7 +364,7 @@ export const STEPS: readonly ScopeStep[] = [
     key: "sell",
     kicker: "Selling online",
     heading: "The detail that sizes a shop.",
-    lead: "Only relevant if you're selling.",
+    lead: "The questions that size a shop. Only relevant if you are selling.",
     condition: { key: "type", value: "shop" },
     groups: [
       {
