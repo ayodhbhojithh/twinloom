@@ -1,38 +1,15 @@
 import type { Metadata } from "next";
-import { Caveat, IBM_Plex_Mono, Manrope } from "next/font/google";
+import { Manrope } from "next/font/google";
 
 import "./globals.css";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SITE } from "@/lib/content/site";
-import { cn } from "@/lib/utils";
 
-/* The type stack, taken from option 2a of the prototype. Three families, and
-   only three: Manrope carries every bit of UI, IBM Plex Mono every bit of
-   microcopy, Caveat the handwritten asides.
-   The prototype's font request also pulls Newsreader, Bricolage Grotesque,
-   Space Grotesk and Instrument Sans. Those belong to the design directions we
-   are not building, so they stay out. */
-
-/* Variable. 2a uses 400 body, 600 nav, 700 buttons, 800 headings. */
+/* Manrope carries the whole site. Variable, so no weight list is needed: the
+   type scale runs from 400 body copy up to 800 headings and the wordmark. */
 const manrope = Manrope({
   variable: "--font-manrope",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-/* Static family, so the weights have to be listed. 2a uses 400 and 600. */
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
-  weight: ["400", "600"],
-  subsets: ["latin"],
-  display: "swap",
-});
-
-/* Variable. 2a never sets a weight on Caveat, so keep the whole range rather
-   than pinning it to instances the markup does not ask for. */
-const caveat = Caveat({
-  variable: "--font-caveat",
   subsets: ["latin"],
   display: "swap",
 });
@@ -56,15 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en-GB"
-      className={cn(
-        "h-full",
-        manrope.variable,
-        plexMono.variable,
-        caveat.variable,
-      )}
-    >
+    <html lang="en-GB" className={`${manrope.variable} h-full`}>
       <body className="flex min-h-full flex-col">
         <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
       </body>

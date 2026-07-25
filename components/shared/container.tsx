@@ -1,17 +1,24 @@
 import { cn } from "@/lib/utils";
 
-/** The page's single horizontal rhythm. Every section width comes from here. */
+/**
+ * The page's horizontal rhythm. Two widths, both from the artifacts: `landing`
+ * is the narrow 820px column used by the scoping entry page, `page` is the
+ * 1000px column every other page uses.
+ */
 export function Container({
+  width = "page",
   className,
   children,
 }: {
+  width?: "page" | "landing";
   className?: string;
   children: React.ReactNode;
 }) {
   return (
     <div
       className={cn(
-        "mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-8",
+        "mx-auto w-full px-5 sm:px-[22px]",
+        width === "landing" ? "max-w-landing" : "max-w-page",
         className,
       )}
     >

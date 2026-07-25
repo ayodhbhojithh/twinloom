@@ -27,10 +27,13 @@
      --green            --color-ok
 --------------------------------------------------------------------------- */
 @theme {
-  /* System stack. The artifacts use no webfont, so neither do we: nothing to
-     download, nothing to shift on load. */
-  --font-sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial,
-    sans-serif;
+  /* Manrope everywhere. The system stack sits behind it only as a fallback for
+     the moment before the webfont lands. */
+  --font-sans: var(--font-manrope), "Segoe UI", system-ui, -apple-system,
+    "Helvetica Neue", Arial, sans-serif;
+
+  /* Mono is a separate role, not a fallback: the artifacts set eyebrows and
+     small labels in it deliberately. */
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Ink and text */
@@ -168,9 +171,14 @@
 
   html {
     @apply font-sans;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
+    /* Let each platform render text its own way. `-webkit-font-smoothing:
+       antialiased` is a macOS habit, and on Windows Chromium it switches
+       ClearType subpixel rendering off, which is what makes text look thin and
+       noisy. Neither artifact sets it. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    font-optical-sizing: auto;
   }
 
   body {

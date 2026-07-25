@@ -1,34 +1,52 @@
 export interface NavItem {
   label: string;
   href: string;
-  /**
-   * The mono superscript beside the link, as in the prototype's nav. It counts
-   * the things in that section, so keep it in step as each section is built.
-   */
-  count?: number;
+}
+
+export interface CallToAction {
+  label: string;
+  href: string;
 }
 
 export const SITE = {
   name: "TwinCoreTech",
-  tagline: "Website design and build for UK small business",
+  /** The wordmark is set in three parts so the middle one can take the brand colour. */
+  wordmark: { head: "Twin", accent: "Core", tail: "Tech" },
+  tagline: "Websites for growing UK businesses",
   description:
-    "Price your website before you talk to anyone. Tick the parts you need, watch the estimate follow, then book a 30 minute scope call.",
+    "We build, refresh and look after your website and everything around it, so you can get on with running your business.",
   email: "hello@twincoretech.com",
-  phone: "+44 20 7946 0958",
+  phone: "",
   location: "United Kingdom",
-  /** The nav's dark button. */
-  ctaLabel: "Get estimate",
-  ctaHref: "#components",
+  /** Shown beside the primary call to action. */
+  reassurance: "Takes about 3 minutes · No sign-up needed to explore",
+  ownership: "You own everything. No lock-in.",
 } as const;
 
 /**
- * The page plan. Sections are being built one at a time, so some of these
- * anchors land nowhere until their section exists.
+ * The primary journey and the escape hatch. Every call to action on the site
+ * points at one of these two.
+ */
+export const PRIMARY_CTA: CallToAction = {
+  label: "Scope your website",
+  href: "/scope",
+};
+
+export const SECONDARY_CTA: CallToAction = {
+  label: "Book a call",
+  href: "/contact",
+};
+
+/**
+ * Top nav, from TCT_Sitemap.md. Pages are being built one at a time, so some of
+ * these routes do not exist yet.
  */
 export const PRIMARY_NAV: readonly NavItem[] = [
-  { label: "Components", href: "#components", count: 17 },
-  { label: "Process", href: "#process", count: 4 },
-  { label: "Pricing", href: "#pricing", count: 5 },
-  { label: "Work", href: "#work", count: 3 },
-  { label: "FAQ", href: "#faq", count: 8 },
+  { label: "Work", href: "/work" },
+  { label: "About", href: "/about" },
+  { label: "Partners", href: "/partners" },
+  { label: "Care", href: "/care" },
+  { label: "Insights", href: "/insights" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Contact", href: "/contact" },
 ] as const;

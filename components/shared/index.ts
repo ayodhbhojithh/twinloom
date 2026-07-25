@@ -1,4 +1,4 @@
+export { ActionButton } from "./action-button";
 export { Container } from "./container";
-export { MonoLabel } from "./mono-label";
+export { Eyebrow } from "./eyebrow";
 export { Panel } from "./panel";
-export { ScriptNote } from "./script-note";

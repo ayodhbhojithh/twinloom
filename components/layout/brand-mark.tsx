@@ -2,38 +2,32 @@ import { SITE } from "@/lib/content/site";
 import { cn } from "@/lib/utils";
 
 /**
- * The wordmark. The gradient square is the prototype's brand device, tilted at
- * 135 degrees and running amber to pink to violet to emerald.
+ * The wordmark: one word, extrabold, with the middle syllable in the brand
+ * blue. Set in Manrope with tight tracking, inherited from the nav.
  *
- * Swap the square for the real logo once brand assets land; nothing else on the
- * page reads the brand name or mark directly.
+ * No logo mark. Swap this for the real logo when brand assets land; nothing else
+ * on the site sets the brand name.
  */
 export function BrandMark({
-  className,
   size = "default",
+  className,
 }: {
-  className?: string;
   size?: "default" | "large";
+  className?: string;
 }) {
-  const large = size === "large";
+  const { head, accent, tail } = SITE.wordmark;
 
   return (
-    <span className={cn("flex items-center gap-2.5", className)}>
-      <span
-        aria-hidden
-        className={cn(
-          "bg-rainbow-tilt shrink-0 rounded-[8px]",
-          large ? "size-8" : "size-[26px]",
-        )}
-      />
-      <span
-        className={cn(
-          "font-extrabold tracking-[-0.01em]",
-          large ? "text-[21px]" : "text-[19px]",
-        )}
-      >
-        {SITE.name}
-      </span>
+    <span
+      className={cn(
+        "font-extrabold tracking-[-0.02em]",
+        size === "large" ? "text-lg" : "text-base",
+        className,
+      )}
+    >
+      {head}
+      <span className="text-brand">{accent}</span>
+      {tail}
     </span>
   );
 }

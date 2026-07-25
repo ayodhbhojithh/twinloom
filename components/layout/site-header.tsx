@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Menu } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Menu } from "lucide-react";
 
-import { Container } from "@/components/shared";
+import { ActionButton, Container } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -13,52 +14,60 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { PRIMARY_NAV, SITE } from "@/lib/content/site";
+import { PRIMARY_CTA, PRIMARY_NAV, SECONDARY_CTA, SITE } from "@/lib/content/site";
 
 import { BrandMark } from "./brand-mark";
 
 /**
- * The navbar, straight from option 2a: white bar on a hairline, links carrying a
- * mono count, and a dark call to action rather than a purple one, so the purple
- * is saved for the estimator itself.
+ * The global nav from the artifacts: white bar on a hairline, quiet text links
+ * that tint on hover, and the two doors on the right. The journey is the primary
+ * one; "Book a call" is the escape hatch that has to stay visible everywhere.
  */
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-hairline bg-surface">
-      <Container className="flex h-[62px] items-center gap-6 lg:gap-[26px]">
-        <a href="#top" aria-label={`${SITE.name}, home`} className="shrink-0">
+    <header className="sticky top-0 z-40 border-b border-line bg-card">
+      <Container className="flex min-h-[62px] items-center gap-[18px] py-3">
+        <Link href="/" aria-label={`${SITE.name}, home`} className="shrink-0">
           <BrandMark />
-        </a>
+        </Link>
 
         <nav
           aria-label="Primary"
-          className="ml-auto hidden items-baseline gap-[22px] lg:flex"
+          className="hidden flex-wrap gap-0.5 lg:flex"
         >
           {PRIMARY_NAV.map((item) => (
-            <a
+            <Link
               key={item.href}
               href={item.href}
-              className="text-[13.5px] font-semibold text-ink-3 transition-colors hover:text-ink"
+              /* 13.5px at 600 is the weight the prototype pairs with Manrope.
+                 At 400 the face reads thin and almost monospaced. */
+              className="rounded-nav px-2.5 py-1.5 text-[13.5px] font-semibold text-body transition-colors hover:bg-soft hover:text-ink"
             >
               {item.label}
-              {item.count === undefined ? null : (
-                <span className="ml-1 font-mono text-[11px] font-normal text-ink-5 tabular-nums">
-                  {item.count}
-                </span>
-              )}
-            </a>
+            </Link>
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-2 lg:ml-0">
-          <a
-            href={SITE.ctaHref}
-            className="hidden rounded-row bg-ink px-[18px] py-2.5 text-[13.5px] font-bold text-white transition-opacity hover:opacity-85 sm:block"
+        <div className="ml-auto flex items-center gap-2">
+          <ActionButton
+            variant="secondary"
+            size="sm"
+            href={SECONDARY_CTA.href}
+            className="hidden sm:inline-flex"
           >
-            + {SITE.ctaLabel}
-          </a>
+            {SECONDARY_CTA.label}
+          </ActionButton>
+
+          <ActionButton
+            size="sm"
+            href={PRIMARY_CTA.href}
+            className="hidden sm:inline-flex"
+          >
+            {PRIMARY_CTA.label}
+            <ArrowRight aria-hidden className="size-3.5" />
+          </ActionButton>
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -66,7 +75,7 @@ export function SiteHeader() {
                 variant="outline"
                 size="icon"
                 aria-label="Open menu"
-                className="size-9 rounded-row border-edge lg:hidden"
+                className="size-9 rounded-btn-sm border-line lg:hidden"
               >
                 <Menu />
               </Button>
@@ -75,43 +84,45 @@ export function SiteHeader() {
             <SheetContent side="right" className="w-[300px] sm:w-[340px]">
               <SheetHeader>
                 <SheetTitle className="text-left">
-                  <BrandMark />
+                  <BrandMark size="large" />
                 </SheetTitle>
               </SheetHeader>
 
               <nav
                 aria-label="Primary, mobile"
-                className="flex flex-col gap-1 px-4"
+                className="flex flex-col gap-0.5 px-4"
               >
                 {PRIMARY_NAV.map((item) => (
                   <SheetClose asChild key={item.href}>
-                    <a
+                    <Link
                       href={item.href}
-                      className="flex items-baseline justify-between rounded-row px-2 py-2.5 text-[15px] font-bold text-ink transition-colors hover:bg-sunken"
+                      className="rounded-nav px-2 py-2.5 text-[15px] font-semibold text-ink transition-colors hover:bg-soft"
                     >
                       {item.label}
-                      {item.count === undefined ? null : (
-                        <span className="font-mono text-[11px] font-normal text-ink-5 tabular-nums">
-                          {item.count}
-                        </span>
-                      )}
-                    </a>
+                    </Link>
                   </SheetClose>
                 ))}
               </nav>
 
-              <div className="mt-auto flex flex-col gap-3 border-t border-hairline p-4">
+              <div className="mt-auto flex flex-col gap-2.5 border-t border-line p-4">
                 <SheetClose asChild>
-                  <a
-                    href={SITE.ctaHref}
-                    className="rounded-row bg-ink px-4 py-3 text-center text-[14.5px] font-bold text-white"
+                  <ActionButton href={PRIMARY_CTA.href} size="lg">
+                    {PRIMARY_CTA.label}
+                    <ArrowRight aria-hidden className="size-4" />
+                  </ActionButton>
+                </SheetClose>
+                <SheetClose asChild>
+                  <ActionButton
+                    variant="secondary"
+                    href={SECONDARY_CTA.href}
+                    size="lg"
                   >
-                    + {SITE.ctaLabel}
-                  </a>
+                    {SECONDARY_CTA.label}
+                  </ActionButton>
                 </SheetClose>
                 <a
                   href={`mailto:${SITE.email}`}
-                  className="text-center font-mono text-[11px] tracking-[0.04em] text-mono"
+                  className="pt-1 text-center text-[13px] text-body"
                 >
                   {SITE.email}
                 </a>

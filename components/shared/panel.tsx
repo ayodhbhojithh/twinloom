@@ -1,18 +1,20 @@
 import { cn } from "@/lib/utils";
 
 /**
- * The prototype's card: 18px radius, one hairline border, white surface. Used
- * anywhere a block of content needs to read as a panel rather than as page.
+ * The artifacts' card: white on a hairline, with the faintest lift. `sm` is the
+ * 12px radius the site pages use, the default is the 14px the landing uses.
  */
 export function Panel({
+  radius = "default",
   className,
   children,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & { radius?: "default" | "sm" }) {
   return (
     <div
       className={cn(
-        "rounded-card border border-hairline bg-surface",
+        "border border-line bg-card shadow-card",
+        radius === "sm" ? "rounded-card-sm" : "rounded-card",
         className,
       )}
       {...props}
