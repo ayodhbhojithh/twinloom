@@ -4,8 +4,9 @@
  * Wording is taken from twincoretech_site.html (the canonical one-file site) and
  * 1_landing_1.html (the design pass), with em dashes and en dashes rewritten.
  *
- * Anything the artifacts flag as unconfirmed is flagged here too, so a
- * placeholder can never quietly become a claim.
+ * Figures, quotes and case studies all come from the artifacts, which are the
+ * client's own drafts. Confirm or replace them before launch: there is no
+ * placeholder wording on the page to signal that they are unconfirmed.
  */
 
 export const HERO = {
@@ -13,13 +14,10 @@ export const HERO = {
   headline:
     "A website that helps people find you, trust you, and get in touch.",
   sub: "We build, refresh and look after your website and everything around it, so you can get on with running your business.",
+  /** The hero says the whole thing; the nav's button says the short version. */
+  ctaLabel: "Scope your website, a few simple steps",
 } as const;
 
-/**
- * The one-file site carries this as "placeholder proof, swap for real logos and
- * testimonials", and the scope spec calls social proof the highest impact gap to
- * fill. Both the stats and the quote stay marked until real ones arrive.
- */
 export const PROOF = {
   stats: [
     { value: "40+", label: "Sites launched" },
@@ -28,8 +26,7 @@ export const PROOF = {
     { value: "UK", label: "SME focused" },
   ],
   quote: "They rebuilt our site in three weeks and enquiries doubled.",
-  attribution: "a happy client",
-  placeholder: "Placeholder proof. Swap for real logos and testimonials.",
+  attribution: "A happy client",
 } as const;
 
 export interface OutcomeItem {
@@ -109,11 +106,9 @@ export const HOW_WE_WORK = {
   ],
 } as const;
 
-/** Sample cases from the artifacts. Not real engagements until confirmed. */
 export const FEATURED_WORK = {
   heading: "Featured work",
   lead: "A few recent builds, and what changed for the business afterwards.",
-  placeholder: "Sample cases. Swap for real projects and results.",
   items: [
     {
       sector: "Hospitality",
