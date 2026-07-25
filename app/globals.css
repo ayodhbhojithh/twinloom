@@ -84,12 +84,12 @@
   --spacing-panel: 400px;
   --breakpoint-panel: 820px;
 
-  /* Content widths: 820 for the landing, 1000 for the site pages, and a wider
-     1280 for full width furniture like the nav, which should not be squeezed
-     into the reading column. */
+  /* Content widths. `wide` is the site's own edge: nav, sections and footer all
+     sit on it. `page` and `landing` are narrower columns kept for anything that
+     wants tighter gutters, like the scoping journey. */
   --container-landing: 820px;
   --container-page: 1000px;
-  --container-wide: 1280px;
+  --container-wide: 1440px;
 
   /* Radii */
   --radius-card: 14px;

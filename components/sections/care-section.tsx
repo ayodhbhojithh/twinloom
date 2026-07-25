@@ -50,7 +50,7 @@ export function CareSection() {
         })}
       </ul>
 
-      <div className="mx-auto mt-7 max-w-[860px] text-center">
+      <div className="mx-auto mt-7 max-w-[1120px] text-center">
         <p className="text-[13.5px] leading-[1.6] text-body">
           <span className="font-semibold text-ink">Response times.</span>{" "}
           {CARE_TEASER.responseTimes}

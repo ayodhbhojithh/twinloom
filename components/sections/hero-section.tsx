@@ -26,17 +26,23 @@ export function HeroSection() {
 
         <h1
           id="hero-headline"
-          className="mx-auto mt-4 max-w-[1120px] text-[34px] leading-[1.06] font-extrabold tracking-[-0.03em] text-balance sm:text-[44px] lg:text-[54px]"
+          className="mt-4 text-[34px] leading-[1.3] font-extrabold tracking-[-0.03em] sm:text-[44px] lg:text-[54px]"
         >
-          {HERO.headline.lead}
-          <span className="text-brand-gradient">{HERO.headline.accent}</span>
+          {HERO.headline.map((line) => (
+            <span key={line.text} className="block">
+              {line.text}
+              {"accent" in line && line.accent ? (
+                <span className="text-brand-gradient">{line.accent}</span>
+              ) : null}
+            </span>
+          ))}
         </h1>
 
         <p className="mx-auto mt-5 font-script text-[21px] leading-tight text-faint sm:text-[25px]">
           {HERO.aside}
         </p>
 
-        <p className="mx-auto mt-5 max-w-[820px] text-[16px] leading-[1.6] text-body sm:text-[17px]">
+        <p className="mt-5 text-[16px] leading-[1.6] text-body sm:text-[17px]">
           {HERO.sub}
         </p>
 

@@ -12,13 +12,16 @@
 export const HERO = {
   eyebrow: "Websites for growing UK businesses",
   /**
-   * Split so the closing phrase can carry the brand gradient. 2a puts the
-   * gradient on exactly one span per screen, and this is that span.
+   * Written as lines, not one string. Where the headline breaks is a design
+   * decision, and `text-balance` kept choosing a different one. Each line
+   * renders as its own block, so it breaks exactly where it is written here.
+   *
+   * `accent` carries the brand gradient. 2a puts that on one span per screen.
    */
-  headline: {
-    lead: "A website that helps people find you, trust you, and ",
-    accent: "get in touch.",
-  },
+  headline: [
+    { text: "A website that helps people find you," },
+    { text: "trust you, and ", accent: "get in touch." },
+  ],
   sub: "We build, refresh and look after your website and everything around it, so you can get on with running your business.",
   /** The handwritten aside, in the studio's own voice. */
   aside: "this is where your website gets a price, in about ninety seconds...",
