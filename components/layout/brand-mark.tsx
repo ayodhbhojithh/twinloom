@@ -35,7 +35,7 @@ export function BrandMark({
       <span
         className={cn(
           "font-extrabold tracking-[-0.02em]",
-          large ? "text-[21px]" : "text-[19px]",
+          large ? "text-[18px]" : "text-[16px]",
         )}
       >
         {head}
