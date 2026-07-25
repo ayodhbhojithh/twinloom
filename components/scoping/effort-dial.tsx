@@ -14,20 +14,16 @@ import { cn } from "@/lib/utils";
 
 import { useScopingSession } from "./scoping-context";
 
-/** Radius of the progress arc, just outside the outer ring. */
-const ARC_RADIUS = 128;
-const ARC_LENGTH = 2 * Math.PI * ARC_RADIUS;
-
 /**
- * The effort dial: three rings, a progress arc and a hub.
+ * The effort dial: three rings and a hub.
  *
  * Inner ring is the eight sections, middle is each question answered inside one,
  * outer is each component chosen inside that question. Colour is effort, grey is
  * unanswered, and the section in play is the only one at full opacity.
  *
- * The arc around the outside is how far through the journey you are. It is the
- * one thing on the dial that only moves forward, which is why it is separate from
- * the rings: those change colour as answers change, the arc only fills.
+ * Progress lives in the hub and along the top of the action bar, not as a ring
+ * around the outside: the dial is already carrying effort in three colours, and a
+ * fourth accent on top of it competes with the thing it is meant to frame.
  *
  * The inner ring is clickable, so the dial navigates as well as reports. Every
  * segment carries a `<title>`, which is what a tooltip and a screen reader read.
@@ -47,7 +43,7 @@ export function EffortDial({ className }: { className?: string }) {
     <div className={cn("relative", className)}>
       <svg
         viewBox={`0 0 ${DIAL_VIEWBOX} ${DIAL_VIEWBOX}`}
-        className="block size-full overflow-visible"
+        className="block size-full"
         role="img"
         aria-label={`Scoping progress: ${percent} percent complete, overall effort ${RAG_LABEL[rag]}`}
       >
@@ -74,31 +70,6 @@ export function EffortDial({ className }: { className?: string }) {
             </path>
           );
         })}
-
-        {/* The track, then the fill. Rotated so it starts at twelve o'clock. */}
-        <g
-          transform={`rotate(-90 ${DIAL_VIEWBOX / 2} ${DIAL_VIEWBOX / 2})`}
-          fill="none"
-          strokeLinecap="round"
-        >
-          <circle
-            cx={DIAL_VIEWBOX / 2}
-            cy={DIAL_VIEWBOX / 2}
-            r={ARC_RADIUS}
-            stroke="var(--color-line)"
-            strokeWidth={3}
-          />
-          <circle
-            cx={DIAL_VIEWBOX / 2}
-            cy={DIAL_VIEWBOX / 2}
-            r={ARC_RADIUS}
-            stroke="var(--color-brand)"
-            strokeWidth={3}
-            strokeDasharray={ARC_LENGTH}
-            strokeDashoffset={ARC_LENGTH * (1 - percent / 100)}
-            className="transition-[stroke-dashoffset] duration-700 ease-[var(--ease-out-soft)]"
-          />
-        </g>
 
         <circle
           cx={DIAL_VIEWBOX / 2}

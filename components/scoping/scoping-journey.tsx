@@ -26,7 +26,7 @@ function Journey() {
               readout can never push the list out of reach. */}
           <aside className="hidden lg:sticky lg:top-[calc(var(--nav-height)+20px)] lg:block lg:max-h-[calc(100svh-var(--nav-height)-40px)] lg:overflow-y-auto">
             <div className="rounded-card border border-line bg-card p-5">
-              <EffortDial className="mx-auto w-[196px]" />
+              <EffortDial className="mx-auto w-[236px]" />
 
               <div className="mt-5 border-t border-line pt-4">
                 <DialReadout />
