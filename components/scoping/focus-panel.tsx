@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 
 import { EffortCard } from "./effort-card";
+import { EffortSlider } from "./effort-slider";
 import { useScopingSession } from "./scoping-context";
 
 function Shell({
@@ -149,12 +150,11 @@ export function FocusPanel({ className }: { className?: string }) {
       className={className}
     >
       <div className="mt-3">
-        <EffortCard
+        <EffortSlider
           effortKey={optionKey(group.key, option.value)}
           value={optionEffort(answers, group.key, option)}
           explain={option.explain ?? EFFORT_GENERIC}
           label={option.label}
-          showLabel={false}
         />
       </div>
     </Shell>

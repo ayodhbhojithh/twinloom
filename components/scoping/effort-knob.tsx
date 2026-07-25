@@ -55,7 +55,12 @@ export function EffortKnob({
   const { setEffort } = useScopingSession();
 
   const rag = effortRag(value);
-  const colour = RAG_COLOUR[rag];
+
+  /* Zero is off, not light. 6a calls it "not required" and greys the control out
+     rather than colouring it green, which is the only reading that makes an empty
+     ring look deliberate instead of broken. */
+  const off = value === EFFORT_MIN;
+  const colour = off ? "#b4bbc6" : RAG_COLOUR[rag];
   const swept = (value / EFFORT_MAX) * SWEEP;
 
   const set = (next: number) =>
@@ -69,7 +74,9 @@ export function EffortKnob({
       aria-valuemin={EFFORT_MIN}
       aria-valuemax={EFFORT_MAX}
       aria-valuenow={value}
-      aria-valuetext={`${value} out of ${EFFORT_MAX}, ${RAG_LABEL[rag]}`}
+      aria-valuetext={
+        off ? "0, not required" : `${value} out of ${EFFORT_MAX}, ${RAG_LABEL[rag]}`
+      }
       onKeyDown={(event) => {
         const keys: Record<string, number> = {
           ArrowRight: value + 1,
