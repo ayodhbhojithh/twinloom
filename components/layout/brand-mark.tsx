@@ -16,9 +16,12 @@ import { cn } from "@/lib/utils";
  */
 export function BrandMark({
   size = "default",
+  tone = "default",
   className,
 }: {
   size?: "default" | "large";
+  /** `onDark` lightens the glyph, which loses too much contrast in brand purple. */
+  tone?: "default" | "onDark";
   className?: string;
 }) {
   const { head, accent, tail } = SITE.wordmark;
@@ -29,7 +32,11 @@ export function BrandMark({
       <Brain
         aria-hidden
         strokeWidth={2.1}
-        className={cn("shrink-0 text-brand", large ? "size-5" : "size-[18px]")}
+        className={cn(
+          "shrink-0",
+          tone === "onDark" ? "text-accent-violet" : "text-brand",
+          large ? "size-5" : "size-[18px]",
+        )}
       />
 
       <span

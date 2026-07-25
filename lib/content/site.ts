@@ -21,6 +21,7 @@ export interface CallToAction {
   href: string;
 }
 
+
 export const SITE = {
   name: "TwinCoreTech",
   /** The wordmark is set in three parts so the middle one can take the brand colour. */
@@ -58,6 +59,17 @@ export const SECONDARY_CTA: CallToAction = {
 
 /** The scoping journey. Not built yet. */
 export const SCOPE_ROUTE = "/scope";
+
+export const NEWSLETTER = {
+  heading: "Join the newsletter",
+  body: "Occasional, practical notes on getting found and getting enquiries. No filler.",
+  placeholder: "Email address",
+  action: "Sign me up",
+} as const;
+
+/* Social accounts are not here yet. When handles arrive they will need inline
+   brand SVGs: lucide dropped every brand logo in v1, so there is no icon for
+   LinkedIn or Instagram to import. */
 
 /**
  * Top nav. One scrollable page, so these are in page anchors, and every one of
