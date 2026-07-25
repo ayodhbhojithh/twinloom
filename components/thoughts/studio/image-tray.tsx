@@ -24,7 +24,7 @@ export function ImageTray({ studio }: { studio: StudioController }) {
             aria-label={`Work on ${entry.name}`}
             aria-pressed={entry.id === studio.activeId}
             className={cn(
-              "block size-13 overflow-hidden rounded-nav border-2 transition-colors",
+              "block size-13 overflow-hidden rounded-tile border-2 transition-colors",
               entry.id === studio.activeId
                 ? "border-brand"
                 : "border-line hover:border-brand/45",
@@ -55,7 +55,7 @@ export function ImageTray({ studio }: { studio: StudioController }) {
         type="button"
         onClick={() => input.current?.click()}
         aria-label="Add another image"
-        className="flex size-13 items-center justify-center rounded-nav border-2 border-dashed border-line text-brand transition-colors hover:border-brand/50 hover:bg-soft"
+        className="flex size-13 items-center justify-center rounded-tile border-2 border-dashed border-line text-brand transition-colors hover:border-brand/50 hover:bg-soft"
       >
         <Plus className="size-4" />
       </button>

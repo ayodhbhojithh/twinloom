@@ -55,38 +55,33 @@ export function ColoursSection() {
       </button>
 
       <div className="mt-2 flex items-center gap-2">
-        <label className="shrink-0" title="Pick a colour">
+        {/* flex, not inline: an inline colour input sits on the text baseline and
+            picks up descender space, which nudges the swatch out of line with
+            the 36px field and button beside it. */}
+        <label className="flex shrink-0" title="Pick a colour">
           <span className="sr-only">Pick a colour</span>
           <input
             type="color"
             value={picked}
             onChange={(event) => setPicked(event.target.value)}
-            className="swatch-input size-9 rounded-btn-sm"
+            className="swatch-input size-9 rounded-full"
           />
         </label>
 
-        <div className="relative min-w-0 flex-1">
-          <span
-            aria-hidden
-            className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 font-mono text-[12px] text-faint"
-          >
-            #
-          </span>
-          <input
-            value={typed}
-            onChange={(event) => setTyped(event.target.value.replace(/^#/, ""))}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                event.preventDefault();
-                submit(typed);
-              }
-            }}
-            placeholder="2f6fb0"
-            aria-label="Colour code"
-            spellCheck={false}
-            className="h-9 w-full rounded-btn-sm border border-line bg-card pr-3 pl-6 font-mono text-[12px] outline-none transition-colors placeholder:text-faint focus:border-brand"
-          />
-        </div>
+        <input
+          value={typed}
+          onChange={(event) => setTyped(event.target.value.replace(/^#/, ""))}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              submit(typed);
+            }
+          }}
+          placeholder="#2f6fb0"
+          aria-label="Colour code"
+          spellCheck={false}
+          className="h-9 min-w-0 flex-1 rounded-btn-sm border border-line bg-card px-3 font-mono text-[12px] outline-none transition-colors placeholder:text-faint focus:border-brand"
+        />
 
         <button
           type="button"
@@ -114,7 +109,7 @@ export function ColoursSection() {
                 <div className="flex items-center gap-2">
                   <span
                     aria-hidden
-                    className="size-6 shrink-0 rounded-nav border border-ink/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.35)]"
+                    className="size-6 shrink-0 rounded-full"
                     style={{ background: colour.hex }}
                   />
 

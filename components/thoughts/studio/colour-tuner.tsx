@@ -100,7 +100,7 @@ export function ColourTuner({
         <span
           aria-hidden
           style={{ background: hex }}
-          className="size-12 shrink-0 rounded-card border border-ink/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.35)]"
+          className="size-12 shrink-0 rounded-full"
         />
 
         <div className="grid min-w-0 flex-1 grid-cols-3 gap-2">

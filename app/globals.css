@@ -226,28 +226,33 @@
    their pseudo elements are handled here and the rest is done with utilities.
 --------------------------------------------------------------------------- */
 @layer components {
-  /* The colour swatch. Keeps the OS picker, loses the OS border. */
+  /* The colour swatch. Keeps the OS picker, loses the OS chrome.
+     The radius inherits, so whatever rounding class sits on the element is what
+     the swatch itself takes. One source of truth instead of a hardcoded radius
+     here quietly disagreeing with a utility there. */
   .swatch-input {
     appearance: none;
     -webkit-appearance: none;
     padding: 0;
     border: none;
     background: none;
+    overflow: hidden;
     cursor: pointer;
   }
 
   .swatch-input::-webkit-color-swatch-wrapper {
     padding: 0;
+    border-radius: inherit;
   }
 
   .swatch-input::-webkit-color-swatch {
-    border: 1px solid rgba(18, 35, 59, 0.14);
-    border-radius: 9px;
+    border: none;
+    border-radius: inherit;
   }
 
   .swatch-input::-moz-color-swatch {
-    border: 1px solid rgba(18, 35, 59, 0.14);
-    border-radius: 9px;
+    border: none;
+    border-radius: inherit;
   }
 
   /* The weight slider. The track is filled inline with the colour being
