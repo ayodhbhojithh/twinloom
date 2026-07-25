@@ -35,7 +35,7 @@ export function OutcomesSection() {
       id="services"
       heading={OUTCOMES.heading}
       accent={OUTCOMES.accent}
-      accentTone="blue"
+      accentTone="indigo"
       micro={OUTCOMES.micro}
       lead={OUTCOMES.lead}
       revealBody={false}

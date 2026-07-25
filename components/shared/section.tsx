@@ -16,6 +16,7 @@ export type AccentTone =
   | "violet"
   | "emerald"
   | "blue"
+  | "indigo"
   | "gradient";
 
 const ACCENT: Record<AccentTone, string> = {
@@ -25,6 +26,7 @@ const ACCENT: Record<AccentTone, string> = {
   violet: "text-accent-violet",
   emerald: "text-accent-emerald",
   blue: "text-accent-blue",
+  indigo: "text-accent-indigo",
   gradient: "text-brand-gradient",
 };
 

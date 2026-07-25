@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#fff}
+a{color:#2563EB;text-decoration:none}a:hover{color:#1D4ED8}
+@keyframes spinSG{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes pulseSG{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+</helmet>
+<div data-screen-label="Style Guide" style="width:1440px;background:#fff;font-family:'Archivo',sans-serif;color:#111827;padding:0 0 72px">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;padding:40px 56px 26px;border-bottom:1px solid #111827">
+    <div>
+      <div style="font:600 9.5px 'JetBrains Mono',monospace;letter-spacing:.16em;color:#9CA3AF">OMADEAS PROJECTOPS · DIRECTION 1 · MERIDIAN</div>
+      <div style="margin-top:8px;font:800 40px/1 'Archivo',sans-serif;letter-spacing:-.025em">Portfolio Sky — Style Guide</div>
+      <div style="margin-top:10px;font:500 13px/1.6 'Archivo',sans-serif;color:#6B7280;max-width:640px;text-wrap:pretty">The instrument grammar behind the radial planisphere: one white field, colour reserved for meaning, geometry that encodes lineage, and motion that reports work rather than decorating it.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:7px;align-items:flex-end">
+      <div style="font:600 8.5px 'JetBrains Mono',monospace;letter-spacing:.12em;color:#6366F1;background:#EEF2FF;border-radius:999px;padding:5px 12px">v1 · SKY + TIME DIAL</div>
+      <div style="font:400 9.5px 'JetBrains Mono',monospace;color:#9CA3AF">25 JUL 2026</div>
+    </div>
+  </div>
+
+  <div style="padding:34px 56px 0">
+    <div style="font:700 10px 'JetBrains Mono',monospace;letter-spacing:.18em;color:#B3B8C2">01 · PRINCIPLES</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:16px">
+      <sc-for list="{{ principles }}" as="p" hint-placeholder-count="4">
+        <div style="border:1px solid #E5E7EB;border-radius:10px;padding:16px 17px">
+          <div style="font:700 8.5px 'JetBrains Mono',monospace;letter-spacing:.1em;color:#6366F1">{{ p.no }}</div>
+          <div style="margin-top:8px;font:700 15px/1.25 'Archivo',sans-serif;letter-spacing:-.01em">{{ p.title }}</div>
+          <div style="margin-top:7px;font:500 11.5px/1.6 'Archivo',sans-serif;color:#6B7280;text-wrap:pretty">{{ p.body }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="padding:38px 56px 0">
+    <div style="font:700 10px 'JetBrains Mono',monospace;letter-spacing:.18em;color:#B3B8C2">02 · COLOUR — ANCHOR IDENTITY</div>
+    <div style="margin-top:6px;font:500 11.5px/1.6 'Archivo',sans-serif;color:#6B7280;max-width:700px">Anchor type owns hue. Depth is expressed by mixing the anchor hue toward white (0 / 8 / 22 / 38 / 52%), never by a new colour — so a lineage reads as one family from core to leaf.</div>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:18px">
+      <sc-for list="{{ anchors }}" as="a" hint-placeholder-count="6">
+        <div>
+          <div style="{{ a.swatch }}"></div>
+          <div style="margin-top:8px;font:700 10px 'Archivo',sans-serif;letter-spacing:.02em">{{ a.name }}</div>
+          <div style="margin-top:3px;font:400 9px 'JetBrains Mono',monospace;color:#9CA3AF">{{ a.hex }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:22px;align-items:flex-end">
+      <sc-for list="{{ depthRamp }}" as="d" hint-placeholder-count="5">
+        <div style="flex:1">
+          <div style="{{ d.swatch }}"></div>
+          <div style="margin-top:6px;font:600 8.5px 'JetBrains Mono',monospace;color:#6B7280;letter-spacing:.06em">{{ d.label }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="padding:38px 56px 0">
+    <div style="font:700 10px 'JetBrains Mono',monospace;letter-spacing:.18em;color:#B3B8C2">03 · COLOUR — STATE &amp; NEUTRALS</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:16px">
+      <div>
+        <div style="font:700 11px 'Archivo',sans-serif;letter-spacing:.02em">Status &amp; RAG (lens colours)</div>
+        <div style="display:flex;flex-direction:column;gap:7px;margin-top:11px">
+          <sc-for list="{{ states }}" as="s" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:11px;border:1px solid #F0F1F4;border-radius:8px;padding:9px 12px">
+              <span style="{{ s.dot }}"></span>
+              <span style="flex:1;font:600 11px 'Archivo',sans-serif">{{ s.name }}</span>
+              <span style="font:400 9px 'JetBrains Mono',monospace;color:#9CA3AF">{{ s.hex }}</span>
+              <span style="font:400 9.5px 'JetBrains Mono',monospace;color:#6B7280;width:172px;text-align:right">{{ s.use }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div>
+        <div style="font:700 11px 'Archivo',sans-serif;letter-spacing:.02em">Neutral field</div>
+        <div style="display:flex;flex-direction:column;gap:7px;margin-top:11px">
+          <sc-for list="{{ neutrals }}" as="n" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:11px;border:1px solid #F0F1F4;border-radius:8px;padding:9px 12px">
+              <span style="{{ n.dot }}"></span>
+              <span style="flex:1;font:600 11px 'Archivo',sans-serif">{{ n.hex }}</span>
+              <span style="font:400 9.5px 'JetBrains Mono',monospace;color:#6B7280">{{ n.use }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:38px 56px 0">
+    <div style="font:700 10px 'JetBrains Mono',monospace;letter-spacing:.18em;color:#B3B8C2">04 · TYPE</div>
+    <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:26px;margin-top:16px">
+      <div style="border:1px solid #E5E7EB;border-radius:10px;padding:20px 22px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:800 22px 'Archivo',sans-serif;letter-spacing:-.02em">Archivo</div><div style="font:400 9px 'JetBrains Mono',monospace;color:#9CA3AF">500 · 600 · 700 · 800</div></div>
+        <div style="margin-top:5px;font:500 10.5px 'Archivo',sans-serif;color:#6B7280">Voice: names, headings, panel copy. Tight tracking on display sizes.</div>
+        <div style="display:flex;flex-direction:column;gap:11px;margin-top:15px">
+          <sc-for list="{{ typeArchivo }}" as="t" hint-placeholder-count="4">
+            <div style="display:flex;align-items:baseline;gap:14px;border-top:1px solid #F4F5F7;padding-top:11px">
+              <div style="width:112px;flex:none;font:400 8.5px 'JetBrains Mono',monospace;color:#9CA3AF">{{ t.spec }}</div>
+              <div style="{{ t.style }}">{{ t.sample }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="border:1px solid #E5E7EB;border-radius:10px;padding:20px 22px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:700 20px 'JetBrains Mono',monospace;letter-spacing:-.01em">JetBrains Mono</div><div style="font:400 9px 'JetBrains Mono',monospace;color:#9CA3AF">400 · 600 · 700</div></div>
+        <div style="margin-top:5px;font:500 10.5px 'Archivo',sans-serif;color:#6B7280">Instrument: IDs, counts, dates, legends. Always caps, letterspaced .06–.18em.</div>
+        <div style="display:flex;flex-direction:column;gap:11px;margin-top:15px">
+          <sc-for list="{{ typeMono }}" as="t" hint-placeholder-count="4">
+            <div style="display:flex;align-items:baseline;gap:14px;border-top:1px solid #F4F5F7;padding-top:11px">
+              <div style="width:112px;flex:none;font:400 8.5px 'JetBrains Mono',monospace;color:#9CA3AF">{{ t.spec }}</div>
+              <div style="{{ t.style }}">{{ t.sample }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:38px 56px 0">
+    <div style="font:700 10px 'JetBrains Mono',monospace;letter-spacing:.18em;color:#B3B8C2">05 · THE BLOCK — ANATOMY</div>
+    <div style="margin-top:6px;font:500 11.5px/1.6 'Archivo',sans-serif;color:#6B7280;max-width:700px">One wedge = one node. Angular width = share of the lineage's leaf weight; ring index = generation. Every feature below is additive and independently toggleable.</div>
+    <div style="display:flex;gap:30px;margin-top:18px;align-items:flex-start">
+      <svg viewBox="0 0 420 300" style="width:420px;height:300px;flex:none">
+        <sc-for list="{{ anatomy }}" as="an" hint-placeholder-count="5">
+          <path d="{{ an.d }}" style="{{ an.style }}"></path>
+        </sc-for>
+        <circle cx="60" cy="150" r="34" fill="#6366F1"></circle>
+        <text x="60" y="154" text-anchor="middle" style="font:700 10px 'JetBrains Mono',monospace;fill:#fff;letter-spacing:.06em">CORE</text>
+        <circle cx="243" cy="96" r="3.2" fill="#DC2626" stroke="#fff" stroke-width="1"></circle>
+        <sc-for list="{{ anatomyLabels }}" as="al" hint-placeholder-count="5">
+          <g>
+            <line x1="{{ al.x1 }}" y1="{{ al.y1 }}" x2="{{ al.x2 }}" y2="{{ al.y2 }}" stroke="#C4C8D0" stroke-width="1"></line>
+            <text x="{{ al.tx }}" y="{{ al.ty }}" style="font:600 8.5px 'JetBrains Mono',monospace;fill:#6B7280;letter-spacing:.07em">{{ al.label }}</text>
+          </g>
+        </sc-for>
+      </svg>
+      <div style="flex:1;display:flex;flex-direction:column;gap:9px">
+        <sc-for list="{{ features }}" as="f" hint-placeholder-count="6">
+          <div style="display:flex;gap:13px;border:1px solid #F0F1F4;border-radius:9px;padding:12px 14px">
+            <div style="width:34px;flex:none;display:flex;align-items:center;justify-content:center">{{ f.glyph }}</div>
+            <div style="flex:1">
+              <div style="font:700 11.5px 'Archivo',sans-serif">{{ f.name }}</div>
+              <div style="margin-top:3px;font:500 10.5px/1.5 'Archivo',sans-serif;color:#6B7280">{{ f.rule }}</div>
+            </div>
+            <div style="width:104px;flex:none;text-align:right;font:400 8.5px 'JetBrains Mono',monospace;color:#9CA3AF;letter-spacing:.04em">{{ f.token }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:38px 56px 0">
+    <div style="font:700 10px 'JetBrains Mono',monospace;letter-spacing:.18em;color:#B3B8C2">06 · LENSES — ONE GEOMETRY, THREE READINGS</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px">
+      <sc-for list="{{ lenses }}" as="l" hint-placeholder-count="3">
+        <div style="border:1px solid #E5E7EB;border-radius:10px;padding:18px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font:700 12.5px 'Archivo',sans-serif">{{ l.name }}</div>
+            <div style="font:600 8px 'JetBrains Mono',monospace;letter-spacing:.1em;color:#fff;background:#111827;border-radius:999px;padding:4px 9px">{{ l.key }}</div>
+          </div>
+          <svg viewBox="0 0 200 110" style="width:100%;height:110px;margin-top:12px">
+            <sc-for list="{{ l.wedges }}" as="w" hint-placeholder-count="6">
+              <path d="{{ w.d }}" style="{{ w.style }}"></path>
+            </sc-for>
+          </svg>
+          <div style="margin-top:10px;font:500 10.5px/1.55 'Archivo',sans-serif;color:#6B7280">{{ l.body }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="padding:38px 56px 0">
+    <div style="font:700 10px 'JetBrains Mono',monospace;letter-spacing:.18em;color:#B3B8C2">07 · MOTION IS INFORMATION</div>
+    <div style="display:flex;gap:16px;margin-top:16px">
+      <div style="flex:1;border:1px solid #E5E7EB;border-radius:10px;padding:18px 20px">
+        <div style="display:flex;gap:22px;align-items:center">
+          <svg viewBox="0 0 120 120" style="width:104px;height:104px;flex:none">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#E5E7EB" stroke-width="1.2"></circle>
+            <g style="animation:spinSG 9s linear infinite;transform-origin:60px 60px">
+              <path d="M60 60 L60 18 A42 42 0 0 1 96 39 Z" fill="#2563EB"></path>
+              <path d="M60 60 L96 39 A42 42 0 0 1 96 81 Z" fill="#93B4F5"></path>
+              <path d="M60 60 L96 81 A42 42 0 0 1 60 102 Z" fill="#DBDFE6"></path>
+            </g>
+            <circle cx="60" cy="60" r="17" fill="#111827"></circle>
+          </svg>
+          <div>
+            <div style="font:700 12.5px 'Archivo',sans-serif">Rotation ∝ in-flight work</div>
+            <div style="margin-top:6px;font:500 10.5px/1.6 'Archivo',sans-serif;color:#6B7280">Period = 360 / (0.25 + activeShare × 2.2) seconds. A lineage with nothing in flight is still. Hover pauses. Labels counter-rotate to stay upright.</div>
+            <div style="margin-top:9px;font:400 9px 'JetBrains Mono',monospace;color:#9CA3AF">STILL &lt; 2% ACTIVE · FASTEST ≈ 145s/TURN</div>
+          </div>
+        </div>
+      </div>
+      <div style="width:340px;flex:none;display:flex;flex-direction:column;gap:9px">
+        <sc-for list="{{ motions }}" as="m" hint-placeholder-count="4">
+          <div style="border:1px solid #F0F1F4;border-radius:9px;padding:11px 13px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <div style="font:700 11px 'Archivo',sans-serif">{{ m.name }}</div>
+              <div style="font:400 8.5px 'JetBrains Mono',monospace;color:#9CA3AF">{{ m.spec }}</div>
+            </div>
+            <div style="margin-top:4px;font:500 10.5px/1.5 'Archivo',sans-serif;color:#6B7280">{{ m.means }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:38px 56px 0">
+    <div style="font:700 10px 'JetBrains Mono',monospace;letter-spacing:.18em;color:#B3B8C2">08 · TIME DIAL</div>
+    <div style="display:flex;gap:16px;margin-top:16px">
+      <sc-for list="{{ dialRules }}" as="d" hint-placeholder-count="4">
+        <div style="flex:1;border:1px solid #E5E7EB;border-radius:10px;padding:16px 17px">
+          <div style="font:700 8.5px 'JetBrains Mono',monospace;letter-spacing:.1em;color:#2563EB">{{ d.tag }}</div>
+          <div style="margin-top:8px;font:700 13px/1.3 'Archivo',sans-serif">{{ d.title }}</div>
+          <div style="margin-top:6px;font:500 10.5px/1.6 'Archivo',sans-serif;color:#6B7280">{{ d.body }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="padding:38px 56px 0">
+    <div style="font:700 10px 'JetBrains Mono',monospace;letter-spacing:.18em;color:#B3B8C2">09 · UI COMPONENTS</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px">
+      <div style="border:1px solid #E5E7EB;border-radius:10px;padding:18px 20px">
+        <div style="font:700 11px 'Archivo',sans-serif">Chips &amp; controls</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:13px;align-items:center">
+          <div style="display:inline-flex;align-items:center;gap:6px;border:1px solid #E5E7EB;background:#fff;border-radius:999px;padding:5px 10px;font:600 8.5px 'JetBrains Mono',monospace;letter-spacing:.07em;color:#374151"><span style="width:7px;height:7px;border-radius:999px;background:#2563EB"></span>PROJECT<span style="color:#9CA3AF">8</span></div>
+          <div style="display:inline-flex;align-items:center;gap:6px;border:1px dashed #D1D5DB;background:#fff;border-radius:999px;padding:5px 10px;font:600 8.5px 'JetBrains Mono',monospace;letter-spacing:.07em;color:#9CA3AF;opacity:.55"><span style="width:7px;height:7px;border-radius:999px;background:#D97706"></span>WORK ITEM<span>24</span></div>
+          <div style="display:inline-flex;align-items:center;border-radius:999px;overflow:hidden;border:1px solid #E5E7EB">
+            <div style="background:#111827;color:#fff;padding:6px 13px;font:600 8.5px 'JetBrains Mono',monospace;letter-spacing:.1em">STRUCTURE</div>
+            <div style="border-left:1px solid #E5E7EB;color:#6B7280;padding:6px 13px;font:600 8.5px 'JetBrains Mono',monospace;letter-spacing:.1em">PROGRESS</div>
+          </div>
+          <div style="background:#111827;color:#fff;border-radius:8px;padding:9px 15px;font:700 12px 'Archivo',sans-serif">＋ New Plan</div>
+          <div style="border:1px solid #111827;color:#111827;border-radius:8px;padding:8px 14px;font:700 11px 'Archivo',sans-serif">◎ Re-root here</div>
+        </div>
+        <div style="margin-top:14px;font:500 10.5px/1.55 'Archivo',sans-serif;color:#6B7280">Solid border = on · dashed + 55% = dimmed (filters never delete data). Radius 999px for filters, 8px for actions.</div>
+      </div>
+      <div style="border:1px solid #E5E7EB;border-radius:10px;padding:18px 20px">
+        <div style="font:700 11px 'Archivo',sans-serif">Readout &amp; inspector</div>
+        <div style="margin-top:13px;border:1px solid #F0F1F4;border-radius:9px;padding:12px 13px">
+          <div style="font:600 8.5px 'JetBrains Mono',monospace;letter-spacing:.16em;color:#B3B8C2">READOUT</div>
+          <div style="margin-top:5px;font:700 12.5px 'Archivo',sans-serif">Mobile onboarding rebuild</div>
+          <div style="margin-top:3px;font:400 9.5px 'JetBrains Mono',monospace;color:#6B7280;letter-spacing:.04em">PRJ-110 · PROJECT · IN DELIVERY · RAG A · SEP 26</div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:11px;flex-wrap:wrap">
+          <span style="background:#EFF6FF;color:#2563EB;border-radius:999px;padding:4px 9px;font:600 8.5px 'JetBrains Mono',monospace;letter-spacing:.06em">IN DELIVERY</span>
+          <span style="background:#FFFBEB;color:#D97706;border-radius:999px;padding:4px 9px;font:600 8.5px 'JetBrains Mono',monospace;letter-spacing:.06em">RAG A</span>
+          <span style="background:#ECFDF5;color:#059669;border-radius:999px;padding:4px 9px;font:600 8.5px 'JetBrains Mono',monospace;letter-spacing:.06em">62% DONE</span>
+        </div>
+        <div style="margin-top:14px;font:500 10.5px/1.55 'Archivo',sans-serif;color:#6B7280">Panel 298px, always right, always shows lineage before children. Hover feeds the readout; click opens the panel. Never both at once.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:38px 56px 0">
+    <div style="font:700 10px 'JetBrains Mono',monospace;letter-spacing:.18em;color:#B3B8C2">10 · RULES</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 34px;margin-top:14px">
+      <sc-for list="{{ rules }}" as="r" hint-placeholder-count="8">
+        <div style="display:flex;gap:11px;padding:11px 0;border-bottom:1px solid #F4F5F7">
+          <div style="{{ r.mark }}">{{ r.sign }}</div>
+          <div style="flex:1;font:500 11.5px/1.5 'Archivo',sans-serif;color:#374151;text-wrap:pretty">{{ r.text }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1440, &quot;height&quot;: 2400}}">
+class Component extends DCLogic {
+  P(cx,cy,r,a){ return [cx + r*Math.cos(a), cy + r*Math.sin(a)]; }
+  ring(cx,cy,r0,r1,a0,a1){
+    const lg = (a1-a0) > Math.PI ? 1 : 0;
+    const [x0,y0]=this.P(cx,cy,r1,a0), [x1,y1]=this.P(cx,cy,r1,a1), [x2,y2]=this.P(cx,cy,r0,a1), [x3,y3]=this.P(cx,cy,r0,a0);
+    return `M${x0.toFixed(1)} ${y0.toFixed(1)}A${r1} ${r1} 0 ${lg} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}L${x2.toFixed(1)} ${y2.toFixed(1)}A${r0} ${r0} 0 ${lg} 0 ${x3.toFixed(1)} ${y3.toFixed(1)}Z`;
+  }
+  arc(cx,cy,r,a0,a1){ const lg=(a1-a0)>Math.PI?1:0; const [x0,y0]=this.P(cx,cy,r,a0),[x1,y1]=this.P(cx,cy,r,a1); return `M${x0.toFixed(1)} ${y0.toFixed(1)}A${r} ${r} 0 ${lg} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`; }
+  sw(bg, h){ return { height:h+'px', borderRadius:'8px', background:bg, border:bg==='#FFFFFF'||bg==='#F4F4F5'?'1px solid #E5E7EB':'none' }; }
+  renderVals(){
+    const anchors = [['Vision','#7C3AED'],['Programme','#6366F1'],['Project','#2563EB'],['Deliverable','#059669'],['Work Item','#D97706'],['Task','#64748B'],['Control Item','#DC2626'],['Quality Item','#DB2777'],['Brain','#0EA5E9'],['Objective','#0D9488'],['Milestone','#111827'],['Initiative core','#111827']]
+      .map(([name,hex])=>({ name, hex, swatch:this.sw(hex, 64) }));
+    const depthRamp = [0,8,22,38,52].map((m,i)=>({ label:`L${i+1} · MIX ${m}%`, swatch:this.sw(m?`color-mix(in oklab, #2563EB ${100-m}%, white)`:'#2563EB', 40+ (4-i)*4) }));
+    const dot = (c,b)=>({ display:'inline-block', width:'12px', height:'12px', borderRadius:'999px', background:c, border:b||'none', flex:'none' });
+    const states = [
+      ['Done','#059669','Completed · Released · Validated'],
+      ['Active','#2563EB','In Progress · In Delivery'],
+      ['Planned','#DBDFE6','Not started · backlog'],
+      ['Blocked','#DC2626','Escalated · Blocked'],
+      ['RAG Red','#DC2626','Ring outline + slow pulse'],
+      ['RAG Amber','#D97706','Ring outline, no pulse'],
+      ['RAG Green','#059669','No mark needed'],
+      ['Unrated','#E9EBEF','Health lens only']
+    ].map(([name,hex,use])=>({ name, hex, use, dot:dot(hex) }));
+    const neutrals = [
+      ['#FFFFFF','Field — the only background'],['#FAFAFA','Note wells'],['#F4F5F7','Hairline dividers'],
+      ['#E5E7EB','Borders, dial rim'],['#9CA3AF','Instrument labels'],['#6B7280','Secondary copy'],['#374151','Body'],['#111827','Ink, core, today hand']
+    ].map(([hex,use])=>({ hex, use, dot:dot(hex, hex==='#FFFFFF'||hex==='#FAFAFA'?'1px solid #E5E7EB':'none') }));
+    const typeArchivo = [
+      ['800 · 40/1 · -.025em','Portfolio Sky',{ font:"800 34px 'Archivo',sans-serif", letterSpacing:'-.025em' }],
+      ['700 · 15/1.25','Section & card titles',{ font:"700 15px 'Archivo',sans-serif" }],
+      ['600 · 11 · block label','Payments core migration',{ font:"600 11px 'Archivo',sans-serif" }],
+      ['500 · 11.5/1.6','Body copy sits at 11.5 with generous leading for scanning.',{ font:"500 11.5px/1.6 'Archivo',sans-serif", color:'#6B7280' }]
+    ].map(([spec,sample,style])=>({ spec, sample, style }));
+    const typeMono = [
+      ['700 · 10 · .18em','01 · PRINCIPLES',{ font:"700 10px 'JetBrains Mono',monospace", letterSpacing:'.18em', color:'#B3B8C2' }],
+      ['600 · 8.5 · .1em','PRG-100 · PROGRAMME',{ font:"600 8.5px 'JetBrains Mono',monospace", letterSpacing:'.1em' }],
+      ['600 · 8 · .1em · dial','OCT 25 → MAR 27',{ font:"600 8px 'JetBrains Mono',monospace", letterSpacing:'.1em', color:'#9CA3AF' }],
+      ['400 · 9.5 · readout','123 NODES · 38 IN FLIGHT',{ font:"400 9.5px 'JetBrains Mono',monospace", color:'#6B7280', letterSpacing:'.04em' }]
+    ].map(([spec,sample,style])=>({ spec, sample, style }));
+    const cx = 60, cy = 150;
+    const A = [-1.02, -0.34, 0.34, 1.02];
+    const anatomy = [];
+    [[86,150,'#6366F1'],[152,216,'#2563EB'],[218,282,'#059669']].forEach(([r0,r1,c],gi)=>{
+      const segs = gi===0?2:gi===1?3:4;
+      for (let i=0;i<segs;i++){
+        const a0 = A[0] + (A[3]-A[0])*i/segs + 0.012, a1 = A[0] + (A[3]-A[0])*(i+1)/segs - 0.012;
+        const mix = [0,22,38][gi];
+        anatomy.push({ d:this.ring(cx,cy,r0,r1,a0,a1), style:{ fill:mix?`color-mix(in oklab, ${c} ${100-mix}%, white)`:c, stroke:'#fff', strokeWidth:1.4, ...(gi===2&&i===1?{ animation:'pulseSG 2.4s ease-in-out infinite' }:{}) } });
+        if (gi<2 && i===0) anatomy.push({ d:this.arc(cx,cy,r1-3,a0+0.02,a0+(a1-a0)*0.62), style:{ stroke:'#059669', strokeWidth:2.4, fill:'none' } });
+      }
+    });
+    const anatomyLabels = [
+      { x1:120, y1:104, x2:150, y2:80, tx:154, ty:77, label:'GENERATION RING = DEPTH' },
+      { x1:186, y1:196, x2:206, y2:238, tx:210, ty:242, label:'ANGULAR WIDTH = LEAF SHARE' },
+      { x1:212, y1:120, x2:250, y2:56, tx:254, ty:53, label:'GREEN BAND = % DONE' },
+      { x1:243, y1:96, x2:300, y2:96, tx:304, ty:99, label:'RAG DOT · RED PULSES' },
+      { x1:60, y1:186, x2:60, y2:250, tx:20, ty:266, label:'CORE = ROOT PLAN' }
+    ];
+    const glyph = (inner)=>inner;
+    const features = [
+      ['Fill','Anchor hue, mixed toward white by depth','AC[type] + MIX', {bg:'#2563EB'}],
+      ['Green band','Arc on the outer edge; length = % of descendants done','wedgeBands', {ring:'#059669'}],
+      ['RAG mark','Red/amber outline on the block itself, not a separate badge','ragDots', {out:'#DC2626'}],
+      ['Orbiting label','name · % on major blocks; counter-rotates to stay upright','wedgeLabels', {txt:'62%'}],
+      ['Selection','2.4px ink stroke — the only use of black on a block','sel', {out:'#111827'}],
+      ['Dim','Unrelated blocks drop to 20% (12% when isolated); nothing is removed','opacity .2', {bg:'#DBDFE6'}]
+    ].map(([name,rule,token,g])=>({ name, rule, token,
+      glyph: g.ring ? React.createElement('span',{style:{width:'20px',height:'20px',borderRadius:'999px',border:'2.4px solid '+g.ring,borderRightColor:'#F0F1F4',borderBottomColor:'#F0F1F4'}})
+        : g.out ? React.createElement('span',{style:{width:'20px',height:'20px',borderRadius:'6px',background:'#EFF6FF',border:'2.2px solid '+g.out}})
+        : g.txt ? React.createElement('span',{style:{font:"700 9px 'Archivo',sans-serif",color:'#111827'}}, g.txt)
+        : React.createElement('span',{style:{width:'20px',height:'20px',borderRadius:'6px',background:g.bg}}) }));
+    const lensWedges = (mode)=>{
+      const out = [];
+      const cols = { structure:['#6366F1','#2563EB','#8FB0F3','#059669','#7ED0AE','#D97706'], progress:['#059669','#2563EB','#DBDFE6','#059669','#DBDFE6','#DC2626'], health:['#059669','#D97706','#E9EBEF','#059669','#DC2626','#E9EBEF'] }[mode];
+      for (let i=0;i<6;i++){
+        const a0 = -Math.PI/2 + i/6*Math.PI*2 + 0.02, a1 = -Math.PI/2 + (i+1)/6*Math.PI*2 - 0.02;
+        out.push({ d:this.ring(100,55,26,50,a0,a1), style:{ fill:cols[i], stroke:'#fff', strokeWidth:1.2 } });
+      }
+      out.push({ d:this.ring(100,55,0,22,-Math.PI/2,-Math.PI/2+Math.PI*1.999), style:{ fill:'#111827' } });
+      return out;
+    };
+    const lenses = [
+      { name:'Structure', key:'DEFAULT', body:'Anchor identity. Colour answers “what kind of thing is this, and whose lineage?” Depth reads as tint.', wedges:lensWedges('structure') },
+      { name:'Progress', key:'STATUS', body:'Same geometry recoloured to done / active / planned / blocked. Planned is deliberately near-neutral so movement stands out.', wedges:lensWedges('progress') },
+      { name:'Health', key:'RAG', body:'Red, amber, green, unrated only. Unrated goes pale so unassessed scope is visible as a gap, not a pass.', wedges:lensWedges('health') }
+    ];
+    const motions = [
+      ['Bloom','1s · cubic-bezier(.22,1,.36,1)','Load expands outward from the core, one generation at a time — the hierarchy explains itself once.'],
+      ['Hover pause','instant','Cursor stops the system it touches, so reading never fights motion.'],
+      ['Risk pulse','2.4s ease-in-out','Only RAG red. Nothing else in the system blinks.'],
+      ['Re-root','1s bloom, shared centre','Double-click collapses to the core and re-blooms the chosen lineage; the dial re-spans to its dates.']
+    ].map(([name,spec,means])=>({ name, spec, means }));
+    const dialRules = [
+      ['360° = ONE PLAN','Span, not calendar','The dial fits the selected root end-to-end — first date to last, once around. Re-root and the whole dial rescales.'],
+      ['CLOCKWISE = ORDER','Chronology first','Children are sorted by mean date, so reading clockwise is reading the sequence. Angle answers when.'],
+      ['THE HAND','Today','A single ink line from core to rim, labelled once. The only element that references real-world now.'],
+      ['MONTH TICKS','Fixed frame','Ticks and month caps sit outside the rim; they thin out automatically on long programmes and never collide with the hand.']
+    ].map(([tag,title,body])=>({ tag, title, body }));
+    const mark = (ok)=>({ width:'15px', flex:'none', font:"700 12px 'Archivo',sans-serif", color:ok?'#059669':'#DC2626', lineHeight:'1.35' });
+    const rules = [
+      [1,'White is the only background. No gradients, no glass, no drop shadows on data.'],
+      [1,'Colour carries meaning or it is grey. Decorative hue is not permitted.'],
+      [1,'Motion must be readable as a quantity — speed, delay, or pulse tied to data.'],
+      [1,'Filters dim to 20%, never remove: the shape of the plan stays constant.'],
+      [1,'Every block is clickable and reports its lineage before its children.'],
+      [0,'Never put two encodings on one channel (no radius = time AND depth).'],
+      [0,'Never label every block — labels appear only above a legible angular width.'],
+      [0,'Never animate on load and on idle at once; bloom finishes, then drift begins.']
+    ].map(([ok,text])=>({ text, sign:ok?'✓':'✕', mark:mark(!!ok) }));
+    const principles = [
+      ['P1','Centre is truth','Everything hangs off one core. Focus starts at the middle and diverges outward — never a left-hand list.'],
+      ['P2','One field, many readings','The geometry never changes between lenses; only its colouring does, so muscle memory survives.'],
+      ['P3','Instrument, not dashboard','Mono labels, hairline rules, no chrome. It should feel like a measuring device you trust.'],
+      ['P4','Nothing hidden','Filtering dims, re-rooting keeps the trail. The whole plan is always accounted for.']
+    ].map(([no,title,body])=>({ no, title, body }));
+    return { principles, anchors, depthRamp, states, neutrals, typeArchivo, typeMono, anatomy, anatomyLabels, features, lenses, motions, dialRules, rules };
+  }
+}
+</script>
+</body>
+</html>

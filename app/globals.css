@@ -44,10 +44,10 @@
   --color-bg: #ffffff;
   --color-line: #e7eaf0;
   /* Brand tint, for icon tiles, hovers and quiet callouts. */
-  --color-soft: #f5f1fe;
+  --color-soft: #eff6ff;
 
   /* Brand */
-  --color-brand: #7c3aed;
+  --color-brand: #2563eb;
   --color-ok: #10b981;
 
   /* The accent set the gradients draw from. 2a spends them on portal circles
@@ -100,9 +100,9 @@
 
   /* Elevation. 2a throws the brand colour into its lifts rather than grey. */
   --shadow-card: 0 1px 3px rgba(35, 39, 51, 0.05);
-  --shadow-cta: 0 10px 24px -10px rgba(124, 58, 237, 0.55);
-  --shadow-cta-hover: 0 14px 30px -10px rgba(124, 58, 237, 0.62);
-  --shadow-featured: 0 18px 40px -26px rgba(124, 58, 237, 0.5);
+  --shadow-cta: 0 10px 24px -10px rgba(37, 99, 235, 0.55);
+  --shadow-cta-hover: 0 14px 30px -10px rgba(37, 99, 235, 0.62);
+  --shadow-featured: 0 18px 40px -26px rgba(37, 99, 235, 0.5);
 
   /* The sticky nav's height, so anchored sections can clear it. */
   --nav-height: 62px;
@@ -163,20 +163,20 @@
   --card-foreground: #232733;
   --popover: #ffffff;
   --popover-foreground: #232733;
-  --primary: #7c3aed;
+  --primary: #2563eb;
   --primary-foreground: #ffffff;
   --secondary: #f1f3f7;
   --secondary-foreground: #232733;
   --muted: #f1f3f7;
   --muted-foreground: #5b6472;
-  --accent: #f5f1fe;
-  --accent-foreground: #7c3aed;
+  --accent: #eff6ff;
+  --accent-foreground: #2563eb;
   --destructive: #e2574c;
   --border: #e7eaf0;
   --input: #e7eaf0;
-  --ring: #7c3aed;
+  --ring: #2563eb;
 
-  --chart-1: #7c3aed;
+  --chart-1: #2563eb;
   --chart-2: #ec4899;
   --chart-3: #f59e0b;
   --chart-4: #10b981;
@@ -184,12 +184,12 @@
 
   --sidebar: #ffffff;
   --sidebar-foreground: #232733;
-  --sidebar-primary: #7c3aed;
+  --sidebar-primary: #2563eb;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f5f1fe;
-  --sidebar-accent-foreground: #7c3aed;
+  --sidebar-accent: #eff6ff;
+  --sidebar-accent-foreground: #2563eb;
   --sidebar-border: #e7eaf0;
-  --sidebar-ring: #7c3aed;
+  --sidebar-ring: #2563eb;
 }
 
 @layer base {

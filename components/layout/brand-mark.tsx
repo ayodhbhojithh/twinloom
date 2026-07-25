@@ -34,7 +34,7 @@ export function BrandMark({
         strokeWidth={2.1}
         className={cn(
           "shrink-0",
-          tone === "onDark" ? "text-accent-violet" : "text-brand",
+          tone === "onDark" ? "text-accent-sky" : "text-brand",
           large ? "size-5" : "size-[18px]",
         )}
       />
