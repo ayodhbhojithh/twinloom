@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 
 import { Container } from "./container";
 import { Eyebrow } from "./eyebrow";
+import { Reveal } from "./reveal";
 
 interface SectionProps {
   id: string;
@@ -11,6 +12,11 @@ interface SectionProps {
   /** Centred reads better on a marketing page; left suits denser blocks. */
   align?: "center" | "left";
   width?: "page" | "landing" | "wide";
+  /**
+   * Set false when the section reveals its own children, so their spring is not
+   * played inside a second one on the wrapper.
+   */
+  revealBody?: boolean;
   className?: string;
   children?: React.ReactNode;
 }
@@ -21,6 +27,9 @@ interface SectionProps {
  * The page is white throughout with no dividers between sections, so spacing and
  * type hierarchy are the only things separating one block from the next. That
  * makes consistency here load bearing rather than cosmetic.
+ *
+ * The heading reveals on scroll and the body a beat behind, so a section
+ * introduces itself before its contents arrive.
  */
 export function Section({
   id,
@@ -29,6 +38,7 @@ export function Section({
   lead,
   align = "center",
   width = "wide",
+  revealBody = true,
   className,
   children,
 }: SectionProps) {
@@ -41,7 +51,9 @@ export function Section({
       className={cn("py-12 sm:py-16 lg:py-20", className)}
     >
       <Container width={width}>
-        <div className={cn("max-w-[1200px]", centred && "mx-auto text-center")}>
+        <Reveal
+          className={cn("max-w-[1200px]", centred && "mx-auto text-center")}
+        >
           {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
 
           <h2
@@ -59,9 +71,17 @@ export function Section({
               {lead}
             </p>
           ) : null}
-        </div>
+        </Reveal>
 
-        {children ? <div className="mt-8 sm:mt-10">{children}</div> : null}
+        {children ? (
+          revealBody ? (
+            <Reveal delay={0.08} className="mt-8 sm:mt-10">
+              {children}
+            </Reveal>
+          ) : (
+            <div className="mt-8 sm:mt-10">{children}</div>
+          )
+        ) : null}
       </Container>
     </section>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import { Rise } from "@/components/shared";
 import { effortRag, RAG_COLOUR, RAG_LABEL } from "@/lib/scoping";
 
 import { useScopingSession } from "./scoping-context";
@@ -41,10 +42,7 @@ export function DialReadout() {
         ))}
       </ul>
 
-      <div
-        key={index}
-        className="mt-4 animate-in duration-300 fade-in slide-in-from-bottom-1"
-      >
+      <Rise key={index} y={8} className="mt-4">
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="text-[14.5px] font-extrabold tracking-[-0.01em]">
             {step.kicker}
@@ -74,7 +72,7 @@ export function DialReadout() {
             Nothing answered here yet.
           </p>
         )}
-      </div>
+      </Rise>
     </div>
   );
 }

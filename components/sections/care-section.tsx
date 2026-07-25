@@ -1,4 +1,4 @@
-import { ActionButton, Panel, Section } from "@/components/shared";
+import { ActionButton, Panel, Reveal, Section } from "@/components/shared";
 import { CARE_TEASER } from "@/lib/content/home";
 import { PRIMARY_CTA } from "@/lib/content/site";
 import { cn } from "@/lib/utils";
@@ -12,13 +12,18 @@ import { cn } from "@/lib/utils";
  */
 export function CareSection() {
   return (
-    <Section id="care" heading={CARE_TEASER.heading} lead={CARE_TEASER.lead}>
+    <Section
+      id="care"
+      heading={CARE_TEASER.heading}
+      lead={CARE_TEASER.lead}
+      revealBody={false}
+    >
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {CARE_TEASER.plans.map((plan) => {
+        {CARE_TEASER.plans.map((plan, at) => {
           const featured = "featured" in plan && plan.featured;
 
           return (
-            <li key={plan.name}>
+            <Reveal as="li" key={plan.name} index={at}>
               <Panel
                 className={cn(
                   "h-full p-5 sm:p-6",
@@ -45,12 +50,15 @@ export function CareSection() {
                   {plan.body}
                 </p>
               </Panel>
-            </li>
+            </Reveal>
           );
         })}
       </ul>
 
-      <div className="mx-auto mt-7 max-w-[1120px] text-center">
+      <Reveal
+        delay={0.12}
+        className="mx-auto mt-7 max-w-[1120px] text-center"
+      >
         <p className="text-[13.5px] leading-[1.6] text-body">
           <span className="font-semibold text-ink">Response times.</span>{" "}
           {CARE_TEASER.responseTimes}
@@ -67,7 +75,7 @@ export function CareSection() {
             Ask about care
           </ActionButton>
         </div>
-      </div>
+      </Reveal>
     </Section>
   );
 }

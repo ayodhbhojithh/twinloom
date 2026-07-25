@@ -1,6 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 
-import { Panel, Section } from "@/components/shared";
+import { Panel, Reveal, Section } from "@/components/shared";
 import { FEATURED_WORK } from "@/lib/content/home";
 
 /**
@@ -10,10 +10,15 @@ import { FEATURED_WORK } from "@/lib/content/home";
  */
 export function FeaturedWorkSection() {
   return (
-    <Section id="work" heading={FEATURED_WORK.heading} lead={FEATURED_WORK.lead}>
+    <Section
+      id="work"
+      heading={FEATURED_WORK.heading}
+      lead={FEATURED_WORK.lead}
+      revealBody={false}
+    >
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {FEATURED_WORK.items.map((item) => (
-          <li key={item.client}>
+        {FEATURED_WORK.items.map((item, at) => (
+          <Reveal as="li" key={item.client} index={at}>
             <Panel className="flex h-full flex-col p-5 transition-colors hover:border-brand/35">
               <span className="font-mono text-[10.5px] font-semibold tracking-[0.12em] text-faint uppercase">
                 {item.sector}
@@ -38,7 +43,7 @@ export function FeaturedWorkSection() {
                 </span>
               </div>
             </Panel>
-          </li>
+          </Reveal>
         ))}
       </ul>
     </Section>

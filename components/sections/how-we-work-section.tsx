@@ -1,6 +1,6 @@
 import { Check } from "lucide-react";
 
-import { Panel, Section } from "@/components/shared";
+import { Panel, Reveal, Section } from "@/components/shared";
 import { HOW_WE_WORK } from "@/lib/content/home";
 
 /**
@@ -17,10 +17,11 @@ export function HowWeWorkSection() {
       id="how-we-work"
       heading={HOW_WE_WORK.heading}
       lead={HOW_WE_WORK.lead}
+      revealBody={false}
     >
       <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {HOW_WE_WORK.steps.map((step, index) => (
-          <li key={step.name}>
+          <Reveal as="li" key={step.name} index={index}>
             <Panel className="h-full p-4 sm:p-5">
               <span className="font-mono text-[11px] font-semibold tracking-[0.12em] text-faint tabular-nums">
                 {String(index + 1).padStart(2, "0")}
@@ -32,7 +33,7 @@ export function HowWeWorkSection() {
                 {step.body}
               </p>
             </Panel>
-          </li>
+          </Reveal>
         ))}
       </ol>
 

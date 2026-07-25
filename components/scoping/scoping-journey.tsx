@@ -1,6 +1,6 @@
 "use client";
 
-import { Container, Eyebrow } from "@/components/shared";
+import { Container, Eyebrow, Rise } from "@/components/shared";
 import { STEP_COUNT } from "@/lib/scoping";
 
 import { ActionBar } from "./action-bar";
@@ -50,12 +50,9 @@ function Journey() {
               </p>
             </div>
 
-            {/* Keyed on the step, so moving section replays the enter animation
-                rather than swapping the text in place. */}
-            <div
-              key={step.key}
-              className="animate-in duration-400 fade-in slide-in-from-bottom-2"
-            >
+            {/* Keyed on the step, so moving section replays the spring rather
+                than swapping the text in place. */}
+            <Rise key={step.key} y={12}>
               <h1 className="mt-3 text-[22px] font-extrabold tracking-[-0.02em] text-balance sm:text-[27px]">
                 {step.heading}
               </h1>
@@ -69,7 +66,7 @@ function Journey() {
               <div className="mt-5">
                 <StepCard />
               </div>
-            </div>
+            </Rise>
           </div>
         </div>
         {/* Sits inside the container so the island sticks while the journey is

@@ -9,7 +9,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { Panel, Section } from "@/components/shared";
+import { Panel, Reveal, Section } from "@/components/shared";
 import { OUTCOMES, type OutcomeItem } from "@/lib/content/home";
 
 const ICONS: Record<OutcomeItem["icon"], LucideIcon> = {
@@ -31,13 +31,18 @@ const ICONS: Record<OutcomeItem["icon"], LucideIcon> = {
  */
 export function OutcomesSection() {
   return (
-    <Section id="services" heading={OUTCOMES.heading} lead={OUTCOMES.lead}>
+    <Section
+      id="services"
+      heading={OUTCOMES.heading}
+      lead={OUTCOMES.lead}
+      revealBody={false}
+    >
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {OUTCOMES.items.map((item) => {
+        {OUTCOMES.items.map((item, at) => {
           const Icon = ICONS[item.icon];
 
           return (
-            <li key={item.title}>
+            <Reveal as="li" key={item.title} index={at}>
               <Panel className="h-full p-5">
                 <span
                   aria-hidden
@@ -52,7 +57,7 @@ export function OutcomesSection() {
                   {item.body}
                 </p>
               </Panel>
-            </li>
+            </Reveal>
           );
         })}
       </ul>

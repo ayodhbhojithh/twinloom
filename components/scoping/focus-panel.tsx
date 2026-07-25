@@ -2,6 +2,7 @@
 
 import { Check } from "lucide-react";
 
+import { Rise } from "@/components/shared";
 import {
   dialEffort,
   dialKey,
@@ -27,9 +28,10 @@ function Shell({
   children?: React.ReactNode;
 }) {
   return (
-    <div
+    <Rise
+      y={-8}
       className={cn(
-        "animate-in rounded-card border border-brand/25 bg-soft/40 p-5 duration-300 fade-in slide-in-from-top-1",
+        "rounded-card border border-brand/25 bg-soft/40 p-5",
         className,
       )}
     >
@@ -40,7 +42,7 @@ function Shell({
         {title}
       </h3>
       {children}
-    </div>
+    </Rise>
   );
 }
 

@@ -42,6 +42,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-GB" className={`${manrope.variable} ${caveat.variable} h-full`}>
+      <head>
+        {/* Reveals animate from opacity 0, and motion writes that starting state
+            into the server HTML. Without JavaScript nothing would ever animate it
+            back, so the page would render blank. This shows everything instead. */}
+        <noscript>
+          <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
+      </head>
       <body className="min-h-full">
         <TooltipProvider delayDuration={200}>
           {/* The panel lives above the page so it is present on every route, and

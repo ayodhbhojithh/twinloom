@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
 
-import { Panel, Section } from "@/components/shared";
+import { Panel, Reveal, Section } from "@/components/shared";
 import { FINAL_CTA } from "@/lib/content/home";
 import { SCOPE_ROUTE, SITE } from "@/lib/content/site";
 import { cn } from "@/lib/utils";
@@ -23,14 +23,19 @@ const DOOR_LINKS = [
 
 export function FinalCtaSection() {
   return (
-    <Section id="contact" heading={FINAL_CTA.heading} lead={FINAL_CTA.lead}>
+    <Section
+      id="contact"
+      heading={FINAL_CTA.heading}
+      lead={FINAL_CTA.lead}
+      revealBody={false}
+    >
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {FINAL_CTA.doors.map((door, index) => {
           const featured = "featured" in door && door.featured;
           const href = DOOR_LINKS[index];
 
           return (
-            <li key={door.title}>
+            <Reveal as="li" key={door.title} index={index}>
               <Panel
                 className={cn(
                   "relative flex h-full flex-col p-5 sm:p-6",
@@ -74,20 +79,22 @@ export function FinalCtaSection() {
                   <ArrowRight aria-hidden className="size-3.5" />
                 </a>
               </Panel>
-            </li>
+            </Reveal>
           );
         })}
       </ul>
 
-      <Panel className="mx-auto mt-6 max-w-[1120px] p-5 text-center sm:p-6">
-        <h3 className="text-[16px] font-bold">{FINAL_CTA.next.title}</h3>
-        <p className="mt-2 text-[14.5px] leading-[1.65] text-body">
-          {FINAL_CTA.next.body}
-        </p>
-        <p className="mt-3 text-[13.5px] leading-[1.6] font-semibold text-ink">
-          {FINAL_CTA.next.closing}
-        </p>
-      </Panel>
+      <Reveal delay={0.12} className="mt-6">
+        <Panel className="mx-auto max-w-[1120px] p-5 text-center sm:p-6">
+          <h3 className="text-[16px] font-bold">{FINAL_CTA.next.title}</h3>
+          <p className="mt-2 text-[14.5px] leading-[1.65] text-body">
+            {FINAL_CTA.next.body}
+          </p>
+          <p className="mt-3 text-[13.5px] leading-[1.6] font-semibold text-ink">
+            {FINAL_CTA.next.closing}
+          </p>
+        </Panel>
+      </Reveal>
     </Section>
   );
 }
