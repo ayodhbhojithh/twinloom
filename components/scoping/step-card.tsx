@@ -11,16 +11,22 @@ import { useScopingSession } from "./scoping-context";
 /**
  * The questions for the section in play.
  *
- * Below xl the focus panel is rendered inline, directly under the group whose
- * option is focused. A sticky side panel is right on a wide screen and useless on
- * a phone, so the same component gets two mount points and CSS picks.
+ * Groups are separated by a hairline rather than each being boxed. Four bordered
+ * cards holding bordered rows holding bordered checkboxes is three levels of
+ * outline for one list of choices, and it reads as scaffolding rather than as
+ * questions. The only outlines left on this column belong to the options
+ * themselves, which are the things you actually click.
+ *
+ * Below lg the focus panel is rendered inline, directly under the group whose
+ * option is focused. On a wide screen it has its own column instead, so the list
+ * never moves when something opens.
  */
 export function StepCard() {
   const { step, applies, goTo, focus, answers, setFree } = useScopingSession();
 
   if (!applies) {
     return (
-      <div className="rounded-card border border-line bg-card p-5 sm:p-6">
+      <div className="rounded-card bg-panel-bg p-5 sm:p-6">
         <p className="text-[14px] leading-[1.6] text-body">
           Nothing to size here yet. This section only applies if you are selling
           online, so skip it, or go back and add a shop.
@@ -38,22 +44,25 @@ export function StepCard() {
     );
   }
 
-  if (step.special === "assets") {
-    return (
-      <div className="rounded-card border border-line bg-card p-5 sm:p-6">
-        <AssetAudit />
-      </div>
-    );
-  }
+  if (step.special === "assets") return <AssetAudit />;
 
   const focusedGroup = focus ? focus.split(":")[0] : null;
+  const groups = step.groups ?? [];
+
+  /* The hairline only exists to separate one block from the block above it, so
+     the first thing on the page never gets one. */
+  const divider = groups.length
+    ? "mt-6 border-t border-line pt-6"
+    : undefined;
 
   return (
-    <div className="flex flex-col gap-4">
-      {(step.groups ?? []).map((group) => (
-        <div key={group.key}>
+    <div className="flex flex-col">
+      {groups.map((group, at) => (
+        <div
+          key={group.key}
+          className={at > 0 ? "mt-6 border-t border-line pt-6" : undefined}
+        >
           <div
-            className="rounded-card border border-line bg-card p-5 sm:p-6"
             role={group.type === "single" ? "radiogroup" : "group"}
             aria-label={group.question}
           >
@@ -74,16 +83,21 @@ export function StepCard() {
           </div>
 
           {focusedGroup === group.key ||
-          (step.deepen && focus === `${step.deepen.when.key}:${step.deepen.when.value}`) ? (
-            <FocusPanel className="mt-3" />
+          (step.deepen &&
+            focus === `${step.deepen.when.key}:${step.deepen.when.value}`) ? (
+            <FocusPanel className="mt-3 lg:hidden" />
           ) : null}
         </div>
       ))}
 
-      {step.special === "budget" ? <BudgetField /> : null}
+      {step.special === "budget" ? (
+        <div className={divider}>
+          <BudgetField />
+        </div>
+      ) : null}
 
       {step.special === "free" ? (
-        <div className="rounded-card border border-line bg-card p-5 sm:p-6">
+        <div className={divider}>
           <label
             htmlFor="scoping-free"
             className="text-[14.5px] font-extrabold tracking-[-0.01em]"
@@ -97,7 +111,7 @@ export function StepCard() {
             onChange={(event) => setFree(event.target.value)}
             rows={5}
             placeholder="Calculators, integrations, a member area, a quirk of how you work. Anything at all."
-            className="field-sizing-content mt-3 max-h-72 min-h-32 w-full resize-none rounded-btn-sm border border-line bg-card p-3 text-[13.5px] leading-[1.6] outline-none transition-colors placeholder:text-faint focus:border-brand"
+            className="field-sizing-content mt-3 max-h-72 min-h-32 w-full resize-none rounded-btn-sm bg-panel-bg p-3.5 text-[13.5px] leading-[1.6] outline-none transition-shadow ring-inset placeholder:text-faint focus:ring-1 focus:ring-brand/40"
           />
         </div>
       ) : null}

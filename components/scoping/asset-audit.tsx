@@ -30,8 +30,10 @@ export function AssetAudit() {
           <li
             key={asset}
             className={cn(
-              "flex flex-col gap-2.5 rounded-btn-sm border px-3.5 py-3 transition-colors sm:flex-row sm:items-center sm:justify-between",
-              state ? "border-brand/35 bg-soft/60" : "border-line bg-card",
+              "flex flex-col gap-2.5 rounded-btn-sm px-3.5 py-3 transition-colors sm:flex-row sm:items-center sm:justify-between",
+              state
+                ? "bg-soft ring-1 ring-brand/35 ring-inset"
+                : "bg-panel-bg",
             )}
           >
             <span className="text-[13.5px] font-bold">{asset}</span>
@@ -52,10 +54,10 @@ export function AssetAudit() {
                     aria-checked={on}
                     onClick={() => setAsset(key, choice.state)}
                     className={cn(
-                      "rounded-nav border px-2.5 py-1.5 text-[12px] font-semibold whitespace-nowrap transition-all",
+                      "rounded-nav px-2.5 py-1.5 text-[12px] font-semibold whitespace-nowrap transition-all",
                       on
-                        ? "border-brand bg-brand text-white"
-                        : "border-line bg-card text-body hover:border-brand/35 hover:text-ink",
+                        ? "bg-brand text-white"
+                        : "bg-card text-body hover:text-ink",
                     )}
                   >
                     {choice.label}

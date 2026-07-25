@@ -56,6 +56,12 @@ export interface ScopeStep {
   key: string;
   /** The small uppercase label. */
   kicker: string;
+  /**
+   * One or two words, for the switcher rail. Eight full kickers side by side wrap
+   * to three lines each and the row stops being scannable, which is the whole
+   * point of it.
+   */
+  short: string;
   heading: string;
   lead: string;
   groups?: ScopeGroup[];

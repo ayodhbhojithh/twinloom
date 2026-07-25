@@ -23,7 +23,7 @@ export function BudgetField() {
   const filled = ((value - MIN) / (MAX - MIN)) * 100;
 
   return (
-    <div className="rounded-card border border-line bg-card p-4 sm:p-5">
+    <div className="rounded-card bg-panel-bg p-4 sm:p-5">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h3 className="text-[14px] font-bold">
           Budget comfort{" "}

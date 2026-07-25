@@ -36,12 +36,16 @@ export function OptionRow({
       role={group.type === "single" ? "radio" : "checkbox"}
       aria-checked={chosen}
       onClick={() => choose(group.key, option.value, group.type)}
+      /* Unchosen options are a soft fill with no outline. An outline on every
+         option turns the list into a grid and makes the chosen one hard to
+         find; a fill change carries the same affordance and lets selection do
+         the only outlining on screen. */
       className={cn(
-        "flex w-full items-start gap-2.5 rounded-btn-sm border px-3 py-2.5 text-left transition-all",
+        "flex w-full items-start gap-2.5 rounded-btn-sm px-3 py-2.5 text-left transition-all",
         chosen
-          ? "border-brand/45 bg-soft"
-          : "border-line bg-card hover:border-brand/30 hover:bg-soft/50",
-        focused && "ring-2 ring-brand/25",
+          ? "bg-soft ring-1 ring-brand/40 ring-inset"
+          : "bg-panel-bg hover:bg-soft/70",
+        focused && "ring-2 ring-brand/45",
       )}
     >
       <span
@@ -51,7 +55,7 @@ export function OptionRow({
           group.type === "single" ? "rounded-full" : "rounded-[5px]",
           chosen
             ? "border-brand bg-brand text-white"
-            : "border-faint/55 bg-card text-transparent",
+            : "border-faint/45 bg-card text-transparent",
         )}
       >
         <Check className="size-2.5" strokeWidth={3.5} />

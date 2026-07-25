@@ -82,16 +82,16 @@ export function EffortDial({ className }: { className?: string }) {
       {/* The hub sits over the SVG as real text, so it inherits the type scale
           rather than being sized in user units. */}
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className="font-mono text-[8.5px] font-bold tracking-[0.16em] text-faint uppercase">
+        <span className="font-mono text-[8px] font-bold tracking-[0.16em] text-faint uppercase sm:text-[9.5px]">
           Complete
         </span>
 
-        <span className="text-[24px] leading-none font-extrabold tabular-nums">
+        <span className="text-[22px] leading-none font-extrabold tabular-nums sm:text-[30px] xl:text-[34px]">
           {percent}%
         </span>
 
         <span
-          className="mt-1 font-mono text-[8.5px] font-bold tracking-[0.1em] uppercase transition-colors duration-500"
+          className="mt-1 font-mono text-[8px] font-bold tracking-[0.1em] uppercase transition-colors duration-500 sm:text-[9.5px]"
           style={{ color: RAG_COLOUR[rag] }}
         >
           {overall === null ? "Effort not set" : RAG_LABEL[rag]}

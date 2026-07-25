@@ -30,10 +30,9 @@ function Shell({
   return (
     <Rise
       y={-8}
-      className={cn(
-        "rounded-card border border-brand/25 bg-soft/40 p-5",
-        className,
-      )}
+      /* A fill, not an outline. It is already the only tinted block in its
+         column, which is enough to say it is a different kind of thing. */
+      className={cn("rounded-card bg-soft/60 p-5", className)}
     >
       <p className="font-mono text-[9.5px] font-bold tracking-[0.12em] text-brand uppercase">
         {label}
@@ -91,10 +90,10 @@ export function FocusPanel({ className }: { className?: string }) {
                 aria-checked={on}
                 onClick={() => choose(drivers.key, driver.value, "multi")}
                 className={cn(
-                  "flex w-full items-start gap-2 rounded-btn-sm border px-2.5 py-2 text-left transition-all",
+                  "flex w-full items-start gap-2 rounded-btn-sm px-2.5 py-2 text-left transition-all",
                   on
-                    ? "border-brand/45 bg-card"
-                    : "border-line bg-card/60 hover:border-brand/30 hover:bg-card",
+                    ? "bg-card ring-1 ring-brand/40 ring-inset"
+                    : "bg-card/55 hover:bg-card",
                 )}
               >
                 <span
