@@ -139,7 +139,7 @@ function RailSection({
                       ? "pl-9"
                       : "pl-6",
                   pathname === item.href
-                    ? "border-active bg-well font-semibold text-ink"
+                    ? "border-active bg-well font-semibold text-active"
                     : "border-transparent text-quiet hover:bg-well hover:text-ink",
                 )}
               >

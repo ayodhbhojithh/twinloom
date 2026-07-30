@@ -1,14 +1,8 @@
 import type { Metadata } from "next";
 
 import { ActionLink, Actions } from "@/components/blocks/action-link";
-import {
-  Aside,
-  GuideNote,
-  Pick,
-  Picks,
-  QuietLink,
-} from "@/components/blocks/picks";
-import { P } from "@/components/blocks/prose";
+import { GuideNote, TextLink } from "@/components/blocks/text-link";
+import { Item, List, P } from "@/components/blocks/prose";
 import {
   PageHeading,
   PageShell,
@@ -47,7 +41,11 @@ const SECTIONS: PageSection[] = [
  * one joined a link to its explanation, so the explanation is a sentence of its
  * own now. It reads the same and it reads aloud better.
  *
- * The page is four ways in and two ways to read up first, and nothing else. No
+ * The four ways in are set as a list of terms: the route in the accent, then what
+ * it means. That pairing is the page's whole job, and running the two together in
+ * a paragraph made them one grey block with bold words in it.
+ *
+ * The page is four ways in and two things to read first, and nothing else. No
  * hero, no proof strip, no feature grid. That restraint is the design: someone who
  * has arrived wanting a website is offered the four doors immediately, and someone
  * who is not ready is offered the reading instead.
@@ -61,57 +59,48 @@ export default function HomePage() {
 
       <P>That may be:</P>
 
-      <Picks>
-        <Pick>a clear, well-made website that explains what you offer</Pick>
-        <Pick>an online shop</Pick>
-        <Pick>a booking journey</Pick>
-        <Pick>a better way to collect enquiries</Pick>
-        <Pick>a website connected to the systems you already use</Pick>
-        <Pick more>
-          <QuietLink href={ROUTES.services}>
-            Everything we do, and what is included
-          </QuietLink>
-        </Pick>
-      </Picks>
+      <List>
+        <Item>a clear, well-made website that explains what you offer</Item>
+        <Item>an online shop</Item>
+        <Item>a booking journey</Item>
+        <Item>a better way to collect enquiries</Item>
+        <Item>a website connected to the systems you already use</Item>
+      </List>
+
+      <P>
+        <TextLink href={ROUTES.services}>
+          Everything we do, and what is included
+        </TextLink>
+      </P>
 
       <Section id={SECTIONS[0].id} title={SECTIONS[0].title} first>
         <P>Four ways in. Use whichever suits you.</P>
 
-        <Picks>
-          <Pick>
-            <QuietLink href={ROUTES.freeflow}>Send us what you have</QuietLink>{" "}
-            <Aside>
-              A brief, screenshots, photographs, links, colours or a few
-              sentences. We read it before responding.
-            </Aside>
-          </Pick>
+        <List>
+          <Item>
+            <TextLink href={ROUTES.freeflow}>Send us what you have</TextLink>:{" "}
+            A brief, screenshots, photographs, links, colours or a few
+            sentences. We read it before responding.
+          </Item>
 
-          <Pick>
-            <QuietLink href={ROUTES.guided}>Use our guided journey</QuietLink>{" "}
-            <Aside>
-              A more structured set of answers, with room to attach documents
-              and thoughts of your own as you go.
-            </Aside>
-          </Pick>
+          <Item>
+            <TextLink href={ROUTES.guided}>Use our guided journey</TextLink>: A
+            more structured set of answers, with room to attach documents and
+            thoughts of your own as you go.
+          </Item>
 
-          <Pick>
-            <QuietLink href={ROUTES.contact}>Email us your request</QuietLink>{" "}
-            <Aside>
-              Or call. Tell us what the business does and what you are trying to
-              sort out, and we will say whether it fits.
-            </Aside>
-          </Pick>
+          <Item>
+            <TextLink href={ROUTES.contact}>Email us your request</TextLink>:
+            Or call. Tell us what the business does and what you are trying to
+            sort out, and we will say whether it fits.
+          </Item>
 
-          <Pick>
-            <QuietLink href={ROUTES.book}>
-              Book a thirty-minute meeting
-            </QuietLink>{" "}
-            <Aside>
-              A conversation about the requirement, free and with no obligation.
-              We write up what we heard afterwards and send it to you.
-            </Aside>
-          </Pick>
-        </Picks>
+          <Item>
+            <TextLink href={ROUTES.book}>Book a thirty-minute meeting</TextLink>
+            : A conversation about the requirement, free and with no obligation.
+            We write up what we heard afterwards and send it to you.
+          </Item>
+        </List>
 
         <Actions>
           <ActionLink href={ROUTES.start} variant="primary">
@@ -119,7 +108,7 @@ export default function HomePage() {
           </ActionLink>
         </Actions>
 
-        <div className="mt-[22px]">
+        <div className="mt-5">
           <GuideNote>
             Nothing reaches us until you choose to send it. You can stop at any
             point and pick it up again later.
@@ -130,21 +119,19 @@ export default function HomePage() {
       <Section id={SECTIONS[1].id} title={SECTIONS[1].title}>
         <P>These may be of interest first.</P>
 
-        <Picks className="mb-0">
-          <Pick>
-            <QuietLink href={ROUTES.how}>
+        <List className="mb-0">
+          <Item>
+            <TextLink href={ROUTES.how}>
               How a project runs, stage by stage
-            </QuietLink>
-          </Pick>
-          <Pick>
-            <QuietLink href={ROUTES.pricing}>How our pricing works</QuietLink>
-          </Pick>
-          <Pick>
-            <QuietLink href={ROUTES.advice}>
-              Our advice and FAQ section
-            </QuietLink>
-          </Pick>
-        </Picks>
+            </TextLink>
+          </Item>
+          <Item>
+            <TextLink href={ROUTES.pricing}>How our pricing works</TextLink>
+          </Item>
+          <Item>
+            <TextLink href={ROUTES.advice}>Our advice and FAQ section</TextLink>
+          </Item>
+        </List>
       </Section>
     </PageShell>
   );

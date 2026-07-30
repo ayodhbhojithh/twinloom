@@ -73,7 +73,7 @@ export function SiteHeader() {
                 aria-current={on ? "page" : undefined}
                 className={cn(
                   "text-[14.5px] whitespace-nowrap hover:underline",
-                  on ? "font-semibold text-ink" : "text-quiet",
+                  on ? "font-semibold text-active" : "text-quiet hover:text-ink",
                 )}
               >
                 {item.label}

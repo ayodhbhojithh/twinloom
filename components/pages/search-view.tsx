@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { QuietLink } from "@/components/blocks/picks";
+import { TextLink } from "@/components/blocks/text-link";
 import { P } from "@/components/blocks/prose";
 import { SimpleList } from "@/components/blocks/simple-list";
 import { PageHeading, PageShell } from "@/components/layout";
@@ -111,10 +111,10 @@ export function SearchView() {
 
           <P>
             Try a shorter phrase, browse{" "}
-            <QuietLink href={ROUTES.services}>
+            <TextLink href={ROUTES.services}>
               our products and services
-            </QuietLink>
-            , or <QuietLink href={ROUTES.contact}>contact us</QuietLink>.
+            </TextLink>
+            , or <TextLink href={ROUTES.contact}>contact us</TextLink>.
           </P>
         </>
       )}

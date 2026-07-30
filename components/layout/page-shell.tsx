@@ -64,6 +64,12 @@ export function PageShell({
  * `h1` here rather than the draft's `h2`. The draft is one document holding
  * forty-eight screens, so its screens could not each own an `h1`; a real page must,
  * and it is the first thing a screen reader is asked for.
+ *
+ * The ladder across this file is 38 / 26 / 19, each step a clear third smaller
+ * than the one above it. The draft's own is 34 / 21 / 16.5, which puts its section
+ * headings close enough to body text that a rule has to do the separating on its
+ * own. Widening the gaps lets the type carry the structure and leaves the rules as
+ * confirmation rather than as the only signal.
  */
 export function PageHeading({
   tag,
@@ -84,12 +90,12 @@ export function PageHeading({
         </p>
       ) : null}
 
-      <h1 className="mb-4 max-w-[900px] text-[28px] leading-[1.14] font-extrabold tracking-[-0.025em] text-ink sm:text-[36px]">
+      <h1 className="mb-4 max-w-[900px] text-[30px] leading-[1.12] font-extrabold tracking-[-0.028em] text-ink sm:text-[38px]">
         {title}
       </h1>
 
       {lead ? (
-        <p className="mb-[26px] max-w-[760px] text-[18px] leading-[1.55] text-ink sm:text-[20px]">
+        <p className="mb-6 max-w-[760px] text-[17.5px] leading-[1.6] text-ink sm:text-[19px]">
           {lead}
         </p>
       ) : null}
@@ -140,7 +146,7 @@ export function Section({
           is the one for the section they are looking at. */}
       <h2
         id={`${id}-heading`}
-        className="group/h mb-3.5 flex items-baseline gap-2 text-[20px] leading-[1.25] font-bold tracking-[-0.015em] text-ink sm:text-[23px]"
+        className="group/h mb-4 flex items-baseline gap-2 text-[23px] leading-[1.22] font-bold tracking-[-0.02em] text-ink sm:text-[26px]"
       >
         {title}
 
@@ -155,5 +161,54 @@ export function Section({
 
       {children}
     </section>
+  );
+}
+
+/**
+ * A subsection: a heading inside a section, with no rule.
+ *
+ * The rule is what says "new section", so a subsection must not have one or the
+ * two levels look identical and the hierarchy collapses. Space and a smaller
+ * heading do the work instead, which is the arrangement every well set document
+ * uses and the one the reference uses too.
+ *
+ * It takes an id like a section does, because a subsection is still a place
+ * somebody may want to link to, but it does not appear in the page index. An index
+ * listing every heading stops being a summary.
+ */
+export function SubSection({
+  id,
+  title,
+  className,
+  children,
+}: {
+  id?: string;
+  title: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div id={id} className={cn("mt-9 scroll-mt-6", className)}>
+      <h3
+        className={cn(
+          "mb-3 text-[18px] leading-[1.3] font-bold tracking-[-0.012em] text-ink sm:text-[19.5px]",
+          id && "group/h flex items-baseline gap-2",
+        )}
+      >
+        {title}
+
+        {id ? (
+          <a
+            href={`#${id}`}
+            aria-label={`Link to ${title}`}
+            className="text-idx opacity-0 transition-opacity group-hover/h:opacity-100 focus-visible:opacity-100"
+          >
+            <LinkIcon aria-hidden className="size-3.5" />
+          </a>
+        ) : null}
+      </h3>
+
+      {children}
+    </div>
   );
 }

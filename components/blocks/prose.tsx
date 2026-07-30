@@ -40,7 +40,7 @@ export function List({
   children: React.ReactNode;
 }) {
   return (
-    <ul className={cn("mb-5 flex max-w-[720px] flex-col gap-3", className)}>
+    <ul className={cn("mb-5 flex max-w-[720px] flex-col gap-3.5", className)}>
       {children}
     </ul>
   );
