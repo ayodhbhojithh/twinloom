@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 
 import { Actions, ActionLink } from "@/components/blocks/action-link";
 import { P } from "@/components/blocks/prose";
+import { TextLink } from "@/components/blocks/text-link";
 import { SimpleList } from "@/components/blocks/simple-list";
 import { PageHeading, PageShell } from "@/components/layout";
 import { ROUTES } from "@/lib/site";
@@ -87,12 +88,7 @@ export function NotFoundView() {
 
       <P className="mt-9">
         If you followed a link on this website,{" "}
-        <a
-          href={ROUTES.contact}
-          className="font-semibold text-ink underline underline-offset-2"
-        >
-          tell us
-        </a>{" "}
+        <TextLink href={ROUTES.contact}>tell us</TextLink>{" "}
         so that we can fix it.
       </P>
     </PageShell>
