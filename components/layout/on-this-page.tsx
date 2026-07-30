@@ -62,12 +62,18 @@ export function OnThisPage({ sections }: { sections: readonly PageSection[] }) {
   return (
     <nav
       aria-label="On this page"
-      /* Sticky under the header rather than at the top of the viewport, so it
-         stops where the header ends instead of sliding behind it. Hidden when the
-         copy column matters more than the index. */
-      className="quiet-scroll sticky hidden w-[212px] shrink-0 self-start overflow-y-auto pb-6 xl:block"
+      /* Fixed, not sticky. Sticky holds only within its own parent, so the index
+         let go as soon as the article ended and rode the footer up the screen.
+         Fixed takes it out of the flow entirely: it is pinned to the right gutter
+         for the whole page and never moves at all.
+   
+         The copy reserves the space it vacated, in `PageShell`, so nothing runs
+         underneath it. */
+      className="quiet-scroll fixed hidden overflow-y-auto pb-6 xl:block"
       style={{
         top: "calc(var(--nav-height) + 28px)",
+        right: "var(--page-gutter)",
+        width: "var(--index-width)",
         maxHeight: "calc(100svh - var(--nav-height) - 56px)",
       }}
     >

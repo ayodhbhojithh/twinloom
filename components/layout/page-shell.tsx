@@ -12,12 +12,11 @@ export interface PageSection {
 }
 
 /**
- * The page shell: the copy column, and the section index beside it.
+ * The page shell: the copy column, with the section index pinned beside it.
  *
- * Measures are the draft's. 1100px when there is no index, 1360px when there is,
- * with a 48px gutter and a 212px index. Prose inside is capped at 720px by the
- * base styles, because a 1100px line of 16.5px text is unreadable however wide the
- * screen is; the extra width is for tables and boxes, not for paragraphs.
+ * No outer cap. The copy caps itself at the reading measure and the index is fixed
+ * to the right gutter, so a wider window opens the space between the two rather
+ * than stranding both on the left with a corridor of nothing to the right.
  *
  * A page declares its sections once, here, and passes the same entries to the
  * `Section` components below. That is one list rather than two, so the index can
@@ -40,20 +39,18 @@ export function PageShell({
 
   return (
     <div
+      data-indexed={indexed || undefined}
       className={cn(
-        "px-5 pt-8 pb-20 sm:px-8 sm:pt-11 lg:px-12 lg:pb-[110px] xl:px-16 xl:pt-14 2xl:px-20",
-        indexed ? "max-w-[1360px]" : "max-w-[1100px]",
+        "page-frame pt-8 pb-20 sm:pt-11 lg:pb-[110px] xl:pt-14",
         className,
       )}
     >
-      <div className={cn(indexed && "xl:flex xl:items-start xl:gap-12")}>
-        <div className="min-w-0 flex-1">
-          {children}
-          <PageNav />
-        </div>
-
-        {indexed ? <OnThisPage sections={sections} /> : null}
+      <div className="min-w-0">
+        {children}
+        <PageNav />
       </div>
+
+      {indexed ? <OnThisPage sections={sections} /> : null}
     </div>
   );
 }
@@ -90,12 +87,12 @@ export function PageHeading({
         </p>
       ) : null}
 
-      <h1 className="mb-4 max-w-[900px] text-[30px] leading-[1.12] font-extrabold tracking-[-0.028em] text-ink sm:text-[38px]">
+      <h1 className="mb-4 max-w-[980px] text-[30px] leading-[1.12] font-extrabold tracking-[-0.028em] text-ink sm:text-[38px]">
         {title}
       </h1>
 
       {lead ? (
-        <p className="mb-6 max-w-[760px] text-[17.5px] leading-[1.6] text-ink sm:text-[19px]">
+        <p className="mb-6 max-w-measure text-[17.5px] leading-[1.6] text-ink sm:text-[19px]">
           {lead}
         </p>
       ) : null}

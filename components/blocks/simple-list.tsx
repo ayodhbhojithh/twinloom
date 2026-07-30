@@ -43,7 +43,7 @@ export function SimpleList({
   className?: string;
 }) {
   return (
-    <div className={cn("max-w-[720px]", className)}>
+    <div className={cn("max-w-measure", className)}>
       {title || count ? (
         <div className="flex items-baseline justify-between gap-4 pb-2.5">
           {title ? (

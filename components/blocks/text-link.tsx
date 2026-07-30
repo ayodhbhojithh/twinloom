@@ -98,7 +98,7 @@ function Arrow() {
  */
 export function GuideNote({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-[22px] max-w-[820px] text-[12.5px] leading-[1.6] text-quiet">
+    <p className="mb-[22px] max-w-measure text-[12.5px] leading-[1.6] text-quiet">
       {children}
     </p>
   );

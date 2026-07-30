@@ -49,7 +49,7 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-field/95 backdrop-blur-sm">
-      <div className="flex items-center gap-4 px-5 py-2.5 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
+      <div className="page-frame flex items-center gap-4 py-2.5">
         <div className="flex min-w-0 flex-1 items-center">
           <Link
             href={ROUTES.home}

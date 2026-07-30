@@ -15,7 +15,7 @@ export function P({
   children: React.ReactNode;
 }) {
   return (
-    <p className={cn("mb-4 max-w-[720px] text-[16.5px]", className)}>
+    <p className={cn("mb-4 max-w-measure text-[16.5px]", className)}>
       {children}
     </p>
   );
@@ -41,7 +41,7 @@ export function List({
   children: React.ReactNode;
 }) {
   return (
-    <ul className={cn("mb-5 flex max-w-[720px] flex-col gap-3.5", className)}>
+    <ul className={cn("mb-5 flex max-w-measure flex-col gap-3.5", className)}>
       {children}
     </ul>
   );

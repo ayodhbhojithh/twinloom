@@ -21,7 +21,7 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-[70px] border-t border-border px-5 pt-10 pb-14 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
+    <footer className="page-frame mt-[70px] border-t border-border pt-10 pb-14">
       <div className="max-w-[1100px]">
         <nav
           aria-label="Footer"

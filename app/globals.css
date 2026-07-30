@@ -61,6 +61,28 @@
   --radius-field: 8px;
   --radius-pill: 999px;
 
+  /* The reading measure: how wide a line of body copy is allowed to get, and the
+     cap on everything that is prose. The draft sets 720px; this is wider because
+     the rail already takes a fixed slice of the window and the copy was leaving a
+     corridor of empty space between itself and the section index.
+
+     `--container-*` is what Tailwind builds its max-width scale from, so this is
+     `max-w-measure` at every use. */
+  --container-measure: 860px;
+
+  /* The page's side gutter. The index is fixed to it and the copy reserves a lane
+     measured from it, so the two are set from one number at every width. */
+  --page-gutter: 20px;
+
+  /* The section index, and the lane the copy leaves for it.
+
+     The arithmetic lives here rather than in a utility class. Written as
+     `pr-[calc(var(--page-gutter)+252px)]` it produced invalid CSS, because `calc`
+     requires whitespace around its operator and a Tailwind arbitrary value has
+     none; the browser dropped the declaration and the copy ran under the index. */
+  --index-width: 212px;
+  --index-lane: calc(var(--page-gutter) + var(--index-width) + 40px);
+
   /* The docked panel's width, and the breakpoint above which docking it makes
      sense at all. */
   --spacing-panel: 360px;
@@ -154,6 +176,31 @@
     @apply border-border outline-ring/50;
   }
 
+  /* The gutter steps with the page padding: 20 / 32 / 48 / 64 / 80. */
+  @media (min-width: 40rem) {
+    :root {
+      --page-gutter: 32px;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    :root {
+      --page-gutter: 48px;
+    }
+  }
+
+  @media (min-width: 80rem) {
+    :root {
+      --page-gutter: 64px;
+    }
+  }
+
+  @media (min-width: 96rem) {
+    :root {
+      --page-gutter: 80px;
+    }
+  }
+
   html {
     scroll-behavior: smooth;
   }
@@ -225,6 +272,28 @@
 }
 
 @layer components {
+  /* ---------------------------------------------------------------------------
+     The page's horizontal frame.
+
+     One rule rather than a run of `px-*` utilities, because the right edge has two
+     jobs: it is the page gutter normally, and the lane beside the fixed section
+     index when a page has one. As utilities that was a cascade fight nobody wins,
+     since `2xl:px-20` is written after `xl:pr-[...]` and quietly took the right
+     padding back at the widest breakpoint, dropping the copy under the index.
+
+     Both values come from variables that already step per breakpoint, so this
+     needs no media queries of its own beyond the one that turns the lane on.
+  --------------------------------------------------------------------------- */
+  .page-frame {
+    padding-inline: var(--page-gutter);
+  }
+
+  @media (min-width: 80rem) {
+    .page-frame[data-indexed] {
+      padding-right: var(--index-lane);
+    }
+  }
+
   /* Scrolls with no bar at all, for the short indexes where one would be more
      noise than the content it measures. Content cutting off at the edge is the
      cue that there is more. */

@@ -71,7 +71,7 @@ export function NotFoundView() {
       </PageHeading>
 
       {/* The fact, in the typeface the system reserves for facts. */}
-      <div className="mt-9 max-w-[720px] rounded-card border border-hair bg-well px-5 py-4">
+      <div className="mt-9 max-w-measure rounded-card border border-hair bg-well px-5 py-4">
         <p className="font-mono text-[11px] font-bold tracking-[0.18em] text-label uppercase">
           Address requested
         </p>

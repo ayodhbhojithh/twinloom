@@ -48,7 +48,7 @@ export function SearchView() {
 
       <form
         role="search"
-        className="mb-9 flex max-w-[720px] flex-wrap gap-2.5"
+        className="mb-9 flex max-w-measure flex-wrap gap-2.5"
         onSubmit={(event) => {
           event.preventDefault();
           const next = draft.trim();
@@ -105,7 +105,7 @@ export function SearchView() {
             No results
           </h2>
 
-          <p className="mb-4 max-w-[760px] text-[18px] leading-[1.55] text-ink sm:text-[20px]">
+          <p className="mb-4 max-w-measure text-[18px] leading-[1.55] text-ink sm:text-[20px]">
             We could not find a page matching <b>{query}</b>.
           </p>
 
