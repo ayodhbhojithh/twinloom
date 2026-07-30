@@ -8,188 +8,136 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ---------------------------------------------------------------------------
-   TwinCoreTech design tokens
+   Design tokens, from Docs/new-ui/TCT_Website_Draft_v3 1.html.
 
-   Colour theme from option 2a of the design canvas, "Riff on your product's
-   visual DNA: portal circles, mono microcopy, gradient accents"
-   (Docs/old/source/Web Studio Page.dc.html, turn 2). Values are the ones the
-   prototype actually uses, taken by frequency rather than by eye.
+   Every value is the draft's own, read from its `:root` rather than matched by
+   eye. The names are the draft's too: field, well, hair, border, label,
+   secondary, body, ink. Keeping its vocabulary means a rule in the draft and the
+   class that implements it can be compared without translating between them.
 
-   Structure, type and spacing are unchanged. This is a palette swap, which is
-   the whole reason every colour on the site comes from a token.
+   The draft is white surfaces, hairline borders and one blue. It is a quieter
+   system than what came before, and the tokens are deliberately few: if a colour
+   is not here, it is not in the design.
 --------------------------------------------------------------------------- */
 @theme {
-  /* Manrope everywhere. The system stack sits behind it only as a fallback for
-     the moment before the webfont lands. */
-  --font-sans: var(--font-manrope), "Segoe UI", system-ui, -apple-system,
-    "Helvetica Neue", Arial, sans-serif;
+  /* Archivo carries everything. The system stack sits behind it only as a
+     fallback for the moment before the webfont lands. */
+  --font-sans: var(--font-archivo), -apple-system, "Segoe UI", Helvetica, Arial,
+    sans-serif;
 
-  /* Mono is a separate role, not a fallback: the artifacts set eyebrows and
-     small labels in it deliberately. */
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* Mono is a role, not a fallback: the draft sets labels, counts and codes in
+     it deliberately. */
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo,
+    Consolas, monospace;
 
-  /* Caveat, for the handwritten aside. 2a uses it once per screen, as an aside
-     in the designer's voice, never for anything load bearing. */
-  --font-script: var(--font-caveat), ui-rounded, cursive;
+  /* Surfaces, lightest to firmest. */
+  --color-field: #ffffff;
+  --color-well: #fafafa;
+  --color-hair: #f4f5f7;
+  --color-border: #e5e7eb;
 
-  /* Ink and text */
-  --color-ink: #232733;
-  --color-body: #5b6472;
-  /* The mono microcopy grey. The most used colour in 2a after the hairline. */
-  --color-faint: #8b93a1;
+  /* Type, faintest to firmest. */
+  --color-label: #9ca3af;
+  --color-secondary: #6b7280;
+  --color-body: #374151;
+  --color-ink: #111827;
 
-  /* Surfaces and lines.
-     One background for the whole page: white. Sections do not alternate, so the
-     only things drawing structure are hairlines, spacing and type. */
-  --color-bg: #ffffff;
-  --color-line: #e7eaf0;
-  /* Brand tint, for icon tiles, hovers and quiet callouts. */
-  --color-soft: #eff6ff;
+  /* State. `active` is the only blue in the system and the whole accent. */
+  --color-active: #2563eb;
+  --color-done: #059669;
+  --color-amber: #d97706;
+  --color-blocked: #dc2626;
+  --color-planned: #dbdfe6;
+  --color-unrated: #e9ebef;
+  /* The mono index grey, for numbers that are labels rather than data. */
+  --color-idx: #b3b8c2;
 
-  /* Brand */
-  --color-brand: #2563eb;
-  --color-ok: #10b981;
+  --radius-card: 10px;
+  --radius-field: 8px;
+  --radius-pill: 999px;
 
-  /* The accent set the gradients draw from. 2a spends them on portal circles
-     and on one coloured word per heading, never on flat panels. */
-  --color-accent-amber: #f59e0b;
-  --color-accent-pink: #ec4899;
-  --color-accent-violet: #8b5cf6;
-  --color-accent-emerald: #10b981;
-  --color-accent-blue: #3b82f6;
-  --color-accent-teal: #14b8a6;
-  --color-accent-orange: #f97316;
-  --color-accent-indigo: #6366f1;
-  --color-accent-sky: #0ea5e9;
-  --color-accent-fuchsia: #d946ef;
-  --color-accent-slate: #64748b;
-
-  /* Scoping dial, from the mono baseline. RAG here is semantic, not decorative:
-     it reads effort per component, so these keep their own names. */
-  --color-rag-green: #10b981;
-  --color-rag-amber: #f59e0b;
-  --color-rag-red: #e2574c;
-  --color-rag-todo: #e7eaf0;
-
-  /* The Thoughts and inspiration panel. It docks right and the page shifts by
-     its width, so the width is a token both sides read. Below the `panel`
-     breakpoint it goes full width and nothing shifts.
-
-     Its body takes the faintest tint so the white capture cards lift off it.
-     Everything else in the panel is the site's own palette: same brand, same
-     hairlines, same radii. */
-  --color-panel-bg: #f7f8fb;
-  --spacing-panel: 400px;
+  /* The docked panel's width, and the breakpoint above which docking it makes
+     sense at all. */
+  --spacing-panel: 360px;
   --breakpoint-panel: 820px;
-
-  /* Content widths. `wide` is the site's own edge: nav, sections and footer all
-     sit on it. `page` and `landing` are narrower columns kept for anything that
-     wants tighter gutters, like the scoping journey. */
-  --container-landing: 820px;
-  --container-page: 1000px;
-  --container-wide: 1440px;
-
-  /* Radii */
-  --radius-card: 14px;
-  --radius-card-sm: 12px;
-  --radius-btn: 12px;
-  --radius-btn-sm: 9px;
-  --radius-tile: 10px;
-  --radius-nav: 7px;
-  --radius-pill: 20px;
-
-  /* Elevation. 2a throws the brand colour into its lifts rather than grey. */
-  --shadow-card: 0 1px 3px rgba(35, 39, 51, 0.05);
-  --shadow-cta: 0 10px 24px -10px rgba(37, 99, 235, 0.55);
-  --shadow-cta-hover: 0 14px 30px -10px rgba(37, 99, 235, 0.62);
-  --shadow-featured: 0 18px 40px -26px rgba(37, 99, 235, 0.5);
-
-  /* The sticky nav's height, so anchored sections can clear it. */
-  --nav-height: 62px;
 }
 
 /* ---------------------------------------------------------------------------
-   shadcn semantic tokens, mapped onto the same palette so shadcn components and
-   hand built ones never disagree about a colour.
+   shadcn's own tokens, mapped onto the same palette so a primitive dropped in
+   anywhere already matches the draft.
 --------------------------------------------------------------------------- */
-@theme inline {
-  --font-heading: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --color-foreground: var(--foreground);
-  --color-background: var(--background);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-}
-
 :root {
-  --radius: 0.75rem;
-
   --background: #ffffff;
-  --foreground: #232733;
+  --foreground: #111827;
   --card: #ffffff;
-  --card-foreground: #232733;
+  --card-foreground: #111827;
   --popover: #ffffff;
-  --popover-foreground: #232733;
+  --popover-foreground: #111827;
   --primary: #2563eb;
   --primary-foreground: #ffffff;
-  --secondary: #f1f3f7;
-  --secondary-foreground: #232733;
-  --muted: #f1f3f7;
-  --muted-foreground: #5b6472;
-  --accent: #eff6ff;
+  --secondary: #f4f5f7;
+  --secondary-foreground: #111827;
+  --muted: #fafafa;
+  --muted-foreground: #6b7280;
+  --accent: #f4f5f7;
   --accent-foreground: #2563eb;
-  --destructive: #e2574c;
-  --border: #e7eaf0;
-  --input: #e7eaf0;
+  --destructive: #dc2626;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
   --ring: #2563eb;
 
   --chart-1: #2563eb;
-  --chart-2: #ec4899;
-  --chart-3: #f59e0b;
-  --chart-4: #10b981;
-  --chart-5: #3b82f6;
+  --chart-2: #059669;
+  --chart-3: #d97706;
+  --chart-4: #dc2626;
+  --chart-5: #6b7280;
 
   --sidebar: #ffffff;
-  --sidebar-foreground: #232733;
+  --sidebar-foreground: #111827;
   --sidebar-primary: #2563eb;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #eff6ff;
+  --sidebar-accent: #f4f5f7;
   --sidebar-accent-foreground: #2563eb;
-  --sidebar-border: #e7eaf0;
+  --sidebar-border: #e5e7eb;
   --sidebar-ring: #2563eb;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
 }
 
 @layer base {
@@ -198,151 +146,40 @@
   }
 
   html {
-    @apply font-sans;
     scroll-behavior: smooth;
-    /* Let each platform render text its own way. `-webkit-font-smoothing:
-       antialiased` is a macOS habit, and on Windows Chromium it switches
-       ClearType subpixel rendering off, which is what makes text look thin and
-       noisy. Neither artifact sets it. */
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-    font-optical-sizing: auto;
   }
 
   body {
-    @apply bg-background text-foreground;
-    line-height: 1.55;
+    @apply bg-field text-body;
+    font-family: var(--font-sans);
+    /* No `-webkit-font-smoothing: antialiased`. It disables ClearType on
+       Windows, which makes text look thin and noisy rather than smooth. */
+    text-rendering: optimizeLegibility;
   }
 
-  button {
-    cursor: pointer;
-    text-align: left;
-  }
-
-  /* Scrollbars are hidden, scrolling is not. The wheel, trackpad, touch, arrow
-     keys, Page Up and Down, Home and End and the scrollbar's keyboard equivalents
-     all still work; only the bar itself is gone.
-     `scrollbar-width` covers Firefox and the standard, the webkit rule covers
-     Chromium and Safari, and `-ms-overflow-style` covers old Edge. */
-  html {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  ::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-    display: none;
-  }
-
-  /* One scrollable page, so every nav link is an in page anchor. This keeps a
-     jumped to section clear of the sticky nav. */
-  :target,
-  section[id],
-  [data-anchor] {
-    scroll-margin-top: var(--nav-height);
-  }
-}
-
-/* ---------------------------------------------------------------------------
-   Native controls, restyled.
-
-   Two inputs in the Thoughts panel have to stay native: the colour input opens
-   the operating system's picker, and the range input is the accessible way to
-   drag a weight. Both ship with chrome that cannot be reached from a class, so
-   their pseudo elements are handled here and the rest is done with utilities.
---------------------------------------------------------------------------- */
-@layer utilities {
-  /* The brand gradient, in the two angles 2a uses: 90deg across a wordmark,
-     135deg across a filled tile. Amber to pink to violet to emerald. */
-  .bg-brand-gradient {
-    background-image: linear-gradient(
-      90deg,
-      var(--color-accent-amber),
-      var(--color-accent-pink) 40%,
-      var(--color-accent-violet) 72%,
-      var(--color-accent-emerald)
-    );
-  }
-
-  .bg-brand-gradient-tilt {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-accent-amber),
-      var(--color-accent-pink) 45%,
-      var(--color-accent-violet) 75%,
-      var(--color-accent-emerald)
-    );
-  }
-
-  .text-brand-gradient {
-    background-image: linear-gradient(
-      90deg,
-      var(--color-accent-amber),
-      var(--color-accent-pink) 40%,
-      var(--color-accent-violet) 72%,
-      var(--color-accent-emerald)
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-}
-
-@layer components {
-  /* The colour swatch. Keeps the OS picker, loses the OS chrome.
-     The radius inherits, so whatever rounding class sits on the element is what
-     the swatch itself takes. One source of truth instead of a hardcoded radius
-     here quietly disagreeing with a utility there. */
-  .swatch-input {
-    appearance: none;
-    -webkit-appearance: none;
-    padding: 0;
-    border: none;
-    background: none;
-    overflow: hidden;
-    cursor: pointer;
-  }
-
-  .swatch-input::-webkit-color-swatch-wrapper {
-    padding: 0;
-    border-radius: inherit;
-  }
-
-  .swatch-input::-webkit-color-swatch {
-    border: none;
-    border-radius: inherit;
-  }
-
-  .swatch-input::-moz-color-swatch {
-    border: none;
-    border-radius: inherit;
-  }
-
-  /* The panel and the studio scroll the same way the page does: no visible bar.
-     Their content cuts off at the edge, which is the cue that there is more. */
-  .panel-scroll {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .panel-scroll::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-    display: none;
+  ::selection {
+    background: color-mix(in oklab, var(--color-active) 18%, white);
+    color: var(--color-ink);
   }
 
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
     }
+  }
+}
 
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
+@layer components {
+  /* Scrolls without a visible bar, the way the draft's panel does. Content
+     cutting off at the edge is the cue that there is more. */
+  .quiet-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .quiet-scroll::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
   }
 }

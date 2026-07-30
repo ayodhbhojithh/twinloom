@@ -1,38 +1,27 @@
 import type { Metadata } from "next";
-import { Caveat, Manrope } from "next/font/google";
+import { Archivo, JetBrains_Mono } from "next/font/google";
 
 import "./globals.css";
 
-import { ThoughtsProvider } from "@/components/thoughts";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { SITE } from "@/lib/content/site";
-
-/* Manrope carries the whole site. Variable, so no weight list is needed: the
-   type scale runs from 400 body copy up to 800 headings and the wordmark. */
-const manrope = Manrope({
-  variable: "--font-manrope",
+/* Archivo carries the whole site. Variable, so no weight list is needed: the
+   draft runs from 400 body copy to 800 display. */
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
   display: "swap",
 });
 
-/* Caveat, for the one handwritten aside. Variable, so no weight list. */
-const caveat = Caveat({
-  variable: "--font-caveat",
+/* JetBrains Mono, for labels, counts and codes. A role of its own in the draft,
+   not a fallback for the sans. */
+const jetbrains = JetBrains_Mono({
+  variable: "--font-jetbrains",
   subsets: ["latin"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: `${SITE.name} | ${SITE.tagline}`,
-    template: `%s | ${SITE.name}`,
-  },
-  description: SITE.description,
-  openGraph: {
-    title: `${SITE.name} | ${SITE.tagline}`,
-    description: SITE.description,
-    type: "website",
-  },
+  title: "TwinCoreTech",
+  description: "Websites for growing UK businesses.",
 };
 
 export default function RootLayout({
@@ -41,22 +30,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-GB" className={`${manrope.variable} ${caveat.variable} h-full`}>
-      <head>
-        {/* Reveals animate from opacity 0, and motion writes that starting state
-            into the server HTML. Without JavaScript nothing would ever animate it
-            back, so the page would render blank. This shows everything instead. */}
-        <noscript>
-          <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
-        </noscript>
-      </head>
-      <body className="min-h-full">
-        <TooltipProvider delayDuration={200}>
-          {/* The panel lives above the page so it is present on every route, and
-              it owns the column layout because the page shifts when it opens. */}
-          <ThoughtsProvider>{children}</ThoughtsProvider>
-        </TooltipProvider>
-      </body>
+    <html
+      lang="en-GB"
+      className={`${archivo.variable} ${jetbrains.variable} h-full`}
+    >
+      <body className="min-h-full">{children}</body>
     </html>
   );
 }

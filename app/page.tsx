@@ -1,37 +1,10 @@
-import { SiteFooter, SiteHeader } from "@/components/layout";
-import {
-  AboutSection,
-  CareSection,
-  FaqSection,
-  FeaturedWorkSection,
-  FinalCtaSection,
-  HeroSection,
-  HowWeWorkSection,
-  OutcomesSection,
-  ProofSection,
-} from "@/components/sections";
-
+/**
+ * Home.
+ *
+ * Empty on purpose. The site is being rebuilt against
+ * Docs/new-ui/TCT_Website_Draft_v3 1.html, section by section, and this is the
+ * shell the first of them goes into.
+ */
 export default function Home() {
-  return (
-    <>
-      <SiteHeader />
-
-      {/* One scrollable page, in the block order set out in
-          Docs/artifacts/TCT_Sitemap.md §1. Each section carries the id its nav
-          link points at. */}
-      <main className="flex-1">
-        <HeroSection />
-        <ProofSection />
-        <OutcomesSection />
-        <HowWeWorkSection />
-        <FeaturedWorkSection />
-        <AboutSection />
-        <CareSection />
-        <FaqSection />
-        <FinalCtaSection />
-      </main>
-
-      <SiteFooter />
-    </>
-  );
+  return <main className="flex-1" />;
 }
