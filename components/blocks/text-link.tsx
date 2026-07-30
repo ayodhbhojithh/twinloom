@@ -24,18 +24,25 @@ function isOffsite(href: string) {
  * with a rule, or leads a line that a bold weight has already separated from its
  * description.
  *
- * Links that leave the site say so with an arrow, before they are followed rather
- * than after. It is worked out from the address rather than declared, so nobody has
- * to remember a flag and no outbound link can quietly lose its mark. The arrow sits
- * inside the link so it underlines with the text, and it is sized in `em` so it
- * tracks whatever type it lands in.
+ * The arrow marks a link that is a destination rather than a mention. Every
+ * offsite link gets one, worked out from the address so nobody has to remember a
+ * flag; an onsite link takes one with `arrow`, which is right when the link is the
+ * whole line and wrong when it is a term at the head of a sentence, where an arrow
+ * would sit between the term and its colon.
+ *
+ * The arrow sits inside the link so it underlines with the text and cannot be
+ * orphaned at the end of a wrapped line, and it is sized in `em` so it tracks
+ * whatever type it lands in.
  */
 export function TextLink({
   href,
+  arrow,
   className,
   children,
 }: {
   href: string;
+  /** Marks an onsite link as a destination. Offsite links are marked anyway. */
+  arrow?: boolean;
   className?: string;
   children: React.ReactNode;
 }) {
@@ -58,11 +65,7 @@ export function TextLink({
         className={classes}
       >
         {children}
-        <ArrowUpRight
-          aria-hidden
-          className="ml-0.5 inline-block size-[0.82em] align-[-0.06em]"
-          strokeWidth={2.5}
-        />
+        <Arrow />
         {newTab ? (
           <span className="sr-only"> (opens in a new tab)</span>
         ) : null}
@@ -73,7 +76,19 @@ export function TextLink({
   return (
     <Link href={href} className={classes}>
       {children}
+      {arrow ? <Arrow /> : null}
     </Link>
+  );
+}
+
+/** One glyph, one size rule, wherever it appears. */
+function Arrow() {
+  return (
+    <ArrowUpRight
+      aria-hidden
+      className="ml-0.5 inline-block size-[0.82em] align-[-0.06em]"
+      strokeWidth={2.5}
+    />
   );
 }
 

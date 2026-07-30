@@ -88,7 +88,9 @@ export function NotFoundView() {
 
       <P className="mt-9">
         If you followed a link on this website,{" "}
-        <TextLink href={ROUTES.contact}>tell us</TextLink>{" "}
+        <TextLink href={ROUTES.contact} arrow>
+          tell us
+        </TextLink>{" "}
         so that we can fix it.
       </P>
     </PageShell>

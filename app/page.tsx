@@ -68,7 +68,7 @@ export default function HomePage() {
       </List>
 
       <P>
-        <TextLink href={ROUTES.services}>
+        <TextLink href={ROUTES.services} arrow>
           Everything we do, and what is included
         </TextLink>
       </P>
@@ -121,15 +121,19 @@ export default function HomePage() {
 
         <List className="mb-0">
           <Item>
-            <TextLink href={ROUTES.how}>
+            <TextLink href={ROUTES.how} arrow>
               How a project runs, stage by stage
             </TextLink>
           </Item>
           <Item>
-            <TextLink href={ROUTES.pricing}>How our pricing works</TextLink>
+            <TextLink href={ROUTES.pricing} arrow>
+              How our pricing works
+            </TextLink>
           </Item>
           <Item>
-            <TextLink href={ROUTES.advice}>Our advice and FAQ section</TextLink>
+            <TextLink href={ROUTES.advice} arrow>
+              Our advice and FAQ section
+            </TextLink>
           </Item>
         </List>
       </Section>
