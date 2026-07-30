@@ -20,6 +20,10 @@ import { RailNav, useRailGroups } from "./rail-nav";
  * behind it. It keeps a scrollbar rather than hiding one: forty eight items do not
  * fit on a laptop screen and how far down the list you are is worth knowing.
  *
+ * No rule down its edge. The gap between the list and the copy is wide enough to
+ * separate them on its own, and a full height rule beside a page whose sections are
+ * already divided by rules gives the eye a second grid to read.
+ *
  * It collapses to a 48px strip. At 1280 the rail is a fifth of the window, and
  * somebody reading a long legal page wants that width back; the strip keeps the way
  * to reopen it exactly where the rail was, so nothing moves but the boundary.
@@ -46,7 +50,7 @@ export function SiteRail({
   if (collapsed) {
     return (
       <div
-        className="sticky hidden w-12 shrink-0 border-r border-border bg-field pt-4 lg:block"
+        className="sticky hidden w-12 shrink-0 bg-field pt-4 lg:block"
         style={stick}
       >
         <button
@@ -65,7 +69,7 @@ export function SiteRail({
   return (
     <nav
       aria-label="All pages"
-      className="sticky hidden w-[252px] shrink-0 overflow-y-auto border-r border-border bg-field pb-10 lg:block xl:w-[272px] 2xl:w-[290px]"
+      className="sticky hidden w-[284px] shrink-0 overflow-y-auto bg-field pb-10 lg:block xl:w-[308px] 2xl:w-[328px]"
       style={stick}
     >
       {/* The head stays put while the list scrolls under it: it holds the only
