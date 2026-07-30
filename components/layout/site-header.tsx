@@ -50,9 +50,12 @@ export function SiteHeader() {
             narrows shoves the whole page down, and the rail is already carrying
             every page from `lg` up, so these seven are a convenience rather than
             the navigation. They appear only once there is room beside it. */}
+        {/* `flex-1` and centred, so the links sit on the header's centre line
+            rather than trailing the brand. The right group keeps `ml-auto` for
+            the widths where the nav is not rendered at all. */}
         <nav
           aria-label="Primary"
-          className="hidden flex-nowrap items-center gap-x-5 2xl:flex"
+          className="hidden flex-1 flex-nowrap items-center justify-center gap-x-5 2xl:flex"
         >
           {HEADER_NAV.map((item) => {
             /* `startsWith` so a child route still marks its parent, but the home
