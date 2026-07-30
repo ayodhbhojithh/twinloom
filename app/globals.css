@@ -174,9 +174,56 @@
   }
 }
 
+@layer base {
+  /* ---------------------------------------------------------------------------
+     The scrollbar.
+
+     Thin, and made of the palette rather than the operating system's. The thumb
+     is the hairline grey the rest of the site draws its rules in, so a scrollbar
+     at rest reads as one more hairline; it firms up to the label grey on hover,
+     which is the only time anyone is looking at it.
+
+     The transparent border with `background-clip: content-box` is what makes a
+     10px gutter hold a 4px thumb: the border is padding the thumb cannot paint
+     into. Sizing the bar down instead would give a 4px target, which is too small
+     to catch with a mouse.
+  --------------------------------------------------------------------------- */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border: 3px solid transparent;
+    background-clip: content-box;
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-label);
+    background-clip: content-box;
+  }
+
+  /* Where two bars meet. Left alone it renders as a pale grey square. */
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
 @layer components {
-  /* Scrolls without a visible bar, the way the draft's panel does. Content
-     cutting off at the edge is the cue that there is more. */
+  /* Scrolls with no bar at all, for the short indexes where one would be more
+     noise than the content it measures. Content cutting off at the edge is the
+     cue that there is more. */
   .quiet-scroll {
     scrollbar-width: none;
     -ms-overflow-style: none;

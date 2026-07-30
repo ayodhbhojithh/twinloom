@@ -126,7 +126,7 @@ export function SiteHeader() {
 
           <nav
             aria-label="All pages, mobile"
-            className="quiet-scroll flex-1 overflow-y-auto px-5 pt-2 pb-6 sm:px-8"
+            className="flex-1 overflow-y-auto px-5 pt-2 pb-6 sm:px-8"
           >
             {RAIL_GROUPS.map((group) => (
               <div key={group.title} className="pt-5">
