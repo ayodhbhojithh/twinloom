@@ -26,13 +26,20 @@ import { cn } from "@/lib/utils";
  * that switches screens with JavaScript. Here they are real links, and the one
  * matching the current route is marked, which the prototype had no way to do.
  *
- * Below the nav's breakpoint the links move into a panel rather than wrapping.
- * Seven items at 14.5px wrap to three ragged rows on a phone, and a header that
- * changes height as it wraps pushes the page around underneath it.
+ * Three zones with equal weight on the outside, so the links sit on the header's
+ * true centre line rather than wherever the brand happens to end. Nothing wraps at
+ * any width: a header that grows a second row as the window narrows shoves the
+ * whole page down as it does it.
  *
- * That panel carries the whole rail, not the seven. The rail is the site's real
- * navigation and it is hidden below `lg`, so without this a phone could reach
- * seven pages out of forty-eight.
+ * Every control on the bar is 32px tall and shares one radius, so the search field,
+ * the call to action and the menu button read as one set rather than three
+ * borrowed parts.
+ *
+ * What is shown when: the brand and the way into the menu are always there; the
+ * search field arrives at `lg`, where the rail has docked and there is room; the
+ * seven links arrive at `2xl`, which is the first width at which all four zones fit
+ * without crowding. Nothing is lost below those widths, because the menu carries
+ * the whole rail and the rail carries every page.
  */
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -40,23 +47,19 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-field/95 backdrop-blur-sm">
-      <div className="flex items-center gap-5 px-5 py-3 sm:px-8 lg:px-14">
-        <Link
-          href={ROUTES.home}
-          className="min-w-0 truncate text-[14.5px] font-bold text-ink hover:underline"
-        >
-          {SITE.name}
-        </Link>
+      <div className="flex items-center gap-4 px-5 py-2.5 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
+        <div className="flex min-w-0 flex-1 items-center">
+          <Link
+            href={ROUTES.home}
+            className="truncate text-[14.5px] font-bold whitespace-nowrap text-ink hover:underline"
+          >
+            {SITE.name}
+          </Link>
+        </div>
 
-        {/* Nothing here may wrap. A header that grows a second row as the window
-            narrows shoves the whole page down, and the rail is already carrying
-            every page from `lg` up, so these seven are a convenience rather than
-            the navigation. They appear only once there is room beside it. */}
-        {/* The links sit between the brand and the search, and only appear at
-            the width where all three fit without wrapping. */}
         <nav
           aria-label="Primary"
-          className="hidden flex-nowrap items-center gap-x-5 2xl:flex"
+          className="hidden shrink-0 flex-nowrap items-center gap-x-6 2xl:flex"
         >
           {HEADER_NAV.map((item) => {
             /* `startsWith` so a child route still marks its parent, but the home
@@ -82,12 +85,12 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <SiteSearch className="ml-auto hidden w-[240px] shrink-0 lg:block xl:w-[280px]" />
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
+          <SiteSearch className="hidden w-[200px] shrink-0 lg:block xl:w-[240px] 2xl:w-[260px]" />
 
-        <div className="ml-auto flex shrink-0 items-center gap-2 lg:ml-0">
           <Link
             href={HEADER_CTA.href}
-            className="hidden rounded-field bg-active px-[14px] py-[7px] text-[13.5px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90 sm:inline-block"
+            className="hidden h-8 shrink-0 items-center rounded-field bg-active px-3.5 text-[13.5px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90 sm:inline-flex"
           >
             {HEADER_CTA.label}
           </Link>
@@ -98,9 +101,9 @@ export function SiteHeader() {
             aria-label="Open menu"
             aria-expanded={open}
             aria-controls="site-menu"
-            className="flex size-9 items-center justify-center rounded-field text-ink transition-colors hover:bg-hair lg:hidden"
+            className="flex size-8 shrink-0 items-center justify-center rounded-field text-ink transition-colors hover:bg-hair lg:hidden"
           >
-            <Menu className="size-5" />
+            <Menu className="size-[18px]" />
           </button>
         </div>
       </div>
@@ -112,8 +115,8 @@ export function SiteHeader() {
           id="site-menu"
           className="fixed inset-0 z-50 flex flex-col bg-field lg:hidden"
         >
-          <div className="flex items-center gap-5 border-b border-border px-5 py-3.5 sm:px-8">
-            <span className="text-[14.5px] font-bold text-ink">
+          <div className="flex items-center gap-4 border-b border-border px-5 py-2.5 sm:px-8">
+            <span className="min-w-0 truncate text-[14.5px] font-bold text-ink">
               {SITE.name}
             </span>
 
@@ -121,9 +124,9 @@ export function SiteHeader() {
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close menu"
-              className="ml-auto flex size-9 items-center justify-center rounded-field text-ink transition-colors hover:bg-hair"
+              className="ml-auto flex size-8 shrink-0 items-center justify-center rounded-field text-ink transition-colors hover:bg-hair"
             >
-              <X className="size-5" />
+              <X className="size-[18px]" />
             </button>
           </div>
 
@@ -170,7 +173,7 @@ export function SiteHeader() {
             <Link
               href={HEADER_CTA.href}
               onClick={() => setOpen(false)}
-              className="block rounded-field bg-active px-[14px] py-2.5 text-center text-[15px] font-semibold text-white"
+              className="block rounded-field bg-active px-3.5 py-2.5 text-center text-[15px] font-semibold text-white"
             >
               {HEADER_CTA.label}
             </Link>

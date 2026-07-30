@@ -53,8 +53,8 @@ export function SiteSearch({ className }: { className?: string }) {
         router.push(query ? `/search?q=${encodeURIComponent(query)}` : "/search");
       }}
     >
-      <div className="flex items-center gap-2 rounded-field border border-border bg-well px-3 py-[7px] transition-colors focus-within:border-active">
-        <Search aria-hidden className="size-4 shrink-0 text-label" />
+      <div className="flex h-8 items-center gap-2 rounded-field border border-border bg-well px-2.5 transition-colors focus-within:border-active">
+        <Search aria-hidden className="size-3.5 shrink-0 text-label" />
 
         <input
           ref={input}
@@ -62,12 +62,12 @@ export function SiteSearch({ className }: { className?: string }) {
           name="q"
           aria-label="Search this website"
           placeholder="Search this website"
-          className="min-w-0 flex-1 bg-transparent text-[13.5px] text-body outline-none placeholder:text-label [&::-webkit-search-cancel-button]:appearance-none"
+          className="min-w-0 flex-1 bg-transparent text-[13px] text-body outline-none placeholder:text-label [&::-webkit-search-cancel-button]:appearance-none"
         />
 
         <kbd
           aria-hidden
-          className="hidden shrink-0 rounded-[5px] border border-border bg-field px-1.5 py-px font-mono text-[10px] font-semibold text-label xl:block"
+          className="hidden shrink-0 rounded-[5px] border border-border bg-field px-1.5 py-px font-mono text-[9.5px] font-semibold text-label 2xl:block"
         >
           {mac ? "⌘K" : "CtrlK"}
         </kbd>

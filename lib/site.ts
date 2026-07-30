@@ -90,15 +90,23 @@ export interface NavLink {
   href: string;
 }
 
-/** The header's seven, in the draft's order. */
+/**
+ * The header's seven, in the draft's order.
+ *
+ * Short labels, because the header has to hold the name, seven links, a search
+ * field and a call to action on one line that never wraps. "Our products and
+ * services" is 175px of a 1100px bar on its own; "Services" says the same thing in
+ * a third of it. The rail and the footer keep the full wording, so the long form
+ * is never lost, only moved to where there is room for it.
+ */
 export const HEADER_NAV: readonly NavLink[] = [
-  { label: "Our products and services", href: ROUTES.services },
+  { label: "Services", href: ROUTES.services },
   { label: "How we work", href: ROUTES.how },
   { label: "Pricing", href: ROUTES.pricing },
   { label: "Our work", href: ROUTES.work },
   { label: "Advice", href: ROUTES.advice },
   { label: "FAQ", href: ROUTES.faq },
-  { label: "About us", href: ROUTES.about },
+  { label: "About", href: ROUTES.about },
 ];
 
 /** The one call to action in the chrome. */

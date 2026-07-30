@@ -22,15 +22,16 @@ export function P({
 }
 
 /**
- * A list, marked with a rule rather than a bullet.
+ * A list, marked with a hyphen rather than a bullet.
  *
- * A drawn 10px line instead of a bullet or a dash character. Two reasons it is
- * drawn: a glyph sits on the text baseline and drifts as the type size changes,
- * where a positioned rule stays put; and a bullet reads as a specification while a
- * rule reads as an aside, which is what these lists are.
+ * A real hyphen, not a drawn rule. A 10px rule at this weight reads as an em dash,
+ * which is a punctuation mark this site does not use, and the marker should not be
+ * making a claim the copy avoids.
  *
- * The marker is a hairline in the index grey, so it belongs to the same family as
- * every other rule on the site rather than being a new mark.
+ * It is set in the index grey and hung outside the text, so the marker is quieter
+ * than what it marks and wrapped lines align with the first word rather than with
+ * the hyphen. A bullet would read as a specification; a hyphen reads as an aside,
+ * which is what these lists are.
  */
 export function List({
   className,
@@ -61,10 +62,14 @@ export function Item({
         className,
       )}
     >
+      {/* Shares the item's line height, so the hyphen sits on the same baseline
+          as the first line of text at any type size. */}
       <span
         aria-hidden
-        className="absolute top-[0.68em] left-0 h-px w-2.5 bg-idx"
-      />
+        className="absolute top-0 left-0 leading-[1.62] text-idx select-none"
+      >
+        -
+      </span>
       {children}
     </li>
   );
