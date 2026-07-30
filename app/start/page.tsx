@@ -15,12 +15,19 @@ import {
   Section,
   type PageSection,
 } from "@/components/layout";
+import { PageMeta, type PageMetaValues } from "@/components/blocks/page-meta";
 import { ROUTES } from "@/lib/site";
 
-export const metadata: Metadata = {
+/** One source: the route's metadata and the block at the foot of the page. */
+const META: PageMetaValues = {
   title: "Start your website project",
   description:
     "Send an existing brief or build one with us. Both routes end with a summary you can correct, a reference on screen and an email confirmation. An account is optional.",
+};
+
+export const metadata: Metadata = {
+  title: META.title,
+  description: META.description,
 };
 
 const SECTIONS: PageSection[] = [
@@ -264,6 +271,8 @@ export default function StartPage() {
           <ActionLink href={ROUTES.resume}>Resume a saved brief</ActionLink>
         </Actions>
       </Section>
+
+      <PageMeta values={META} />
     </PageShell>
   );
 }

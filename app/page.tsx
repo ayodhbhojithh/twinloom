@@ -9,6 +9,7 @@ import {
   Section,
   type PageSection,
 } from "@/components/layout";
+import { PageMeta, type PageMetaValues } from "@/components/blocks/page-meta";
 import { ROUTES, SITE } from "@/lib/site";
 
 /**
@@ -19,13 +20,19 @@ import { ROUTES, SITE } from "@/lib/site";
  * `absolute` because the root layout appends the company name to every title, and
  * the draft's own title already ends with it.
  */
-export const metadata: Metadata = {
-  title: {
-    absolute:
-      "Website design and development for growing businesses | Very Good Website Company",
-  },
+/** One source: the route's metadata and the block at the foot of the page. */
+const META: PageMetaValues = {
+  title:
+    "Website design and development for growing businesses | Very Good Website Company",
   description:
     "Websites, online shops, booking journeys and connected features, for businesses and organisations. Tell us what you need in the way that suits you.",
+};
+
+export const metadata: Metadata = {
+  /* `absolute` because the layout appends the company name to every title, and
+     the draft's own title already ends with it. */
+  title: { absolute: META.title },
+  description: META.description,
 };
 
 /** Declared once, and passed to both the index and the sections it points at. */
@@ -137,6 +144,8 @@ export default function HomePage() {
           </Item>
         </List>
       </Section>
+
+      <PageMeta values={META} />
     </PageShell>
   );
 }
