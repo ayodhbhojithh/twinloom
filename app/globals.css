@@ -65,6 +65,10 @@
      sense at all. */
   --spacing-panel: 360px;
   --breakpoint-panel: 820px;
+
+  /* The header's height. Every sticky thing under it measures from this, so the
+     three of them cannot drift apart when the header changes. */
+  --nav-height: 58px;
 }
 
 /* ---------------------------------------------------------------------------

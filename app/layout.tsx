@@ -33,14 +33,17 @@ export const metadata: Metadata = {
 /**
  * The chrome every page sits in.
  *
- * Two columns, as the draft has them: the rail down the left at its own full
- * height, and everything else in the right column, header and page and footer
- * together. `items-start` is what lets the rail be sticky, since a stretched flex
- * child is already as tall as its parent and has nothing to stick within.
+ * The header spans the full width and the two columns sit underneath it, rather
+ * than the header living inside the right column. That is what lets the rail stop
+ * below the header instead of running up behind it, and it is the arrangement every
+ * documentation layout uses for the same reason.
  *
- * The right column is at least the height of the viewport with the page taking the
- * slack, so a short page still puts its footer at the bottom of the screen rather
- * than halfway up it.
+ * `items-start` on the row is what lets the rail be sticky: a stretched flex child
+ * is already as tall as its parent and has nothing left to stick within.
+ *
+ * The content column is at least the height of the viewport with the page taking
+ * the slack, so a short page still puts its footer at the bottom of the screen
+ * rather than halfway up it.
  */
 export default function RootLayout({
   children,
@@ -52,13 +55,16 @@ export default function RootLayout({
       lang="en-GB"
       className={`${archivo.variable} ${jetbrains.variable} h-full`}
     >
-      <body className="flex min-h-full items-start">
-        <SiteRail />
+      <body className="flex min-h-full flex-col">
+        <SiteHeader />
 
-        <div className="flex min-h-screen min-w-0 flex-1 flex-col">
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
+        <div className="flex flex-1 items-start">
+          <SiteRail />
+
+          <div className="flex min-w-0 flex-1 flex-col">
+            <main className="flex-1">{children}</main>
+            <SiteFooter />
+          </div>
         </div>
       </body>
     </html>

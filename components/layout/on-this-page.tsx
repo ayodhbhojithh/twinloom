@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowUp } from "lucide-react";
+import Link from "next/link";
+import { CircleArrowUp, SquareArrowOutUpRight } from "lucide-react";
 
+import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import type { PageSection } from "./page-shell";
 
@@ -60,16 +62,18 @@ export function OnThisPage({ sections }: { sections: readonly PageSection[] }) {
   return (
     <nav
       aria-label="On this page"
-      /* Hidden when the copy column matters more than the index: below 1240px
-         outright, and below 1560px once Freeflow has taken its 360px. */
-      className="quiet-scroll sticky top-6 hidden w-[212px] shrink-0 self-start overflow-y-auto pb-6 xl:block"
-      style={{ maxHeight: "calc(100vh - 48px)" }}
+      /* Sticky under the header rather than at the top of the viewport, so it
+         stops where the header ends instead of sliding behind it. Hidden when the
+         copy column matters more than the index. */
+      className="quiet-scroll sticky hidden w-[212px] shrink-0 self-start overflow-y-auto pb-6 xl:block"
+      style={{
+        top: "calc(var(--nav-height) + 28px)",
+        maxHeight: "calc(100svh - var(--nav-height) - 56px)",
+      }}
     >
-      <h2 className="mb-[13px] font-mono text-[11px] font-bold tracking-[0.18em] text-idx uppercase">
-        On this page
-      </h2>
+      <h2 className="mb-3 text-[14px] font-semibold text-ink">On this page</h2>
 
-      <ol className="border-l border-border">
+      <ol>
         {sections.map((section) => {
           const on = section.id === active;
 
@@ -79,19 +83,10 @@ export function OnThisPage({ sections }: { sections: readonly PageSection[] }) {
                 href={`#${section.id}`}
                 aria-current={on ? "true" : undefined}
                 className={cn(
-                  "relative block py-2 pl-5 text-[14px] leading-[1.35] transition-colors",
-                  on ? "font-semibold text-active" : "text-quiet hover:text-ink",
+                  "block py-[7px] text-[14px] leading-[1.35] transition-colors",
+                  on ? "text-active" : "text-quiet hover:text-ink",
                 )}
               >
-                {/* The dot sits on the rule, so the index reads as a track with
-                    stops rather than as a list with bullets. */}
-                <span
-                  aria-hidden
-                  className={cn(
-                    "absolute top-3.5 -left-1 size-[7px] rounded-pill border transition-colors",
-                    on ? "border-active bg-active" : "border-border bg-field",
-                  )}
-                />
                 {section.title}
               </a>
             </li>
@@ -99,8 +94,16 @@ export function OnThisPage({ sections }: { sections: readonly PageSection[] }) {
         })}
       </ol>
 
-      {/* Under a rule, the two things that are about the page rather than in it. */}
-      <div className="mt-5 border-t border-border pt-4">
+      {/* Under a rule, the things that are about the page rather than in it. */}
+      <div className="mt-6 flex flex-col items-start gap-2.5 border-t border-border pt-4">
+        <Link
+          href={ROUTES.contact}
+          className="flex items-center gap-1.5 text-[13.5px] text-quiet transition-colors hover:text-ink"
+        >
+          Something wrong on this page?
+          <SquareArrowOutUpRight aria-hidden className="size-3.5 shrink-0" />
+        </Link>
+
         <button
           type="button"
           onClick={() =>
@@ -115,7 +118,7 @@ export function OnThisPage({ sections }: { sections: readonly PageSection[] }) {
           className="flex items-center gap-1.5 text-[13.5px] text-quiet transition-colors hover:text-ink"
         >
           Scroll to top
-          <ArrowUp aria-hidden className="size-3.5" />
+          <CircleArrowUp aria-hidden className="size-3.5 shrink-0" />
         </button>
       </div>
     </nav>

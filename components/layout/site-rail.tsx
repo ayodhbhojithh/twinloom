@@ -15,9 +15,10 @@ import { cn } from "@/lib/utils";
  * visitor is most likely to want and the rail carries all of them, the way
  * documentation sites and admin tools do.
  *
- * Sticky and its own scroll container, so it stays put while a long legal page
- * runs past it. It keeps a scrollbar rather than hiding one: forty eight items do
- * not fit on a laptop screen and how far down the list you are is worth knowing.
+ * Sticky under the header and its own scroll container, so it stays put while a
+ * long legal page runs past it and stops where the header ends rather than sliding
+ * behind it. It keeps a scrollbar rather than hiding one: forty eight items do not
+ * fit on a laptop screen and how far down the list you are is worth knowing.
  *
  * Groups collapse. Which ones are open is local state rather than anything
  * persisted: it is a property of looking at the nav, not of the site.
@@ -38,7 +39,11 @@ export function SiteRail() {
   return (
     <nav
       aria-label="All pages"
-      className="sticky top-0 hidden h-screen w-[252px] shrink-0 xl:w-[290px] overflow-y-auto border-r border-border bg-field pt-[30px] pb-10 lg:block"
+      className="sticky hidden w-[252px] shrink-0 overflow-y-auto border-r border-border bg-field pt-6 pb-10 lg:block xl:w-[290px]"
+      style={{
+        top: "var(--nav-height)",
+        height: "calc(100svh - var(--nav-height))",
+      }}
     >
       <p className="px-6 pb-1 text-[15px] font-bold tracking-[-0.012em] text-ink">
         {SITE.name}
