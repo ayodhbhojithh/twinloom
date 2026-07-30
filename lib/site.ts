@@ -153,18 +153,23 @@ export const FOOTER_COLUMNS: readonly {
       { label: "Frequently asked questions", href: ROUTES.faq },
     ],
   },
-  {
-    title: "Legal",
-    links: [
-      { label: "Privacy", href: ROUTES.privacy },
-      { label: "Cookies", href: ROUTES.cookies },
-      { label: "Sub-processors", href: ROUTES.subProcessors },
-      { label: "Terms of use", href: ROUTES.terms },
-      { label: "Terms of business", href: ROUTES.termsOfBusiness },
-      { label: "Accessibility statement", href: ROUTES.accessibility },
-      { label: "Complaints", href: ROUTES.complaints },
-    ],
-  },
+];
+
+/**
+ * The legal links, kept out of the column grid.
+ *
+ * Seven of them in a fifth column left an orphan row with four columns of empty
+ * space beside it. They are short, they are a set, and every site puts them along
+ * the bottom, so they run as one line above the company statement instead.
+ */
+export const FOOTER_LEGAL: readonly NavLink[] = [
+  { label: "Privacy", href: ROUTES.privacy },
+  { label: "Cookies", href: ROUTES.cookies },
+  { label: "Sub-processors", href: ROUTES.subProcessors },
+  { label: "Terms of use", href: ROUTES.terms },
+  { label: "Terms of business", href: ROUTES.termsOfBusiness },
+  { label: "Accessibility statement", href: ROUTES.accessibility },
+  { label: "Complaints", href: ROUTES.complaints },
 ];
 
 /**
