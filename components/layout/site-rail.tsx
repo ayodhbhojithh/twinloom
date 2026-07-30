@@ -100,8 +100,8 @@ function RailSection({
         aria-expanded={open}
         aria-controls={id}
         className={cn(
-          "flex w-full items-center justify-between gap-2.5 px-6 pt-5 pb-[7px] text-left font-mono text-[11px] font-bold tracking-[0.18em] uppercase",
-          group.highlight ? "text-active" : "text-idx hover:text-quiet",
+          "flex w-full items-center justify-between gap-2.5 px-6 pt-6 pb-2 text-left font-mono text-[11px] font-bold tracking-[0.14em] uppercase transition-colors",
+          group.highlight ? "text-active" : "text-ink hover:text-quiet",
         )}
       >
         <span>{group.title}</span>
@@ -132,15 +132,15 @@ function RailSection({
                 href={item.href}
                 aria-current={pathname === item.href ? "page" : undefined}
                 className={cn(
-                  "block border-l-2 py-[7px] pr-6 text-[15px] leading-[1.4] transition-colors",
+                  "block border-l-2 py-[6px] pr-5 text-[14.5px] leading-[1.4] transition-colors",
                   item.level === 3
-                    ? "pl-[52px]"
+                    ? "pl-[50px]"
                     : item.level === 2
                       ? "pl-9"
                       : "pl-6",
                   pathname === item.href
-                    ? "border-ink font-semibold text-ink"
-                    : "border-transparent text-body hover:text-ink",
+                    ? "border-active bg-well font-semibold text-ink"
+                    : "border-transparent text-quiet hover:bg-well hover:text-ink",
                 )}
               >
                 {item.label}

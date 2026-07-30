@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 
 import { Actions, ActionLink } from "@/components/blocks/action-link";
+import { P } from "@/components/blocks/prose";
 import { SimpleList } from "@/components/blocks/simple-list";
 import { PageHeading, PageShell } from "@/components/layout";
 import { ROUTES } from "@/lib/site";
@@ -84,7 +85,7 @@ export function NotFoundView() {
         rows={USEFUL.map((row) => ({ ...row, tone: "planned" as const }))}
       />
 
-      <p className="mt-9 max-w-[720px] text-[16.5px]">
+      <P className="mt-9">
         If you followed a link on this website,{" "}
         <a
           href={ROUTES.contact}
@@ -93,7 +94,7 @@ export function NotFoundView() {
           tell us
         </a>{" "}
         so that we can fix it.
-      </p>
+      </P>
     </PageShell>
   );
 }

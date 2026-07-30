@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ArrowUp } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import type { PageSection } from "./page-shell";
@@ -79,7 +80,7 @@ export function OnThisPage({ sections }: { sections: readonly PageSection[] }) {
                 aria-current={on ? "true" : undefined}
                 className={cn(
                   "relative block py-2 pl-5 text-[14px] leading-[1.35] transition-colors",
-                  on ? "font-semibold text-ink" : "text-quiet hover:text-ink",
+                  on ? "font-semibold text-active" : "text-quiet hover:text-ink",
                 )}
               >
                 {/* The dot sits on the rule, so the index reads as a track with
@@ -88,7 +89,7 @@ export function OnThisPage({ sections }: { sections: readonly PageSection[] }) {
                   aria-hidden
                   className={cn(
                     "absolute top-3.5 -left-1 size-[7px] rounded-pill border transition-colors",
-                    on ? "border-ink bg-ink" : "border-border bg-field",
+                    on ? "border-active bg-active" : "border-border bg-field",
                   )}
                 />
                 {section.title}
@@ -97,6 +98,26 @@ export function OnThisPage({ sections }: { sections: readonly PageSection[] }) {
           );
         })}
       </ol>
+
+      {/* Under a rule, the two things that are about the page rather than in it. */}
+      <div className="mt-5 border-t border-border pt-4">
+        <button
+          type="button"
+          onClick={() =>
+            window.scrollTo({
+              top: 0,
+              behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
+                .matches
+                ? "auto"
+                : "smooth",
+            })
+          }
+          className="flex items-center gap-1.5 text-[13.5px] text-quiet transition-colors hover:text-ink"
+        >
+          Scroll to top
+          <ArrowUp aria-hidden className="size-3.5" />
+        </button>
+      </div>
     </nav>
   );
 }

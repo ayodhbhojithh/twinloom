@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
+import { SiteSearch } from "./site-search";
+
 import { HEADER_CTA, HEADER_NAV, RAIL_GROUPS, ROUTES, SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -37,7 +39,7 @@ export function SiteHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="border-b border-border bg-field">
+    <header className="sticky top-0 z-40 border-b border-border bg-field/95 backdrop-blur-sm">
       <div className="flex items-center gap-5 px-5 py-3 sm:px-8 lg:px-14">
         <Link
           href={ROUTES.home}
@@ -50,12 +52,11 @@ export function SiteHeader() {
             narrows shoves the whole page down, and the rail is already carrying
             every page from `lg` up, so these seven are a convenience rather than
             the navigation. They appear only once there is room beside it. */}
-        {/* `flex-1` and centred, so the links sit on the header's centre line
-            rather than trailing the brand. The right group keeps `ml-auto` for
-            the widths where the nav is not rendered at all. */}
+        {/* The links sit between the brand and the search, and only appear at
+            the width where all three fit without wrapping. */}
         <nav
           aria-label="Primary"
-          className="hidden flex-1 flex-nowrap items-center justify-center gap-x-5 2xl:flex"
+          className="hidden flex-nowrap items-center gap-x-5 2xl:flex"
         >
           {HEADER_NAV.map((item) => {
             /* `startsWith` so a child route still marks its parent, but the home
@@ -81,7 +82,9 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div className="ml-auto flex shrink-0 items-center gap-2">
+        <SiteSearch className="ml-auto hidden w-[240px] shrink-0 lg:block xl:w-[280px]" />
+
+        <div className="ml-auto flex shrink-0 items-center gap-2 lg:ml-0">
           <Link
             href={HEADER_CTA.href}
             className="hidden rounded-field bg-active px-[14px] py-[7px] text-[13.5px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90 sm:inline-block"
@@ -122,6 +125,10 @@ export function SiteHeader() {
             >
               <X className="size-5" />
             </button>
+          </div>
+
+          <div className="border-b border-hair px-5 py-3 sm:px-8">
+            <SiteSearch />
           </div>
 
           <nav

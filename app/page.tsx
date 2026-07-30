@@ -8,6 +8,7 @@ import {
   Picks,
   QuietLink,
 } from "@/components/blocks/picks";
+import { P } from "@/components/blocks/prose";
 import {
   PageHeading,
   PageShell,
@@ -56,9 +57,9 @@ export default function HomePage() {
     <PageShell sections={SECTIONS}>
       <PageHeading title={SITE.name} lead={SITE.tagline} />
 
-      <p className="mb-4 max-w-[720px] text-[16.5px]">{SITE.description}</p>
+      <P>{SITE.description}</P>
 
-      <p className="mb-4 max-w-[720px] text-[16.5px]">That may be:</p>
+      <P>That may be:</P>
 
       <Picks>
         <Pick>a clear, well-made website that explains what you offer</Pick>
@@ -74,9 +75,7 @@ export default function HomePage() {
       </Picks>
 
       <Section id={SECTIONS[0].id} title={SECTIONS[0].title} first>
-        <p className="mb-4 max-w-[720px] text-[16.5px]">
-          Four ways in. Use whichever suits you.
-        </p>
+        <P>Four ways in. Use whichever suits you.</P>
 
         <Picks>
           <Pick>
@@ -129,9 +128,7 @@ export default function HomePage() {
       </Section>
 
       <Section id={SECTIONS[1].id} title={SECTIONS[1].title}>
-        <p className="mb-4 max-w-[720px] text-[16.5px]">
-          These may be of interest first.
-        </p>
+        <P>These may be of interest first.</P>
 
         <Picks className="mb-0">
           <Pick>

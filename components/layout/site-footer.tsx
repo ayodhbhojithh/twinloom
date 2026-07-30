@@ -17,7 +17,7 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-[70px] border-t border-border px-5 pt-[30px] pb-14 sm:px-8 lg:px-10 xl:px-14">
+    <footer className="mt-[70px] border-t border-border px-5 pt-[30px] pb-14 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
       <div className="flex max-w-[1100px] flex-wrap gap-x-10 gap-y-8 xl:gap-x-[52px] xl:gap-y-9">
         {FOOTER_COLUMNS.map((column) => (
           <div key={column.title} className="min-w-[150px]">

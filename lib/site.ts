@@ -343,3 +343,31 @@ export const RAIL_GROUPS: readonly RailGroup[] = [
     ],
   },
 ];
+
+/**
+ * The rail, flattened into reading order.
+ *
+ * The rail is the site's table of contents, so the order it puts its pages in is
+ * the order they are meant to be read in. Flattening it gives every page a
+ * previous and a next for free, and keeps that sequence tied to the one list
+ * rather than to a second one somebody has to remember to update.
+ */
+export const FLAT_PAGES: readonly (NavLink & { group: string })[] =
+  RAIL_GROUPS.flatMap((group) =>
+    group.items.map((item) => ({
+      label: item.label,
+      href: item.href,
+      group: group.title,
+    })),
+  );
+
+/** What comes before and after a page, for the pagination at its foot. */
+export function siblingPages(pathname: string) {
+  const at = FLAT_PAGES.findIndex((page) => page.href === pathname);
+  if (at === -1) return { previous: null, next: null };
+
+  return {
+    previous: at > 0 ? FLAT_PAGES[at - 1] : null,
+    next: at < FLAT_PAGES.length - 1 ? FLAT_PAGES[at + 1] : null,
+  };
+}

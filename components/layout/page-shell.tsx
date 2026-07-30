@@ -1,6 +1,9 @@
+import { Link as LinkIcon } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 
 import { OnThisPage } from "./on-this-page";
+import { PageNav } from "./page-nav";
 
 /** One entry in the section index, and the section it points at. */
 export interface PageSection {
@@ -38,13 +41,16 @@ export function PageShell({
   return (
     <div
       className={cn(
-        "px-5 pt-8 pb-20 sm:px-8 sm:pt-11 lg:px-10 lg:pb-[110px] xl:px-14 xl:pt-14",
+        "px-5 pt-8 pb-20 sm:px-8 sm:pt-11 lg:px-12 lg:pb-[110px] xl:px-16 xl:pt-14 2xl:px-20",
         indexed ? "max-w-[1360px]" : "max-w-[1100px]",
         className,
       )}
     >
       <div className={cn(indexed && "xl:flex xl:items-start xl:gap-12")}>
-        <div className="min-w-0 flex-1">{children}</div>
+        <div className="min-w-0 flex-1">
+          {children}
+          <PageNav />
+        </div>
 
         {indexed ? <OnThisPage sections={sections} /> : null}
       </div>
@@ -71,14 +77,14 @@ export function PageHeading({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="mb-7">
+    <div className="mb-8">
       {tag ? (
         <p className="mb-4 font-mono text-[12px] font-bold tracking-[0.18em] text-idx uppercase">
           {tag}
         </p>
       ) : null}
 
-      <h1 className="mb-4 max-w-[900px] text-[27px] leading-[1.14] font-extrabold tracking-[-0.025em] text-ink sm:text-[34px]">
+      <h1 className="mb-4 max-w-[900px] text-[28px] leading-[1.14] font-extrabold tracking-[-0.025em] text-ink sm:text-[36px]">
         {title}
       </h1>
 
@@ -96,7 +102,8 @@ export function PageHeading({
 /**
  * One section of a page.
  *
- * A rule above and space, which is the only divider the draft uses. The first
+ * A rule above and space, which is the only divider the draft uses, with enough
+ * of it that the rule reads as a break rather than as a box edge. The first
  * section drops the rule: a line immediately under the standfirst reads as an
  * underline for it rather than as the start of something new.
  *
@@ -123,16 +130,27 @@ export function Section({
       className={cn(
         "scroll-mt-6",
         first
-          ? "mt-7"
-          : "mt-10 border-t border-border pt-8",
+          ? "mt-8"
+          : "mt-14 border-t border-border pt-12",
         className,
       )}
     >
+      {/* The heading links to itself, revealed on hover. A page with a section
+          index is a page whose sections get linked to, and the link people want
+          is the one for the section they are looking at. */}
       <h2
         id={`${id}-heading`}
-        className="mb-2.5 text-[19px] leading-[1.25] font-bold tracking-[-0.012em] text-ink sm:text-[21px]"
+        className="group/h mb-3.5 flex items-baseline gap-2 text-[20px] leading-[1.25] font-bold tracking-[-0.015em] text-ink sm:text-[23px]"
       >
         {title}
+
+        <a
+          href={`#${id}`}
+          aria-label={`Link to ${title}`}
+          className="text-idx opacity-0 transition-opacity group-hover/h:opacity-100 focus-visible:opacity-100"
+        >
+          <LinkIcon aria-hidden className="size-3.5" />
+        </a>
       </h2>
 
       {children}
