@@ -36,9 +36,14 @@
   --color-hair: #f4f5f7;
   --color-border: #e5e7eb;
 
-  /* Type, faintest to firmest. */
+  /* Type, faintest to firmest.
+
+     The draft calls the middle one `--secondary`. That name is already shadcn's,
+     where it means a pale surface rather than grey text, and the two would resolve
+     to whichever was declared last. It is `quiet` here for that reason, and that
+     is the one place this file departs from the draft's vocabulary. */
   --color-label: #9ca3af;
-  --color-secondary: #6b7280;
+  --color-quiet: #6b7280;
   --color-body: #374151;
   --color-ink: #111827;
 
