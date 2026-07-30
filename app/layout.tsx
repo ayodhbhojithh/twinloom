@@ -3,7 +3,7 @@ import { Archivo, JetBrains_Mono } from "next/font/google";
 
 import "./globals.css";
 
-import { SiteFooter, SiteHeader, SiteRail } from "@/components/layout";
+import { SiteShell } from "@/components/layout";
 import { SITE } from "@/lib/site";
 
 /* Archivo carries the whole site. Variable, so no weight list is needed: the
@@ -56,16 +56,7 @@ export default function RootLayout({
       className={`${archivo.variable} ${jetbrains.variable} h-full`}
     >
       <body className="flex min-h-full flex-col">
-        <SiteHeader />
-
-        <div className="flex flex-1 items-start">
-          <SiteRail />
-
-          <div className="flex min-w-0 flex-1 flex-col">
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
-          </div>
-        </div>
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   );

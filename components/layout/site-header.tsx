@@ -5,9 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
+import { RailNav, useRailGroups } from "./rail-nav";
 import { SiteSearch } from "./site-search";
 
-import { HEADER_CTA, HEADER_NAV, RAIL_GROUPS, ROUTES, SITE } from "@/lib/site";
+import { HEADER_CTA, HEADER_NAV, ROUTES, SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 /**
@@ -44,6 +45,7 @@ import { cn } from "@/lib/utils";
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const groups = useRailGroups();
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-field/95 backdrop-blur-sm">
@@ -136,37 +138,15 @@ export function SiteHeader() {
 
           <nav
             aria-label="All pages, mobile"
-            className="flex-1 overflow-y-auto px-5 pt-2 pb-6 sm:px-8"
+            className="flex-1 overflow-y-auto px-4 pb-8 sm:px-7"
           >
-            {RAIL_GROUPS.map((group) => (
-              <div key={group.title} className="pt-5">
-                <p className="pb-1.5 font-mono text-[11px] font-bold tracking-[0.18em] text-idx uppercase">
-                  {group.title}
-                </p>
-
-                {group.items.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setOpen(false)}
-                    aria-current={pathname === item.href ? "page" : undefined}
-                    className={cn(
-                      "block border-b border-hair py-3 text-[15.5px]",
-                      item.level === 3
-                        ? "pl-8"
-                        : item.level === 2
-                          ? "pl-4"
-                          : "",
-                      pathname === item.href
-                        ? "font-semibold text-ink"
-                        : "text-body",
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            ))}
+            <RailNav
+              size="menu"
+              pathname={pathname}
+              closed={groups.closed}
+              onToggle={groups.toggle}
+              onNavigate={() => setOpen(false)}
+            />
           </nav>
 
           <div className="border-t border-border px-5 py-4 sm:px-8">
