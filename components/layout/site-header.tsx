@@ -84,7 +84,7 @@ export function SiteHeader() {
         <div className="ml-auto flex shrink-0 items-center gap-2">
           <Link
             href={HEADER_CTA.href}
-            className="hidden rounded-field bg-active px-[15px] py-2 text-[14.5px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90 sm:inline-block"
+            className="hidden rounded-field bg-active px-[14px] py-[7px] text-[13.5px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90 sm:inline-block"
           >
             {HEADER_CTA.label}
           </Link>
@@ -163,7 +163,7 @@ export function SiteHeader() {
             <Link
               href={HEADER_CTA.href}
               onClick={() => setOpen(false)}
-              className="block rounded-field bg-active px-[15px] py-3 text-center text-[15.5px] font-semibold text-white"
+              className="block rounded-field bg-active px-[14px] py-2.5 text-center text-[15px] font-semibold text-white"
             >
               {HEADER_CTA.label}
             </Link>

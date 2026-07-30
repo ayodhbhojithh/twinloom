@@ -28,7 +28,7 @@ export function ActionLink({
     <Link
       href={href}
       className={cn(
-        "inline-block rounded-field px-[22px] py-[13px] text-[15.5px] font-semibold transition-colors",
+        "inline-block rounded-field px-[18px] py-[10px] text-[14.5px] font-semibold transition-colors",
         variant === "primary" &&
           "bg-active text-white hover:opacity-90",
         variant === "secondary" &&
