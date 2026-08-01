@@ -1,1 +1,1 @@
-export { VersionSwitcher } from "./version-switcher";
+export { Hero } from "./hero";

@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 import { SiteFooter } from "./site-footer";
@@ -16,9 +17,15 @@ import { SiteRail } from "./site-rail";
  *
  * `items-start` is what lets the rail be sticky. A stretched flex child is already
  * as tall as its parent and has nothing left to stick within.
+ *
+ * Home is the one route without a footer. It is built to exactly one screenful,
+ * so a footer under it would exist only to be scrolled past, and a page that
+ * says it is one screen should not have a second one hiding below the fold.
+ * Every other route keeps it.
  */
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
+  const pathname = usePathname();
 
   return (
     <>
@@ -29,7 +36,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
         <div className="flex min-w-0 flex-1 flex-col">
           <main className="flex-1">{children}</main>
-          <SiteFooter />
+          {pathname === "/" ? null : <SiteFooter />}
         </div>
       </div>
     </>

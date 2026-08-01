@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { VersionSwitcher } from "@/components/home";
+import { Hero } from "@/components/home";
 
 export const metadata: Metadata = {
   /* `absolute` because the layout appends the company name to every title, and
@@ -11,27 +11,16 @@ export const metadata: Metadata = {
 };
 
 /**
- * Home, as ten versions to choose between.
+ * Home.
  *
  * Not a `PageShell`. Every other screen here is a document, with a reading
  * measure, a section index and a previous/next pair at the foot of it. This one
- * is an argument, and it wants the full width and none of that furniture, so it
- * sets its own frame.
+ * is a single claim on a single screen, and it wants none of that furniture.
  *
- * Nothing under the fold, either. The framework note and the metadata block that
- * every other screen carries are gone from this one: a version built to a single
- * screen is not built to a single screen if something is waiting below it, and
- * the metadata belongs in the `metadata` export above, where a crawler will
- * actually read it, rather than printed on the page.
- *
- * The switcher is scaffolding. Once one version is chosen the other nine are
- * deleted, `VersionSwitcher` goes with them, and this file imports the winner
- * directly.
+ * Nothing under the fold either, and no footer: the whole page is the screen, so
+ * anything below it would only be there to be scrolled past. `SiteShell` leaves
+ * the footer off this route for that reason.
  */
 export default function HomePage() {
-  return (
-    <div className="page-frame">
-      <VersionSwitcher />
-    </div>
-  );
+  return <Hero />;
 }
