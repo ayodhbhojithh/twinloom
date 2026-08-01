@@ -365,6 +365,21 @@ export const INCLUDED: readonly Omit<VisitorAction, 'need' | 'page'>[] = [
 ];
 
 /** Ticked before anybody touches anything. */
+/**
+ * The six things every site can do, from the prototype's "What this does" tab.
+ *
+ * Nothing here is tickable, because nothing here is optional. It is the floor
+ * under every answer the tool collects.
+ */
+export const EVERY_SITE: readonly string[] = [
+  "Read who you are and what you do",
+  "See what you sell, in simple terms",
+  "Call you",
+  "Email you",
+  "Send an enquiry through a form",
+  "Get to your nearest location",
+];
+
 export const PRE_TICKED: readonly string[] = ["mail", "enq", "call"];
 
 /** The pages every site has, whatever the answers. */

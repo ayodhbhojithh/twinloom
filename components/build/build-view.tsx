@@ -9,6 +9,7 @@ import { Item, List, P } from "@/components/blocks/prose";
 import { TextLink } from "@/components/blocks/text-link";
 import { PageHeading, PageShell } from "@/components/layout";
 
+import { EVERY_SITE } from "@/lib/build/data";
 import { tally } from "@/lib/build/derive";
 import {
   getServerSnapshot,
@@ -28,16 +29,6 @@ const TABS = [
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
-
-/** The six things in every site, as the prototype lists them. */
-const EVERY_SITE = [
-  "Read who you are and what you do",
-  "See what you sell, in simple terms",
-  "Call you",
-  "Email you",
-  "Send an enquiry through a form",
-  "Get to your nearest location",
-];
 
 /**
  * Build your website.

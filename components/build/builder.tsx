@@ -106,7 +106,7 @@ export function Builder() {
   }
 
   return (
-    <div className="mt-[22px] grid max-w-wide grid-cols-1 border-t border-border lg:grid-cols-[minmax(0,1fr)_330px]">
+    <div className="mt-[22px] grid max-w-wide grid-cols-1 border-t border-border lg:grid-cols-[minmax(0,1fr)_330px] 2xl:grid-cols-[minmax(0,1fr)_380px]">
       <div className="min-w-0 lg:border-r lg:border-border lg:pr-7">
         <Area
           open={open.who}
@@ -118,8 +118,8 @@ export function Builder() {
           total={GROUPS.length}
           bar="segments"
         >
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-            {GROUPS.map((group) => (
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 [&>*:last-child]:sm:col-span-2 [&>*:last-child]:xl:col-span-3">
+            {GROUPS.map((group, at) => (
               <PickCard
                 key={group.key}
                 on={answers.groups.includes(group.key)}
@@ -127,6 +127,7 @@ export function Builder() {
                 name={group.name}
                 sub={group.sub}
                 short={group.short}
+                wide={at === GROUPS.length - 1}
                 onToggle={() => toggleGroup(group.key)}
               />
             ))}

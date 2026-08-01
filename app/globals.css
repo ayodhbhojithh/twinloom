@@ -76,8 +76,12 @@
 
      Two widths, not five. Every block on a page settles on one edge or the
      other, so the page reads as aligned rather than as a stack of boxes that
-     each happened to pick a number. */
-  --container-wide: 1160px;
+     each happened to pick a number.
+
+     Set high enough that it does not bind at any ordinary window: the tool
+     should take the room the rail and the gutters leave it. It is a ceiling for
+     an ultrawide monitor, not a column. */
+  --container-wide: 1600px;
 
   /* The page's side gutter. The index is fixed to it and the copy reserves a lane
      measured from it, so the two are set from one number at every width. */
@@ -315,5 +319,88 @@
     width: 0;
     height: 0;
     display: none;
+  }
+
+  /* ---------------------------------------------------------------------------
+     The hero's ground.
+
+     A white page needs something under a headline or the headline looks like it
+     was left there. Two layers, both hairline quiet, both masked so they never
+     reach the copy: a dot grid for texture, and one wash of the accent so the
+     colour arrives before any of the buttons do.
+
+     Painted on a pseudo element behind everything, so nothing here can catch a
+     click or land in the tab order.
+  --------------------------------------------------------------------------- */
+  .hero-ground {
+    position: relative;
+    isolation: isolate;
+    /* `clip` rather than `hidden`: the wash is allowed to bleed well past the
+       copy on both sides, and this contains it without making the section a
+       scroll container. */
+    overflow: clip;
+  }
+
+  .hero-ground::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -160px -25% -60px;
+    pointer-events: none;
+    background-image:
+      radial-gradient(
+        44rem 30rem at 18% -8%,
+        color-mix(in oklab, var(--color-active) 9%, transparent),
+        transparent 68%
+      ),
+      radial-gradient(
+        34rem 26rem at 88% 4%,
+        color-mix(in oklab, var(--color-done) 7%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(circle at 1px 1px, var(--color-border) 1px, transparent 0);
+    background-size:
+      auto,
+      auto,
+      22px 22px;
+    mask-image: radial-gradient(
+      118% 82% at 22% 12%,
+      #000 0%,
+      color-mix(in oklab, #000 45%, transparent) 52%,
+      transparent 78%
+    );
+  }
+
+  /* One live dot. It is the only thing on the page that moves on its own, which
+     is the point: it says the promise beside it is current. */
+  .pulse-dot {
+    position: relative;
+  }
+
+  .pulse-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    animation: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  @keyframes pulse-ring {
+    0% {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    70%,
+    100% {
+      opacity: 0;
+      transform: scale(2.6);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pulse-dot::after {
+      animation: none;
+    }
   }
 }
