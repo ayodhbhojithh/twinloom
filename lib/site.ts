@@ -12,9 +12,9 @@
 --------------------------------------------------------------------------- */
 
 export const SITE = {
-  name: "The Very Good Website Company",
-  /** For the header, where the full name crowds everything beside it. */
-  short: "Very Good Website Company",
+  name: "TwinLoom",
+  /** For the header, where a longer name crowds everything beside it. */
+  short: "TwinLoom",
   tagline: "Tell us who your website is for. We write the rest down for you.",
   description:
     "You answer one question. We send back a written scope in your own words, within two working days. It costs nothing and commits you to nothing.",
@@ -179,7 +179,7 @@ export const FOOTER_LEGAL: readonly NavLink[] = [
  */
 export const LEGAL = {
   entity: "TwinCoreTech Ltd",
-  line: "The Very Good Website Company is a trading name of TwinCoreTech Ltd, a company registered in England and Wales under company number [company number]. Registered office: [registered office]. [VAT registration wording.]",
+  line: "TwinLoom is a trading name of TwinCoreTech Ltd, a company registered in England and Wales under company number [company number]. Registered office: [registered office]. [VAT registration wording.]",
   rights: "All rights reserved.",
 } as const;
 

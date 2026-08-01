@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 
 import { Hero } from "@/components/home";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
   /* `absolute` because the layout appends the company name to every title, and
      this one is the company name. */
-  title: { absolute: "The Very Good Website Company" },
+  title: { absolute: SITE.name },
   description:
     "Tell us who your website is for and we write the rest down for you. One question, a written scope back within two working days, and no obligation.",
 };
