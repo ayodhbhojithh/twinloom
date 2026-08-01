@@ -50,7 +50,7 @@ export function SiteRail({
   if (collapsed) {
     return (
       <div
-        className="sticky hidden w-12 shrink-0 border-r border-hair bg-field pt-4 lg:block"
+        className="sticky hidden w-12 shrink-0 border-r border-border bg-field pt-4 lg:block"
         style={stick}
       >
         <button
@@ -69,7 +69,7 @@ export function SiteRail({
   return (
     <nav
       aria-label="All pages"
-      className="sticky hidden w-[284px] shrink-0 overflow-y-auto border-r border-hair bg-field pb-10 lg:block xl:w-[308px] 2xl:w-[328px]"
+      className="sticky hidden w-[284px] shrink-0 overflow-y-auto border-r border-border bg-field pb-10 lg:block xl:w-[308px] 2xl:w-[328px]"
       style={stick}
     >
       {/* The head stays put while the list scrolls under it: it holds the only

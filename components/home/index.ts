@@ -1,3 +1,3 @@
-export { Hero } from "./hero";
-export { LiveDemo } from "./live-demo";
-export { Closing, Included, Steps } from "./sections";
+export { AnswerBlock } from "./answer-block";
+export { Masthead } from "./masthead";
+export { Clauses, Closing, Included } from "./sections";

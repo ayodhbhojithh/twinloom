@@ -3,7 +3,13 @@ import type { Metadata } from "next";
 import { BuildNote } from "@/components/blocks/build-note";
 import { PageMeta, type PageMetaValues } from "@/components/blocks/page-meta";
 import { Item, List } from "@/components/blocks/prose";
-import { Closing, Hero, Included, LiveDemo, Steps } from "@/components/home";
+import {
+  AnswerBlock,
+  Clauses,
+  Closing,
+  Included,
+  Masthead,
+} from "@/components/home";
 
 /** One source: the route's metadata and the block at the foot of the page. */
 const META: PageMetaValues = {
@@ -24,38 +30,41 @@ export const metadata: Metadata = {
  *
  * Not a `PageShell`. Every other screen here is a document, with a reading
  * measure, a section index and a previous/next pair at the foot of it. This one
- * is an argument, and it needs the full width and none of that furniture, so it
+ * is an argument, and it wants the full width and none of that furniture, so it
  * sets its own frame.
  *
- * The order is the argument: make the claim, let them test it, explain what just
- * happened, say what it costs, ask again. The tool sits second rather than last
- * because it is the only thing on the page that proves anything, and a proof
- * nobody scrolls to is not a proof.
+ * The copy at the top is the framework's own, verbatim. What follows is this
+ * page answering the framework's note about itself: the one line that says what
+ * we do, then the single way in, made single by putting the first question on
+ * this page rather than behind a button. The two the note asks for that are not
+ * ours to invent, proof and price, are still listed at the foot as outstanding.
  *
- * One client boundary, at `LiveDemo`. Everything else is rendered on the server
- * and ships no JavaScript.
+ * Everything hangs off the same left edge and every band runs to the same right
+ * one. The width is used by giving each block two columns or seven, rather than
+ * by stretching a line of prose across the whole window.
+ *
+ * One client boundary, at `AnswerBlock`. Everything else is rendered on the
+ * server and ships no JavaScript.
  */
 export default function HomePage() {
   return (
     <div className="page-frame pt-6 pb-20 sm:pt-8 lg:pb-[110px]">
       <div className="max-w-wide">
-        <Hero />
-        <LiveDemo />
+        <Masthead />
+        <AnswerBlock />
 
-        <div className="mt-16 space-y-16">
-          <Steps />
+        <div className="mt-24 space-y-20">
+          <Clauses />
           <Included />
+          <Closing />
         </div>
 
-        <Closing />
-
-        <div className="mt-16 border-t border-border pt-10">
+        <div className="mt-20 max-w-measure border-t border-border pt-10">
           <BuildNote>
             <List className="mb-0">
-              <Item>
-                Enough proof that somebody feels safe starting: named work, or
-                named clients.
-              </Item>
+              <Item>The one line that says what you do, in your words.</Item>
+              <Item>The single way in, which is the build page.</Item>
+              <Item>Enough proof that somebody feels safe starting.</Item>
               <Item>
                 A short answer to &ldquo;what will this cost me&rdquo;, now that
                 pricing is off the nav.
