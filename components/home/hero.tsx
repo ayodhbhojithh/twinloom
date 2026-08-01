@@ -43,6 +43,20 @@ const POINTS = [
  */
 const RINGS = [58, 74, 90, 106, 122];
 
+/** Timing, in one place, so the order things arrive in can be read at a glance. */
+const IN = {
+  kicker: 0,
+  title: 90,
+  lead: 190,
+  actions: 280,
+  points: 360,
+  art: 160,
+  ring: 320,
+} as const;
+
+/** `--in` is what `.rise` and `.ring-in` read their delay from. */
+const delay = (ms: number) => ({ "--in": `${ms}ms` }) as React.CSSProperties;
+
 /**
  * The home page.
  *
@@ -55,8 +69,13 @@ const RINGS = [58, 74, 90, 106, 122];
  * a value picked per block. Four steps that each read as bigger than the last is
  * what makes a column look set rather than assembled.
  *
- * A server component. There is nothing interactive on this page, so it ships no
- * JavaScript at all.
+ * It arrives in reading order, and it arrives in CSS. A page that ships no
+ * JavaScript should not start shipping some for an animation that plays once, so
+ * the whole sequence is keyframes and a `--in` delay per element. Everything
+ * moves `opacity` and `transform` only, and all of it stops under
+ * `prefers-reduced-motion`.
+ *
+ * A server component, still: nothing here is interactive.
  */
 export function Hero() {
   const at = SITE.tagline.indexOf(". ");
@@ -67,31 +86,43 @@ export function Hero() {
     <section className="page-frame relative isolate flex min-h-[var(--stage)] flex-col justify-center overflow-clip py-12 lg:py-10">
       <div className="grid max-w-wide items-center gap-x-12 gap-y-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] xl:gap-x-16">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] font-bold tracking-[0.2em] text-label uppercase">
+          <p
+            style={delay(IN.kicker)}
+            className="rise font-mono text-[10px] font-bold tracking-[0.2em] text-label uppercase"
+          >
             Home
           </p>
 
-          <h1 className="mt-6 max-w-[21ch] text-[clamp(34px,4.6vw,68px)] leading-[1.04] font-extrabold tracking-[-0.045em] text-ink">
+          <h1
+            style={delay(IN.title)}
+            className="rise mt-6 max-w-[21ch] text-[clamp(34px,4.6vw,68px)] leading-[1.04] font-extrabold tracking-[-0.045em] text-ink"
+          >
             {claim}
             {promise ? (
               <span className="block text-active">{promise}</span>
             ) : null}
           </h1>
 
-          <p className="mt-6 max-w-[58ch] text-[17px] leading-[1.6] text-body sm:text-[18px]">
+          <p
+            style={delay(IN.lead)}
+            className="rise mt-6 max-w-[58ch] text-[17px] leading-[1.6] text-body sm:text-[18px]"
+          >
             {SITE.description}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          <div
+            style={delay(IN.actions)}
+            className="rise mt-8 flex flex-wrap items-center gap-3"
+          >
             <Link
               href={ROUTES.build}
-              className="inline-flex items-center rounded-field bg-active px-6 py-[13px] text-[15.5px] font-semibold text-white transition-opacity hover:opacity-90 sm:px-7 sm:py-[14px] sm:text-[16px]"
+              className="inline-flex items-center rounded-field bg-active px-6 py-[13px] text-[15.5px] font-semibold text-white transition-[opacity,transform] hover:opacity-90 active:translate-y-px sm:px-7 sm:py-[14px] sm:text-[16px]"
             >
               Build your website
             </Link>
             <Link
               href={ROUTES.book}
-              className="inline-flex items-center rounded-field border border-ink bg-field px-6 py-[13px] text-[15.5px] font-semibold text-ink transition-colors hover:bg-ink hover:text-white sm:px-7 sm:py-[14px] sm:text-[16px]"
+              className="inline-flex items-center rounded-field border border-ink bg-field px-6 py-[13px] text-[15.5px] font-semibold text-ink transition-[color,background-color,transform] hover:bg-ink hover:text-white active:translate-y-px sm:px-7 sm:py-[14px] sm:text-[16px]"
             >
               Book a meeting
             </Link>
@@ -101,12 +132,16 @@ export function Hero() {
               titles on one baseline, where flex-wrap left them stepping down as
               soon as one of them ran on. */}
           <ul className="mt-10 grid gap-x-6 gap-y-5 sm:grid-cols-3">
-            {POINTS.map((point) => (
-              <li key={point.title} className="flex min-w-0 items-center gap-3">
+            {POINTS.map((point, index) => (
+              <li
+                key={point.title}
+                style={delay(IN.points + index * 80)}
+                className="rise group flex min-w-0 items-center gap-3"
+              >
                 <span
                   aria-hidden
                   className={cn(
-                    "flex size-10 shrink-0 items-center justify-center rounded-pill",
+                    "flex size-10 shrink-0 items-center justify-center rounded-pill transition-transform duration-300 group-hover:scale-110",
                     point.ring,
                   )}
                 >
@@ -136,9 +171,13 @@ export function Hero() {
               {RINGS.map((size, ring) => (
                 <span
                   key={size}
-                  style={{ width: `${size}%`, aspectRatio: "1" }}
+                  style={{
+                    width: `${size}%`,
+                    aspectRatio: "1",
+                    ...delay(IN.ring + ring * 90),
+                  }}
                   className={cn(
-                    "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-pill border",
+                    "ring-in absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-pill border",
                     ring < 2 ? "border-active/25" : "border-border",
                     /* The two widest are noise on a small screen, where they
                        are mostly cropped anyway. */
@@ -146,6 +185,12 @@ export function Hero() {
                   )}
                 />
               ))}
+
+              {/* One ring leaving, on a long loop: the question going out. */}
+              <span
+                style={{ width: `${RINGS[0]}%`, aspectRatio: "1" }}
+                className="ping absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-pill border border-active/40"
+              />
             </div>
 
             {/* `preload` rather than the deprecated `priority`, because this is
@@ -153,15 +198,17 @@ export function Hero() {
                 `sizes` is what makes Next generate a width based srcset:
                 without it the browser assumes the image is viewport wide and
                 pulls a far larger file than this column ever needs. */}
-            <Image
-              src="/right-image.png"
-              alt="A written scope headed 'Your answers become clarity', with three answers ticked off."
-              width={999}
-              height={999}
-              preload
-              sizes="(max-width: 640px) 88vw, (max-width: 1024px) 400px, 560px"
-              className="h-auto w-full"
-            />
+            <div style={delay(IN.art)} className="rise">
+              <Image
+                src="/right-image.png"
+                alt="A written scope headed 'Your answers become clarity', with three answers ticked off."
+                width={999}
+                height={999}
+                preload
+                sizes="(max-width: 640px) 88vw, (max-width: 1024px) 400px, 560px"
+                className="float h-auto w-full"
+              />
+            </div>
           </div>
         </div>
       </div>

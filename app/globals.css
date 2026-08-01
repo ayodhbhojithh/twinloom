@@ -457,6 +457,102 @@
   }
 
   /* ---------------------------------------------------------------------------
+     The home page's entrance.
+
+     CSS rather than a motion library, and deliberately: the page is a server
+     component that ships no JavaScript, and an animation that plays once on load
+     is no reason to give that up. Every one of these moves `opacity` and
+     `transform` only, so the compositor does all of it and none of it triggers
+     layout.
+
+     Timing is carried on a `--in` custom property rather than in a class per
+     step. The order things arrive in is a decision the markup should be able to
+     state at the point of use, and a ladder of `.delay-1`, `.delay-2` classes
+     turns into a guessing game the moment something is inserted in the middle.
+  --------------------------------------------------------------------------- */
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .rise {
+    animation: rise 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    animation-delay: var(--in, 0ms);
+  }
+
+  /* Rings arrive from the middle outwards.
+
+     `transform: scale()` only. Tailwind v4 centres these with the standalone
+     `translate` property, and the two compose, so a scale here cannot undo the
+     centring the way a full `transform: translate(-50%,-50%) scale()` would if
+     the utility ever changed. */
+  @keyframes ring-in {
+    from {
+      opacity: 0;
+      transform: scale(0.86);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .ring-in {
+    animation: ring-in 0.85s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    animation-delay: var(--in, 0ms);
+  }
+
+  /* One ring leaving on a long loop: a question going out, which is what the
+     page is asking for. Slow and faint enough to be noticed only on the second
+     look. */
+  @keyframes ping-out {
+    0% {
+      opacity: 0;
+      transform: scale(1);
+    }
+    12% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.95);
+    }
+  }
+
+  .ping {
+    animation: ping-out 6s cubic-bezier(0.2, 0.6, 0.35, 1) 1.6s infinite;
+  }
+
+  /* The artwork hovers inside the rings rather than sitting on them. */
+  @keyframes float {
+    from {
+      transform: translateY(-7px);
+    }
+    to {
+      transform: translateY(9px);
+    }
+  }
+
+  .float {
+    animation: float 7s ease-in-out 1.2s infinite alternate;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rise,
+    .ring-in,
+    .ping,
+    .float {
+      animation: none;
+    }
+  }
+
+  /* ---------------------------------------------------------------------------
      Devices for the home page.
 
      Everything here is drawn with type, rules and one accent. No images: the
