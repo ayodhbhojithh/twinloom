@@ -6,9 +6,10 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
 import { RailNav } from "./rail-nav";
+import { Wordmark } from "./wordmark";
 import { SiteSearch } from "./site-search";
 
-import { HEADER_CTA, HEADER_NAV, ROUTES, SITE } from "@/lib/site";
+import { HEADER_CTA, HEADER_NAV, ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 /**
@@ -53,12 +54,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 bg-field">
       <div className="page-frame flex items-center gap-4 py-2.5">
         <div className="flex min-w-0 flex-1 items-center">
-          <Link
-            href={ROUTES.home}
-            className="truncate text-[14.5px] font-bold whitespace-nowrap text-ink hover:underline"
-          >
-            {SITE.name}
-          </Link>
+          <Wordmark />
         </div>
 
         <nav
@@ -120,9 +116,7 @@ export function SiteHeader() {
           className="fixed inset-0 z-50 flex flex-col bg-field lg:hidden"
         >
           <div className="flex items-center gap-4 border-b border-border px-5 py-2.5 sm:px-8">
-            <span className="min-w-0 truncate text-[14.5px] font-bold text-ink">
-              {SITE.name}
-            </span>
+            <Wordmark as="text" className="min-w-0" />
 
             <button
               type="button"
