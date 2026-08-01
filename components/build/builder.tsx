@@ -190,8 +190,13 @@ export function Builder() {
 
       {/* Sticky at the wide sizes and simply below at the narrow ones. A panel
           that follows you down a page it is taller than would be a panel you
-          could not read the bottom of. */}
-      <aside className="mt-1 min-w-0 self-start border-t border-border pt-[22px] lg:sticky lg:top-[calc(var(--nav-height)+22px)] lg:mt-0 lg:border-t-0 lg:pt-[15px] lg:pl-7">
+          could not read the bottom of.
+
+          The 20px top sets the panel's first line on the same baseline as the
+          first area's title across the rule. Matching the paddings instead would
+          not have done it: 10.5px mono and 16px bold sit differently in their
+          line boxes, so equal tops read as a step. */}
+      <aside className="min-w-0 self-start border-t border-border pt-[22px] lg:sticky lg:top-[calc(var(--nav-height)+22px)] lg:border-t-0 lg:pt-5 lg:pl-7">
         <p className="mb-2.5 font-mono text-[10.5px] font-bold tracking-[0.14em] text-label uppercase">
           The site your answers describe
         </p>
