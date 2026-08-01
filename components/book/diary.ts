@@ -166,22 +166,21 @@ export function freeCount(date: Date): number {
 export function monthGrid(year: number, month: number, weekStart: number) {
   const first = new Date(year, month, 1);
   const lead = (first.getDay() - weekStart + 7) % 7;
-
   const start = addDays(first, -lead);
+
   const weeks: Date[][] = [];
 
   for (let week = 0; week < 6; week += 1) {
-    const row: Date[] = [];
-    for (let day = 0; day < 7; day += 1) {
-      row.push(addDays(start, week * 7 + day));
-    }
-    weeks.push(row);
+    const row = Array.from({ length: 7 }, (_unused, day) =>
+      addDays(start, week * 7 + day),
+    );
 
-    /* Six rows only when the month needs them. */
-    const last = row[6];
-    if (week >= 4 && (last.getMonth() !== month || last.getDate() >= 28)) {
-      if (last.getMonth() !== month) break;
+    /* A trailing row entirely in the next month is a row of nothing. */
+    if (weeks.length >= 4 && row.every((date) => date.getMonth() !== month)) {
+      break;
     }
+
+    weeks.push(row);
   }
 
   return weeks;

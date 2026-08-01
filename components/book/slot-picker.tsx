@@ -26,17 +26,26 @@ const TERMS = [
   { icon: X, term: "Move it or cancel", note: "Any time, no explanation." },
 ];
 
+/** One layout, written once, so the shell and the real thing cannot disagree. */
+const FRAME =
+  "grid gap-x-10 gap-y-9 lg:grid-cols-[minmax(0,14rem)_minmax(0,1fr)]";
+const PAIR = "grid gap-x-8 gap-y-8 sm:grid-cols-[minmax(0,1fr)_10.5rem]";
+
 /**
  * Pick a time that suits you.
  *
- * Three columns, which is the arrangement every booking tool worth using has
- * settled on: what the meeting is, when it could be, and which time. It is
- * settled because it works, and there is nothing to be gained by being novel
- * about a calendar.
+ * What the meeting is, when it could be, and which time: the arrangement every
+ * booking tool worth using has settled on. It is settled because it works, and
+ * there is nothing to be won by being novel about a calendar.
+ *
+ * The calendar and the times are one pair inside the layout rather than two
+ * siblings of the details column. That is what lets them sit together from the
+ * small breakpoint up while the details move beside them only when there is
+ * room, instead of the times dropping to the far side of the page in between.
  *
  * Everything that depends on the reader waits for hydration. Their zone, their
  * locale, their clock convention and today's date are all the browser's to tell
- * us, and none of them are knowable while this is rendered on a server.
+ * us, and none of them are knowable while this renders on a server.
  */
 export function SlotPicker() {
   const reader = useSyncExternalStore(
@@ -45,75 +54,68 @@ export function SlotPicker() {
     getReaderOnServer,
   );
 
-  const [dayKeyChosen, setDayKey] = useState<string | null>(null);
+  const [chosenDay, setChosenDay] = useState<string | null>(null);
   const [slotAt, setSlotAt] = useState<number | null>(null);
   const [asked, setAsked] = useState(false);
-  /* Some people would rather see the office's clock than their own. */
+  /* Some people would rather see our clock than their own. */
   const [inOfficeZone, setInOfficeZone] = useState(false);
 
   if (!reader) return <Waiting />;
 
   const zone = inOfficeZone ? OFFICE_ZONE : reader.zone;
-  const day = dayKeyChosen ? keyToDate(dayKeyChosen) : null;
+  const day = chosenDay ? keyToDate(chosenDay) : null;
   const taken = day ? takenSlots(day) : [];
 
-  const timeAt = (at: number) => {
-    const slot = SLOTS[at];
-    const when = officeInstant(
+  const instantOf = (at: number) =>
+    officeInstant(
       day!.getFullYear(),
       day!.getMonth(),
       day!.getDate(),
-      slot.hour,
-      slot.minute,
+      SLOTS[at].hour,
+      SLOTS[at].minute,
     );
 
-    return {
-      when,
-      label: new Intl.DateTimeFormat(reader.locale, {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: reader.hour12,
-        timeZone: zone,
-      }).format(when),
-    };
-  };
+  const shortTime = new Intl.DateTimeFormat(reader.locale, {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: reader.hour12,
+    timeZone: zone,
+  });
+
+  const fullWhen = new Intl.DateTimeFormat(reader.locale, {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: reader.hour12,
+    timeZone: zone,
+  });
 
   const chosen =
-    day && slotAt !== null
-      ? new Intl.DateTimeFormat(reader.locale, {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: reader.hour12,
-          timeZone: zone,
-        }).format(timeAt(slotAt).when)
-      : "";
+    day && slotAt !== null ? fullWhen.format(instantOf(slotAt)) : "";
 
   return (
-    <div className="grid gap-x-12 gap-y-10 xl:grid-cols-[minmax(0,17rem)_minmax(0,1fr)_minmax(0,13rem)]">
+    <div className={FRAME}>
       <aside className="min-w-0">
-        <p className="font-mono text-[10px] font-bold tracking-[0.2em] text-label uppercase">
-          The meeting
-        </p>
+        <Kicker>The meeting</Kicker>
 
-        <dl className="mt-4 border-t border-hair">
+        <dl className="mt-3 border-t border-hair">
           {TERMS.map((entry) => (
             <div
               key={entry.term}
-              className="flex items-start gap-3 border-b border-hair py-3"
+              className="flex items-start gap-2.5 border-b border-hair py-2.5"
             >
               <entry.icon
                 aria-hidden
-                className="mt-0.5 size-4 shrink-0 text-label"
+                className="mt-0.5 size-[15px] shrink-0 text-label"
                 strokeWidth={2}
               />
               <div className="min-w-0">
-                <dt className="text-[14.5px] leading-[1.3] font-semibold text-ink">
+                <dt className="text-[14px] leading-[1.3] font-semibold text-ink">
                   {entry.term}
                 </dt>
-                <dd className="text-[13px] leading-[1.4] text-quiet">
+                <dd className="text-[12.5px] leading-[1.4] text-quiet">
                   {entry.note}
                 </dd>
               </div>
@@ -128,123 +130,128 @@ export function SlotPicker() {
         />
       </aside>
 
-      <div className="min-w-0 xl:border-x xl:border-hair xl:px-12">
-        <Calendar
-          reader={reader}
-          selected={dayKeyChosen}
-          onSelect={(key) => {
-            setDayKey(key);
-            /* The times belong to the day. Keeping one across a change would
-               leave the panel showing a slot nobody picked. */
-            setSlotAt(null);
-            setAsked(false);
-          }}
-        />
-      </div>
+      <div className={PAIR}>
+        <div className="min-w-0">
+          <Calendar
+            reader={reader}
+            selected={chosenDay}
+            onSelect={(key) => {
+              setChosenDay(key);
+              /* The times belong to the day. Keeping one across a change would
+                 leave the panel showing a slot nobody picked. */
+              setSlotAt(null);
+              setAsked(false);
+            }}
+          />
+        </div>
 
-      <div className="flex min-w-0 flex-col">
-        <p className="font-mono text-[10px] font-bold tracking-[0.2em] text-label uppercase">
-          {day
-            ? new Intl.DateTimeFormat(reader.locale, {
-                weekday: "long",
-                day: "numeric",
-                month: "short",
-              }).format(day)
-            : "Times"}
-        </p>
+        <div className="flex min-w-0 flex-col">
+          <Kicker>
+            {day
+              ? new Intl.DateTimeFormat(reader.locale, {
+                  weekday: "short",
+                  day: "numeric",
+                  month: "short",
+                }).format(day)
+              : "Times"}
+          </Kicker>
 
-        {day ? (
-          <>
-            <div
-              className="quiet-scroll mt-4 flex max-h-[22rem] flex-col gap-2 overflow-y-auto pr-1"
-              role="group"
-              aria-label="Available times"
-            >
-              {SLOTS.map((_slot, at) => {
-                const gone = taken[at];
-                const on = slotAt === at;
-                const { label } = timeAt(at);
+          {day ? (
+            <>
+              <div
+                role="group"
+                aria-label="Available times"
+                className="quiet-scroll mt-3 flex max-h-[16.5rem] flex-col gap-1.5 overflow-y-auto pr-0.5"
+              >
+                {SLOTS.map((_slot, at) => {
+                  const gone = taken[at];
+                  const on = slotAt === at;
 
-                return (
-                  <button
-                    key={at}
-                    type="button"
-                    disabled={gone}
-                    aria-pressed={on}
-                    onClick={() => {
-                      setSlotAt(at);
-                      setAsked(false);
-                    }}
-                    className={cn(
-                      "rounded-field border py-2.5 text-center text-[14.5px] font-semibold tabular-nums transition-colors",
-                      gone &&
-                        "cursor-not-allowed border-hair bg-well text-label line-through",
-                      !gone && on && "border-active bg-active text-white",
-                      !gone &&
-                        !on &&
-                        "cursor-pointer border-border bg-field text-ink hover:border-ink",
-                    )}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
+                  return (
+                    <button
+                      key={at}
+                      type="button"
+                      disabled={gone}
+                      aria-pressed={on}
+                      onClick={() => {
+                        setSlotAt(at);
+                        setAsked(false);
+                      }}
+                      className={cn(
+                        "rounded-field border py-2 text-center text-[14px] font-semibold tabular-nums transition-colors",
+                        gone &&
+                          "cursor-not-allowed border-hair bg-well text-label line-through",
+                        !gone && on && "border-active bg-active text-white",
+                        !gone &&
+                          !on &&
+                          "cursor-pointer border-border bg-field text-ink hover:border-ink",
+                      )}
+                    >
+                      {shortTime.format(instantOf(at))}
+                    </button>
+                  );
+                })}
+              </div>
 
-            {/* Announced rather than only drawn, so somebody not looking at the
-                panel still learns what they just picked. */}
-            <p aria-live="polite" className="sr-only">
-              {chosen ? `Selected ${chosen}` : ""}
-            </p>
-
-            <div className="mt-5 border-t border-hair pt-5">
-              <p className="text-[14px] leading-[1.45] text-quiet">
-                {chosen ? (
-                  <span className="font-semibold text-ink">{chosen}</span>
-                ) : (
-                  "Pick a time and it appears here."
-                )}
+              <p aria-live="polite" className="sr-only">
+                {chosen ? `Selected ${chosen}` : ""}
               </p>
 
-              <button
-                type="button"
-                disabled={!chosen}
-                onClick={() => setAsked(true)}
-                className="mt-4 w-full cursor-pointer rounded-field bg-active px-5 py-[12px] text-[15px] font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-default disabled:bg-planned disabled:text-label"
-              >
-                Book this time
-              </button>
-
-              {/* A booking screen that says "confirmed" when nothing was sent is
-                  the one thing this page must not do. */}
-              {asked ? (
-                <p
-                  role="status"
-                  className="mt-3 rounded-card border border-amber/30 bg-amber/5 px-3.5 py-3 text-[13px] leading-[1.5] text-body"
-                >
-                  Nothing has been sent. This calendar is not connected to a real
-                  diary yet, so that time is not held for you.
+              <div className="mt-4 border-t border-hair pt-4">
+                <p className="text-[13px] leading-[1.45] text-quiet">
+                  {chosen ? (
+                    <span className="font-semibold text-ink">{chosen}</span>
+                  ) : (
+                    "Pick a time and it appears here."
+                  )}
                 </p>
-              ) : null}
-            </div>
-          </>
-        ) : (
-          <p className="mt-4 rounded-card border border-dashed border-border px-4 py-5 text-[14px] leading-[1.5] text-quiet">
-            Choose a day and its times appear here. A dot under a date means it
-            has room; struck out means somebody already has it.
-          </p>
-        )}
+
+                <button
+                  type="button"
+                  disabled={!chosen}
+                  onClick={() => setAsked(true)}
+                  className="mt-3 w-full cursor-pointer rounded-field bg-active px-4 py-2.5 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-default disabled:bg-planned disabled:text-label"
+                >
+                  Book this time
+                </button>
+
+                {asked ? (
+                  <p
+                    role="status"
+                    className="mt-3 rounded-card border border-amber/30 bg-amber/5 px-3 py-2.5 text-[12.5px] leading-[1.5] text-body"
+                  >
+                    Nothing has been sent. This calendar is not connected to a
+                    real diary yet, so that time is not held for you.
+                  </p>
+                ) : null}
+              </div>
+            </>
+          ) : (
+            <p className="mt-3 rounded-card border border-dashed border-border px-3.5 py-4 text-[13px] leading-[1.5] text-quiet">
+              Choose a day and its times appear here. A dot under a date means it
+              has room.
+            </p>
+          )}
+        </div>
       </div>
     </div>
+  );
+}
+
+function Kicker({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="font-mono text-[9.5px] font-bold tracking-[0.18em] text-label uppercase">
+      {children}
+    </p>
   );
 }
 
 /**
  * Whose clock the times are on.
  *
- * Named outright rather than left to be discovered. A time with no zone against
- * it is the most common way a booking goes wrong across borders, and the offset
- * is spelled out because a zone name alone means nothing to most people.
+ * Named outright rather than left to be worked out. A time with no zone against
+ * it is the commonest way a booking goes wrong across borders, and the offset is
+ * spelled out because a zone name on its own means nothing to most people.
  */
 function ZoneNote({
   reader,
@@ -256,6 +263,7 @@ function ZoneNote({
   onToggle: () => void;
 }) {
   const zone = inOfficeZone ? OFFICE_ZONE : reader.zone;
+  const sameZone = reader.zone === OFFICE_ZONE;
 
   const offset =
     new Intl.DateTimeFormat(reader.locale, {
@@ -265,14 +273,12 @@ function ZoneNote({
       .formatToParts(new Date())
       .find((part) => part.type === "timeZoneName")?.value ?? "";
 
-  const sameZone = reader.zone === OFFICE_ZONE;
-
   return (
-    <div className="mt-6">
-      <p className="flex items-start gap-2.5 text-[13px] leading-[1.5] text-quiet">
-        <Globe aria-hidden className="mt-0.5 size-4 shrink-0 text-label" />
+    <div className="mt-5">
+      <p className="flex items-start gap-2 text-[12.5px] leading-[1.5] text-quiet">
+        <Globe aria-hidden className="mt-0.5 size-3.5 shrink-0 text-label" />
         <span>
-          Times shown in{" "}
+          Times in{" "}
           <span className="font-semibold text-ink">
             {zone.replace(/_/g, " ")}
           </span>
@@ -286,7 +292,7 @@ function ZoneNote({
           type="button"
           aria-pressed={inOfficeZone}
           onClick={onToggle}
-          className="mt-2.5 cursor-pointer font-mono text-[10px] font-bold tracking-[0.14em] text-active uppercase transition-opacity hover:opacity-75"
+          className="mt-2 cursor-pointer font-mono text-[9.5px] font-bold tracking-[0.14em] text-active uppercase transition-opacity hover:opacity-75"
         >
           {inOfficeZone ? "Show my own time" : "Show London time"}
         </button>
@@ -298,32 +304,32 @@ function ZoneNote({
 /**
  * Before hydration.
  *
- * The shape of the thing rather than a spinner: the columns are already the
- * right size, so nothing moves when the real calendar replaces this.
+ * The shape of the thing rather than a spinner, and built from the same two
+ * layout constants, so nothing moves when the real calendar replaces it.
  */
 function Waiting() {
   return (
-    <div
-      aria-hidden
-      className="grid gap-x-12 gap-y-10 xl:grid-cols-[minmax(0,17rem)_minmax(0,1fr)_minmax(0,13rem)]"
-    >
-      <div className="space-y-3">
+    <div aria-hidden className={FRAME}>
+      <div className="space-y-2.5">
         {[0, 1, 2, 3].map((at) => (
-          <div key={at} className="h-12 rounded-field bg-well" />
+          <div key={at} className="h-11 rounded-field bg-well" />
         ))}
       </div>
-      <div className="xl:border-x xl:border-hair xl:px-12">
-        <div className="h-6 w-40 rounded-field bg-well" />
-        <div className="mt-4 grid grid-cols-7 gap-1">
-          {Array.from({ length: 35 }, (_, at) => (
-            <div key={at} className="aspect-square rounded-field bg-well" />
+
+      <div className={PAIR}>
+        <div>
+          <div className="h-5 w-36 rounded-field bg-well" />
+          <div className="mt-4 grid grid-cols-7 gap-px">
+            {Array.from({ length: 35 }, (_unused, at) => (
+              <div key={at} className="h-9 rounded-field bg-well" />
+            ))}
+          </div>
+        </div>
+        <div className="space-y-1.5">
+          {[0, 1, 2, 3, 4, 5].map((at) => (
+            <div key={at} className="h-9 rounded-field bg-well" />
           ))}
         </div>
-      </div>
-      <div className="space-y-2">
-        {[0, 1, 2, 3, 4].map((at) => (
-          <div key={at} className="h-10 rounded-field bg-well" />
-        ))}
       </div>
     </div>
   );

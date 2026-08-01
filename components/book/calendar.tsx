@@ -16,17 +16,28 @@ import {
   type Reader,
 } from "./diary";
 
+const STEPS: Record<string, number> = {
+  ArrowLeft: -1,
+  ArrowRight: 1,
+  ArrowUp: -7,
+  ArrowDown: 7,
+};
+
 /**
  * A month, navigable by keyboard.
  *
  * `role="grid"` with a roving tab stop, which is what a date picker is supposed
- * to be and what almost none of them are. One date is in the tab order at a
- * time; the arrows move within the month, Home and End go to the ends of a week,
- * Page Up and Page Down change month. Reaching for a date should not mean
- * pressing Tab thirty times.
+ * to be and what most of them are not. One date is in the tab order at a time;
+ * the arrows move within the month, Home and End go to the ends of a week, Page
+ * Up and Page Down change month. Reaching a date should not mean pressing Tab
+ * thirty times.
+ *
+ * `aria-selected` sits on the cell rather than the button inside it. A button
+ * does not support it, and a grid expects to be told which of its cells is
+ * chosen.
  *
  * Weekday names and the day the week starts on both come from the reader's
- * locale. A calendar that starts on Monday for everyone is a calendar that is
+ * locale. A calendar that starts on Monday for everybody is a calendar that is
  * wrong in half the world.
  */
 export function Calendar({
@@ -39,13 +50,14 @@ export function Calendar({
   onSelect: (key: string) => void;
 }) {
   const opening = firstBookable();
+  const closing = lastBookable();
 
   const [view, setView] = useState(() => ({
     year: opening.getFullYear(),
     month: opening.getMonth(),
   }));
 
-  /* The date the keyboard is on, which is not always the date chosen. */
+  /* Where the keyboard is, which is not always what has been chosen. */
   const [cursor, setCursor] = useState(() => dayKey(opening));
   const moveFocus = useRef(false);
   const grid = useRef<HTMLDivElement>(null);
@@ -77,21 +89,18 @@ export function Calendar({
     month: "long",
   });
 
-  const headers = Array.from({ length: 7 }, (_, at) =>
-    /* 2024-01-07 was a Sunday, so this walks a whole week from the reader's
-       own starting day without hardcoding any names. */
-    new Date(2024, 0, 7 + ((reader.weekStart + at) % 7)),
+  /* 2024-01-07 was a Sunday, so this walks one whole week from the reader's own
+     starting day without hardcoding a single name. */
+  const headers = Array.from(
+    { length: 7 },
+    (_unused, at) => new Date(2024, 0, 7 + ((reader.weekStart + at) % 7)),
   );
 
-  const openFrom = opening;
-  const openTo = lastBookable();
-
+  const viewing = new Date(view.year, view.month, 1);
   const canGoBack =
-    new Date(view.year, view.month, 1) >
-    new Date(openFrom.getFullYear(), openFrom.getMonth(), 1);
+    viewing > new Date(opening.getFullYear(), opening.getMonth(), 1);
   const canGoOn =
-    new Date(view.year, view.month, 1) <
-    new Date(openTo.getFullYear(), openTo.getMonth(), 1);
+    viewing < new Date(closing.getFullYear(), closing.getMonth(), 1);
 
   function shift(months: number) {
     setView((was) => {
@@ -112,16 +121,9 @@ export function Calendar({
     const [year, month, day] = cursor.split("-").map(Number);
     const at = new Date(year, month - 1, day);
 
-    const steps: Record<string, number> = {
-      ArrowLeft: -1,
-      ArrowRight: 1,
-      ArrowUp: -7,
-      ArrowDown: 7,
-    };
-
-    if (steps[event.key] !== undefined) {
+    if (STEPS[event.key] !== undefined) {
       event.preventDefault();
-      moveTo(addDays(at, steps[event.key]));
+      moveTo(addDays(at, STEPS[event.key]));
       return;
     }
 
@@ -142,11 +144,11 @@ export function Calendar({
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between gap-4">
+      <div className="mb-3 flex items-center justify-between gap-4">
         <h3
           id="calendar-heading"
           aria-live="polite"
-          className="text-[16px] font-bold tracking-[-0.015em] text-ink"
+          className="text-[15px] font-bold tracking-[-0.015em] text-ink"
         >
           {monthName}
         </h3>
@@ -159,11 +161,7 @@ export function Calendar({
           >
             <ChevronLeft className="size-4" />
           </Step>
-          <Step
-            label="Next month"
-            disabled={!canGoOn}
-            onClick={() => shift(1)}
-          >
+          <Step label="Next month" disabled={!canGoOn} onClick={() => shift(1)}>
             <ChevronRight className="size-4" />
           </Step>
         </div>
@@ -181,7 +179,7 @@ export function Calendar({
               key={date.getDay()}
               role="columnheader"
               aria-label={weekdayLong.format(date)}
-              className="pb-2 text-center font-mono text-[9.5px] font-bold tracking-[0.1em] text-label uppercase"
+              className="pb-1.5 text-center font-mono text-[9px] font-bold tracking-[0.1em] text-label uppercase"
             >
               {weekdayShort.format(date)}
             </div>
@@ -198,13 +196,17 @@ export function Calendar({
               const free = freeCount(date);
 
               return (
-                <div role="gridcell" key={key} className="p-0.5">
+                <div
+                  role="gridcell"
+                  key={key}
+                  aria-selected={open ? chosen : undefined}
+                  className="p-px"
+                >
                   <button
                     type="button"
                     data-key={key}
                     disabled={!open}
                     tabIndex={key === cursor ? 0 : -1}
-                    aria-selected={chosen}
                     aria-label={`${dateLong.format(date)}${
                       open
                         ? `, ${free} ${free === 1 ? "time" : "times"} free`
@@ -216,9 +218,11 @@ export function Calendar({
                     }}
                     onFocus={() => setCursor(key)}
                     className={cn(
-                      "relative flex aspect-square w-full flex-col items-center justify-center rounded-field text-[14.5px] font-semibold tabular-nums transition-colors",
+                      "relative flex h-9 w-full items-center justify-center rounded-field text-[13.5px] font-semibold tabular-nums transition-colors",
                       !open && "cursor-not-allowed text-planned",
-                      open && !chosen && "cursor-pointer text-ink hover:bg-hair",
+                      open &&
+                        !chosen &&
+                        "cursor-pointer text-ink hover:bg-hair",
                       chosen && "cursor-pointer bg-ink text-white",
                       outside && open && !chosen && "text-quiet",
                       outside && !open && "text-hair",
@@ -226,12 +230,10 @@ export function Calendar({
                   >
                     {date.getDate()}
 
-                    {/* One dot for a day with room, so availability reads at a
-                        glance rather than only after a click. */}
                     <span
                       aria-hidden
                       className={cn(
-                        "absolute bottom-[7px] size-[3px] rounded-pill transition-colors",
+                        "absolute bottom-[5px] size-[3px] rounded-pill transition-colors",
                         open && !chosen && "bg-active",
                         chosen && "bg-white/70",
                         !open && "bg-transparent",
@@ -265,7 +267,7 @@ function Step({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className="flex size-8 cursor-pointer items-center justify-center rounded-field border border-border text-quiet transition-colors hover:border-ink hover:text-ink disabled:cursor-not-allowed disabled:border-hair disabled:text-planned"
+      className="flex size-7 cursor-pointer items-center justify-center rounded-field border border-border text-quiet transition-colors hover:border-ink hover:text-ink disabled:cursor-not-allowed disabled:border-hair disabled:text-planned"
     >
       {children}
     </button>
