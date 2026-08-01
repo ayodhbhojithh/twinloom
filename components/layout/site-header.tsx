@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
-import { RailNav, useRailGroups } from "./rail-nav";
+import { RailNav } from "./rail-nav";
 import { SiteSearch } from "./site-search";
 
 import { HEADER_CTA, HEADER_NAV, ROUTES, SITE } from "@/lib/site";
@@ -44,7 +44,6 @@ import { cn } from "@/lib/utils";
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const groups = useRailGroups();
 
   /* No rule under it, and opaque. The two go together: a translucent bar shows the
      page sliding through it, and without a rule there is nothing left to mark where
@@ -146,8 +145,6 @@ export function SiteHeader() {
             <RailNav
               size="menu"
               pathname={pathname}
-              closed={groups.closed}
-              onToggle={groups.toggle}
               onNavigate={() => setOpen(false)}
             />
           </nav>

@@ -1,166 +1,115 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 
-import { RAIL_GROUPS, type RailGroup, type RailItem } from "@/lib/site";
+import { RAIL_PAGES, type NavLink as NavLinkData } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 /**
- * Where everything in the nav lines up.
+ * Where the two levels sit, as the prototype sets them.
  *
- * One table rather than a ternary at each use. Every row in the list, at either
- * size, gets its left offset from here, so a group heading, a sub label and a
- * third level link cannot drift apart as any of them is adjusted.
+ * Its rail indents a sub page by 12 and leaves the 2px marker where it was, at
+ * the rail's own left edge. So the bar is in one column down the whole list and
+ * only the text steps in. A bar that moved with the indent would give the eye
+ * two vertical lines to follow and make the second level look like a different
+ * navigation rather than part of this one.
  *
- * The indents are additive: a level two item is its container's gutter plus 14. A
- * half step, because the nesting is only two deep and a full 24px would walk a
- * child page a long way across a narrow rail.
+ * The phone menu sits almost against its own edge: a sheet has less width to
+ * spend and nothing to the left of it to line up with.
  */
-const GUTTER = { rail: 24, menu: 4 } as const;
-const INDENT = { 1: 0, 2: 14 } as const;
-
-const offset = (size: keyof typeof GUTTER, level: RailItem["level"]) =>
-  GUTTER[size] + INDENT[level ?? 1];
+const GUTTER = { rail: 24, menu: 8 } as const;
+const NEST = 12;
 
 /**
- * The grouped list of every page, shared by the docked rail and the menu.
+ * Every page on the site, shared by the docked rail and the phone menu.
  *
- * One component for both, because they are the same navigation seen at two widths.
- * Written twice, the menu quietly lost the collapsing groups and the indents, so a
- * phone got forty eight flat rows where a laptop got ten groups.
+ * One component for both, because they are the same navigation seen at two
+ * widths. Written twice, the menu quietly lost its indents and a phone got a
+ * flat list where a laptop got a structured one.
  *
- * Which groups are open is local state. It is a property of looking at the nav
- * rather than of the site, and in the App Router the layout survives navigation, so
- * it holds while you move between pages and resets only on a reload, which is what
- * people expect of a disclosure.
+ * No headings and nothing to open or shut. Fifteen links do not need chapters;
+ * they need to be short, in a sensible order, and always on screen.
+ *
+ * Ink marks the page you are on, not the accent. Blue is the site's one action
+ * colour, and a rail that paints the current page in it competes with every
+ * button on the screen for the same meaning. The prototype uses ink here and it
+ * is right: this is where you are, not something to do.
  */
 export function RailNav({
   pathname,
   onNavigate,
   size = "rail",
-  closed,
-  onToggle,
 }: {
   pathname: string;
   /** The menu closes itself on the way out; the docked rail has nothing to do. */
   onNavigate?: () => void;
   size?: keyof typeof GUTTER;
-  closed: ReadonlySet<string>;
-  onToggle: (title: string) => void;
 }) {
   return (
-    <>
-      {RAIL_GROUPS.map((group) => (
-        <RailSection
-          key={group.title}
-          group={group}
-          open={!closed.has(group.title)}
-          onToggle={() => onToggle(group.title)}
-          pathname={pathname}
-          onNavigate={onNavigate}
-          size={size}
-        />
+    <ul>
+      {RAIL_PAGES.map((page) => (
+        <li key={page.href}>
+          <Row page={page} pathname={pathname} onNavigate={onNavigate} size={size} />
+
+          {page.children?.map((child) => (
+            <Row
+              key={child.href}
+              page={child}
+              pathname={pathname}
+              onNavigate={onNavigate}
+              size={size}
+              nested
+            />
+          ))}
+        </li>
       ))}
-    </>
+    </ul>
   );
 }
 
-/** Holds which groups are shut, and the two ways of shutting all of them. */
-export function useRailGroups() {
-  const [closed, setClosed] = useState<ReadonlySet<string>>(new Set());
-
-  return {
-    closed,
-    toggle: (title: string) =>
-      setClosed((current) => {
-        const next = new Set(current);
-        if (next.has(title)) next.delete(title);
-        else next.add(title);
-        return next;
-      }),
-    expandAll: () => setClosed(new Set()),
-    collapseAll: () =>
-      setClosed(new Set(RAIL_GROUPS.map((group) => group.title))),
-  };
-}
-
-function RailSection({
-  group,
-  open,
-  onToggle,
+function Row({
+  page,
   pathname,
   onNavigate,
   size,
+  nested,
 }: {
-  group: RailGroup;
-  open: boolean;
-  onToggle: () => void;
+  page: NavLinkData;
   pathname: string;
   onNavigate?: () => void;
   size: keyof typeof GUTTER;
+  nested?: boolean;
 }) {
-  const id = `nav-${group.title.replace(/\W+/g, "-").toLowerCase()}`;
+  const here = pathname === page.href;
   const gutter = GUTTER[size];
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-expanded={open}
-        aria-controls={id}
-        style={{ paddingLeft: gutter, paddingRight: gutter }}
-        className={cn(
-          "flex w-full items-center justify-between gap-2.5 pt-6 pb-2 text-left font-mono text-[11px] font-bold tracking-[0.14em] uppercase transition-colors",
-          group.highlight ? "text-active" : "text-ink hover:text-quiet",
-        )}
-      >
-        <span>{group.title}</span>
-
-        {/* A chevron drawn from two borders, as the draft draws it: no icon to
-            load, and it rotates rather than swapping glyphs. */}
-        <span aria-hidden className="relative size-3 shrink-0">
-          <span
-            className={cn(
-              "absolute top-[3px] left-[2px] size-1.5 border-r-[1.5px] border-b-[1.5px] border-current transition-transform duration-150",
-              open ? "-rotate-[135deg]" : "rotate-45",
-            )}
-          />
-        </span>
-      </button>
-
-      {open ? (
-        <div id={id}>
-          {group.items.map((item) => (
-            <div key={item.href}>
-              <Link
-                href={item.href}
-                onClick={onNavigate}
-                aria-current={pathname === item.href ? "page" : undefined}
-                style={{
-                  /* The 2px active bar is drawn inside the link's left edge, so
-                     the padding carries it and every level's text still lands on
-                     its own indent. */
-                  paddingLeft: offset(size, item.level) - 2,
-                  paddingRight: gutter,
-                }}
-                className={cn(
-                  "block border-l-2 transition-colors",
-                  size === "menu"
-                    ? "py-2.5 text-[15px] leading-[1.4]"
-                    : "py-[7px] text-[14.5px] leading-[1.4]",
-                  pathname === item.href
-                    ? "border-active bg-well font-semibold text-active"
-                    : "border-transparent text-quiet hover:bg-well hover:text-ink",
-                )}
-              >
-                {item.label}
-              </Link>
-            </div>
-          ))}
-        </div>
-      ) : null}
-    </>
+    <Link
+      href={page.href}
+      onClick={onNavigate}
+      aria-current={here ? "page" : undefined}
+      style={{
+        /* The 2px bar is drawn inside the link's own left edge, so the padding
+           carries it and the text still lands where it should. */
+        paddingLeft: gutter + (nested ? NEST : 0) - 2,
+        paddingRight: gutter,
+      }}
+      className={cn(
+        "block border-l-2 leading-[1.4] transition-colors",
+        size === "menu" ? "py-2.5" : "py-[7px]",
+        nested
+          ? size === "menu"
+            ? "text-[14.5px]"
+            : "text-[14px]"
+          : size === "menu"
+            ? "text-[15.5px]"
+            : "text-[15px]",
+        here
+          ? "border-ink font-semibold text-ink"
+          : "border-transparent text-body hover:text-ink",
+      )}
+    >
+      {page.label}
+    </Link>
   );
 }

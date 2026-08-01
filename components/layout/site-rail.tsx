@@ -3,10 +3,12 @@
 import { usePathname } from "next/navigation";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
-import { RailNav, useRailGroups } from "./rail-nav";
+import { SITE } from "@/lib/site";
+
+import { RailNav } from "./rail-nav";
 
 /**
- * The left rail: every page on the site, grouped and indented.
+ * The left rail: every page on the site, in reading order.
  *
  * The draft's own navigation, and the thing that makes this site legible. Forty
  * eight pages is more than a header can hold, so the header carries the seven a
@@ -40,7 +42,6 @@ export function SiteRail({
   onCollapsedChange: (collapsed: boolean) => void;
 }) {
   const pathname = usePathname();
-  const groups = useRailGroups();
 
   const stick = {
     top: "var(--nav-height)",
@@ -76,25 +77,10 @@ export function SiteRail({
           control that puts the rail away, and the only one that brings it back.
 
           No name in here. The header above already carries it, and repeating it
-          two rows lower said the same thing twice in the same eyeline. */}
-      <div className="sticky top-0 z-10 flex items-center gap-4 bg-field pt-4 pb-3">
-        <div className="flex flex-1 gap-4 px-6">
-          <button
-            type="button"
-            onClick={groups.expandAll}
-            className="font-mono text-[10.5px] font-semibold tracking-[0.08em] text-quiet uppercase transition-colors hover:text-ink"
-          >
-            Expand all
-          </button>
-          <button
-            type="button"
-            onClick={groups.collapseAll}
-            className="font-mono text-[10.5px] font-semibold tracking-[0.08em] text-quiet uppercase transition-colors hover:text-ink"
-          >
-            Collapse all
-          </button>
-        </div>
-
+          two rows lower said the same thing twice in the same eyeline. Nothing
+          to expand or collapse either, now that the list has no groups to open:
+          two controls that operated on something invisible. */}
+      <div className="sticky top-0 z-10 flex items-center justify-end bg-field pt-3 pb-2">
         <button
           type="button"
           onClick={() => onCollapsedChange(true)}
@@ -106,11 +92,14 @@ export function SiteRail({
         </button>
       </div>
 
-      <RailNav
-        pathname={pathname}
-        closed={groups.closed}
-        onToggle={groups.toggle}
-      />
+      <RailNav pathname={pathname} />
+
+      {/* The prototype's own foot note. It says what this site is while you are
+          looking at the list of everything in it, which is the one place the
+          admission is useful rather than apologetic. */}
+      <div className="mt-7 border-t border-border px-6 pt-[18px]">
+        <p className="text-[12.5px] leading-[1.5] text-label">{SITE.status}</p>
+      </div>
     </nav>
   );
 }

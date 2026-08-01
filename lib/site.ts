@@ -73,56 +73,48 @@ export const HEADER_CTA: NavLink = {
   href: ROUTES.build,
 };
 
-export interface RailItem extends NavLink {
-  /** 2 for a page that sits under another. */
-  level?: 2;
+/**
+ * One page in the rail, and anything that sits under it.
+ *
+ * Pages and sub pages, and no third level. Two is as deep as this site goes and
+ * as deep as a left rail should: a nav that needs three indents to reach a page
+ * is a nav telling you the site is organised for whoever built it.
+ */
+export interface RailPage extends NavLink {
+  children?: readonly NavLink[];
 }
 
-export interface RailGroup {
-  title: string;
-  /** Marks the group the site most wants people in. */
-  highlight?: boolean;
-  items: readonly RailItem[];
-}
-
-export const RAIL_GROUPS: readonly RailGroup[] = [
+/**
+ * Every page, in reading order.
+ *
+ * Flat, with no headings over it. Named groups made the rail look like four
+ * small navigations stacked up, and each one needed a control to open and shut
+ * it before any page could be read. Fifteen links do not need chapters; they
+ * need to be short, in a sensible order, and always visible.
+ *
+ * The order is the order the site is meant to be read in, which is also what
+ * gives every page its previous and next.
+ */
+export const RAIL_PAGES: readonly RailPage[] = [
+  { label: "Home", href: ROUTES.home },
+  { label: "Build your website", href: ROUTES.build },
+  { label: "The site your answers describe", href: ROUTES.site },
+  { label: "About us", href: ROUTES.about },
+  { label: "Our partners", href: ROUTES.partners },
   {
-    title: "Start here",
-    highlight: true,
-    items: [
-      { label: "Home", href: ROUTES.home },
-      { label: "Build your website", href: ROUTES.build },
-      { label: "The site your answers describe", href: ROUTES.site },
-    ],
+    label: "Contact us",
+    href: ROUTES.contact,
+    children: [{ label: "Book a meeting", href: ROUTES.book }],
   },
-  {
-    title: "About us",
-    items: [
-      { label: "About us", href: ROUTES.about },
-      { label: "Our partners", href: ROUTES.partners },
-      { label: "Contact us", href: ROUTES.contact },
-      { label: "Book a meeting", href: ROUTES.book, level: 2 },
-    ],
-  },
-  {
-    title: "Reading",
-    items: [
-      { label: "FAQs", href: ROUTES.faq },
-      { label: "Blogs", href: ROUTES.blog },
-    ],
-  },
-  {
-    title: "Legal",
-    items: [
-      { label: "Privacy", href: ROUTES.privacy },
-      { label: "Cookies", href: ROUTES.cookies },
-      { label: "Terms of use", href: ROUTES.terms },
-      { label: "Terms of business", href: ROUTES.termsOfBusiness },
-      { label: "Accessibility", href: ROUTES.accessibility },
-      { label: "Complaints", href: ROUTES.complaints },
-      { label: "Sub-processors", href: ROUTES.subProcessors },
-    ],
-  },
+  { label: "FAQs", href: ROUTES.faq },
+  { label: "Blogs", href: ROUTES.blog },
+  { label: "Privacy", href: ROUTES.privacy },
+  { label: "Cookies", href: ROUTES.cookies },
+  { label: "Terms of use", href: ROUTES.terms },
+  { label: "Terms of business", href: ROUTES.termsOfBusiness },
+  { label: "Accessibility", href: ROUTES.accessibility },
+  { label: "Complaints", href: ROUTES.complaints },
+  { label: "Sub-processors", href: ROUTES.subProcessors },
 ];
 
 export const FOOTER_COLUMNS: readonly {
@@ -188,16 +180,13 @@ export const LEGAL = {
  *
  * The rail is the site's table of contents, so its order is the order the pages
  * are meant to be read in. Flattening it gives every page a previous and a next
- * for free, tied to the one list rather than to a second one.
+ * for free, tied to the one list rather than to a second one, and a sub page
+ * follows its parent because that is where it sits in the rail.
  */
-export const FLAT_PAGES: readonly (NavLink & { group: string })[] =
-  RAIL_GROUPS.flatMap((group) =>
-    group.items.map((item) => ({
-      label: item.label,
-      href: item.href,
-      group: group.title,
-    })),
-  );
+export const FLAT_PAGES: readonly NavLink[] = RAIL_PAGES.flatMap((page) => [
+  { label: page.label, href: page.href },
+  ...(page.children ?? []),
+]);
 
 /** What comes before and after a page, for the pagination at its foot. */
 export function siblingPages(pathname: string) {

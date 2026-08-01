@@ -38,7 +38,10 @@ export function SearchView() {
     if (!words.length) return [];
 
     return FLAT_PAGES.filter((page) => {
-      const haystack = `${page.label} ${page.group}`.toLowerCase();
+      /* The path is searched as well as the label: "faq" should find "FAQs"
+         and "sub" should find sub-processors, and the path carries wording the
+         label does not. */
+      const haystack = `${page.label} ${page.href}`.toLowerCase();
       return words.every((word) => haystack.includes(word));
     });
   }, [query]);
@@ -94,7 +97,7 @@ export function SearchView() {
           <SimpleList
             rows={results.map((page) => ({
               label: page.label,
-              note: page.group,
+              note: page.href,
               href: page.href,
               tone: "active" as const,
             }))}
