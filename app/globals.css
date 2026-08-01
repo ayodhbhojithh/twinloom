@@ -70,6 +70,15 @@
      `max-w-measure` at every use. */
   --container-measure: 860px;
 
+  /* The second and last width on the site: what a working surface is allowed to
+     reach when it is not prose. The build tool needs three cards across and a
+     panel beside them, and none of that fits in the measure.
+
+     Two widths, not five. Every block on a page settles on one edge or the
+     other, so the page reads as aligned rather than as a stack of boxes that
+     each happened to pick a number. */
+  --container-wide: 1160px;
+
   /* The page's side gutter. The index is fixed to it and the copy reserves a lane
      measured from it, so the two are set from one number at every width. */
   --page-gutter: 20px;
