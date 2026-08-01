@@ -1,0 +1,1208 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Very Good Website Company &mdash; framework v4</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --field:#FFFFFF; --well:#FAFAFA; --hair:#F4F5F7; --border:#E5E7EB;
+  --label:#9CA3AF; --secondary:#6B7280; --body:#374151; --ink:#111827;
+  --done:#059669; --active:#2563EB; --planned:#DBDFE6; --idx:#B3B8C2;
+}
+html{background:var(--field)}
+body{font-family:'Archivo',-apple-system,Segoe UI,Helvetica,Arial,sans-serif;
+ color:var(--body);background:var(--field);font-size:16.5px;line-height:1.62;
+ -webkit-font-smoothing:antialiased}
+.wrap{display:flex;min-height:100vh;align-items:flex-start}
+
+/* ---- left rail ---- */
+.rail{width:250px;flex:none;position:sticky;top:0;height:100vh;overflow-y:auto;
+ background:var(--field);border-right:1px solid var(--border);padding:30px 0 40px}
+.rail h1{font-size:15px;font-weight:700;letter-spacing:-.012em;color:var(--ink);padding:0 24px 4px}
+.rail .sub{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+ letter-spacing:.1em;text-transform:uppercase;color:var(--secondary);padding:0 24px 22px}
+.rail .grp{display:flex;align-items:center;justify-content:space-between;gap:10px;
+ width:100%;background:none;border:0;cursor:pointer;text-align:left;
+ font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+ letter-spacing:.18em;text-transform:uppercase;color:var(--idx);padding:20px 24px 7px}
+.rail .grp:hover{color:var(--secondary)}
+.rail .grp:focus-visible{outline:2px solid var(--active);outline-offset:-2px}
+.rail .grp .gc{flex:none;position:relative;width:12px;height:12px}
+.rail .grp .gc:before{content:'';position:absolute;left:2px;top:3px;width:6px;height:6px;
+ border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;
+ transform:rotate(45deg);transform-origin:center}
+.rail .grp[aria-expanded="true"] .gc:before{transform:rotate(-135deg)}
+.rail .grp[aria-expanded="false"] + .gitems{display:none}
+.nav{display:block;width:100%;text-align:left;background:none;border:0;cursor:pointer;
+ font-family:inherit;font-size:15px;line-height:1.4;color:var(--body);
+ padding:7px 24px;border-left:2px solid transparent}
+.nav:hover{color:var(--ink)}
+.nav.on{color:var(--ink);font-weight:600;border-left-color:var(--ink)}
+.nav:focus-visible{outline:2px solid var(--active);outline-offset:2px}
+.nav.lvl2{padding-left:36px;font-size:14.5px}
+.railf{margin-top:26px;padding:18px 24px 0;border-top:1px solid var(--border)}
+.railf p{font-size:12.5px;line-height:1.5;color:var(--label);margin:0}
+
+/* ---- page ---- */
+.page{flex:1;min-width:0;padding:0 0 120px}
+.screen{display:none}
+.screen.on{display:block}
+.inner{max-width:1160px;padding:56px 56px 0}
+p,ul,ol,.measure{max-width:720px}
+.tag{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.18em;
+ text-transform:uppercase;color:var(--idx);margin-bottom:16px}
+h2{font-size:34px;line-height:1.14;font-weight:800;letter-spacing:-.025em;color:var(--ink);
+ margin-bottom:16px;max-width:900px}
+h3{font-size:21px;line-height:1.25;font-weight:700;letter-spacing:-.012em;color:var(--ink);margin:0 0 10px}
+h4{font-size:16.5px;font-weight:700;color:var(--ink);margin:0 0 6px}
+p{margin-bottom:16px}
+p.lead{font-size:20px;line-height:1.55;color:var(--ink);margin-bottom:26px;max-width:760px}
+.sec{border-top:1px solid var(--border);padding-top:32px;margin-top:40px}
+.sech{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.sech h3{margin-bottom:0}
+.sech .sn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+ letter-spacing:.08em;text-transform:uppercase;color:var(--idx)}
+.sec.first{border-top:0;margin-top:28px;padding-top:0}
+ul,ol{margin:0 0 16px 0;padding-left:20px}
+li{margin-bottom:8px}
+li strong,li b{color:var(--ink)}
+a{color:var(--ink)}
+.dim{color:var(--secondary)}
+.act{display:inline-block;border:1px solid var(--ink);border-radius:8px;padding:13px 22px;
+ font-size:15.5px;font-weight:600;margin:0 10px 10px 0;background:var(--field);color:var(--ink);
+ cursor:pointer;font-family:inherit}
+.act.pri{background:var(--ink);color:#fff}
+.act.quiet{border-color:var(--border);color:var(--secondary);font-weight:500}
+.act:focus-visible{outline:2px solid var(--active);outline-offset:2px}
+.act[disabled]{border-color:var(--planned);background:var(--field);color:var(--label);
+ cursor:default}
+.build{background:var(--field);border:1px dashed #D1D5DB;border-radius:10px;padding:18px 22px;
+ margin:26px 0;font-size:15px;color:var(--secondary);max-width:840px}
+.build .k{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.18em;
+ text-transform:uppercase;color:var(--label);margin-bottom:9px}
+.build ul{margin-bottom:0}
+.build li{color:var(--secondary)}
+.note{background:var(--well);border:1px solid #F0F1F4;border-radius:10px;
+ padding:18px 22px;margin:22px 0;font-size:15.5px;color:var(--body);max-width:840px}
+.note b{color:var(--ink)}
+.note p:last-child{margin-bottom:0}
+
+/* ---- tabs ---- */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin:26px 0 0}
+.tb{background:none;border:0;border-bottom:2px solid transparent;cursor:pointer;
+ font-family:inherit;font-size:15.5px;font-weight:600;color:var(--secondary);
+ padding:12px 20px 13px;margin-bottom:-1px}
+.tb:first-child{padding-left:0}
+.tb:hover{color:var(--ink)}
+.tb.on{color:var(--ink);border-bottom-color:var(--ink)}
+.tb:focus-visible{outline:2px solid var(--active);outline-offset:2px}
+.tb .n{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+ letter-spacing:.1em;color:var(--idx);margin-right:9px}
+.tb.on .n{color:var(--secondary)}
+.pane{display:none;padding-top:34px}
+.pane.on{display:block}
+
+/* ---- the areas: the cards ---- */
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:920px}
+.cd{display:flex;flex-direction:column;width:100%;text-align:left;background:var(--field);cursor:pointer;
+ border:1px solid var(--border);border-radius:10px;padding:20px 22px 17px;font-family:inherit}
+.cd:hover{border-color:#D5D8DE}
+.cd:focus-visible{outline:2px solid var(--active);outline-offset:2px}
+.cd[aria-disabled="true"]{cursor:default;background:var(--well)}
+.cd[aria-disabled="true"]:hover{border-color:var(--border)}
+.cd h4{font-size:17px;margin-bottom:5px}
+.cd p{font-size:14.5px;line-height:1.45;color:var(--secondary);margin:0 0 14px;max-width:none;flex:1}
+.cd .cf{display:flex;align-items:center;justify-content:space-between;gap:12px;
+ padding-top:13px;border-top:1px solid var(--hair)}
+.cst{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+ letter-spacing:.1em;text-transform:uppercase;color:var(--label)}
+.cst.ok{color:var(--done)}
+.cst.on{color:var(--active)}
+.cgo{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+ letter-spacing:.1em;text-transform:uppercase;color:var(--secondary)}
+
+/* ---- layers ---- */
+.layer{display:none}
+.layer.on{display:block}
+.crumb{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:22px}
+.crumb button{background:none;border:0;padding:0;cursor:pointer;font-family:inherit;
+ font-size:14px;color:var(--secondary);text-decoration:underline;text-underline-offset:3px}
+.crumb button:hover{color:var(--ink)}
+.crumb button:focus-visible{outline:2px solid var(--active);outline-offset:2px}
+.crumb .sep{color:var(--idx);font-size:13px}
+.crumb .here{font-size:14px;color:var(--ink);font-weight:600}
+.lvl{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.18em;
+ text-transform:uppercase;color:var(--idx);margin-left:auto}
+
+/* ---- the group tiles (from the visitor page) ---- */
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:1000px}
+.t{background:var(--field);border:1px solid var(--border);border-radius:10px;
+ display:flex;flex-direction:column;overflow:hidden}
+.t:hover{border-color:#D5D8DE}
+.t[data-on="true"]{border-color:var(--ink);background:var(--well)}
+.tt{flex:1;width:100%;text-align:left;background:none;border:0;margin:0;
+ padding:17px 17px 14px;cursor:pointer;font-family:inherit;display:flex;flex-direction:column}
+.tt:focus-visible{outline:2px solid var(--active);outline-offset:-2px}
+.t .ic{width:38px;height:38px;border-radius:999px;border:1px solid var(--border);
+ display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.t[data-on="true"] .ic{background:var(--ink);border-color:var(--ink)}
+.t .ic svg{width:19px;height:19px;fill:none;stroke:var(--secondary);stroke-width:1.6;
+ stroke-linecap:round;stroke-linejoin:round}
+.t[data-on="true"] .ic svg{stroke:#fff}
+.t .tn{font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.28;margin-bottom:6px}
+.t .tb2{font-size:13.5px;line-height:1.45;color:var(--secondary);flex:1;margin-bottom:12px}
+.t .sh{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;
+ letter-spacing:.1em;text-transform:uppercase;color:var(--idx)}
+.tf{display:flex;align-items:stretch;border-top:1px solid var(--hair)}
+.tf button{flex:1;background:none;border:0;margin:0;padding:11px 14px;cursor:pointer;
+ font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+ letter-spacing:.1em;text-transform:uppercase;color:var(--secondary);text-align:left}
+.tf button:focus-visible{outline:2px solid var(--active);outline-offset:-2px}
+.tf button:hover{color:var(--ink)}
+.opb{flex:0 0 auto !important;border-left:1px solid var(--hair) !important;
+ text-align:right !important;color:var(--label) !important}
+.opb:hover{color:var(--ink) !important}
+.t[data-on="true"] .pk{color:var(--done)}
+.t[data-on="true"] .pk:before{content:'\2022 ';}
+
+/* ---- the always-included tick list ---- */
+.inc{border:1px solid var(--border);border-radius:10px;overflow:hidden;max-width:720px}
+.in1{display:flex;align-items:center;gap:12px;padding:11px 17px;border-top:1px solid var(--hair)}
+.in1:first-child{border-top:0}
+.in1 svg{width:17px;height:17px;flex:none;fill:none;stroke:var(--done);stroke-width:2.3;
+ stroke-linecap:round;stroke-linejoin:round}
+.in1 span{font-size:14.5px;font-weight:600;color:var(--ink);line-height:1.35}
+
+/* ---- the running strip ---- */
+.strip{border:1px solid var(--border);border-radius:10px;max-width:920px;overflow:hidden}
+.striph{display:flex;align-items:baseline;justify-content:space-between;gap:14px;
+ padding:15px 20px 13px;border-bottom:1px solid var(--hair)}
+.striph b{font-size:16px;color:var(--ink)}
+.striph .k{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+ letter-spacing:.1em;text-transform:uppercase;color:var(--idx)}
+.tally{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.ty{padding:17px 20px;border-left:1px solid var(--hair)}
+.ty:first-child{border-left:0}
+.ty b{display:block;font-size:26px;font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.1}
+.ty span{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;
+ letter-spacing:.1em;text-transform:uppercase;color:var(--secondary);margin-top:5px}
+.stripf{border-top:1px solid var(--hair);padding:13px 20px;background:var(--well)}
+.stripf p{margin:0;font-size:14px;color:var(--secondary)}
+
+/* ---- the sitemap, grouped by what put the page there ---- */
+.map{border:1px solid var(--border);border-radius:10px;overflow:hidden;max-width:760px}
+.mz{border-top:1px solid var(--hair);padding:15px 18px 13px}
+.mz:first-child{border-top:0}
+.mzh{display:flex;align-items:baseline;gap:10px;margin-bottom:2px}
+.mzh h4{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+ letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+.mzh .c{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--idx)}
+.mzn{font-size:13px;line-height:1.45;color:var(--secondary);margin-bottom:9px}
+.pg{display:flex;align-items:baseline;gap:10px;padding:3px 0}
+.pg .ix{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--idx);
+ min-width:18px;flex:none}
+.pg .nm{font-size:14px;font-weight:500;color:var(--ink)}
+.pg .fo{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:600;
+ letter-spacing:.07em;text-transform:uppercase;color:var(--secondary)}
+.pg .fo.tk{color:var(--label)}
+
+/* ---- build it v2: the ladder ---- */
+.lad{display:grid;grid-template-columns:minmax(0,1fr) 330px;border-top:1px solid var(--border);
+ max-width:1160px;margin-top:22px}
+.ladl{min-width:0;border-right:1px solid var(--border)}
+.ladp{padding:24px 0 24px 28px;position:sticky;top:22px;align-self:start;min-width:0}
+.ar{border-bottom:1px solid var(--hair)}
+.ar:last-child{border-bottom:0}
+.arh{display:flex;align-items:center;gap:13px;width:100%;background:none;border:0;cursor:pointer;
+ font-family:inherit;text-align:left;padding:15px 18px 15px 0}
+.arh:focus-visible{outline:2px solid var(--active);outline-offset:-2px}
+.ax{flex:none;width:23px;height:23px;border:1px solid var(--border);border-radius:6px;
+ display:flex;align-items:center;justify-content:center;color:var(--secondary);
+ font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;line-height:1}
+.arh:hover .ax{border-color:#D5D8DE;color:var(--ink)}
+.an{flex:1;min-width:0}
+.an b{display:block;font-size:16px;font-weight:700;color:var(--ink);line-height:1.3}
+.an em{display:block;font-style:normal;font-size:13.5px;color:var(--secondary);
+ line-height:1.4;margin-top:1px}
+.abar{flex:none;display:flex;gap:2px;width:104px}
+.abar i{flex:1;height:9px;border-radius:2px;background:var(--planned)}
+.abar i.f{background:var(--ink)}
+.acount{flex:none;width:58px;text-align:right;font-family:'JetBrains Mono',monospace;
+ font-size:11.5px;font-weight:600;color:var(--secondary)}
+.astate{flex:none;width:86px;text-align:right;font-family:'JetBrains Mono',monospace;
+ font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--idx)}
+.arb{display:none;padding:0 0 18px 39px}
+.ar[data-open="true"] .arb{display:block}
+.itg{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.14em;
+ text-transform:uppercase;color:var(--label);padding:2px 0 10px}
+/* the cards inside an open area. Four shapes, one per kind of answer. */
+.cg{display:grid;gap:12px}
+.cg.sh-tile{grid-template-columns:repeat(3,minmax(0,1fr))}
+.cg.sh-wide{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cg.sh-sq{grid-template-columns:repeat(4,minmax(0,1fr))}
+.cg.sh-full{grid-template-columns:minmax(0,1fr)}
+.c2{background:var(--field);border:1px solid var(--border);border-radius:10px;
+ display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.c2:hover{border-color:#D5D8DE}
+.c2[data-on="true"]{border-color:var(--ink);background:var(--well)}
+.c2 .it{flex:1;width:100%;min-width:0;display:flex;flex-direction:column;background:none;border:0;
+ margin:0;cursor:pointer;font-family:inherit;text-align:left;padding:15px 15px 13px}
+.c2 .it:focus-visible{outline:2px solid var(--active);outline-offset:-2px}
+.c2 .tn{font-size:15px;font-weight:700;color:var(--ink);line-height:1.28;margin-bottom:5px}
+.c2 .tb2{font-size:13px;line-height:1.45;color:var(--secondary);flex:1}
+.c2 .sh{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;
+ letter-spacing:.1em;text-transform:uppercase;color:var(--idx);margin-top:11px}
+.c2 .ic{width:34px;height:34px;border-radius:999px;border:1px solid var(--border);
+ display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.c2[data-on="true"] .ic{background:var(--ink);border-color:var(--ink)}
+.c2 .ic svg{width:17px;height:17px;fill:none;stroke:var(--secondary);stroke-width:1.6;
+ stroke-linecap:round;stroke-linejoin:round}
+.c2[data-on="true"] .ic svg{stroke:#fff}
+.c2 .ix{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+ letter-spacing:.1em;color:var(--idx);margin-bottom:9px}
+.c2 .rd{width:18px;height:18px;border-radius:999px;border:1.5px solid var(--planned);
+ display:flex;align-items:center;justify-content:center;margin-bottom:11px}
+.c2[data-on="true"] .rd{background:var(--ink);border-color:var(--ink)}
+.c2 .rd svg{width:11px;height:11px;fill:none;stroke:#fff;stroke-width:3;
+ stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.c2[data-on="true"] .rd svg{opacity:1}
+.tf2{display:flex;align-items:stretch;border-top:1px solid var(--hair)}
+.tf2 button{flex:1;background:none;border:0;margin:0;padding:10px 14px;cursor:pointer;
+ font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.1em;
+ text-transform:uppercase;color:var(--secondary);text-align:left}
+.tf2 button:hover{color:var(--ink)}
+.tf2 button:focus-visible{outline:2px solid var(--active);outline-offset:-2px}
+.c2[data-on="true"] .pk{color:var(--done)}
+.cg.sh-sq .it{padding:13px 13px 11px}
+.cg.sh-sq .tn{font-size:14px}
+.cg.sh-sq .tb2{font-size:12.5px}
+.cg.sh-sq .tf2 button{padding:9px 11px;font-size:10px;letter-spacing:.08em}
+.cg.sh-full .c2{flex-direction:row}
+.cg.sh-full .it{flex-direction:row;align-items:baseline;gap:15px;padding:15px 18px}
+.cg.sh-full .ix{flex:none;margin-bottom:0}
+.cg.sh-full .tn{flex:none;margin-bottom:0}
+.cg.sh-full .tb2{flex:1}
+.cg.sh-full .tf2{flex-direction:column;flex:none;width:112px;border-top:0;
+ border-left:1px solid var(--hair)}
+.cg.sh-full .tf2 button{display:flex;align-items:center}
+.op2{flex:0 0 auto !important;border-left:1px solid var(--hair) !important;
+ text-align:right !important;color:var(--label) !important}
+.op2:hover{color:var(--ink) !important}
+
+/* ---- layer two, opened inside an area on the ladder ---- */
+.dt2{display:none}
+.ar[data-det] .dt2{display:block}
+.ar[data-det] .cg,.ar[data-det] .itg{display:none}
+.dt2 .crumb{margin-bottom:16px}
+.dt2 p.lead{font-size:16.5px;line-height:1.5;color:var(--secondary);margin-bottom:0;
+ max-width:640px}
+.dt2 .sec{padding-top:17px;margin-top:19px;border-top-color:var(--hair)}
+.dt2 .sec.first{padding-top:17px;margin-top:19px;border-top:1px solid var(--hair)}
+.dt2 h4{font-size:15px;margin-bottom:8px}
+.dt2 li,.dt2 .sec p{font-size:14.5px;color:var(--body)}
+.dt2 .build{margin-top:19px;padding:15px 19px}
+.dt2 .dact{display:flex;gap:10px;flex-wrap:wrap;margin:19px 0 0}
+.dt2 .act{font-size:14.5px;padding:11px 18px}
+/* ---- v3. two areas, and the bands the actions arrive in ---- */
+.abar.prop{display:block;height:9px;border-radius:2px;background:var(--planned);
+ overflow:hidden}
+.abar.prop i{display:block;height:9px;border-radius:2px;background:var(--ink);width:0}
+.bnd{margin-top:23px}
+.bnd:first-child{margin-top:0}
+.bndh{display:flex;align-items:baseline;gap:10px;margin-bottom:3px}
+.bndh h4{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+ letter-spacing:.14em;text-transform:uppercase;color:var(--label);margin:0}
+.bndh .c{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--idx)}
+.bndn{font-size:13px;line-height:1.45;color:var(--secondary);margin-bottom:11px;max-width:640px}
+/* ---- v3. what a visitor can do, and what each tick puts on the site ---- */
+.ar3 .arb{padding-right:26px}
+.ctb{width:100%;border-collapse:collapse;margin-top:10px}
+.ctb th{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+ letter-spacing:.14em;text-transform:uppercase;color:var(--label);text-align:left;
+ padding:0 12px 8px 0;border-bottom:1px solid var(--border)}
+.ctb th.md{width:31%}
+.ctb th.rt{width:88px;text-align:right;padding-right:0}
+.ctb td{border-bottom:1px solid var(--hair);padding:0;vertical-align:middle}
+.ctb .bh td{padding:21px 0 7px}
+.ctb tr.bh:first-child td{padding-top:12px}
+.ctb .bh h4{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+ letter-spacing:.14em;text-transform:uppercase;color:var(--label);margin:0 0 2px}
+.ctb .bh h4 i{font-style:normal;font-size:10px;font-weight:400;color:var(--idx);
+ margin-left:9px}
+.ctb .bh .bn{font-size:12.5px;line-height:1.45;color:var(--secondary)}
+.ctb .rw td{cursor:pointer}
+.ctb .rw:hover td{background:var(--well)}
+.ctb .c1{display:flex;align-items:center;gap:14px;padding:11px 12px 11px 2px}
+.ctb .c1 .tx{display:block;min-width:0}
+.ctb .ci{flex:none;width:24px;height:24px;color:var(--secondary)}
+.ctb .ci svg{width:24px;height:24px;display:block;fill:none;stroke:currentColor;
+ stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ctb .tn{display:block;font-size:15px;font-weight:600;color:var(--ink);line-height:1.3}
+.ctb .tb2{display:block;font-size:12.5px;line-height:1.4;color:var(--secondary)}
+.ctb .pgc{font-size:13.5px;line-height:1.35;color:var(--secondary);padding:11px 12px 11px 0}
+.ctb .pgs{display:none;margin-top:3px;font-family:'JetBrains Mono',monospace;
+ font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+ color:var(--label)}
+.ctb .pgc em{font-style:normal;color:var(--label)}
+.ctb .ctl{text-align:right;padding:0}
+.ctb .ctl button{background:none;border:0;margin:0;padding:11px 0 11px 12px;cursor:pointer;
+ font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.14em;
+ text-transform:uppercase;color:var(--label);white-space:nowrap}
+.ctb .ctl button:hover{color:var(--ink)}
+.ctb .ctl button:focus-visible{outline:2px solid var(--active);outline-offset:-2px}
+.ctb .rw[data-on="true"] .pk{color:var(--done)}
+.ctb .rw[data-on="true"] .ci{color:var(--ink)}
+.ctb .rw[data-on="true"] .tn{font-weight:700}
+.ctb .rw[data-on="true"] .pgc{color:var(--ink)}
+.ctb .rw[data-on="true"] .pgs{color:var(--secondary)}
+
+/* rows that are simply there: a green tick where the control would be, and no
+   way to switch them off, because there is nothing to switch */
+.ctb .tkm{display:inline-flex;align-items:center;justify-content:flex-end;
+ padding:11px 0 11px 12px;color:var(--done)}
+.ctb .tkm svg{width:17px;height:17px;display:block;fill:none;stroke:currentColor;
+ stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ctb .rw.icl td{cursor:default}
+.ctb .rw.icl:hover td{background:transparent}
+.ctb .rw.icl .ci{color:var(--ink)}
+.ctb .rw.icl .tn{font-weight:700}
+/* rows the client wrote: on the list from the moment they are added */
+.ctb .rw.own .ci{color:var(--ink)}
+.ctb .rw.own .tn{font-weight:700}
+.ctb .rw.own td{cursor:default}
+.ctb .rw.own:hover td{background:var(--well)}
+.ctb .rmv{background:none;border:0;margin:0;padding:11px 0 11px 12px;cursor:pointer;
+ font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+ letter-spacing:.14em;text-transform:uppercase;color:var(--label);white-space:nowrap}
+.ctb .rmv:hover{color:var(--ink)}
+.ctb .rmv:focus-visible{outline:2px solid var(--active);outline-offset:-2px}
+/* the row where they add one of their own */
+.addf{display:flex;gap:10px;align-items:stretch;margin-top:11px}
+.addf input{flex:1 1 auto;min-width:0;
+ font:400 14.5px 'Archivo',-apple-system,Segoe UI,Helvetica,Arial,sans-serif;
+ color:var(--ink);background:var(--field);border:1px solid var(--border);
+ border-radius:8px;padding:11px 13px}
+.addf input::placeholder{color:var(--label)}
+.addf input:focus{outline:2px solid var(--active);outline-offset:-1px;
+ border-color:var(--active)}
+.addf button{flex:none;border:1px solid var(--border);background:var(--well);
+ border-radius:8px;padding:0 20px;cursor:pointer;
+ font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+ letter-spacing:.14em;text-transform:uppercase;color:var(--secondary)}
+.addf button:hover{color:var(--ink);border-color:var(--label)}
+.addf button:focus-visible{outline:2px solid var(--active);outline-offset:1px}
+.miss{margin-top:25px;border-top:1px solid var(--hair);padding-top:17px;max-width:640px}
+.miss label{display:block;font-size:14px;color:var(--body);margin-bottom:9px}
+.miss input{width:100%;font:400 14.5px 'Archivo',-apple-system,Segoe UI,Helvetica,Arial,sans-serif;
+ color:var(--ink);background:var(--field);border:1px solid var(--border);border-radius:8px;
+ padding:11px 14px}
+.miss input::placeholder{color:var(--label)}
+.miss input:focus{outline:2px solid var(--active);outline-offset:-1px;border-color:var(--active)}
+.ladp .p3t{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;
+ letter-spacing:.08em;text-transform:uppercase;color:var(--label);margin-top:15px}
+.ladp .p3n{font-size:13px;line-height:1.5;color:var(--secondary);margin-top:13px}
+.ladp .kk{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+ letter-spacing:.14em;text-transform:uppercase;color:var(--label);margin-bottom:10px}
+.ladp .pvn{display:flex;align-items:baseline;gap:9px;margin-bottom:15px}
+.ladp .pvn b{font-family:'JetBrains Mono',monospace;font-size:29px;font-weight:700;
+ color:var(--ink);line-height:1}
+.ladp .pvn span{font-size:13.5px;color:var(--secondary)}
+.ladp .act{margin-top:18px;font-size:14px;padding:10px 16px}
+.map.sm{max-width:none}
+.map.sm .mz{padding:13px 15px 11px}
+.map.sm .mzn{font-size:12.5px;margin-bottom:8px}
+.map.sm .pg .nm{font-size:13.5px;line-height:1.35}
+
+/* ---- the framework marker: what is real and what is not ---- */
+.fw{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border);
+ border-radius:999px;padding:5px 12px 5px 10px;background:var(--well);
+ font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+ letter-spacing:.1em;text-transform:uppercase;color:var(--secondary);margin-bottom:18px}
+.fw i{width:6px;height:6px;border-radius:999px;background:var(--planned);flex:none}
+.fw.real i{background:var(--done)}
+
+@media (max-width:1080px){.cards{grid-template-columns:1fr}.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .lad{grid-template-columns:minmax(0,1fr)}.ladl{border-right:0}
+ .cg.sh-tile,.cg.sh-sq{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .cg.sh-wide{grid-template-columns:minmax(0,1fr)}
+ .cg.sh-full .c2{flex-direction:column}
+ .cg.sh-full .it{flex-direction:column;align-items:flex-start;gap:5px}
+ .cg.sh-full .tf2{flex-direction:row;width:auto;border-left:0;border-top:1px solid var(--hair)}
+ .ladp{position:static;padding:22px 0 0;border-top:1px solid var(--border);margin-top:4px}
+ .abar,.astate{display:none}}
+@media (max-width:1250px){.ctb th.md,.ctb .pgc{display:none}
+ .ctb .pgs{display:block}}
+@media (max-width:760px){
+ .tally{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .ty:nth-child(3){border-left:0}.ty:nth-child(n+3){border-top:1px solid var(--hair)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="rail" aria-label="Screens">
+<h1>The Very Good Website Company</h1>
+<div class="sub">Framework &middot; v4</div>
+<button class="nav" type="button" data-s="p-home">Home</button>
+<button class="nav" type="button" data-s="p-build">Build your website</button>
+<button class="nav" type="button" data-s="p-site">The site your answers describe</button>
+<button class="nav" type="button" data-s="p-about">About us</button>
+<button class="nav" type="button" data-s="p-partners">Our partners</button>
+<button class="nav" type="button" data-s="p-contact">Contact us</button>
+<button class="nav" type="button" data-s="p-book">Book a meeting</button>
+<button class="nav" type="button" data-s="p-faq">FAQs</button>
+<button class="nav" type="button" data-s="p-blog">Blogs</button>
+<button class="grp" type="button" aria-expanded="true">Legal<span class="gc"></span></button>
+<div class="gitems">
+<button class="nav lvl2" type="button" data-s="p-privacy">Privacy</button>
+<button class="nav lvl2" type="button" data-s="p-cookies">Cookies</button>
+<button class="nav lvl2" type="button" data-s="p-terms">Terms of use</button>
+<button class="nav lvl2" type="button" data-s="p-tob">Terms of business</button>
+<button class="nav lvl2" type="button" data-s="p-a11y">Accessibility</button>
+<button class="nav lvl2" type="button" data-s="p-complain">Complaints</button>
+<button class="nav lvl2" type="button" data-s="p-subproc">Sub-processors</button>
+</div>
+<div class="railf"><p>A framework, not a website. Every screen here is a place for something, and only the visitor page has anything in it yet.</p></div>
+</nav>
+<main class="page">
+
+<section class="screen" id="p-home"><div class="inner">
+  <div class="tag">Home</div>
+  <h2>Tell us who your website is for. We write the rest down for you.</h2>
+  <p class="lead">You answer one question. We send back a written scope in your own
+  words, within two working days. It costs nothing and commits you to nothing.</p>
+  <p><button class="act pri" data-go="p-build">Build your website</button>
+     <button class="act" data-go="p-book">Book a meeting</button></p>
+  <div class="fw"><i></i>Nothing in here yet</div>
+  <div class="build"><div class="k">What belongs on this screen</div>
+  <ul>
+    <li>The one line that says what you do, in your words.</li>
+    <li>The single way in, which is the build page.</li>
+    <li>Enough proof that somebody feels safe starting.</li>
+    <li>A short answer to "what will this cost me", now that pricing is off the nav.</li>
+  </ul></div>
+</div></section>
+<section class="screen" id="p-build"><div class="inner"><div class="tag">Build your website</div><h2>Build your website</h2><p class="lead">Read what this does, work through the areas, or just send us what you have.</p><div class="tabs" role="tablist"><button class="tb on" type="button" data-t="t-what"><span class="n">01</span>What this does</button><button class="tb" type="button" data-t="t-build"><span class="n">02</span>Build it</button><button class="tb" type="button" data-t="t-build2"><span class="n">03</span>Build it v2</button><button class="tb" type="button" data-t="t-build3"><span class="n">04</span>Build it v3</button><button class="tb" type="button" data-t="t-free"><span class="n">05</span>Freeflow</button></div>
+<div class="pane on" id="t-what">
+  <h3>What this does</h3>
+  <p class="lead">Answer as much or as little as you like. One question is enough
+  to send.</p>
+  <p>Every answer changes the site we describe back to you. Nothing here is a quote,
+  and nothing is fixed until you have read the scope and agreed it.</p>
+
+  <div class="sec"><h3>Included in every site</h3>
+  <p class="dim">Nothing to tick. These are in every site we build.</p>
+  <div class="inc"><div class="in1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg><span>Read who you are and what you do</span></div><div class="in1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg><span>See what you sell, in simple terms</span></div><div class="in1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg><span>Call you</span></div><div class="in1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg><span>Email you</span></div><div class="in1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg><span>Send an enquiry through a form</span></div><div class="in1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg><span>Get to your nearest location</span></div></div>
+  </div>
+
+  <div class="sec"><h3>What you have said so far</h3>
+  <div class="strip" id="strip-what"><div class="striph"><b>The site your answers describe</b><span class="k">Live</span></div><div class="tally"><div class="ty"><b data-f="groups">0</b><span>groups of people</span></div><div class="ty"><b data-f="things">0</b><span>things to do</span></div><div class="ty"><b data-f="pages">4</b><span>pages, as it stands</span></div><div class="ty"><b data-f="needs">6</b><span>things we need from you</span></div></div><div class="stripf"><p data-f="note">Six things are in every site we build. Everything after that is yours to add.</p></div></div>
+  <p style="margin-top:16px"><button class="act pri" data-t="t-build">Start with the first
+  area</button> <button class="act quiet" data-go="p-site">See the full site
+  description</button></p>
+  </div>
+</div>
+<div class="pane" id="t-build">
+  <div class="layer on" id="areas">
+    <h3>Build it</h3>
+    <p>Seven areas. Open any one and add what you know. You can leave the rest.</p>
+    <div class="cards" id="cards">
+<button class="cd" type="button" data-c="visitors"><h4>Your visitors and what they can do</h4><p>Who the site is for, and what each of them needs to be able to do.</p><span class="cf"><span class="cst ok" data-st="visitors">Nothing added yet</span><span class="cgo">Open &rarr;</span></span></button>
+<button class="cd" type="button" data-c="offer" aria-disabled="true"><h4>What you sell, and how</h4><p>What you offer, in your words, and how somebody gets it.</p><span class="cf"><span class="cst" data-st="offer">Not built yet</span><span class="cgo">&nbsp;</span></span></button>
+<button class="cd" type="button" data-c="have" aria-disabled="true"><h4>What you already have</h4><p>Words, pictures, a logo, a site that exists. What can be reused.</p><span class="cf"><span class="cst" data-st="have">Not built yet</span><span class="cgo">&nbsp;</span></span></button>
+<button class="cd" type="button" data-c="found" aria-disabled="true"><h4>How people find you</h4><p>Search, social, word of mouth, a van with your name on it.</p><span class="cf"><span class="cst" data-st="found">Not built yet</span><span class="cgo">&nbsp;</span></span></button>
+<button class="cd" type="button" data-c="after" aria-disabled="true"><h4>What happens after it is live</h4><p>Who changes it, how often, and what you want to keep an eye on.</p><span class="cf"><span class="cst" data-st="after">Not built yet</span><span class="cgo">&nbsp;</span></span></button>
+<button class="cd" type="button" data-c="work" aria-disabled="true"><h4>How you want to work with us</h4><p>When you need it, how you like to be kept up to date.</p><span class="cf"><span class="cst" data-st="work">Not built yet</span><span class="cgo">&nbsp;</span></span></button>
+<button class="cd" type="button" data-c="else" aria-disabled="true"><h4>Anything else</h4><p>The thing that does not fit anywhere above. There is always one.</p><span class="cf"><span class="cst" data-st="else">Not built yet</span><span class="cgo">&nbsp;</span></span></button>
+</div>
+    <div class="build" style="margin-top:30px"><div class="k">Framework note</div>
+    <p style="margin:0">An area is not a layer. The layers sit under it: open an area and
+    layer one is the first thing you are asked. Area one is built. The other six are named
+    so the shape can be argued with, and every one of those names is yours to change.</p></div>
+  </div>
+
+  <div class="layer" id="l1">
+    <div class="crumb">
+      <button type="button" data-back="areas">Build it</button>
+      <span class="sep">/</span>
+      <span class="here">Your visitors and what they can do</span>
+      <span class="lvl">Layer 1</span>
+    </div>
+    <h3>Who is this website for?</h3>
+    <p>Pick any that fit. Each group gets its own way in, so this changes the size of
+    the site more than anything else you can tell us.</p>
+    <div class="tiles" id="tiles">
+<div class="t" data-k="consumer" data-on="false"><button class="tt" type="button" data-k="consumer" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7.6" r="3.2"/><path d="M5.5 20.5a6.5 6.5 0 0 1 13 0"/></svg></span><span class="tn">People buying for themselves</span><span class="tb2">Members of the public, spending their own money.</span><span class="sh">For customers</span></button><div class="tf"><button class="pkb" type="button" data-k="consumer" aria-pressed="false"><span class="pk">Pick</span></button><button class="opb" type="button" data-open="consumer">Detail</button></div></div>
+<div class="t" data-k="b2b" data-on="false"><button class="tt" type="button" data-k="b2b" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="8.5" width="7.5" height="12"/><rect x="13" y="4.5" width="7.5" height="16"/><path d="M6 12h2.5M6 15.5h2.5M15.5 8h2.5M15.5 11.5h2.5M15.5 15h2.5"/></svg></span><span class="tn">Other businesses buying from you</span><span class="tb2">Buying on behalf of an organisation, often with someone to answer to.</span><span class="sh">For business buyers</span></button><div class="tf"><button class="pkb" type="button" data-k="b2b" aria-pressed="false"><span class="pk">Pick</span></button><button class="opb" type="button" data-open="b2b">Detail</button></div></div>
+<div class="t" data-k="existing" data-on="false"><button class="tt" type="button" data-k="existing" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 3.5V8h-4.5"/><circle cx="12" cy="12" r="2.6"/></svg></span><span class="tn">People who already buy from you</span><span class="tb2">They have bought already. They come back for something else.</span><span class="sh">For existing customers</span></button><div class="tf"><button class="pkb" type="button" data-k="existing" aria-pressed="false"><span class="pk">Pick</span></button><button class="opb" type="button" data-open="existing">Detail</button></div></div>
+<div class="t" data-k="investor" data-on="false"><button class="tt" type="button" data-k="investor" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 20.5h17"/><path d="M6 16.5 10.5 11l3.5 3 4.5-6.5"/><path d="M18.5 7.5H15M18.5 7.5V11"/></svg></span><span class="tn">Investors, funders or a board</span><span class="tb2">People with money or oversight in the business.</span><span class="sh">For investors</span></button><div class="tf"><button class="pkb" type="button" data-k="investor" aria-pressed="false"><span class="pk">Pick</span></button><button class="opb" type="button" data-open="investor">Detail</button></div></div>
+<div class="t" data-k="partner" data-on="false"><button class="tt" type="button" data-k="partner" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="9" r="2.4"/><circle cx="18" cy="9" r="2.4"/><circle cx="12" cy="17.5" r="2.4"/><path d="M7.6 10.9 10.6 15.6M16.4 10.9 13.4 15.6M8.4 9h7.2"/></svg></span><span class="tn">Franchisees, agents or resellers</span><span class="tb2">They sell on your behalf, or trade under your name.</span><span class="sh">For franchisees and agents</span></button><div class="tf"><button class="pkb" type="button" data-k="partner" aria-pressed="false"><span class="pk">Pick</span></button><button class="opb" type="button" data-open="partner">Detail</button></div></div>
+<div class="t" data-k="staff" data-on="false"><button class="tt" type="button" data-k="staff" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="6.5" width="15" height="13" rx="2"/><path d="M9 3.5h6v3H9z"/><circle cx="12" cy="12" r="2.2"/><path d="M8.4 17.4a4 4 0 0 1 7.2 0"/></svg></span><span class="tn">Staff, and people who want to work for you</span><span class="tb2">The people who do the work, and the ones who would like to.</span><span class="sh">Working here</span></button><div class="tf"><button class="pkb" type="button" data-k="staff" aria-pressed="false"><span class="pk">Pick</span></button><button class="opb" type="button" data-open="staff">Detail</button></div></div>
+<div class="t" data-k="press" data-on="false"><button class="tt" type="button" data-k="press" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="14.5" height="13" rx="1.5"/><path d="M17.5 9.5H21v7a2 2 0 0 1-3.5 1.3"/><path d="M6 9h8M6 12.5h8M6 16h5"/></svg></span><span class="tn">Press, or the wider public</span><span class="tb2">Anyone writing about you, or checking you exist.</span><span class="sh">Press and media</span></button><div class="tf"><button class="pkb" type="button" data-k="press" aria-pressed="false"><span class="pk">Pick</span></button><button class="opb" type="button" data-open="press">Detail</button></div></div>
+<div class="t" data-k="regulator" data-on="false"><button class="tt" type="button" data-k="regulator" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 20 6v6.2c0 4.4-3.2 7.5-8 8.6-4.8-1.1-8-4.2-8-8.6V6Z"/><path d="m8.8 12 2.4 2.4 4-4.6"/></svg></span><span class="tn">Regulators, auditors or awarding bodies</span><span class="tb2">People who need to see that you do what you say you do.</span><span class="sh">Governance</span></button><div class="tf"><button class="pkb" type="button" data-k="regulator" aria-pressed="false"><span class="pk">Pick</span></button><button class="opb" type="button" data-open="regulator">Detail</button></div></div>
+</div>
+    <div class="sec">
+    <div class="strip" id="strip-l1"><div class="striph"><b>The site your answers describe</b><span class="k">Live</span></div><div class="tally"><div class="ty"><b data-f="groups">0</b><span>groups of people</span></div><div class="ty"><b data-f="things">0</b><span>things to do</span></div><div class="ty"><b data-f="pages">4</b><span>pages, as it stands</span></div><div class="ty"><b data-f="needs">6</b><span>things we need from you</span></div></div><div class="stripf"><p data-f="note">Six things are in every site we build. Everything after that is yours to add.</p></div></div>
+    <p style="margin-top:18px"><button class="act pri" id="sendnow" data-go="p-site"
+    disabled>That is enough &mdash; see what it describes</button></p>
+    <p class="dim" style="font-size:14.5px">Or open a group above to say more about it.
+    You do not have to.</p>
+    </div>
+  </div>
+
+  <div class="layer" id="l2">
+    <div class="crumb">
+      <button type="button" data-back="areas">Build it</button>
+      <span class="sep">/</span>
+      <button type="button" data-back="l1">Your visitors and what they can do</button>
+      <span class="sep">/</span>
+      <span class="here" id="l2name">A group</span>
+      <span class="lvl">Layer 2</span>
+    </div>
+    <div id="l2body"></div>
+  </div>
+</div>
+<div class="pane" id="t-build2">
+  <h3>Build it v2</h3>
+  <p class="lead">The same seven areas on one screen, with layer one open inside each.</p>
+  <p>Open an area and its first layer opens as cards. The card shape follows the kind of
+  answer the area asks for, so an area reads differently before you have read a word of it.
+  Where a card has more behind it, its detail opens in place, and the cards come back when
+  you close it. The site your answers describe is built alongside them, and it changes as
+  you pick.</p>
+  <div class="lad"><div class="ladl" id="ladl">
+<div class="ar" data-a="visitors" data-n="8" data-open="true">
+<button class="arh" type="button" data-atog="visitors" aria-expanded="true"><span class="ax">&minus;</span><span class="an"><b>Your visitors and what they can do</b><em>Who the site is for, and what each of them needs to be able to do.</em></span><span class="abar"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="acount">0 of 8</span><span class="astate">Built</span></button>
+<div class="arb"><div class="itg">Layer 1 &middot; pick any that fit</div>
+<div class="cg sh-tile">
+<div class="c2" data-a="visitors" data-i="consumer" data-on="false"><button class="it" type="button" data-a="visitors" data-i="consumer" data-on="false" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7.6" r="3.2"/><path d="M5.5 20.5a6.5 6.5 0 0 1 13 0"/></svg></span><span class="tn">People buying for themselves</span><span class="tb2">Members of the public, spending their own money.</span><span class="sh">For customers</span></button><div class="tf2"><button class="pk2" type="button" data-a="visitors" data-i="consumer"><span class="pk">Pick</span></button><button class="op2" type="button" data-da="visitors" data-di="consumer">Detail</button></div></div>
+<div class="c2" data-a="visitors" data-i="b2b" data-on="false"><button class="it" type="button" data-a="visitors" data-i="b2b" data-on="false" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="8.5" width="7.5" height="12"/><rect x="13" y="4.5" width="7.5" height="16"/><path d="M6 12h2.5M6 15.5h2.5M15.5 8h2.5M15.5 11.5h2.5M15.5 15h2.5"/></svg></span><span class="tn">Other businesses buying from you</span><span class="tb2">Buying on behalf of an organisation, often with someone to answer to.</span><span class="sh">For business buyers</span></button><div class="tf2"><button class="pk2" type="button" data-a="visitors" data-i="b2b"><span class="pk">Pick</span></button><button class="op2" type="button" data-da="visitors" data-di="b2b">Detail</button></div></div>
+<div class="c2" data-a="visitors" data-i="existing" data-on="false"><button class="it" type="button" data-a="visitors" data-i="existing" data-on="false" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 3.5V8h-4.5"/><circle cx="12" cy="12" r="2.6"/></svg></span><span class="tn">People who already buy from you</span><span class="tb2">They have bought already. They come back for something else.</span><span class="sh">For existing customers</span></button><div class="tf2"><button class="pk2" type="button" data-a="visitors" data-i="existing"><span class="pk">Pick</span></button><button class="op2" type="button" data-da="visitors" data-di="existing">Detail</button></div></div>
+<div class="c2" data-a="visitors" data-i="investor" data-on="false"><button class="it" type="button" data-a="visitors" data-i="investor" data-on="false" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 20.5h17"/><path d="M6 16.5 10.5 11l3.5 3 4.5-6.5"/><path d="M18.5 7.5H15M18.5 7.5V11"/></svg></span><span class="tn">Investors, funders or a board</span><span class="tb2">People with money or oversight in the business.</span><span class="sh">For investors</span></button><div class="tf2"><button class="pk2" type="button" data-a="visitors" data-i="investor"><span class="pk">Pick</span></button><button class="op2" type="button" data-da="visitors" data-di="investor">Detail</button></div></div>
+<div class="c2" data-a="visitors" data-i="partner" data-on="false"><button class="it" type="button" data-a="visitors" data-i="partner" data-on="false" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="9" r="2.4"/><circle cx="18" cy="9" r="2.4"/><circle cx="12" cy="17.5" r="2.4"/><path d="M7.6 10.9 10.6 15.6M16.4 10.9 13.4 15.6M8.4 9h7.2"/></svg></span><span class="tn">Franchisees, agents or resellers</span><span class="tb2">They sell on your behalf, or trade under your name.</span><span class="sh">For franchisees and agents</span></button><div class="tf2"><button class="pk2" type="button" data-a="visitors" data-i="partner"><span class="pk">Pick</span></button><button class="op2" type="button" data-da="visitors" data-di="partner">Detail</button></div></div>
+<div class="c2" data-a="visitors" data-i="staff" data-on="false"><button class="it" type="button" data-a="visitors" data-i="staff" data-on="false" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="6.5" width="15" height="13" rx="2"/><path d="M9 3.5h6v3H9z"/><circle cx="12" cy="12" r="2.2"/><path d="M8.4 17.4a4 4 0 0 1 7.2 0"/></svg></span><span class="tn">Staff, and people who want to work for you</span><span class="tb2">The people who do the work, and the ones who would like to.</span><span class="sh">Working here</span></button><div class="tf2"><button class="pk2" type="button" data-a="visitors" data-i="staff"><span class="pk">Pick</span></button><button class="op2" type="button" data-da="visitors" data-di="staff">Detail</button></div></div>
+<div class="c2" data-a="visitors" data-i="press" data-on="false"><button class="it" type="button" data-a="visitors" data-i="press" data-on="false" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="14.5" height="13" rx="1.5"/><path d="M17.5 9.5H21v7a2 2 0 0 1-3.5 1.3"/><path d="M6 9h8M6 12.5h8M6 16h5"/></svg></span><span class="tn">Press, or the wider public</span><span class="tb2">Anyone writing about you, or checking you exist.</span><span class="sh">Press and media</span></button><div class="tf2"><button class="pk2" type="button" data-a="visitors" data-i="press"><span class="pk">Pick</span></button><button class="op2" type="button" data-da="visitors" data-di="press">Detail</button></div></div>
+<div class="c2" data-a="visitors" data-i="regulator" data-on="false"><button class="it" type="button" data-a="visitors" data-i="regulator" data-on="false" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 20 6v6.2c0 4.4-3.2 7.5-8 8.6-4.8-1.1-8-4.2-8-8.6V6Z"/><path d="m8.8 12 2.4 2.4 4-4.6"/></svg></span><span class="tn">Regulators, auditors or awarding bodies</span><span class="tb2">People who need to see that you do what you say you do.</span><span class="sh">Governance</span></button><div class="tf2"><button class="pk2" type="button" data-a="visitors" data-i="regulator"><span class="pk">Pick</span></button><button class="op2" type="button" data-da="visitors" data-di="regulator">Detail</button></div></div>
+</div><div class="dt2"></div></div></div>
+<div class="ar" data-a="offer" data-n="5" data-open="false">
+<button class="arh" type="button" data-atog="offer" aria-expanded="false"><span class="ax">+</span><span class="an"><b>What you sell, and how</b><em>What you offer, in your words, and how somebody gets it.</em></span><span class="abar"><i></i><i></i><i></i><i></i><i></i></span><span class="acount">0 of 5</span><span class="astate">Provisional</span></button>
+<div class="arb"><div class="itg">Layer 1 &middot; names to argue with</div>
+<div class="cg sh-wide">
+<div class="c2" data-a="offer" data-i="sells" data-on="false"><button class="it" type="button" data-a="offer" data-i="sells" data-on="false" aria-pressed="false"><span class="ix">01</span><span class="tn">The things you sell</span><span class="tb2">One line each, in the words you use with a customer.</span></button><div class="tf2"><button class="pk2" type="button" data-a="offer" data-i="sells"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="offer" data-i="how" data-on="false"><button class="it" type="button" data-a="offer" data-i="how" data-on="false" aria-pressed="false"><span class="ix">02</span><span class="tn">How somebody buys or books</span><span class="tb2">In person, by phone, online, or through somebody else.</span></button><div class="tf2"><button class="pk2" type="button" data-a="offer" data-i="how"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="offer" data-i="cost" data-on="false"><button class="it" type="button" data-a="offer" data-i="cost" data-on="false" aria-pressed="false"><span class="ix">03</span><span class="tn">What it costs, and how you say so</span><span class="tb2">A figure, a range, or a reason it has to be a conversation.</span></button><div class="tf2"><button class="pk2" type="button" data-a="offer" data-i="cost"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="offer" data-i="where" data-on="false"><button class="it" type="button" data-a="offer" data-i="where" data-on="false" aria-pressed="false"><span class="ix">04</span><span class="tn">Where you do it, and who for</span><span class="tb2">The area you cover, and the sort of customer you take.</span></button><div class="tf2"><button class="pk2" type="button" data-a="offer" data-i="where"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="offer" data-i="wont" data-on="false"><button class="it" type="button" data-a="offer" data-i="wont" data-on="false" aria-pressed="false"><span class="ix">05</span><span class="tn">What you do not take on</span><span class="tb2">The work you turn down, which saves everybody time.</span></button><div class="tf2"><button class="pk2" type="button" data-a="offer" data-i="wont"><span class="pk">Pick</span></button></div></div>
+</div><div class="dt2"></div></div></div>
+<div class="ar" data-a="have" data-n="5" data-open="false">
+<button class="arh" type="button" data-atog="have" aria-expanded="false"><span class="ax">+</span><span class="an"><b>What you already have</b><em>Words, pictures, a logo, a site that exists. What can be reused.</em></span><span class="abar"><i></i><i></i><i></i><i></i><i></i></span><span class="acount">0 of 5</span><span class="astate">Provisional</span></button>
+<div class="arb"><div class="itg">Layer 1 &middot; names to argue with</div>
+<div class="cg sh-sq">
+<div class="c2" data-a="have" data-i="site" data-on="false"><button class="it" type="button" data-a="have" data-i="site" data-on="false" aria-pressed="false"><span class="rd"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span><span class="tn">A website that exists now</span><span class="tb2">What is on it, and what is worth keeping.</span></button><div class="tf2"><button class="pk2" type="button" data-a="have" data-i="site"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="have" data-i="brand" data-on="false"><button class="it" type="button" data-a="have" data-i="brand" data-on="false" aria-pressed="false"><span class="rd"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span><span class="tn">A logo, colours and type</span><span class="tb2">Whatever exists, however rough.</span></button><div class="tf2"><button class="pk2" type="button" data-a="have" data-i="brand"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="have" data-i="words" data-on="false"><button class="it" type="button" data-a="have" data-i="words" data-on="false" aria-pressed="false"><span class="rd"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span><span class="tn">Words already written</span><span class="tb2">Brochures, emails you send often, anything you have said well once.</span></button><div class="tf2"><button class="pk2" type="button" data-a="have" data-i="words"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="have" data-i="images" data-on="false"><button class="it" type="button" data-a="have" data-i="images" data-on="false" aria-pressed="false"><span class="rd"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span><span class="tn">Photographs and video</span><span class="tb2">Your own, and whatever you are allowed to use.</span></button><div class="tf2"><button class="pk2" type="button" data-a="have" data-i="images"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="have" data-i="lists" data-on="false"><button class="it" type="button" data-a="have" data-i="lists" data-on="false" aria-pressed="false"><span class="rd"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span><span class="tn">Lists you already keep</span><span class="tb2">Products, prices, locations, staff, customers.</span></button><div class="tf2"><button class="pk2" type="button" data-a="have" data-i="lists"><span class="pk">Pick</span></button></div></div>
+</div><div class="dt2"></div></div></div>
+<div class="ar" data-a="found" data-n="6" data-open="false">
+<button class="arh" type="button" data-atog="found" aria-expanded="false"><span class="ax">+</span><span class="an"><b>How people find you</b><em>Search, social, word of mouth, a van with your name on it.</em></span><span class="abar"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="acount">0 of 6</span><span class="astate">Provisional</span></button>
+<div class="arb"><div class="itg">Layer 1 &middot; names to argue with</div>
+<div class="cg sh-sq">
+<div class="c2" data-a="found" data-i="search" data-on="false"><button class="it" type="button" data-a="found" data-i="search" data-on="false" aria-pressed="false"><span class="rd"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span><span class="tn">Search</span><span class="tb2">Somebody typing what they need and finding a business like yours.</span></button><div class="tf2"><button class="pk2" type="button" data-a="found" data-i="search"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="found" data-i="word" data-on="false"><button class="it" type="button" data-a="found" data-i="word" data-on="false" aria-pressed="false"><span class="rd"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span><span class="tn">Word of mouth</span><span class="tb2">Somebody told them about you.</span></button><div class="tf2"><button class="pk2" type="button" data-a="found" data-i="word"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="found" data-i="social" data-on="false"><button class="it" type="button" data-a="found" data-i="social" data-on="false" aria-pressed="false"><span class="rd"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span><span class="tn">Social accounts</span><span class="tb2">Whatever you run, and how often you run it.</span></button><div class="tf2"><button class="pk2" type="button" data-a="found" data-i="social"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="found" data-i="ads" data-on="false"><button class="it" type="button" data-a="found" data-i="ads" data-on="false" aria-pressed="false"><span class="rd"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span><span class="tn">Advertising you already pay for</span><span class="tb2">Anything running now, on or off the internet.</span></button><div class="tf2"><button class="pk2" type="button" data-a="found" data-i="ads"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="found" data-i="print" data-on="false"><button class="it" type="button" data-a="found" data-i="print" data-on="false" aria-pressed="false"><span class="rd"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span><span class="tn">Signage, vehicles and print</span><span class="tb2">Your name in the physical world.</span></button><div class="tf2"><button class="pk2" type="button" data-a="found" data-i="print"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="found" data-i="dirs" data-on="false"><button class="it" type="button" data-a="found" data-i="dirs" data-on="false" aria-pressed="false"><span class="rd"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span><span class="tn">Directories and listings</span><span class="tb2">Trade bodies, maps, marketplaces, review sites.</span></button><div class="tf2"><button class="pk2" type="button" data-a="found" data-i="dirs"><span class="pk">Pick</span></button></div></div>
+</div><div class="dt2"></div></div></div>
+<div class="ar" data-a="after" data-n="5" data-open="false">
+<button class="arh" type="button" data-atog="after" aria-expanded="false"><span class="ax">+</span><span class="an"><b>What happens after it is live</b><em>Who changes it, how often, and what you want to keep an eye on.</em></span><span class="abar"><i></i><i></i><i></i><i></i><i></i></span><span class="acount">0 of 5</span><span class="astate">Provisional</span></button>
+<div class="arb"><div class="itg">Layer 1 &middot; names to argue with</div>
+<div class="cg sh-wide">
+<div class="c2" data-a="after" data-i="who" data-on="false"><button class="it" type="button" data-a="after" data-i="who" data-on="false" aria-pressed="false"><span class="ix">01</span><span class="tn">Who changes it</span><span class="tb2">You, us, or somebody in between.</span></button><div class="tf2"><button class="pk2" type="button" data-a="after" data-i="who"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="after" data-i="often" data-on="false"><button class="it" type="button" data-a="after" data-i="often" data-on="false" aria-pressed="false"><span class="ix">02</span><span class="tn">How often it changes</span><span class="tb2">Never, now and then, or every week.</span></button><div class="tf2"><button class="pk2" type="button" data-a="after" data-i="often"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="after" data-i="watch" data-on="false"><button class="it" type="button" data-a="after" data-i="watch" data-on="false" aria-pressed="false"><span class="ix">03</span><span class="tn">What you want to keep an eye on</span><span class="tb2">Enquiries, calls, bookings, sales.</span></button><div class="tf2"><button class="pk2" type="button" data-a="after" data-i="watch"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="after" data-i="fix" data-on="false"><button class="it" type="button" data-a="after" data-i="fix" data-on="false" aria-pressed="false"><span class="ix">04</span><span class="tn">Who to call when something is wrong</span><span class="tb2">And how quickly you expect an answer.</span></button><div class="tf2"><button class="pk2" type="button" data-a="after" data-i="fix"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="after" data-i="keys" data-on="false"><button class="it" type="button" data-a="after" data-i="keys" data-on="false" aria-pressed="false"><span class="ix">05</span><span class="tn">Where it lives, and who holds the keys</span><span class="tb2">Hosting, the domain, the accounts it depends on.</span></button><div class="tf2"><button class="pk2" type="button" data-a="after" data-i="keys"><span class="pk">Pick</span></button></div></div>
+</div><div class="dt2"></div></div></div>
+<div class="ar" data-a="work" data-n="5" data-open="false">
+<button class="arh" type="button" data-atog="work" aria-expanded="false"><span class="ax">+</span><span class="an"><b>How you want to work with us</b><em>When you need it, how you like to be kept up to date.</em></span><span class="abar"><i></i><i></i><i></i><i></i><i></i></span><span class="acount">0 of 5</span><span class="astate">Provisional</span></button>
+<div class="arb"><div class="itg">Layer 1 &middot; names to argue with</div>
+<div class="cg sh-wide">
+<div class="c2" data-a="work" data-i="when" data-on="false"><button class="it" type="button" data-a="work" data-i="when" data-on="false" aria-pressed="false"><span class="ix">01</span><span class="tn">When you need it live</span><span class="tb2">A date, a season, or no particular hurry.</span></button><div class="tf2"><button class="pk2" type="button" data-a="work" data-i="when"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="work" data-i="news" data-on="false"><button class="it" type="button" data-a="work" data-i="news" data-on="false" aria-pressed="false"><span class="ix">02</span><span class="tn">How you like to be kept up to date</span><span class="tb2">Email, a call, a shared board, or as little as possible.</span></button><div class="tf2"><button class="pk2" type="button" data-a="work" data-i="news"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="work" data-i="decide" data-on="false"><button class="it" type="button" data-a="work" data-i="decide" data-on="false" aria-pressed="false"><span class="ix">03</span><span class="tn">Who decides on your side</span><span class="tb2">One person, or a group who have to agree.</span></button><div class="tf2"><button class="pk2" type="button" data-a="work" data-i="decide"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="work" data-i="doing" data-on="false"><button class="it" type="button" data-a="work" data-i="doing" data-on="false" aria-pressed="false"><span class="ix">04</span><span class="tn">How much you want to do yourselves</span><span class="tb2">Writing, pictures, keeping it current afterwards.</span></button><div class="tf2"><button class="pk2" type="button" data-a="work" data-i="doing"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="work" data-i="before" data-on="false"><button class="it" type="button" data-a="work" data-i="before" data-on="false" aria-pressed="false"><span class="ix">05</span><span class="tn">What has gone wrong for you before</span><span class="tb2">So that we do not repeat it.</span></button><div class="tf2"><button class="pk2" type="button" data-a="work" data-i="before"><span class="pk">Pick</span></button></div></div>
+</div><div class="dt2"></div></div></div>
+<div class="ar" data-a="else" data-n="4" data-open="false">
+<button class="arh" type="button" data-atog="else" aria-expanded="false"><span class="ax">+</span><span class="an"><b>Anything else</b><em>The thing that does not fit anywhere above. There is always one.</em></span><span class="abar"><i></i><i></i><i></i><i></i></span><span class="acount">0 of 4</span><span class="astate">Provisional</span></button>
+<div class="arb"><div class="itg">Layer 1 &middot; names to argue with</div>
+<div class="cg sh-full">
+<div class="c2" data-a="else" data-i="liked" data-on="false"><button class="it" type="button" data-a="else" data-i="liked" data-on="false" aria-pressed="false"><span class="ix">01</span><span class="tn">Something you have seen and liked</span><span class="tb2">A website, a leaflet, a shop front.</span></button><div class="tf2"><button class="pk2" type="button" data-a="else" data-i="liked"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="else" data-i="rule" data-on="false"><button class="it" type="button" data-a="else" data-i="rule" data-on="false" aria-pressed="false"><span class="ix">02</span><span class="tn">A rule you have to work within</span><span class="tb2">A regulator, a franchise, a landlord, a funder.</span></button><div class="tf2"><button class="pk2" type="button" data-a="else" data-i="rule"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="else" data-i="date" data-on="false"><button class="it" type="button" data-a="else" data-i="date" data-on="false" aria-pressed="false"><span class="ix">03</span><span class="tn">A date that cannot move</span><span class="tb2">An opening, a season, a contract ending.</span></button><div class="tf2"><button class="pk2" type="button" data-a="else" data-i="date"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-a="else" data-i="worry" data-on="false"><button class="it" type="button" data-a="else" data-i="worry" data-on="false" aria-pressed="false"><span class="ix">04</span><span class="tn">Something you are worried about</span><span class="tb2">Say it early and it stops being a surprise.</span></button><div class="tf2"><button class="pk2" type="button" data-a="else" data-i="worry"><span class="pk">Pick</span></button></div></div>
+</div><div class="dt2"></div></div></div>
+</div><aside class="ladp" id="ladp"><div class="kk">The site your answers describe</div><div class="pvn"><b data-f="pages">4</b><span>pages, as it stands</span></div><div class="map sm" id="sitepages2"></div><button class="act quiet" type="button" data-go="p-site">See the whole thing</button></aside></div>
+  <p style="margin-top:26px"><button class="act pri" id="sendnow2" data-go="p-site"
+  disabled>That is enough &mdash; see what it describes</button></p>
+  <div class="build" style="margin-top:14px"><div class="k">Framework note</div>
+  <p style="margin:0">Area one carries the real eight groups, and picking here is the same
+  as picking on the cards. The other six carry rows I have drafted so the pattern can be
+  judged with something in it. Those rows are provisional and are yours to cut, rename or
+  reorder, and only area one feeds the site description so far. Four card shapes are in use:
+  the full card where a row becomes its own way in, a wide card where you would answer in a
+  sentence, a small card where you either have the thing or you do not, and a single row
+  where there is nothing to compare it against.</p></div>
+</div>
+<div class="pane" id="t-build3">
+  <h3>Build it v3</h3>
+  <p class="lead">Two questions. Who comes to your website, and what each of them should
+  be able to do.</p>
+  <p>The second question is written by the first. Name a group and the things that group
+  needs turn up underneath, in a band of their own. Take a group away and its things go
+  with it, so the site we describe back to you can only hold what you asked for. The
+  five ways of getting in touch are standard in every site we build, and three of them
+  start off ticked.</p>
+  <div class="lad lad3"><div class="ladl" id="ladl3">
+<div class="ar ar3" data-a3="v3who" data-open="true">
+<button class="arh" type="button" data-atog3="v3who" aria-expanded="true"><span class="ax">&minus;</span><span class="an"><b>Your visitors</b><em>Who comes to your website</em></span><span class="abar"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="acount">0 of 7</span><span class="astate">Built</span></button>
+<div class="arb"><div class="itg">Layer 1 &middot; tick everyone who might arrive</div>
+<div class="cg sh-tile">
+<div class="c2" data-g3="consumer" data-on="false"><button class="it" type="button" data-g="consumer" data-on="false" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7.6" r="3.2"/><path d="M5.5 20.5a6.5 6.5 0 0 1 13 0"/></svg></span><span class="tn">Customers (D2C)</span><span class="tb2">People buying from you for themselves.</span><span class="sh">For customers</span></button><div class="tf2"><button class="pk3" type="button" data-g="consumer"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-g3="b2b" data-on="false"><button class="it" type="button" data-g="b2b" data-on="false" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="8.5" width="7.5" height="12"/><rect x="13" y="4.5" width="7.5" height="16"/><path d="M6 12h2.5M6 15.5h2.5M15.5 8h2.5M15.5 11.5h2.5M15.5 15h2.5"/></svg></span><span class="tn">Business customers (B2B)</span><span class="tb2">Companies and organisations buying from you.</span><span class="sh">For business buyers</span></button><div class="tf2"><button class="pk3" type="button" data-g="b2b"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-g3="investor" data-on="false"><button class="it" type="button" data-g="investor" data-on="false" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 20.5h17"/><path d="M6 16.5 10.5 11l3.5 3 4.5-6.5"/><path d="M18.5 7.5H15M18.5 7.5V11"/></svg></span><span class="tn">Investors, funders or a board</span><span class="tb2">People who put money in, or oversee it.</span><span class="sh">For investors</span></button><div class="tf2"><button class="pk3" type="button" data-g="investor"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-g3="partner" data-on="false"><button class="it" type="button" data-g="partner" data-on="false" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="9" r="2.4"/><circle cx="18" cy="9" r="2.4"/><circle cx="12" cy="17.5" r="2.4"/><path d="M7.6 10.9 10.6 15.6M16.4 10.9 13.4 15.6M8.4 9h7.2"/></svg></span><span class="tn">Franchisees, agents or resellers</span><span class="tb2">People who sell your product or run your model.</span><span class="sh">For franchisees and agents</span></button><div class="tf2"><button class="pk3" type="button" data-g="partner"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-g3="staff" data-on="false"><button class="it" type="button" data-g="staff" data-on="false" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="6.5" width="15" height="13" rx="2"/><path d="M9 3.5h6v3H9z"/><circle cx="12" cy="12" r="2.2"/><path d="M8.4 17.4a4 4 0 0 1 7.2 0"/></svg></span><span class="tn">Staff, and people who want to work for you</span><span class="tb2">Your current team, and people looking for a job.</span><span class="sh">Working here</span></button><div class="tf2"><button class="pk3" type="button" data-g="staff"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-g3="press" data-on="false"><button class="it" type="button" data-g="press" data-on="false" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="14.5" height="13" rx="1.5"/><path d="M17.5 9.5H21v7a2 2 0 0 1-3.5 1.3"/><path d="M6 9h8M6 12.5h8M6 16h5"/></svg></span><span class="tn">Press, or the wider public</span><span class="tb2">Journalists, researchers, the curious.</span><span class="sh">Press and media</span></button><div class="tf2"><button class="pk3" type="button" data-g="press"><span class="pk">Pick</span></button></div></div>
+<div class="c2" data-g3="regulator" data-on="false"><button class="it" type="button" data-g="regulator" data-on="false" aria-pressed="false"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 20 6v6.2c0 4.4-3.2 7.5-8 8.6-4.8-1.1-8-4.2-8-8.6V6Z"/><path d="m8.8 12 2.4 2.4 4-4.6"/></svg></span><span class="tn">Regulators, auditors or awarding bodies</span><span class="tb2">People checking that you meet a standard.</span><span class="sh">Governance</span></button><div class="tf2"><button class="pk3" type="button" data-g="regulator"><span class="pk">Pick</span></button></div></div>
+</div></div></div>
+<div class="ar ar3" data-a3="v3cta" data-open="true">
+<button class="arh" type="button" data-atog3="v3cta" aria-expanded="true"><span class="ax">&minus;</span><span class="an"><b>What your visitors can do</b><em>One clear thing for each kind of visitor</em></span><span class="abar prop"><i></i></span><span class="acount">0 of 5</span><span class="astate">Built</span></button>
+<div class="arb"><div class="itg">Layer 2 &middot; built from who you named</div><div id="ctabands"></div><div class="miss"><label for="v3miss">Missing something? Add whatever else a visitor should be able to do, and it joins the list.</label><div class="addf"><input type="text" id="v3miss" placeholder="Anything we have not listed"><button type="button" id="v3add">Add</button></div></div></div></div>
+</div><aside class="ladp" id="ladp3"><div class="kk">The site your answers describe</div><div class="pvn"><b data-f3="pages">4</b><span>pages, as it stands</span></div><div class="map sm" id="sitepages3"></div><div class="p3t">0 groups named &middot; 0 things to do</div><div class="p3n">Built from these two answers alone, and kept apart from the description on the other tabs until you tell us this one replaces them.</div></aside></div>
+  <div class="build" style="margin-top:30px"><div class="k">Framework note</div>
+  <p style="margin:0">Seven groups here, not the eight on the other two tabs: "people who
+  already buy from you" is not on this list, and the first two are named in your words.
+  This tab keeps its own answers and builds its own site description, so nothing here
+  changes what the other tabs say. Two questions are still to come, and they are what make
+  this answer usable: the order these things go in, and how you will know the site is
+  working.</p></div>
+</div>
+<div class="pane" id="t-free">
+  <h3>Freeflow</h3>
+  <p class="lead">Do not follow a structure. Send us what you have and tell us what
+  you want.</p>
+  <p>A brief on the back of an envelope, a competitor's site you like, three photos and
+  a phone number. We read it and come back with questions.</p>
+  <div class="fw"><i></i>Nothing in here yet</div>
+  <div class="build"><div class="k">What belongs on this screen</div>
+  <ul>
+    <li>A drop area for files, with what happens to them said plainly.</li>
+    <li>One open box, and no required fields except a way to reply.</li>
+    <li>The same two working days promise as the card route.</li>
+    <li>A note that this and the cards are two doors into the same room.</li>
+  </ul></div>
+</div></div></section>
+<section class="screen" id="p-site"><div class="inner"><div class="tag">The site your answers describe</div><h2>The site your answers describe</h2><p class="lead">Every page here comes from something you have said so far.</p><div class="strip" id="strip-site"><div class="tally"><div class="ty"><b data-f="groups">0</b><span>groups of people</span></div><div class="ty"><b data-f="things">0</b><span>things to do</span></div><div class="ty"><b data-f="pages">4</b><span>pages, as it stands</span></div><div class="ty"><b data-f="needs">6</b><span>things we need from you</span></div></div><div class="stripf"><p data-f="note">Six things are in every site we build. Everything after that is yours to add.</p></div></div><div class="sec"><div class="sech"><h3>Pages</h3><span class="sn" data-f="mapn">4 pages</span></div><p class="dim" style="margin-bottom:18px;font-size:14.5px">Every page sits under the answer that put it there.</p><div class="map" id="sitepages"></div><p style="margin-top:22px"><button class="act pri" data-go="p-build">Add more to it</button></p></div><div class="build"><div class="k">Still to decide</div><ul><li>Whether this screen can be sent on its own, or only from the build page.</li><li>Whether a page here can be opened to say what goes on it.</li></ul></div></div></section>
+<section class="screen" id="p-about"><div class="inner"><div class="tag">About us</div><h2>About us</h2><p class="lead">Who we are, and how we work.</p><div class="fw"><i></i>Nothing in here yet</div><div class="build"><div class="k">What belongs on this screen</div><ul><li>Who does the work, named.</li><li>How we work, in the order it happens.</li><li>What we will not do, which matters as much.</li><li>Specialist partners, shown as integral rather than as an extra.</li></ul></div></div></section>
+<section class="screen" id="p-partners"><div class="inner"><div class="tag">Our partners</div><h2>Our partners</h2><p class="lead">The people we bring in, and what they cover.</p><div class="fw"><i></i>Nothing in here yet</div><div class="build"><div class="k">What belongs on this screen</div><ul><li>Each partner named, with the work they cover.</li><li>Where partner work sits in a build, which is inside it rather than beside it.</li><li>Who you deal with when a partner is involved, which is us.</li><li>What we ask of a partner before we put them in front of you.</li></ul></div></div></section>
+<section class="screen" id="p-contact"><div class="inner"><div class="tag">Contact us</div><h2>Contact us</h2><p class="lead">Call us, or send an enquiry.</p><div class="fw"><i></i>Nothing in here yet</div><div class="build"><div class="k">What belongs on this screen</div><ul><li>A phone number that is answered, with the hours it is answered.</li><li>An enquiry form with as few fields as will do.</li><li>An email address, written out.</li><li>Where we are, if somebody wants to come.</li></ul></div></div></section>
+<section class="screen" id="p-book"><div class="inner"><div class="tag">Book a meeting</div><h2>Book a meeting</h2><p class="lead">Pick a time that suits you.</p><div class="fw"><i></i>Nothing in here yet</div><div class="build"><div class="k">What belongs on this screen</div><ul><li>A calendar with real availability.</li><li>What the meeting is for, and how long it takes.</li><li>What to have ready, which should be nothing.</li><li>What happens if you cannot make it.</li></ul></div></div></section>
+<section class="screen" id="p-faq"><div class="inner"><div class="tag">FAQs</div><h2>FAQs</h2><p class="lead">The questions people actually ask.</p><div class="fw"><i></i>Nothing in here yet</div><div class="build"><div class="k">What belongs on this screen</div><ul><li>The questions asked before somebody starts a brief.</li><li>The questions asked before somebody signs.</li><li>The questions asked after launch.</li><li>Where the honest answer is &quot;it depends&quot;, say what it depends on.</li></ul></div></div></section>
+<section class="screen" id="p-blog"><div class="inner"><div class="tag">Blogs</div><h2>Blogs</h2><p class="lead">What we have written.</p><div class="fw"><i></i>Nothing in here yet</div><div class="build"><div class="k">What belongs on this screen</div><ul><li>A list, newest first, with the date shown.</li><li>One post template.</li><li>A way to subscribe, if we are going to keep writing.</li><li>Where the blog actually lives, which is its own decision.</li></ul></div></div></section>
+<section class="screen" id="p-privacy"><div class="inner"><div class="tag">Privacy</div><h2>Privacy</h2><p class="lead">What we do with your information.</p><div class="fw"><i></i>Nothing in here yet</div><div class="build"><div class="k">What belongs on this screen</div><p style="margin:0">Legal wording, written once and reviewed before it goes anywhere near a live site.</p></div></div></section>
+<section class="screen" id="p-cookies"><div class="inner"><div class="tag">Cookies</div><h2>Cookies</h2><p class="lead">What we set, and what you can turn off.</p><div class="fw"><i></i>Nothing in here yet</div><div class="build"><div class="k">What belongs on this screen</div><p style="margin:0">Legal wording, written once and reviewed before it goes anywhere near a live site.</p></div></div></section>
+<section class="screen" id="p-terms"><div class="inner"><div class="tag">Terms of use</div><h2>Terms of use</h2><p class="lead">The terms for using this website.</p><div class="fw"><i></i>Nothing in here yet</div><div class="build"><div class="k">What belongs on this screen</div><p style="margin:0">Legal wording, written once and reviewed before it goes anywhere near a live site.</p></div></div></section>
+<section class="screen" id="p-tob"><div class="inner"><div class="tag">Terms of business</div><h2>Terms of business</h2><p class="lead">The terms for working with us.</p><div class="fw"><i></i>Nothing in here yet</div><div class="build"><div class="k">What belongs on this screen</div><p style="margin:0">Legal wording, written once and reviewed before it goes anywhere near a live site.</p></div></div></section>
+<section class="screen" id="p-a11y"><div class="inner"><div class="tag">Accessibility</div><h2>Accessibility</h2><p class="lead">How we build, and how to tell us when it fails.</p><div class="fw"><i></i>Nothing in here yet</div><div class="build"><div class="k">What belongs on this screen</div><p style="margin:0">Legal wording, written once and reviewed before it goes anywhere near a live site.</p></div></div></section>
+<section class="screen" id="p-complain"><div class="inner"><div class="tag">Complaints</div><h2>Complaints</h2><p class="lead">How to complain, and what happens next.</p><div class="fw"><i></i>Nothing in here yet</div><div class="build"><div class="k">What belongs on this screen</div><p style="margin:0">Legal wording, written once and reviewed before it goes anywhere near a live site.</p></div></div></section>
+<section class="screen" id="p-subproc"><div class="inner"><div class="tag">Sub-processors</div><h2>Sub-processors</h2><p class="lead">Who else touches your information.</p><div class="fw"><i></i>Nothing in here yet</div><div class="build"><div class="k">What belongs on this screen</div><p style="margin:0">Legal wording, written once and reviewed before it goes anywhere near a live site.</p></div></div></section>
+</main>
+</div>
+<script>
+var GROUPS = [{"k": "consumer", "name": "People buying for themselves", "short": "For customers", "attr": "customers", "icon": "<circle cx=\"12\" cy=\"7.6\" r=\"3.2\"/><path d=\"M5.5 20.5a6.5 6.5 0 0 1 13 0\"/>", "blurb": "Members of the public, spending their own money.", "covers": ["what you sell, said plainly", "what it costs, or what decides the cost", "why you rather than the next one along", "a way to ask, or a way to buy"]}, {"k": "b2b", "name": "Other businesses buying from you", "short": "For business buyers", "attr": "business buyers", "icon": "<rect x=\"3.5\" y=\"8.5\" width=\"7.5\" height=\"12\"/><rect x=\"13\" y=\"4.5\" width=\"7.5\" height=\"16\"/><path d=\"M6 12h2.5M6 15.5h2.5M15.5 8h2.5M15.5 11.5h2.5M15.5 15h2.5\"/>", "blurb": "Buying on behalf of an organisation, often with someone to answer to.", "covers": ["who you already work with", "how you are bought: quote, tender, framework, account", "the detail a buyer has to take back to someone else", "terms, cover and anything they will be asked to check"]}, {"k": "existing", "name": "People who already buy from you", "short": "For existing customers", "attr": "existing customers", "icon": "<path d=\"M20 12a8 8 0 1 1-2.6-5.9\"/><path d=\"M20 3.5V8h-4.5\"/><circle cx=\"12\" cy=\"12\" r=\"2.6\"/>", "blurb": "They have bought already. They come back for something else.", "covers": ["where their account, order or job is up to", "how to get hold of the person who knows them", "anything they are entitled to that a new customer is not", "buying the next thing without starting again"]}, {"k": "investor", "name": "Investors, funders or a board", "short": "For investors", "attr": "investors", "icon": "<path d=\"M3.5 20.5h17\"/><path d=\"M6 16.5 10.5 11l3.5 3 4.5-6.5\"/><path d=\"M18.5 7.5H15M18.5 7.5V11\"/>", "blurb": "People with money or oversight in the business.", "covers": ["how the business is doing, in its own words", "the papers they are expected to read", "who is on the board and who runs it", "the dates in the year they need to know"]}, {"k": "partner", "name": "Franchisees, agents or resellers", "short": "For franchisees and agents", "attr": "franchisees and agents", "icon": "<circle cx=\"6\" cy=\"9\" r=\"2.4\"/><circle cx=\"18\" cy=\"9\" r=\"2.4\"/><circle cx=\"12\" cy=\"17.5\" r=\"2.4\"/><path d=\"M7.6 10.9 10.6 15.6M16.4 10.9 13.4 15.6M8.4 9h7.2\"/>", "blurb": "They sell on your behalf, or trade under your name.", "covers": ["what is on offer and what is expected back", "the money: how it works and when it arrives", "the support and the materials they get", "how somebody applies, and who decides"]}, {"k": "staff", "name": "Staff, and people who want to work for you", "short": "Working here", "attr": "staff and candidates", "icon": "<rect x=\"4.5\" y=\"6.5\" width=\"15\" height=\"13\" rx=\"2\"/><path d=\"M9 3.5h6v3H9z\"/><circle cx=\"12\" cy=\"12\" r=\"2.2\"/><path d=\"M8.4 17.4a4 4 0 0 1 7.2 0\"/>", "blurb": "The people who do the work, and the ones who would like to.", "covers": ["what it is actually like to work there", "what is open now", "what happens after somebody applies", "anything current staff need to reach"]}, {"k": "press", "name": "Press, or the wider public", "short": "Press and media", "attr": "press", "icon": "<rect x=\"3\" y=\"5.5\" width=\"14.5\" height=\"13\" rx=\"1.5\"/><path d=\"M17.5 9.5H21v7a2 2 0 0 1-3.5 1.3\"/><path d=\"M6 9h8M6 12.5h8M6 16h5\"/>", "blurb": "Anyone writing about you, or checking you exist.", "covers": ["who to contact, and how quickly you answer", "the facts about the business, in one place", "logos and pictures they are allowed to use", "anything you have said publicly already"]}, {"k": "regulator", "name": "Regulators, auditors or awarding bodies", "short": "Governance", "attr": "regulators", "icon": "<path d=\"M12 3.2 20 6v6.2c0 4.4-3.2 7.5-8 8.6-4.8-1.1-8-4.2-8-8.6V6Z\"/><path d=\"m8.8 12 2.4 2.4 4-4.6\"/>", "blurb": "People who need to see that you do what you say you do.", "covers": ["registrations, numbers and accreditations", "the policies you are required to publish", "how a complaint or a concern is raised", "the dated record of what was published when"]}], ALWAYS = ["Home", "About", "What we do", "Contact"], STDN = 6, MAPAREAS = [["always", "Always there", "In every site we build."], ["who", "Who it is for", "You named more than one group, so each gets a way in."]];
+var V3G = [{"k": "consumer", "n": "Customers (D2C)", "s": "People buying from you for themselves.", "cta": "What somebody buying for themselves should be able to do.", "icon": "<circle cx=\"12\" cy=\"7.6\" r=\"3.2\"/><path d=\"M5.5 20.5a6.5 6.5 0 0 1 13 0\"/>", "short": "For customers", "attr": "customers"}, {"k": "b2b", "n": "Business customers (B2B)", "s": "Companies and organisations buying from you.", "cta": "What somebody buying for an organisation should be able to do.", "icon": "<rect x=\"3.5\" y=\"8.5\" width=\"7.5\" height=\"12\"/><rect x=\"13\" y=\"4.5\" width=\"7.5\" height=\"16\"/><path d=\"M6 12h2.5M6 15.5h2.5M15.5 8h2.5M15.5 11.5h2.5M15.5 15h2.5\"/>", "short": "For business buyers", "attr": "business buyers"}, {"k": "investor", "n": "Investors, funders or a board", "s": "People who put money in, or oversee it.", "cta": "What somebody with money or oversight should be able to do.", "icon": "<path d=\"M3.5 20.5h17\"/><path d=\"M6 16.5 10.5 11l3.5 3 4.5-6.5\"/><path d=\"M18.5 7.5H15M18.5 7.5V11\"/>", "short": "For investors", "attr": "investors"}, {"k": "partner", "n": "Franchisees, agents or resellers", "s": "People who sell your product or run your model.", "cta": "What somebody selling on your behalf should be able to do.", "icon": "<circle cx=\"6\" cy=\"9\" r=\"2.4\"/><circle cx=\"18\" cy=\"9\" r=\"2.4\"/><circle cx=\"12\" cy=\"17.5\" r=\"2.4\"/><path d=\"M7.6 10.9 10.6 15.6M16.4 10.9 13.4 15.6M8.4 9h7.2\"/>", "short": "For franchisees and agents", "attr": "franchisees and agents"}, {"k": "staff", "n": "Staff, and people who want to work for you", "s": "Your current team, and people looking for a job.", "cta": "What your team, and the people who want to join it, should be able to do.", "icon": "<rect x=\"4.5\" y=\"6.5\" width=\"15\" height=\"13\" rx=\"2\"/><path d=\"M9 3.5h6v3H9z\"/><circle cx=\"12\" cy=\"12\" r=\"2.2\"/><path d=\"M8.4 17.4a4 4 0 0 1 7.2 0\"/>", "short": "Working here", "attr": "staff and candidates"}, {"k": "press", "n": "Press, or the wider public", "s": "Journalists, researchers, the curious.", "cta": "What somebody writing about you should be able to do.", "icon": "<rect x=\"3\" y=\"5.5\" width=\"14.5\" height=\"13\" rx=\"1.5\"/><path d=\"M17.5 9.5H21v7a2 2 0 0 1-3.5 1.3\"/><path d=\"M6 9h8M6 12.5h8M6 16h5\"/>", "short": "Press and media", "attr": "press"}, {"k": "regulator", "n": "Regulators, auditors or awarding bodies", "s": "People checking that you meet a standard.", "cta": "What somebody checking you should be able to do.", "icon": "<path d=\"M12 3.2 20 6v6.2c0 4.4-3.2 7.5-8 8.6-4.8-1.1-8-4.2-8-8.6V6Z\"/><path d=\"m8.8 12 2.4 2.4 4-4.6\"/>", "short": "Governance", "attr": "regulators"}], V3A = [{"k": "mail", "need": "", "n": "Email you", "s": "A real address, answered by a person, for anybody who would rather write.", "page": "", "icon": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"14\" rx=\"2\"/><path d=\"m4 6.6 8 5.7 8-5.7\"/>"}, {"k": "enq", "need": "", "n": "Send an enquiry with details", "s": "A form that asks the right questions, and the answers arrive in your email.", "page": "", "icon": "<path d=\"M6 3.5h8l4 4v13H6Z\"/><path d=\"M14 3.5v4h4\"/><path d=\"M9 12.6h6M9 16h4\"/>"}, {"k": "call", "need": "", "n": "Call you", "s": "The number impossible to miss, with a reason to dial it.", "page": "", "icon": "<path d=\"M6.5 3.5h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.5 5.7 2 2 0 0 1 6.5 3.5Z\"/>"}, {"k": "msg", "need": "", "n": "Message you", "s": "WhatsApp, Messenger or similar, for people who would rather not call.", "page": "", "icon": "<path d=\"M20.5 4.5h-17v12h5v3.6l4.2-3.6h7.8Z\"/><path d=\"M8 9h8M8 12.4h5\"/>"}, {"k": "book", "need": "", "n": "Book an appointment", "s": "Pick a time with you, straight from the site.", "page": "Book an appointment", "icon": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"15.5\" rx=\"2\"/><path d=\"M3.5 10h17M8 3v4M16 3v4\"/>"}, {"k": "buy", "need": "consumer", "n": "Buy something online", "s": "Pay for products or services on the site.", "page": "Shop", "icon": "<path d=\"M5 8h14l-1.2 12.5H6.2Z\"/><path d=\"M9 10.5V7a3 3 0 0 1 6 0v3.5\"/>"}, {"k": "quote", "need": "b2b", "n": "Request a quote or proposal", "s": "They say what they need, you come back with a price.", "page": "Request a quote", "icon": "<path d=\"M6 3.5h8l4 4v13H6Z\"/><path d=\"M14 3.5v4h4\"/><circle cx=\"12\" cy=\"14.2\" r=\"2.6\"/><path d=\"M12 11.6v-1.2M12 16.8v1.2\"/>"}, {"k": "demo", "need": "b2b", "n": "Book a demo or a meeting", "s": "The business version of an appointment.", "page": "Book a demo", "icon": "<rect x=\"3\" y=\"4.5\" width=\"18\" height=\"12\" rx=\"2\"/><path d=\"M8 20.5h8M12 16.5v4\"/><path d=\"m10.6 8.2 4 2.3-4 2.3Z\"/>"}, {"k": "broch", "need": "b2b", "n": "Download your brochure", "s": "The thing they forward to whoever decides.", "page": "Brochure", "icon": "<path d=\"M6 3.5h8l4 4v13H6Z\"/><path d=\"M14 3.5v4h4\"/><path d=\"M12 11v6M9.5 14.5 12 17l2.5-2.5\"/>"}, {"k": "trade", "need": "b2b", "n": "Open a trade account", "s": "For buying from you again and again.", "page": "Trade account", "icon": "<rect x=\"2.5\" y=\"5.5\" width=\"19\" height=\"13\" rx=\"2\"/><path d=\"M2.5 10h19M6 14.6h4\"/>"}, {"k": "reports", "need": "investor", "n": "View or download reports and results", "s": "Accounts, impact reports, annual reviews.", "page": "Reports and results", "icon": "<rect x=\"3.5\" y=\"3.5\" width=\"17\" height=\"17\" rx=\"2\"/><path d=\"M8 16.5v-4M12 16.5v-7M16 16.5v-2.5\"/>"}, {"k": "updates", "need": "investor", "n": "Register for investor updates", "s": "A quieter list, kept apart from the rest.", "page": "Investor updates", "icon": "<path d=\"M18 16.5H6l1.5-2.5V11a4.5 4.5 0 0 1 9 0v3Z\"/><path d=\"M10.2 19.4a2 2 0 0 0 3.6 0\"/>"}, {"k": "named", "need": "investor", "n": "Contact the right person directly", "s": "A named route, rather than the general enquiry form.", "page": "", "icon": "<circle cx=\"12\" cy=\"8.5\" r=\"3.5\"/><path d=\"M5.5 20.5a6.5 6.5 0 0 1 13 0\"/>"}, {"k": "apply", "need": "partner", "n": "Apply to become a franchisee or reseller", "s": "A structured application, not just get in touch.", "page": "Apply to join", "icon": "<path d=\"M6 3.5h8l4 4v13H6Z\"/><path d=\"M14 3.5v4h4\"/><path d=\"m9 14 2.2 2.2L15.5 12\"/>"}, {"k": "pack", "need": "partner", "n": "Download the prospectus or partner pack", "s": "What somebody reads before they apply.", "page": "Prospectus", "icon": "<path d=\"M12 7.5S10 5.5 3.5 5.5v12C10 17.5 12 19.5 12 19.5s2-2 8.5-2v-12C14 5.5 12 7.5 12 7.5Z\"/><path d=\"M12 7.5v12\"/>"}, {"k": "interest", "need": "partner", "n": "Register interest", "s": "For a model that is not open yet, or a waiting list.", "page": "Register interest", "icon": "<path d=\"M6.5 3.5h11v17l-5.5-4-5.5 4Z\"/>"}, {"k": "jobs", "need": "staff", "n": "See vacancies and apply for a job", "s": "Live roles, with a proper way to apply.", "page": "Vacancies", "icon": "<rect x=\"3\" y=\"7.5\" width=\"18\" height=\"12\" rx=\"2\"/><path d=\"M9 7.5V5.5h6v2M3 12.6h18\"/>"}, {"k": "spec", "need": "staff", "n": "Send a speculative application", "s": "No role listed, but talk to us anyway.", "page": "", "icon": "<path d=\"m20.5 3.5-17 7 6.6 2.6L13 20.5Z\"/><path d=\"m10.1 13.1 3.6-3.6\"/>"}, {"k": "portal", "need": "staff", "n": "Sign in to a staff area", "s": "A place only your team can get to.", "page": "Staff sign-in", "icon": "<rect x=\"4.5\" y=\"10.5\" width=\"15\" height=\"10\" rx=\"2\"/><path d=\"M8 10.5V8a4 4 0 0 1 8 0v2.5\"/>"}, {"k": "kit", "need": "press", "n": "Download the press kit", "s": "Logos, photographs and the facts, written once.", "page": "Press kit", "icon": "<rect x=\"3\" y=\"4.5\" width=\"18\" height=\"15\" rx=\"2\"/><circle cx=\"8.4\" cy=\"9.4\" r=\"1.6\"/><path d=\"m4 17.2 5-5 4 4 3-2.4 4 3.4\"/>"}, {"k": "media", "need": "press", "n": "Contact you about media", "s": "A named route, with how quickly you answer.", "page": "Media enquiries", "icon": "<path d=\"M4 9.5h3l8-4.5v14l-8-4.5H4Z\"/><path d=\"M18 9a3.5 3.5 0 0 1 0 6\"/>"}, {"k": "certs", "need": "regulator", "n": "View certifications, policies and documents", "s": "Findable without having to ask for them.", "page": "Certifications and policies", "icon": "<path d=\"M12 3.2 19.5 6v6c0 4.2-3 7.2-7.5 8.8C7.5 19.2 4.5 16.2 4.5 12V6Z\"/><path d=\"m9 12 2.2 2.2L15.5 10\"/>"}, {"k": "verify", "need": "regulator", "n": "Verify a credential", "s": "Check that a certificate, registration or member is genuine.", "page": "Check a credential", "icon": "<circle cx=\"11\" cy=\"11\" r=\"6.5\"/><path d=\"m15.9 15.9 4.6 4.6\"/><path d=\"m8.4 11 1.9 1.9L13.9 9.3\"/>"}, {"k": "chat", "need": "talk", "n": "Live chat with a person", "s": "A window on every page, answered by somebody on your side.", "page": "", "icon": "<path d=\"M20.5 4.5h-17v12h5v3.6l4.2-3.6h7.8Z\"/><circle cx=\"12\" cy=\"8.9\" r=\"1.9\"/><path d=\"M8.7 13.7a3.5 3.5 0 0 1 6.6 0\"/>"}, {"k": "bot", "need": "talk", "n": "A chat assistant", "s": "Answers the questions you get asked most, and hands over to a person.", "page": "", "icon": "<path d=\"M20.5 4.5h-17v12h5v3.6l4.2-3.6h7.8Z\"/><path d=\"m12 7 .9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9Z\"/>"}, {"k": "email", "need": "any", "n": "Leave their email address", "s": "In exchange for something worth having, from any kind of visitor.", "page": "", "icon": "<path d=\"M3.5 10.5h17v9.5h-17Z\"/><path d=\"m3.5 10.5 8.5 6 8.5-6\"/><path d=\"M12 2.8v5.4M9.5 5.9 12 8.4l2.5-2.5\"/>"}], V3B = {"inc": {"n": "Always included", "s": "In every site we build. Nothing to decide here."}, "": {"n": "Standard inclusions", "s": "In every site we build. Three are ticked to start with, so change them to suit you."}, "any": {"n": "Everyone", "s": "One thing for a visitor who is not ready to do anything else yet."}, "talk": {"n": "Worth a conversation", "s": "Not standard, and not priced here. Tick one and we will talk it through with you before anything is agreed."}, "own": {"n": "Anything else you need", "s": "What you added yourself. We will talk each one through with you."}}, V3MAP = [["always", "Always there", "In every site we build."], ["who", "Who it is for", "You named more than one group, so each gets a way in."], ["do", "What they can do", "Each action you picked needs somewhere to happen."]];
+var V3INC = [{"k": "enq", "n": "Send an enquiry with details", "s": "A form that asks the right questions, so your first reply is useful.", "icon": "<path d=\"M6 3.5h8l4 4v13H6Z\"/><path d=\"M14 3.5v4h4\"/><path d=\"M9 12.6h6M9 16h4\"/>"}, {"k": "mail", "n": "Email you", "s": "A real address, answered by a person, for anybody who would rather write.", "icon": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"14\" rx=\"2\"/><path d=\"m4 6.6 8 5.7 8-5.7\"/>"}];
+var V3PRE = ["mail", "enq", "call"];
+var V3OWNI = "<rect x=\"3.5\" y=\"3.5\" width=\"17\" height=\"17\" rx=\"3\"/><path d=\"M12 8.4v7.2M8.4 12h7.2\"/>";
+var sel = [];      /* the groups, layer one of area one */
+var sel2 = {};     /* everything picked in the other six areas, on the v2 tab */
+
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function gof(k){ for(var i=0;i<GROUPS.length;i++) if(GROUPS[i].k===k) return GROUPS[i]; }
+function names(a){ return a.length<2 ? (a[0]||'') :
+  a.slice(0,-1).join(', ') + ' and ' + a[a.length-1]; }
+
+/* ---------------------------------------------------------------- screens */
+function show(id){
+  var s = document.getElementById(id);
+  if(!s) return;
+  document.querySelectorAll('.screen').forEach(function(x){ x.classList.remove('on'); });
+  s.classList.add('on');
+  document.querySelectorAll('.rail .nav').forEach(function(b){
+    b.classList.toggle('on', b.dataset.s === id); });
+  window.scrollTo(0,0);
+}
+
+/* ------------------------------------------------------------------ tabs */
+function tab(id){
+  document.querySelectorAll('.tb').forEach(function(b){
+    b.classList.toggle('on', b.dataset.t === id); });
+  document.querySelectorAll('.pane').forEach(function(p){
+    p.classList.toggle('on', p.id === id); });
+  window.scrollTo(0,0);
+}
+
+/* ---------------------------------------------------------------- layers */
+function layer(id){
+  document.querySelectorAll('.layer').forEach(function(l){
+    l.classList.toggle('on', l.id === id); });
+  window.scrollTo(0,0);
+}
+
+/* Layer two for one group, written once and used in both routes: the cards
+   route puts it on its own screen, the ladder opens it inside the area. */
+function detailBody(k){
+  var d = gof(k);
+  if(!d) return '';
+  return '<p class="lead">' + esc(d.blurb) + '</p>'
+     + '<div class="sec first"><h4>What they come looking for</h4><ul>'
+     + d.covers.map(function(c){ return '<li>' + esc(c) + '</li>'; }).join('')
+     + '</ul></div>'
+     + '<div class="sec"><h4>On the site as</h4><p>' + esc(d.short) + '</p></div>'
+     + '<div class="build"><div class="k">Layer three, once you build it</div><ul>'
+     + '<li>What this group should be able to do, which is the matrix.</li>'
+     + '<li>Anything they need before they will get in touch.</li>'
+     + '<li>Whether they get their own page, or share one.</li></ul></div>';
+}
+function pickLabel(on){ return on ? 'Take this group off' : 'Add this group'; }
+
+function openGroup(k){
+  var d = gof(k);
+  if(!d) return;
+  document.getElementById('l2name').textContent = d.name;
+  var h = detailBody(k)
+     + '<p><button class="act pri" type="button" data-pick="' + esc(k) + '">'
+     + pickLabel(sel.indexOf(k)>-1) + '</button>'
+     + ' <button class="act quiet" type="button" data-back="l1">Back to the groups</button></p>';
+  document.getElementById('l2body').innerHTML = h;
+  layer('l2');
+}
+
+/* ------------------------------------------ layer two, inside the ladder */
+function arow(ak){ return document.querySelector('.ar[data-a="' + ak + '"]'); }
+function openDetail(ak, ik){
+  var row = arow(ak);
+  if(!row) return;
+  var d = gof(ik);
+  if(!d) return;
+  row.querySelector('.dt2').innerHTML =
+      '<div class="crumb"><button type="button" data-dback="' + esc(ak) + '">'
+    + 'Layer 1</button><span class="sep">/</span>'
+    + '<span class="here">' + esc(d.name) + '</span><span class="lvl">Layer 2</span></div>'
+    + detailBody(ik)
+    + '<p class="dact"><button class="act pri pkd" type="button" data-a="' + esc(ak)
+    + '" data-i="' + esc(ik) + '">' + pickLabel(apicks(ak).indexOf(ik)>-1) + '</button>'
+    + '<button class="act quiet" type="button" data-dback="' + esc(ak) + '">'
+    + 'Back to the cards</button></p>';
+  row.setAttribute('data-det', ik);
+  row.setAttribute('data-open', 'true');
+}
+function closeDetail(ak){
+  var row = arow(ak);
+  if(!row) return;
+  row.removeAttribute('data-det');
+  row.querySelector('.dt2').innerHTML = '';
+}
+
+/* ------------------------------------------------------- the v2 ladder */
+function apicks(ak){
+  if(ak === 'visitors') return sel;
+  if(!sel2[ak]) sel2[ak] = [];
+  return sel2[ak];
+}
+function toggle2(ak, ik){
+  if(ak === 'visitors'){ toggle(ik); return; }
+  var a = apicks(ak), i = a.indexOf(ik);
+  if(i>-1) a.splice(i,1); else a.push(ik);
+  draw();
+}
+/* ----------------------------------------------------------------- picks */
+function toggle(k){
+  var i = sel.indexOf(k);
+  if(i>-1) sel.splice(i,1); else sel.push(k);
+  draw();
+}
+function picked(){ return GROUPS.filter(function(g){ return sel.indexOf(g.k)>-1; }); }
+
+function pages(){
+  var out = [];
+  ALWAYS.forEach(function(nm){ out.push({area:'always', nm:nm, fo:''}); });
+  var gs = picked();
+  /* one group needs no way in of its own: the whole site is theirs */
+  if(gs.length > 1) gs.forEach(function(g){ out.push({area:'who', nm:g.short, fo:''}); });
+  out.forEach(function(p,i){ p.ix = ('0'+(i+1)).slice(-2); });
+  return out;
+}
+function mapHtml(pg, zones){
+  var by = {};
+  pg.forEach(function(p){ (by[p.area] = by[p.area] || []).push(p); });
+  return (zones || MAPAREAS).map(function(a){
+    var ps = by[a[0]];
+    if(!ps) return '';
+    return '<div class="mz"><div class="mzh"><h4>' + esc(a[1]) + '</h4>'
+         + '<span class="c">' + ps.length + (ps.length===1?' page':' pages') + '</span></div>'
+         + '<div class="mzn">' + esc(a[2]) + '</div>'
+         + ps.map(function(p){
+             return '<div class="pg"><span class="ix">' + p.ix + '</span>'
+                  + '<span class="nm">' + esc(p.nm) + '</span>'
+                  + (p.fo ? '<span class="fo">for ' + esc(p.fo) + '</span>' : '')
+                  + (p.fl ? '<span class="fo tk">' + esc(p.fl) + '</span>' : '')
+                  + '</div>'; }).join('')
+         + '</div>';
+  }).join('');
+}
+
+function draw(){
+  document.querySelectorAll('.t').forEach(function(b){
+    var on = sel.indexOf(b.dataset.k) > -1;
+    b.setAttribute('data-on', on ? 'true' : 'false');
+    b.querySelectorAll('[aria-pressed]').forEach(function(x){
+      x.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+    b.querySelector('.pk').textContent = on ? 'Picked' : 'Pick';
+  });
+
+  var gs = picked(), pg = pages();
+  var f = { groups: gs.length, things: 0, pages: pg.length, needs: STDN + 0 };
+  document.querySelectorAll('.strip').forEach(function(s){
+    for(var key in f){
+      var el = s.querySelector('[data-f="'+key+'"]');
+      if(el) el.textContent = f[key];
+    }
+    var n = s.querySelector('[data-f="note"]');
+    if(n) n.textContent = gs.length
+      ? 'You have named ' + names(gs.map(function(g){return g.attr})) + '. That is enough to send.'
+      : 'Six things are in every site we build. Everything after that is yours to add.';
+  });
+
+  var mp = mapHtml(pg);
+  ['sitepages','sitepages2'].forEach(function(id){
+    var host = document.getElementById(id);
+    if(host) host.innerHTML = mp;
+  });
+  document.querySelectorAll('[data-f="mapn"]').forEach(function(el){
+    el.textContent = pg.length + ' pages'; });
+  var pan = document.getElementById('ladp');
+  if(pan){
+    var pc = pan.querySelector('[data-f="pages"]');
+    if(pc) pc.textContent = pg.length;
+  }
+
+  document.querySelectorAll('.c2[data-a]').forEach(function(c){
+    var on = apicks(c.dataset.a).indexOf(c.dataset.i) > -1;
+    c.setAttribute('data-on', on ? 'true' : 'false');
+    var body = c.querySelector('.it');
+    if(body){
+      body.setAttribute('data-on', on ? 'true' : 'false');
+      body.setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+    var lab = c.querySelector('.pk');
+    if(lab) lab.textContent = on ? 'Picked' : 'Pick';
+  });
+  document.querySelectorAll('.pkd').forEach(function(btn){
+    btn.textContent = pickLabel(apicks(btn.dataset.a).indexOf(btn.dataset.i) > -1); });
+  document.querySelectorAll('.ar[data-a]').forEach(function(r){
+    var n = apicks(r.dataset.a).length, tot = +r.dataset.n;
+    var c = r.querySelector('.acount');
+    if(c) c.textContent = n + ' of ' + tot;
+    r.querySelectorAll('.abar i').forEach(function(x,i){
+      x.classList.toggle('f', i < n); });
+  });
+
+  ['sendnow','sendnow2'].forEach(function(id){
+    var send = document.getElementById(id);
+    if(send) send.disabled = gs.length === 0;
+  });
+
+  var cst = document.querySelector('.cst[data-st="visitors"]');
+  if(cst){
+    cst.textContent = gs.length
+      ? gs.length + (gs.length===1 ? ' group named' : ' groups named')
+      : 'Nothing added yet';
+    cst.className = 'cst' + (gs.length ? ' ok' : '');
+  }
+}
+
+/* ------------------------------------------------------------ v3, the two areas */
+var sel3 = [];    /* the groups named on v3 */
+var act3 = V3PRE.slice();  /* the things picked on v3, three of them already */
+var v3last = '';  /* what was on offer when the bands were last written */
+var own3 = [];    /* the things the client wrote themselves */
+var own3n = 0;    /* so every added row keeps its own key */
+
+function v3group(k){ for(var i=0;i<V3G.length;i++) if(V3G[i].k===k) return V3G[i]; }
+
+/* A thing is on offer once the group that needs it has been named. Four are on
+   offer whoever turns up; the catch-all arrives as soon as anybody is named. */
+function v3offered(){
+  return V3A.filter(function(a){
+    if(a.need === '' || a.need === 'talk') return true;
+    if(a.need === 'any') return sel3.length > 0;
+    return sel3.indexOf(a.need) > -1;
+  });
+}
+/* A group taken off takes its things with it, so nothing is left picked that
+   nobody is on the site to do. */
+function v3prune(){
+  var ok = v3offered().map(function(a){ return a.k; });
+  act3 = act3.filter(function(k){ return ok.indexOf(k) > -1; });
+}
+function toggle3(k){
+  var i = sel3.indexOf(k);
+  if(i>-1) sel3.splice(i,1); else sel3.push(k);
+  v3prune();
+  draw3();
+}
+function ownAdd(){
+  var f = document.getElementById('v3miss');
+  if(!f) return;
+  var v = f.value.replace(/\s+/g, ' ').trim();
+  if(!v) { f.focus(); return; }
+  if(v.length > 70) v = v.slice(0, 70).trim();
+  own3.push({ k: 'own' + (++own3n), n: v });
+  f.value = '';
+  draw3();
+  f.focus();
+}
+function ownDrop(k){
+  own3 = own3.filter(function(a){ return a.k !== k; });
+  draw3();
+}
+function toggleAct(k){
+  var i = act3.indexOf(k);
+  if(i>-1) act3.splice(i,1); else act3.push(k);
+  draw3();
+}
+
+function v3bands(){
+  var out = [], off = v3offered();
+  function band(nm, note, list){ if(list.length) out.push({n:nm, s:note, items:list}); }
+  function need(x){ return off.filter(function(a){ return a.need === x; }); }
+  band(V3B[''].n, V3B[''].s, need(''));
+  V3G.forEach(function(g){
+    if(sel3.indexOf(g.k) > -1) band(g.n, g.cta, need(g.k)); });
+  band(V3B.any.n, V3B.any.s, need('any'));
+  band(V3B.talk.n, V3B.talk.s, need('talk'));
+  return out;
+}
+var TICK = '<svg viewBox="0 0 24 24" aria-hidden="true">'
+  + '<path d="m5 12.6 4.6 4.6L19 7.4"/></svg>';
+
+function v3head(b, n){
+  return '<tr class="bh"><td colspan="3"><h4>' + esc(b.n) + '<i>' + n
+    + '</i></h4><span class="bn">' + esc(b.s) + '</span></td></tr>';
+}
+/* the first cell is the same everywhere: the icon, the name, the note, and the
+   page it puts on the site folded underneath for when the column is too narrow */
+function v3cell(icon, nm, note, foot){
+  return '<td><span class="c1">'
+    + '<span class="ci"><svg viewBox="0 0 24 24" aria-hidden="true">'
+    + icon + '</svg></span>'
+    + '<span class="tx"><span class="tn">' + esc(nm) + '</span>'
+    + '<span class="tb2">' + esc(note) + '</span>'
+    + '<span class="pgs">' + esc(foot) + '</span></span></span></td>';
+}
+function v3render(){
+  /* One table, so the columns line up the whole way down and the middle one can
+     say what each tick actually puts on the site. The bands sit inside it as
+     full-width rows rather than as separate tables of their own. Two kinds of
+     row live in it: the ones on offer, and the ones the client wrote. */
+  var rows = v3bands().map(function(b){
+    return v3head(b, b.items.length)
+      + b.items.map(function(a){
+          return '<tr class="rw" data-x3="' + esc(a.k) + '" data-on="false">'
+            + v3cell(a.icon, a.n, a.s,
+                a.page ? 'Adds ' + a.page
+                  : (a.need === 'talk' ? 'A window on every page'
+                                       : 'No page of its own'))
+            + '<td class="pgc">'
+            + (a.page ? esc(a.page)
+               : (a.need === 'talk' ? '<em>a window on every page</em>'
+                                    : '<em>no page of its own</em>')) + '</td>'
+            + '<td class="ctl"><button class="pk3x" type="button" data-x="'
+            + esc(a.k) + '" aria-pressed="false"><span class="pk">Pick</span>'
+            + '</button></td></tr>';
+        }).join('');
+  }).join('');
+
+  if(own3.length){
+    rows += v3head(V3B.own, own3.length)
+      + own3.map(function(a){
+          return '<tr class="rw own" data-own="' + esc(a.k) + '">'
+            + v3cell(V3OWNI, a.n, 'Added by you, and on the list.',
+                     'A page of its own, to talk about')
+            + '<td class="pgc"><em>a page of its own, '
+            + 'to talk about</em></td>'
+            + '<td class="ctl"><button class="rmv" type="button" data-own="'
+            + esc(a.k) + '">Remove</button></td></tr>';
+        }).join('');
+  }
+
+  document.getElementById('ctabands').innerHTML =
+    '<table class="ctb"><thead><tr><th>What a visitor can do</th>'
+    + '<th class="md">What it puts on the site</th>'
+    + '<th class="rt">On the list</th></tr></thead><tbody>' + rows
+    + '</tbody></table>';
+}
+
+function v3pages(){
+  var out = [];
+  ALWAYS.forEach(function(nm){ out.push({area:'always', nm:nm, fo:''}); });
+  var gs = V3G.filter(function(g){ return sel3.indexOf(g.k) > -1; });
+  if(gs.length > 1) gs.forEach(function(g){ out.push({area:'who', nm:g.short, fo:''}); });
+  /* a thing picked needs somewhere to happen, and the page says who asked for it */
+  v3offered().forEach(function(a){
+    if(act3.indexOf(a.k) < 0 || !a.page) return;
+    var g = (a.need && a.need !== 'any') ? v3group(a.need) : null;
+    out.push({area:'do', nm:a.page,
+              fo: g ? g.attr : (a.need === 'any' ? 'everybody' : '')});
+  });
+  /* what they wrote themselves is shown, and marked as not yet scoped */
+  own3.forEach(function(a){
+    out.push({area:'do', nm:a.n, fo:'', fl:'one to talk about'}); });
+  out.forEach(function(p,i){ p.ix = ('0'+(i+1)).slice(-2); });
+  return out;
+}
+
+function v3count(a3, got, tot){
+  var r = document.querySelector('.ar3[data-a3="' + a3 + '"]');
+  if(!r) return;
+  var c = r.querySelector('.acount');
+  if(c) c.textContent = got + ' of ' + tot;
+  var bar = r.querySelector('.abar');
+  if(!bar) return;
+  if(bar.classList.contains('prop')){
+    bar.firstChild.style.width = (tot ? Math.round(got / tot * 100) : 0) + '%';
+    return;
+  }
+  [].forEach.call(bar.children, function(x,i){ x.classList.toggle('f', i < got); });
+}
+
+function draw3(){
+  /* the bands are only rewritten when what is on offer has actually changed */
+  var key = v3offered().map(function(a){ return a.k; }).join(',')
+          + '|' + own3.map(function(a){ return a.k + ':' + a.n; }).join(',');
+  if(key !== v3last){ v3render(); v3last = key; }
+
+  function mark(sel_, attr, list){
+    document.querySelectorAll(sel_).forEach(function(c){
+      var on = list.indexOf(c.getAttribute(attr)) > -1;
+      c.setAttribute('data-on', on ? 'true' : 'false');
+      var body = c.querySelector('.it');
+      if(body){
+        body.setAttribute('data-on', on ? 'true' : 'false');
+        body.setAttribute('aria-pressed', on ? 'true' : 'false');
+      }
+      var pkb = c.querySelector('.pk3x');
+      if(pkb) pkb.setAttribute('aria-pressed', on ? 'true' : 'false');
+      var lab = c.querySelector('.pk');
+      if(lab) lab.textContent = on ? 'Picked' : 'Pick';
+    });
+  }
+  mark('.c2[data-g3]', 'data-g3', sel3);
+  mark('[data-x3]', 'data-x3', act3);
+
+  v3count('v3who', sel3.length, V3G.length);
+  v3count('v3cta', act3.length + own3.length,
+          v3offered().length + own3.length);
+
+  var pg = v3pages();
+  var host = document.getElementById('sitepages3');
+  if(host) host.innerHTML = mapHtml(pg, V3MAP);
+  var pan = document.getElementById('ladp3');
+  if(pan){
+    var b = pan.querySelector('[data-f3="pages"]');
+    if(b) b.textContent = pg.length;
+    var t = pan.querySelector('.p3t');
+    if(t) t.textContent =
+        sel3.length + (sel3.length === 1 ? ' group named' : ' groups named')
+        + ' · ' + (act3.length + own3.length)
+        + (act3.length + own3.length === 1 ? ' thing to do' : ' things to do');
+  }
+}
+
+/* ---------------------------------------------------------------- wiring */
+document.addEventListener('click', function(e){
+  /* a row in the CTA table answers wherever you hit it, control included */
+  var rw = e.target.closest('.ctb .rw[data-x3]');
+  if(rw){ toggleAct(rw.getAttribute('data-x3')); return; }
+  var b = e.target.closest('button');
+  if(!b) return;
+  if(b.id === 'v3add'){ ownAdd(); return; }
+  if(b.classList.contains('rmv')){ ownDrop(b.dataset.own); return; }
+
+  if(b.classList.contains('nav') && b.dataset.s){ show(b.dataset.s); return; }
+  if(b.classList.contains('grp')){
+    b.setAttribute('aria-expanded', b.getAttribute('aria-expanded')==='true' ? 'false':'true');
+    return;
+  }
+  if(b.dataset.go){
+    show(b.dataset.go);
+    if(b.dataset.go === 'p-build') tab('t-build');
+    return;
+  }
+  if(b.classList.contains('tb')){ tab(b.dataset.t); return; }
+  if(b.dataset.t && !b.classList.contains('tb')){ tab(b.dataset.t); return; }
+  if(b.dataset.back){ layer(b.dataset.back); return; }
+  if(b.classList.contains('cd')){
+    if(b.getAttribute('aria-disabled')==='true') return;
+    if(b.dataset.c === 'visitors') layer('l1');
+    return;
+  }
+  if(b.dataset.atog){
+    var row = b.closest('.ar'), open = row.getAttribute('data-open') === 'true';
+    row.setAttribute('data-open', open ? 'false' : 'true');
+    b.setAttribute('aria-expanded', open ? 'false' : 'true');
+    b.querySelector('.ax').textContent = open ? '+' : '\u2212';
+    if(open) closeDetail(row.dataset.a);   /* shut it, and it opens at layer one */
+    return;
+  }
+  if(b.dataset.atog3){
+    var r3 = b.closest('.ar3'), o3 = r3.getAttribute('data-open') === 'true';
+    r3.setAttribute('data-open', o3 ? 'false' : 'true');
+    b.setAttribute('aria-expanded', o3 ? 'false' : 'true');
+    b.querySelector('.ax').textContent = o3 ? '+' : '\u2212';
+    return;
+  }
+  if(b.dataset.g){ toggle3(b.dataset.g); return; }
+  if(b.dataset.x){ toggleAct(b.dataset.x); return; }
+  if(b.classList.contains('op2')){ openDetail(b.dataset.da, b.dataset.di); return; }
+  if(b.dataset.dback){ closeDetail(b.dataset.dback); return; }
+  if(b.classList.contains('it') || b.classList.contains('pk2')
+     || b.classList.contains('pkd')){
+    toggle2(b.dataset.a, b.dataset.i);
+    return;
+  }
+  if(b.classList.contains('tt') || b.classList.contains('pkb')){
+    toggle(b.dataset.k); return; }
+  if(b.dataset.open){ openGroup(b.dataset.open); return; }
+  if(b.dataset.pick){ toggle(b.dataset.pick); openGroup(b.dataset.pick); return; }
+});
+
+
+show('p-home');
+draw();
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Enter') return;
+  if(e.target && e.target.id === 'v3miss'){ e.preventDefault(); ownAdd(); }
+});
+
+draw3();
+</script>
+</body>
+</html>

@@ -13,12 +13,12 @@ import { cn } from "@/lib/utils";
  * size, gets its left offset from here, so a group heading, a sub label and a
  * third level link cannot drift apart as any of them is adjusted.
  *
- * The indents are additive: a level two item is its container's gutter plus 14, a
- * level three is plus 28. Half steps, because the nesting is shallow and a full
- * 24px per level would walk a third level page halfway across a 252px rail.
+ * The indents are additive: a level two item is its container's gutter plus 14. A
+ * half step, because the nesting is only two deep and a full 24px would walk a
+ * child page a long way across a narrow rail.
  */
 const GUTTER = { rail: 24, menu: 4 } as const;
-const INDENT = { 1: 0, 2: 14, 3: 28 } as const;
+const INDENT = { 1: 0, 2: 14 } as const;
 
 const offset = (size: keyof typeof GUTTER, level: RailItem["level"]) =>
   GUTTER[size] + INDENT[level ?? 1];
@@ -134,15 +134,6 @@ function RailSection({
         <div id={id}>
           {group.items.map((item) => (
             <div key={item.href}>
-              {item.sub ? (
-                <p
-                  style={{ paddingLeft: offset(size, item.level) }}
-                  className="pt-4 pb-1 font-mono text-[11px] font-semibold tracking-[0.02em] text-label"
-                >
-                  {item.sub}
-                </p>
-              ) : null}
-
               <Link
                 href={item.href}
                 onClick={onNavigate}

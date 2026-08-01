@@ -112,9 +112,7 @@ export function SearchView() {
 
           <P>
             Try a shorter phrase, browse{" "}
-            <TextLink href={ROUTES.services}>
-              our products and services
-            </TextLink>
+            <TextLink href={ROUTES.build}>building your website</TextLink>
             , or <TextLink href={ROUTES.contact}>contact us</TextLink>.
           </P>
         </>

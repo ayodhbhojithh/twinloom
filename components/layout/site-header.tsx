@@ -14,10 +14,9 @@ import { cn } from "@/lib/utils";
 /**
  * The site header.
  *
- * The draft's own: a hairline under it, the name at 700 in ink, seven links in
- * the quiet grey, and one call to action pushed to the right. No logo mark and no
- * shadow. The rule under it is the only thing separating it from the page, which
- * is the same device the page uses between its own sections.
+ * The name at 700 in ink, the links in the quiet grey, and one call to action
+ * pushed to the right. No logo mark, no shadow and no rule: the page starts far
+ * enough below that a line would only draw a boundary the space already draws.
  *
  * One departure: the draft outlines the call to action in ink, reserving ink for
  * primary actions. This fills it in `active` instead, the system's only accent, so
@@ -47,8 +46,12 @@ export function SiteHeader() {
   const pathname = usePathname();
   const groups = useRailGroups();
 
+  /* No rule under it, and opaque. The two go together: a translucent bar shows the
+     page sliding through it, and without a rule there is nothing left to mark where
+     the header stops. Opaque also removes the shimmer, since a blurred backdrop has
+     to recomposite the whole strip on every scroll frame. */
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-field/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-40 bg-field">
       <div className="page-frame flex items-center gap-4 py-2.5">
         <div className="flex min-w-0 flex-1 items-center">
           <Link

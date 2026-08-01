@@ -10,16 +10,12 @@ import { SimpleList } from "@/components/blocks/simple-list";
 import { PageHeading, PageShell } from "@/components/layout";
 import { ROUTES } from "@/lib/site";
 
-/** The draft's four, and where each one sits, so the note is not decoration. */
+/** Four real destinations, and the section each one sits in. */
 const USEFUL = [
-  {
-    label: "Our products and services",
-    note: "Services",
-    href: ROUTES.services,
-  },
-  { label: "Pricing", note: "Pricing", href: ROUTES.pricing },
-  { label: "Start your project", note: "Start", href: ROUTES.start },
-  { label: "Contact us", note: "Contact", href: ROUTES.contact },
+  { label: "Build your website", note: "Start here", href: ROUTES.build },
+  { label: "About us", note: "About us", href: ROUTES.about },
+  { label: "FAQs", note: "Reading", href: ROUTES.faq },
+  { label: "Contact us", note: "About us", href: ROUTES.contact },
 ] as const;
 
 /**
