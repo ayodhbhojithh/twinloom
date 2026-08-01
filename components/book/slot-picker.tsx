@@ -1,19 +1,22 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
-import { Check, Clock, Video, X } from "lucide-react";
+import { Check, Clock, Globe, Video, X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
+import { Calendar } from "./calendar";
 import {
+  OFFICE_ZONE,
   SLOTS,
-  freeCount,
-  getDiary,
-  getDiaryOnServer,
-  isTaken,
-  subscribeToDiary,
-  type Day,
-} from "./slots";
+  getReader,
+  getReaderOnServer,
+  keyToDate,
+  officeInstant,
+  subscribeToReader,
+  takenSlots,
+  type Reader,
+} from "./diary";
 
 /** What the meeting is, which is the second thing the framework asks this page for. */
 const TERMS = [
@@ -26,199 +29,76 @@ const TERMS = [
 /**
  * Pick a time that suits you.
  *
- * Two questions, the same shape as the rest of the site: which day, then which
- * time. The day decides what times exist, so the second question is written by
- * the first, and the panel beside them writes the answer as it goes.
+ * Three columns, which is the arrangement every booking tool worth using has
+ * settled on: what the meeting is, when it could be, and which time. It is
+ * settled because it works, and there is nothing to be gained by being novel
+ * about a calendar.
  *
- * The days are read through `useSyncExternalStore` rather than computed in
- * render. They depend on what today is, and the server's today and the browser's
- * today are not reliably the same date: the server snapshot is empty and the
- * real one arrives on hydration, so there is nothing for React to find a
- * mismatch in.
+ * Everything that depends on the reader waits for hydration. Their zone, their
+ * locale, their clock convention and today's date are all the browser's to tell
+ * us, and none of them are knowable while this is rendered on a server.
  */
 export function SlotPicker() {
-  const days = useSyncExternalStore(
-    subscribeToDiary,
-    getDiary,
-    getDiaryOnServer,
+  const reader = useSyncExternalStore(
+    subscribeToReader,
+    getReader,
+    getReaderOnServer,
   );
 
-  const [dayKey, setDayKey] = useState<string | null>(null);
-  const [time, setTime] = useState<string | null>(null);
+  const [dayKeyChosen, setDayKey] = useState<string | null>(null);
+  const [slotAt, setSlotAt] = useState<number | null>(null);
   const [asked, setAsked] = useState(false);
+  /* Some people would rather see the office's clock than their own. */
+  const [inOfficeZone, setInOfficeZone] = useState(false);
 
-  const day = days.find((entry) => entry.key === dayKey) ?? null;
-  const picked = day && time ? `${day.full} at ${time}` : "";
+  if (!reader) return <Waiting />;
 
-  function chooseDay(next: Day) {
-    setDayKey(next.key);
-    /* The times belong to the day. Keeping one selected across a change would
-       leave the panel showing a slot nobody picked on a day nobody looked at. */
-    setTime(null);
-    setAsked(false);
-  }
+  const zone = inOfficeZone ? OFFICE_ZONE : reader.zone;
+  const day = dayKeyChosen ? keyToDate(dayKeyChosen) : null;
+  const taken = day ? takenSlots(day) : [];
+
+  const timeAt = (at: number) => {
+    const slot = SLOTS[at];
+    const when = officeInstant(
+      day!.getFullYear(),
+      day!.getMonth(),
+      day!.getDate(),
+      slot.hour,
+      slot.minute,
+    );
+
+    return {
+      when,
+      label: new Intl.DateTimeFormat(reader.locale, {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: reader.hour12,
+        timeZone: zone,
+      }).format(when),
+    };
+  };
+
+  const chosen =
+    day && slotAt !== null
+      ? new Intl.DateTimeFormat(reader.locale, {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: reader.hour12,
+          timeZone: zone,
+        }).format(timeAt(slotAt).when)
+      : "";
 
   return (
-    <div className="grid gap-x-14 gap-y-12 lg:grid-cols-[minmax(0,1fr)_20rem]">
-      <div className="min-w-0">
-        <Question n="01" title="Which day" note={`${days.length} to choose from`} />
-
-        {/* Scrolls sideways rather than wrapping. Ten days in two ragged rows
-            read as a calendar with something missing; one line reads as a run of
-            days, which is what it is. */}
-        <div className="quiet-scroll -mx-1 mt-4 flex gap-2 overflow-x-auto px-1 pb-1">
-          {days.length
-            ? days.map((entry) => {
-                const on = entry.key === dayKey;
-                const free = freeCount(entry);
-
-                return (
-                  <button
-                    key={entry.key}
-                    type="button"
-                    aria-pressed={on}
-                    onClick={() => chooseDay(entry)}
-                    className={cn(
-                      "flex w-[74px] shrink-0 cursor-pointer flex-col items-center gap-0.5 rounded-card border py-3 transition-colors",
-                      on
-                        ? "border-ink bg-ink text-white"
-                        : "border-border bg-field hover:border-ink",
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "font-mono text-[10px] font-bold tracking-[0.12em] uppercase",
-                        on ? "text-white/60" : "text-label",
-                      )}
-                    >
-                      {entry.weekday}
-                    </span>
-                    <span
-                      className={cn(
-                        "text-[21px] leading-none font-bold tabular-nums",
-                        on ? "text-white" : "text-ink",
-                      )}
-                    >
-                      {entry.number}
-                    </span>
-                    <span
-                      className={cn(
-                        "text-[11.5px]",
-                        on ? "text-white/60" : "text-quiet",
-                      )}
-                    >
-                      {entry.month}
-                    </span>
-                    <span
-                      className={cn(
-                        "mt-1 font-mono text-[9px] font-bold tracking-[0.1em] uppercase tabular-nums",
-                        on
-                          ? "text-white/55"
-                          : free
-                            ? "text-done"
-                            : "text-label",
-                      )}
-                    >
-                      {free ? `${free} free` : "full"}
-                    </span>
-                  </button>
-                );
-              })
-            : /* Before hydration. Placeholders rather than an empty box, so the
-                 row does not jump to its full height a moment later. */
-              [0, 1, 2, 3, 4, 5].map((at) => (
-                <span
-                  key={at}
-                  aria-hidden
-                  className="h-[104px] w-[74px] shrink-0 rounded-card border border-hair bg-well"
-                />
-              ))}
-        </div>
-
-        <div className="mt-10">
-          <Question
-            n="02"
-            title="Which time"
-            note={day ? day.full : "Pick a day first"}
-          />
-
-          {day ? (
-            <div className="mt-4 space-y-6">
-              {(["morning", "afternoon"] as const).map((half) => (
-                <div key={half}>
-                  <p className="mb-2.5 font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase">
-                    {half}
-                  </p>
-
-                  <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 xl:grid-cols-5">
-                    {SLOTS.map((slot, at) => {
-                      if (slot.half !== half) return null;
-
-                      const taken = isTaken(day, at);
-                      const on = slot.time === time;
-
-                      return (
-                        <button
-                          key={slot.time}
-                          type="button"
-                          disabled={taken}
-                          aria-pressed={on}
-                          onClick={() => {
-                            setTime(slot.time);
-                            setAsked(false);
-                          }}
-                          className={cn(
-                            "rounded-field border py-2.5 text-[14.5px] font-semibold tabular-nums transition-colors",
-                            taken &&
-                              "cursor-not-allowed border-hair bg-well text-label line-through",
-                            !taken &&
-                              on &&
-                              "border-active bg-active text-white",
-                            !taken &&
-                              !on &&
-                              "cursor-pointer border-border bg-field text-ink hover:border-ink",
-                          )}
-                        >
-                          {slot.time}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="mt-4 rounded-card border border-dashed border-border px-5 py-6 text-[15px] text-quiet">
-              Choose a day above and its times appear here. Struck out means
-              somebody already has it.
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* The answer, written as it is picked. The same behaviour as the scope on
-          the build screen, because it is the same promise: you say something and
-          we put it in writing where you can see it. */}
-      <aside className="min-w-0 lg:sticky lg:top-[calc(var(--nav-height)+28px)] lg:self-start">
+    <div className="grid gap-x-12 gap-y-10 xl:grid-cols-[minmax(0,17rem)_minmax(0,1fr)_minmax(0,13rem)]">
+      <aside className="min-w-0">
         <p className="font-mono text-[10px] font-bold tracking-[0.2em] text-label uppercase">
-          Your meeting
+          The meeting
         </p>
 
-        <p className="mt-4 text-[21px] leading-[1.3] font-bold tracking-[-0.02em] text-ink">
-          {picked ? (
-            <span className="text-active">{picked}</span>
-          ) : (
-            <>
-              <span className="text-quiet">A time you have not picked yet</span>
-              <span
-                aria-hidden
-                className="blank-caret ml-1 inline-block align-baseline"
-              />
-            </>
-          )}
-        </p>
-
-        <dl className="mt-7 border-t border-hair">
+        <dl className="mt-4 border-t border-hair">
           {TERMS.map((entry) => (
             <div
               key={entry.term}
@@ -241,54 +121,210 @@ export function SlotPicker() {
           ))}
         </dl>
 
-        <button
-          type="button"
-          disabled={!picked}
-          onClick={() => setAsked(true)}
-          className="mt-6 w-full cursor-pointer rounded-field bg-active px-6 py-[13px] text-[15.5px] font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-default disabled:bg-planned disabled:text-label"
-        >
-          Book this time
-        </button>
+        <ZoneNote
+          reader={reader}
+          inOfficeZone={inOfficeZone}
+          onToggle={() => setInOfficeZone((was) => !was)}
+        />
+      </aside>
 
-        {/* Honest about what just happened. A booking screen that says
-            "confirmed" when nothing has been sent is the one thing this page
-            must not do. */}
-        {asked ? (
-          <p className="mt-4 rounded-card border border-amber/30 bg-amber/5 px-4 py-3 text-[13.5px] leading-[1.5] text-body">
-            Nothing has been sent. This calendar is not connected to a real diary
-            yet, so {picked} is not held for you.
-          </p>
+      <div className="min-w-0 xl:border-x xl:border-hair xl:px-12">
+        <Calendar
+          reader={reader}
+          selected={dayKeyChosen}
+          onSelect={(key) => {
+            setDayKey(key);
+            /* The times belong to the day. Keeping one across a change would
+               leave the panel showing a slot nobody picked. */
+            setSlotAt(null);
+            setAsked(false);
+          }}
+        />
+      </div>
+
+      <div className="flex min-w-0 flex-col">
+        <p className="font-mono text-[10px] font-bold tracking-[0.2em] text-label uppercase">
+          {day
+            ? new Intl.DateTimeFormat(reader.locale, {
+                weekday: "long",
+                day: "numeric",
+                month: "short",
+              }).format(day)
+            : "Times"}
+        </p>
+
+        {day ? (
+          <>
+            <div
+              className="quiet-scroll mt-4 flex max-h-[22rem] flex-col gap-2 overflow-y-auto pr-1"
+              role="group"
+              aria-label="Available times"
+            >
+              {SLOTS.map((_slot, at) => {
+                const gone = taken[at];
+                const on = slotAt === at;
+                const { label } = timeAt(at);
+
+                return (
+                  <button
+                    key={at}
+                    type="button"
+                    disabled={gone}
+                    aria-pressed={on}
+                    onClick={() => {
+                      setSlotAt(at);
+                      setAsked(false);
+                    }}
+                    className={cn(
+                      "rounded-field border py-2.5 text-center text-[14.5px] font-semibold tabular-nums transition-colors",
+                      gone &&
+                        "cursor-not-allowed border-hair bg-well text-label line-through",
+                      !gone && on && "border-active bg-active text-white",
+                      !gone &&
+                        !on &&
+                        "cursor-pointer border-border bg-field text-ink hover:border-ink",
+                    )}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Announced rather than only drawn, so somebody not looking at the
+                panel still learns what they just picked. */}
+            <p aria-live="polite" className="sr-only">
+              {chosen ? `Selected ${chosen}` : ""}
+            </p>
+
+            <div className="mt-5 border-t border-hair pt-5">
+              <p className="text-[14px] leading-[1.45] text-quiet">
+                {chosen ? (
+                  <span className="font-semibold text-ink">{chosen}</span>
+                ) : (
+                  "Pick a time and it appears here."
+                )}
+              </p>
+
+              <button
+                type="button"
+                disabled={!chosen}
+                onClick={() => setAsked(true)}
+                className="mt-4 w-full cursor-pointer rounded-field bg-active px-5 py-[12px] text-[15px] font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-default disabled:bg-planned disabled:text-label"
+              >
+                Book this time
+              </button>
+
+              {/* A booking screen that says "confirmed" when nothing was sent is
+                  the one thing this page must not do. */}
+              {asked ? (
+                <p
+                  role="status"
+                  className="mt-3 rounded-card border border-amber/30 bg-amber/5 px-3.5 py-3 text-[13px] leading-[1.5] text-body"
+                >
+                  Nothing has been sent. This calendar is not connected to a real
+                  diary yet, so that time is not held for you.
+                </p>
+              ) : null}
+            </div>
+          </>
         ) : (
-          <p className="mt-4 text-[13px] leading-[1.5] text-label">
-            Times are shown in your own time zone.
+          <p className="mt-4 rounded-card border border-dashed border-border px-4 py-5 text-[14px] leading-[1.5] text-quiet">
+            Choose a day and its times appear here. A dot under a date means it
+            has room; struck out means somebody already has it.
           </p>
         )}
-      </aside>
+      </div>
     </div>
   );
 }
 
-/** A numbered question, the same furniture the build screen uses. */
-function Question({
-  n,
-  title,
-  note,
+/**
+ * Whose clock the times are on.
+ *
+ * Named outright rather than left to be discovered. A time with no zone against
+ * it is the most common way a booking goes wrong across borders, and the offset
+ * is spelled out because a zone name alone means nothing to most people.
+ */
+function ZoneNote({
+  reader,
+  inOfficeZone,
+  onToggle,
 }: {
-  n: string;
-  title: string;
-  note: string;
+  reader: Reader;
+  inOfficeZone: boolean;
+  onToggle: () => void;
 }) {
+  const zone = inOfficeZone ? OFFICE_ZONE : reader.zone;
+
+  const offset =
+    new Intl.DateTimeFormat(reader.locale, {
+      timeZone: zone,
+      timeZoneName: "shortOffset",
+    })
+      .formatToParts(new Date())
+      .find((part) => part.type === "timeZoneName")?.value ?? "";
+
+  const sameZone = reader.zone === OFFICE_ZONE;
+
   return (
-    <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ink pb-2.5">
-      <h2 className="flex items-baseline gap-3 text-[17px] leading-[1.2] font-bold tracking-[-0.018em] text-ink">
-        <span className="font-mono text-[11px] font-bold text-idx tabular-nums">
-          {n}
+    <div className="mt-6">
+      <p className="flex items-start gap-2.5 text-[13px] leading-[1.5] text-quiet">
+        <Globe aria-hidden className="mt-0.5 size-4 shrink-0 text-label" />
+        <span>
+          Times shown in{" "}
+          <span className="font-semibold text-ink">
+            {zone.replace(/_/g, " ")}
+          </span>
+          {offset ? ` (${offset})` : ""}.
+          {sameZone ? " Which is ours too." : " We are in London."}
         </span>
-        {title}
-      </h2>
-      <span className="font-mono text-[10px] font-semibold tracking-[0.12em] text-label uppercase">
-        {note}
-      </span>
+      </p>
+
+      {sameZone ? null : (
+        <button
+          type="button"
+          aria-pressed={inOfficeZone}
+          onClick={onToggle}
+          className="mt-2.5 cursor-pointer font-mono text-[10px] font-bold tracking-[0.14em] text-active uppercase transition-opacity hover:opacity-75"
+        >
+          {inOfficeZone ? "Show my own time" : "Show London time"}
+        </button>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Before hydration.
+ *
+ * The shape of the thing rather than a spinner: the columns are already the
+ * right size, so nothing moves when the real calendar replaces this.
+ */
+function Waiting() {
+  return (
+    <div
+      aria-hidden
+      className="grid gap-x-12 gap-y-10 xl:grid-cols-[minmax(0,17rem)_minmax(0,1fr)_minmax(0,13rem)]"
+    >
+      <div className="space-y-3">
+        {[0, 1, 2, 3].map((at) => (
+          <div key={at} className="h-12 rounded-field bg-well" />
+        ))}
+      </div>
+      <div className="xl:border-x xl:border-hair xl:px-12">
+        <div className="h-6 w-40 rounded-field bg-well" />
+        <div className="mt-4 grid grid-cols-7 gap-1">
+          {Array.from({ length: 35 }, (_, at) => (
+            <div key={at} className="aspect-square rounded-field bg-well" />
+          ))}
+        </div>
+      </div>
+      <div className="space-y-2">
+        {[0, 1, 2, 3, 4].map((at) => (
+          <div key={at} className="h-10 rounded-field bg-well" />
+        ))}
+      </div>
     </div>
   );
 }
