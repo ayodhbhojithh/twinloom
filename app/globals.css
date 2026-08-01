@@ -107,6 +107,22 @@
 }
 
 /* ---------------------------------------------------------------------------
+   The stage: one screenful, under the header.
+
+   A home page that has to be read without scrolling needs to know how much room
+   it has, and it cannot know that from a media query. `svh` rather than `vh` so
+   a mobile browser's collapsing toolbar does not push the last band out of
+   sight the moment it collapses.
+
+   Anything that stands between the header and the stage subtracts from it by
+   overriding this on a wrapper, which is how the version chooser makes room for
+   its tab bar without every version having to know the chooser exists.
+--------------------------------------------------------------------------- */
+:root {
+  --stage: calc(100svh - var(--nav-height));
+}
+
+/* ---------------------------------------------------------------------------
    shadcn's own tokens, mapped onto the same palette so a primitive dropped in
    anywhere already matches the draft.
 --------------------------------------------------------------------------- */
@@ -438,6 +454,93 @@
     .blank-caret::after {
       animation: none;
     }
+  }
+
+  /* ---------------------------------------------------------------------------
+     Devices for the home page.
+
+     Everything here is drawn with type, rules and one accent. No images: the
+     site has no photography and inventing some would commit it to a look it
+     cannot maintain. What these do instead is make the type itself the graphic.
+  --------------------------------------------------------------------------- */
+
+  /* A band of repeating words that drifts sideways. The track holds the run
+     twice and shifts by exactly half, so the loop has no seam. */
+  @keyframes drift {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .drift {
+    animation: drift 46s linear infinite;
+  }
+
+  .drift-slow {
+    animation-duration: 78s;
+  }
+
+  .drift-back {
+    animation-direction: reverse;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drift {
+      animation: none;
+    }
+  }
+
+  /* Display type as an outline. Big enough and pale enough to sit behind a
+     headline without competing with it. */
+  .outline-type {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--color-border);
+  }
+
+  .outline-type-accent {
+    -webkit-text-stroke-color: color-mix(
+      in oklab,
+      var(--color-active) 28%,
+      transparent
+    );
+  }
+
+  /* Ruled paper. Horizontal only, at the rhythm of a line of text, for anything
+     that wants to look written rather than drawn. */
+  .ruled {
+    background-image: linear-gradient(var(--color-hair) 1px, transparent 1px);
+    background-size: 100% 46px;
+  }
+
+  /* Drawing paper. The grid is the ground for anything presented as a plan. */
+  .blueprint {
+    background-image:
+      linear-gradient(var(--color-hair) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-hair) 1px, transparent 1px);
+    background-size: 58px 58px;
+  }
+
+  /* A marker sweep behind a phrase. Skewed and slightly overhanging, so it
+     reads as drawn rather than as a background colour. */
+  .swipe {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .swipe::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0.12em -0.14em 0.1em;
+    transform: skewX(-12deg);
+    background: color-mix(in oklab, var(--color-active) 16%, transparent);
+  }
+
+  .swipe-done::before {
+    background: color-mix(in oklab, var(--color-done) 18%, transparent);
   }
 
   /* A table of contents leader. The dots are a background rather than a dotted
