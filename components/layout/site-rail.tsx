@@ -2,8 +2,6 @@
 
 import { usePathname } from "next/navigation";
 
-import { SITE } from "@/lib/site";
-
 import { RailNav } from "./rail-nav";
 
 /**
@@ -39,13 +37,6 @@ export function SiteRail() {
       }}
     >
       <RailNav pathname={pathname} />
-
-      {/* The prototype's own foot note. It says what this site is while you are
-          looking at the list of everything in it, which is the one place the
-          admission reads as useful rather than apologetic. */}
-      <div className="mt-7 border-t border-border px-6 pt-[18px]">
-        <p className="text-[12.5px] leading-[1.5] text-label">{SITE.status}</p>
-      </div>
     </nav>
   );
 }

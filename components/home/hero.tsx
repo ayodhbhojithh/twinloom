@@ -45,13 +45,12 @@ const RINGS = [58, 74, 90, 106, 122];
 
 /** Timing, in one place, so the order things arrive in can be read at a glance. */
 const IN = {
-  kicker: 0,
-  title: 90,
-  lead: 190,
-  actions: 280,
-  points: 360,
-  art: 160,
-  ring: 320,
+  title: 0,
+  lead: 110,
+  actions: 200,
+  points: 280,
+  art: 90,
+  ring: 240,
 } as const;
 
 /** `--in` is what `.rise` and `.ring-in` read their delay from. */
@@ -65,9 +64,9 @@ const delay = (ms: number) => ({ "--in": `${ms}ms` }) as React.CSSProperties;
  * set once in `globals.css`, so this cannot drift out of step with the header
  * when the header changes.
  *
- * The spacing down the left column is one ladder, 24 / 24 / 32 / 40, rather than
- * a value picked per block. Four steps that each read as bigger than the last is
- * what makes a column look set rather than assembled.
+ * The spacing down the left column is one ladder, 24 / 32 / 40, rather than a
+ * value picked per block. Steps that each read as bigger than the last are what
+ * make a column look set rather than assembled.
  *
  * It arrives in reading order, and it arrives in CSS. A page that ships no
  * JavaScript should not start shipping some for an animation that plays once, so
@@ -86,16 +85,9 @@ export function Hero() {
     <section className="page-frame relative isolate flex min-h-[var(--stage)] flex-col justify-center overflow-clip py-12 lg:py-10">
       <div className="grid max-w-wide items-center gap-x-12 gap-y-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] xl:gap-x-16">
         <div className="min-w-0">
-          <p
-            style={delay(IN.kicker)}
-            className="rise font-mono text-[10px] font-bold tracking-[0.2em] text-label uppercase"
-          >
-            Home
-          </p>
-
           <h1
             style={delay(IN.title)}
-            className="rise mt-6 max-w-[21ch] text-[clamp(34px,4.6vw,68px)] leading-[1.04] font-extrabold tracking-[-0.045em] text-ink"
+            className="rise max-w-[21ch] text-[clamp(34px,4.6vw,68px)] leading-[1.04] font-extrabold tracking-[-0.045em] text-ink"
           >
             {claim}
             {promise ? (
