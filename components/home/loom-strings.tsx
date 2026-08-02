@@ -6,57 +6,79 @@ import { Volume2, VolumeX } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /* ---------------------------------------------------------------------------
-   A loom you can play.
+   The name, woven, and playable.
 
    The company is named for a loom, so the hero is warp threads strung across the
-   screen. Move a cursor through them and they pluck: each one bows, rings, and
-   sounds a note. It is the brand rather than a decoration that happens to be on
-   the brand's page.
+   screen with the wordmark woven into them. Where a thread passes through a
+   letter it is ink; everywhere else it is a hairline. So the word is not drawn on
+   top of the cloth, it is made of it, and there is nothing on screen that is not
+   a thread.
+
+   Which is what makes plucking worth doing: a bowed thread carries its share of
+   the letter with it, so the word ripples like fabric rather than sitting still
+   while something happens behind it.
 
    The notes are synthesised, not loaded. A plucked string is an oscillator, a
    falling filter and a decay envelope, which the Web Audio API has had all along
-   and which costs no download at all.
-
-   Sound never starts on its own. It waits for somebody to ask for it, both
-   because browsers rightly refuse otherwise and because a page that makes a
-   noise at you unbidden has already lost the argument.
+   and which costs no download at all. Sound never starts on its own: browsers
+   rightly refuse, and a page that makes a noise at you unbidden has already lost
+   the argument.
 --------------------------------------------------------------------------- */
 
-const THREADS = 19;
+/** Threads per hundred pixels. Close enough that letters read, far enough to see through. */
+const DENSITY = 7.5;
+
+/** Points down a thread. Enough for the curve to look drawn rather than folded. */
+const STEPS = 26;
+
+/** The bow of a plucked string: still at the ends, furthest in the middle. */
+const PROFILE = Float32Array.from({ length: STEPS }, (_unused, at) =>
+  Math.sin((at / (STEPS - 1)) * Math.PI),
+);
 
 /**
  * A minor pentatonic, low to high, left to right.
  *
- * Pentatonic because every note in it agrees with every other one. A visitor
- * dragging a cursor across nineteen strings is not composing, so the scale has
+ * Pentatonic because every note in it agrees with every other one. Somebody
+ * dragging a cursor across a hundred threads is not composing, so the scale has
  * to guarantee that whatever they do sounds deliberate.
  */
 const SCALE = [0, 3, 5, 7, 10];
 const ROOT = 174.61;
 
-const pitchOf = (at: number) =>
-  ROOT *
-  2 ** ((SCALE[at % SCALE.length] + 12 * Math.floor(at / SCALE.length)) / 12);
+/** Many threads, few notes: neighbours share a pitch so a sweep is a run, not a siren. */
+const PER_NOTE = 6;
 
-interface String_ {
-  /** How hard it is ringing, 0 to 1, always falling. */
+function pitchOf(thread: number) {
+  const note = Math.floor(thread / PER_NOTE);
+  const step = SCALE[note % SCALE.length] + 12 * Math.floor(note / SCALE.length);
+  return ROOT * 2 ** (step / 12);
+}
+
+interface Thread {
+  x: number;
+  /** Ink runs down this thread, as pairs of y. Where the letters are. */
+  runs: Float32Array;
   amp: number;
-  /** Where it is in its cycle. */
   phase: number;
-  /** Radians a second, from the note it carries. */
   speed: number;
-  /** When it was last struck, so a lingering cursor does not machine-gun it. */
   struck: number;
 }
 
 /**
- * The threads, played by pointer or keyboard.
+ * The cloth, played by pointer or keyboard.
  *
- * The canvas is a picture of state that lives outside React: sixty times a
- * second is far too often to be re-rendering a component tree, and none of the
- * ringing is anything the rest of the page needs to know about.
+ * The canvas is a picture of state kept outside React. Sixty times a second is
+ * far too often to re-render a component tree, and none of the ringing is
+ * anything the rest of the page needs to know about.
  */
-export function LoomStrings({ className }: { className?: string }) {
+export function LoomStrings({
+  word,
+  className,
+}: {
+  word: string;
+  className?: string;
+}) {
   const frame = useRef<HTMLDivElement>(null);
   const surface = useRef<HTMLCanvasElement>(null);
 
@@ -66,10 +88,7 @@ export function LoomStrings({ className }: { className?: string }) {
   /* Read by the animation loop, which is outside React and must not close over
      a stale value. */
   const wantSound = useRef(false);
-  const audio = useRef<{
-    ctx: AudioContext;
-    master: GainNode;
-  } | null>(null);
+  const audio = useRef<{ ctx: AudioContext; master: GainNode } | null>(null);
 
   useEffect(() => {
     wantSound.current = sound;
@@ -86,17 +105,16 @@ export function LoomStrings({ className }: { className?: string }) {
 
       const ctx = new Ctor();
       const master = ctx.createGain();
-      master.gain.value = 0.16;
+      master.gain.value = 0.15;
 
       /* A short delay with a little feedback, which is the cheapest convincing
-         room there is. Without it the notes sound like they were struck inside a
-         cupboard. */
+         room there is. Without it the notes sound struck inside a cupboard. */
       const echo = ctx.createDelay(1);
-      echo.delayTime.value = 0.28;
+      echo.delayTime.value = 0.3;
       const back = ctx.createGain();
-      back.gain.value = 0.26;
+      back.gain.value = 0.28;
       const wet = ctx.createGain();
-      wet.gain.value = 0.4;
+      wet.gain.value = 0.42;
 
       master.connect(ctx.destination);
       master.connect(echo);
@@ -129,34 +147,109 @@ export function LoomStrings({ className }: { className?: string }) {
 
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const strings: String_[] = Array.from({ length: THREADS }, (_unused, at) => ({
-      amp: 0,
-      phase: 0,
-      /* Higher notes shimmer faster, which is what a real string does and what
-         makes the picture agree with the sound. */
-      speed: 7 + at * 0.9,
-      struck: -1,
-    }));
-
+    let threads: Thread[] = [];
     let width = 0;
     let height = 0;
     let raf = 0;
     let last = 0;
-    let lastAt = -1;
-    let cursorY = -1;
     let born = performance.now();
+    let lastAt = -1;
+    let alive = true;
+    let rebuilding: number | undefined;
+
+    /**
+     * Weave the word into the warp.
+     *
+     * The word is drawn once to an offscreen canvas in the site's own typeface,
+     * then each thread reads the column of pixels it stands in and keeps the
+     * stretches where it found ink. Sampling the glyphs rather than describing
+     * them means the cloth carries Archivo's own curves, and changing the name
+     * changes the weave with nothing to re-export.
+     */
+    async function build() {
+      if (document.fonts?.ready) await document.fonts.ready;
+      if (!alive || !box || width < 2 || height < 2) return;
+
+      const probe = document.createElement("canvas");
+      probe.width = Math.round(width);
+      probe.height = Math.round(height);
+
+      const ink = probe.getContext("2d", { willReadFrequently: true });
+      if (!ink) return;
+
+      const family = getComputedStyle(box).fontFamily || "system-ui, sans-serif";
+
+      /* As large as the box will take, then backed off so the letters have air
+         above and below to be plucked into. */
+      let size = Math.min((width * 0.94) / (word.length * 0.56), height * 0.62);
+      ink.font = `900 ${size}px ${family}`;
+      const measured = ink.measureText(word).width;
+      if (measured > width * 0.94) size *= (width * 0.94) / measured;
+
+      ink.font = `900 ${size}px ${family}`;
+      ink.textAlign = "center";
+      ink.textBaseline = "middle";
+      ink.fillStyle = "#000";
+      ink.fillText(word, width / 2, height / 2);
+
+      const pixels = ink.getImageData(0, 0, probe.width, probe.height).data;
+
+      const count = Math.max(24, Math.round((width / 100) * DENSITY));
+      const gap = width / (count + 1);
+      const next: Thread[] = [];
+
+      for (let at = 0; at < count; at += 1) {
+        const x = gap * (at + 1);
+        const column = Math.min(probe.width - 1, Math.max(0, Math.round(x)));
+
+        /* Walk the column and keep the stretches with ink in them. */
+        const runs: number[] = [];
+        let from = -1;
+
+        for (let y = 0; y < probe.height; y += 1) {
+          const on = pixels[(y * probe.width + column) * 4 + 3] > 128;
+          if (on && from < 0) from = y;
+          if (!on && from >= 0) {
+            if (y - from > 1) runs.push(from, y);
+            from = -1;
+          }
+        }
+        if (from >= 0) runs.push(from, probe.height);
+
+        next.push({
+          x,
+          runs: Float32Array.from(runs),
+          amp: 0,
+          phase: 0,
+          /* Higher threads shimmer faster, as a shorter string does. */
+          speed: 6 + (at / count) * 9,
+          struck: -1,
+        });
+      }
+
+      threads = next;
+      born = performance.now();
+    }
 
     function pluck(at: number, force: number) {
-      const string = strings[at];
-      if (!string) return;
+      const thread = threads[at];
+      if (!thread) return;
 
       const now = performance.now();
       /* A cursor resting on a thread should not retrigger it every frame. */
-      if (now - string.struck < 90) return;
+      if (now - thread.struck < 70) return;
+      thread.struck = now;
 
-      string.struck = now;
-      string.amp = Math.min(1, string.amp + force);
-      string.phase = 0;
+      /* Cloth is connected, so its neighbours move too. This is what turns a
+         pluck into a ripple through the letters rather than one twitching line. */
+      for (let off = -5; off <= 5; off += 1) {
+        const near = threads[at + off];
+        if (!near) continue;
+        const share = force * (1 - Math.abs(off) / 6) ** 2;
+        if (share <= 0) continue;
+        near.amp = Math.min(1, near.amp + share);
+        if (off === 0) near.phase = 0;
+      }
 
       const kit = audio.current;
       if (!wantSound.current || !kit || kit.ctx.state !== "running") return;
@@ -179,10 +272,13 @@ export function LoomStrings({ className }: { className?: string }) {
       const colour = kit.ctx.createBiquadFilter();
       colour.type = "lowpass";
       colour.frequency.setValueAtTime(Math.min(freq * 7, 7000), t);
-      colour.frequency.exponentialRampToValueAtTime(Math.max(freq * 1.4, 220), t + 0.9);
+      colour.frequency.exponentialRampToValueAtTime(
+        Math.max(freq * 1.4, 220),
+        t + 0.9,
+      );
 
       const level = kit.ctx.createGain();
-      const peak = 0.28 * (0.55 + force * 0.45);
+      const peak = 0.26 * (0.55 + force * 0.45);
       level.gain.setValueAtTime(0.0001, t);
       level.gain.exponentialRampToValueAtTime(peak, t + 0.008);
       level.gain.exponentialRampToValueAtTime(0.0001, t + 2.2);
@@ -200,115 +296,127 @@ export function LoomStrings({ className }: { className?: string }) {
 
     function resize() {
       if (!box || !canvas || !paper) return;
+
       const ratio = Math.min(window.devicePixelRatio || 1, 2);
-      width = box.clientWidth;
-      height = box.clientHeight;
+      const nextWidth = box.clientWidth;
+      const nextHeight = box.clientHeight;
+      if (!nextWidth || !nextHeight) return;
+
+      width = nextWidth;
+      height = nextHeight;
+
       canvas.width = Math.round(width * ratio);
       canvas.height = Math.round(height * ratio);
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
       paper.setTransform(ratio, 0, 0, ratio, 0, 0);
+      paper.lineCap = "round";
+
+      /* Re-weaving reads back a whole bitmap, so it waits for the drag to stop.
+         Doing it on every resize event turns a window drag into a slideshow. */
+      window.clearTimeout(rebuilding);
+      rebuilding = window.setTimeout(() => void build(), threads.length ? 160 : 0);
     }
 
     function draw(now: number) {
       raf = requestAnimationFrame(draw);
       if (!paper) return;
 
+      /* Clamped, so returning to a backgrounded tab resumes rather than jumps. */
       const dt = Math.min((now - last) / 1000, 1 / 20) || 0;
       last = now;
 
-      /* The threads draw themselves in from the left on arrival. */
-      const arrived = Math.min((now - born) / 900, 1);
-
       paper.clearRect(0, 0, width, height);
+      if (!threads.length) return;
 
-      const gap = width / (THREADS + 1);
-      const top = height * 0.06;
-      const bottom = height * 0.94;
-      const span = bottom - top;
+      const arrived = Math.min((now - born) / 1100, 1);
+      const reach = Math.max(28, Math.min(width / threads.length, 26));
 
-      /* The weft: a few faint crossing threads, so it reads as cloth on a loom
-         rather than as a row of lines. */
-      paper.lineWidth = 1;
-      paper.strokeStyle = "rgba(229, 231, 235, 0.9)";
-      for (let row = 1; row <= 3; row += 1) {
-        const y = top + (span * row) / 4;
-        paper.beginPath();
-        paper.moveTo(0, y);
-        paper.lineTo(width * arrived, y);
-        paper.stroke();
-      }
+      for (let at = 0; at < threads.length; at += 1) {
+        const thread = threads[at];
 
-      for (let at = 0; at < THREADS; at += 1) {
-        const string = strings[at];
-        const x = gap * (at + 1);
-
-        /* Each thread has its own moment of arrival, left to right. */
+        /* Each thread is strung in turn, left to right. */
         const mine = Math.max(
           0,
-          Math.min((arrived - (at / THREADS) * 0.55) / 0.45, 1),
+          Math.min((arrived - (at / threads.length) * 0.5) / 0.5, 1),
         );
         if (mine <= 0) continue;
 
         if (!still) {
-          string.phase += string.speed * dt;
-          /* Ring down. Higher strings die away sooner, as they do. */
-          string.amp *= Math.exp(-dt * (1.5 + at * 0.05));
-          if (string.amp < 0.001) string.amp = 0;
+          thread.phase += thread.speed * dt;
+          /* Ring down. Higher threads die away sooner, as they do. */
+          thread.amp *= Math.exp(-dt * (1.6 + (at / threads.length) * 0.9));
+          if (thread.amp < 0.0015) thread.amp = 0;
         }
 
-        const swing =
-          Math.sin(string.phase) * string.amp * Math.min(gap * 0.85, 34);
+        /* A slow travelling breath, so the cloth is alive before it is touched
+           and the word shifts like something hanging rather than printed. */
+        const idle = still
+          ? 0
+          : Math.sin(now * 0.0009 + thread.x * 0.013) * 1.3;
 
-        const reach = top + (bottom - top) * mine;
+        const swing = Math.sin(thread.phase) * thread.amp * reach + idle;
+        const lit = Math.min(1, thread.amp * 1.7);
+        const bottom = height * mine;
 
+        /* The whole thread, faint: the warp you can see through. */
         paper.beginPath();
-        paper.moveTo(x, top);
-        /* A standing wave: still at the ends, furthest at the middle. One
-           quadratic with the control point pushed twice the displacement lands
-           the curve exactly on it. */
-        paper.quadraticCurveTo(x + swing * 2, (top + reach) / 2, x, reach);
-
-        const lit = Math.min(1, string.amp * 1.6);
-        paper.lineWidth = 1 + lit * 1.6;
-        paper.strokeStyle =
-          lit > 0.01
-            ? `rgba(37, 99, 235, ${0.3 + lit * 0.7})`
-            : "rgba(17, 24, 39, 0.22)";
+        for (let step = 0; step < STEPS; step += 1) {
+          const t = step / (STEPS - 1);
+          const y = bottom * t;
+          const x = thread.x + swing * PROFILE[step];
+          if (step === 0) paper.moveTo(x, y);
+          else paper.lineTo(x, y);
+        }
+        paper.lineWidth = 1;
+        paper.strokeStyle = lit
+          ? `rgba(37, 99, 235, ${0.18 + lit * 0.42})`
+          : "rgba(17, 24, 39, 0.11)";
         paper.stroke();
 
-        /* A bead riding the middle of a ringing string. */
-        if (lit > 0.05) {
-          paper.beginPath();
-          paper.arc(x + swing, (top + reach) / 2, 2 + lit * 3, 0, Math.PI * 2);
-          paper.fillStyle = `rgba(37, 99, 235, ${lit * 0.9})`;
-          paper.fill();
-        }
-      }
+        /* And the stretches that fall inside a letter, firm: the cloth is the
+           word. Each run is walked with the same bow, so the letter bends with
+           the thread instead of standing still behind it. */
+        paper.lineWidth = 2.4;
+        paper.strokeStyle = lit
+          ? `rgba(37, 99, 235, ${0.62 + lit * 0.38})`
+          : "rgba(17, 24, 39, 0.9)";
 
-      /* Where the hand is. */
-      if (cursorY >= 0 && lastAt >= 0) {
-        paper.beginPath();
-        paper.arc(gap * (lastAt + 1), cursorY, 3, 0, Math.PI * 2);
-        paper.fillStyle = "rgba(17, 24, 39, 0.25)";
-        paper.fill();
+        for (let run = 0; run < thread.runs.length; run += 2) {
+          const from = thread.runs[run];
+          const to = thread.runs[run + 1];
+          if (from > bottom) continue;
+
+          const end = Math.min(to, bottom);
+          paper.beginPath();
+
+          const parts = Math.max(2, Math.round((end - from) / 9));
+          for (let step = 0; step <= parts; step += 1) {
+            const y = from + ((end - from) * step) / parts;
+            const t = height ? y / height : 0;
+            const bow =
+              swing * PROFILE[Math.min(STEPS - 1, Math.round(t * (STEPS - 1)))];
+            if (step === 0) paper.moveTo(thread.x + bow, y);
+            else paper.lineTo(thread.x + bow, y);
+          }
+
+          paper.stroke();
+        }
       }
     }
 
     function onPointer(event: PointerEvent) {
-      if (!box) return;
+      if (!box || !threads.length) return;
       const bounds = box.getBoundingClientRect();
       const x = event.clientX - bounds.left;
-      cursorY = event.clientY - bounds.top;
 
-      const gap = bounds.width / (THREADS + 1);
+      const gap = bounds.width / (threads.length + 1);
       const at = Math.round(x / gap) - 1;
-      if (at < 0 || at >= THREADS) return;
+      if (at < 0 || at >= threads.length) return;
 
       /* Only on crossing, so moving along a thread does not hold it down. */
       if (at !== lastAt) {
-        const near = 1 - Math.min(Math.abs(x - gap * (at + 1)) / (gap / 2), 1);
-        pluck(at, 0.55 + near * 0.45);
+        pluck(at, 0.9);
         lastAt = at;
         setTouched(true);
       }
@@ -316,17 +424,23 @@ export function LoomStrings({ className }: { className?: string }) {
 
     function onLeave() {
       lastAt = -1;
-      cursorY = -1;
     }
 
     function onKey(event: KeyboardEvent) {
       const step =
-        event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+        event.key === "ArrowRight"
+          ? PER_NOTE
+          : event.key === "ArrowLeft"
+            ? -PER_NOTE
+            : 0;
 
       if (step) {
         event.preventDefault();
-        lastAt = Math.max(0, Math.min(THREADS - 1, (lastAt < 0 ? -1 : lastAt) + step));
-        pluck(lastAt, 0.9);
+        lastAt = Math.max(
+          0,
+          Math.min(threads.length - 1, (lastAt < 0 ? -step : lastAt) + step),
+        );
+        pluck(lastAt, 1);
         setTouched(true);
         return;
       }
@@ -346,18 +460,19 @@ export function LoomStrings({ className }: { className?: string }) {
     box.addEventListener("keydown", onKey);
 
     resize();
-    born = performance.now();
     last = performance.now();
     raf = requestAnimationFrame(draw);
 
     return () => {
+      alive = false;
       cancelAnimationFrame(raf);
+      window.clearTimeout(rebuilding);
       watcher.disconnect();
       box.removeEventListener("pointermove", onPointer);
       box.removeEventListener("pointerleave", onLeave);
       box.removeEventListener("keydown", onKey);
     };
-  }, []);
+  }, [word]);
 
   return (
     <div className={className}>
@@ -365,9 +480,9 @@ export function LoomStrings({ className }: { className?: string }) {
         ref={frame}
         tabIndex={0}
         role="group"
-        aria-label="A loom of nineteen strings. Move across them, or use the arrow keys, to play."
+        aria-label={`${word}, woven into a loom of strings. Move across it, or use the arrow keys, to play it.`}
         className="relative w-full cursor-crosshair rounded-card outline-none focus-visible:ring-2 focus-visible:ring-active"
-        style={{ height: "clamp(200px, 34svh, 360px)" }}
+        style={{ height: "clamp(210px, 36svh, 380px)" }}
       >
         <canvas ref={surface} aria-hidden className="block h-full w-full" />
       </div>
@@ -397,7 +512,7 @@ export function LoomStrings({ className }: { className?: string }) {
             ? sound
               ? "Every note agrees with every other one"
               : "Now turn the sound on"
-            : "Run your cursor across the threads"}
+            : "Run your cursor across the name"}
         </p>
       </div>
     </div>

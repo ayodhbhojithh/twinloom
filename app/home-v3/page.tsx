@@ -12,10 +12,13 @@ export const metadata: Metadata = {
 /**
  * Home v3.
  *
- * A loom you can play. The company is named for one, so the hero is warp threads
- * strung across the screen that pluck as a cursor crosses them: each bows,
- * rings, and sounds a note. It is the brand rather than a decoration that
- * happens to sit on the brand's page.
+ * The name, woven, and playable. The company is named for a loom, so the hero is
+ * warp threads with the wordmark woven into them: where a thread crosses a
+ * letter it is ink, everywhere else a hairline. The word is not drawn on the
+ * cloth, it is made of it.
+ *
+ * Which is what makes plucking worth doing. A bowed thread carries its share of
+ * the letter with it, so running a cursor across the name ripples the name.
  *
  * The notes are synthesised rather than loaded, so the whole thing costs no
  * download. Sound waits to be asked for, both because browsers rightly refuse
@@ -38,19 +41,21 @@ export default function HomeV3Page() {
           {SITE.name} / play it
         </p>
 
-        <h1
+        <h1 className="sr-only">{SITE.name}</h1>
+
+        <LoomStrings word={SITE.name} className="mt-7" />
+
+        <p
           style={{ "--in": "90ms" } as React.CSSProperties}
-          className="rise mx-auto mt-6 max-w-[20ch] text-center text-[clamp(30px,3.8vw,52px)] leading-[1.06] font-extrabold tracking-[-0.042em] text-balance text-ink"
+          className="rise mx-auto mt-10 max-w-[22ch] text-center text-[clamp(26px,3.1vw,42px)] leading-[1.08] font-extrabold tracking-[-0.038em] text-balance text-ink"
         >
           {claim}
           {promise ? <span className="text-active"> {promise}</span> : null}
-        </h1>
-
-        <LoomStrings className="mt-10" />
+        </p>
 
         <p
           style={{ "--in": "260ms" } as React.CSSProperties}
-          className="rise mx-auto mt-10 max-w-[52ch] text-center text-[16.5px] leading-[1.6] text-body sm:text-[18px]"
+          className="rise mx-auto mt-6 max-w-[52ch] text-center text-[16.5px] leading-[1.6] text-body sm:text-[18px]"
         >
           {SITE.description}
         </p>
