@@ -2,23 +2,35 @@
 
 import { usePathname } from "next/navigation";
 
+import { ROUTES } from "@/lib/site";
+
 import { SiteFooter } from "./site-footer";
 import { SiteHeader } from "./site-header";
 import { SiteRail } from "./site-rail";
 
 /**
+ * The routes that end at the fold.
+ *
+ * Each home page is built to exactly one screenful, so a footer under one would
+ * exist only to be scrolled past. The two variants follow the first so all three
+ * can be judged on the same terms. Every other route keeps its footer.
+ */
+const NO_FOOTER: readonly string[] = [
+  ROUTES.home,
+  ROUTES.homeV2,
+  ROUTES.homeV3,
+];
+
+/**
  * The two columns under the header.
  *
- * A client component only because home is the one route without a footer, and
- * that is a decision about the current path. Everything inside stays a server
- * component: `children` is passed through, so pages are still rendered on the
- * server and this only decides what surrounds them.
+ * A client component only because whether a route takes a footer is a decision
+ * about the current path. Everything inside stays a server component: `children`
+ * is passed through, so pages are still rendered on the server and this only
+ * decides what surrounds them.
  *
  * `items-start` is what lets the rail be sticky. A stretched flex child is
  * already as tall as its parent and has nothing left to stick within.
- *
- * Home has no footer because it is built to exactly one screenful, so a footer
- * under it would exist only to be scrolled past. Every other route keeps it.
  */
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -32,7 +44,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
         <div className="flex min-w-0 flex-1 flex-col">
           <main className="flex-1">{children}</main>
-          {pathname === "/" ? null : <SiteFooter />}
+          {NO_FOOTER.includes(pathname) ? null : <SiteFooter />}
         </div>
       </div>
     </>

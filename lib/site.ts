@@ -25,6 +25,9 @@ export const SITE = {
 
 export const ROUTES = {
   home: "/",
+  /* Two more home pages, kept beside the first so they can be compared. */
+  homeV2: "/home-v2",
+  homeV3: "/home-v3",
   build: "/build",
   site: "/your-site",
 
@@ -96,7 +99,14 @@ export interface RailPage extends NavLink {
  * gives every page its previous and next.
  */
 export const RAIL_PAGES: readonly RailPage[] = [
-  { label: "Home", href: ROUTES.home },
+  {
+    label: "Home",
+    href: ROUTES.home,
+    children: [
+      { label: "Home v2", href: ROUTES.homeV2 },
+      { label: "Home v3", href: ROUTES.homeV3 },
+    ],
+  },
   { label: "Build your website", href: ROUTES.build },
   { label: "The site your answers describe", href: ROUTES.site },
   { label: "About us", href: ROUTES.about },
