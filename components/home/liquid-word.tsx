@@ -75,7 +75,6 @@ export function LiquidWord({
     let born = 0;
 
     let pointerX = Number.NaN;
-    let pointerY = Number.NaN;
     let wasX = Number.NaN;
 
     function paint(colour: string): HTMLCanvasElement | null {
@@ -254,12 +253,10 @@ export function LiquidWord({
       if (!box) return;
       const bounds = box.getBoundingClientRect();
       pointerX = event.clientX - bounds.left;
-      pointerY = event.clientY - bounds.top;
     }
 
     function onLeave() {
       pointerX = Number.NaN;
-      pointerY = Number.NaN;
       wasX = Number.NaN;
     }
 
