@@ -29,8 +29,14 @@ import { cn } from "@/lib/utils";
    says why. The mute is still there for anyone who wants it.
 --------------------------------------------------------------------------- */
 
-/** Threads per hundred pixels. Close enough that letters read, far enough to see through. */
-const DENSITY = 7.5;
+/**
+ * Threads per hundred pixels.
+ *
+ * Dense enough that a letter is built from a dozen strands rather than three.
+ * At half this the word was a barcode: legible only because you already knew
+ * what it said. The warp behind is faint enough that crowding it costs nothing.
+ */
+const DENSITY = 15;
 
 /** Points down a thread. Enough for the curve to look drawn rather than folded. */
 const STEPS = 34;
@@ -56,7 +62,7 @@ const SCALE = [0, 3, 5, 7, 10];
 const ROOT = 174.61;
 
 /** Many threads, few notes: neighbours share a pitch so a sweep is a run, not a siren. */
-const PER_NOTE = 6;
+const PER_NOTE = 11;
 
 function pitchOf(thread: number) {
   const note = Math.floor(thread / PER_NOTE);
@@ -210,12 +216,12 @@ export function LoomStrings({
 
       const family = getComputedStyle(box).fontFamily || "system-ui, sans-serif";
 
-      /* As large as the box will take, then backed off so the letters have air
-         above and below to be plucked into. */
-      let size = Math.min((width * 0.94) / (word.length * 0.56), height * 0.62);
+      /* As large as the box will take, then backed off so the letters keep clear
+         of the fade at the top and bottom and have air to be plucked into. */
+      let size = Math.min((width * 0.96) / (word.length * 0.52), height * 0.64);
       ink.font = `900 ${size}px ${family}`;
       const measured = ink.measureText(word).width;
-      if (measured > width * 0.94) size *= (width * 0.94) / measured;
+      if (measured > width * 0.96) size *= (width * 0.96) / measured;
 
       ink.font = `900 ${size}px ${family}`;
       ink.textAlign = "center";
@@ -273,10 +279,10 @@ export function LoomStrings({
 
       /* Cloth is connected, so its neighbours move too. This is what turns a
          pluck into a ripple through the letters rather than one twitching line. */
-      for (let off = -5; off <= 5; off += 1) {
+      for (let off = -9; off <= 9; off += 1) {
         const near = threads[at + off];
         if (!near) continue;
-        const share = force * (1 - Math.abs(off) / 6) ** 2;
+        const share = force * (1 - Math.abs(off) / 10) ** 2;
         if (share <= 0) continue;
         near.amp = Math.min(1, near.amp + share);
         if (off === 0) near.phase = 0;
@@ -351,17 +357,40 @@ export function LoomStrings({
          Erased with `destination-out` rather than masked in CSS: it works
          everywhere, it composites once, and the horizontal pass doubles up in
          the corners, which is a vignette for free. */
+      /* Eased rather than linear, and over a fifth of the height rather than a
+         seventh. A short straight fade has a visible waistline where it starts;
+         a long one shaped like an S has the threads simply stop being there. */
       fadeY = paper.createLinearGradient(0, 0, 0, height);
-      fadeY.addColorStop(0, "rgba(0,0,0,1)");
-      fadeY.addColorStop(0.14, "rgba(0,0,0,0)");
-      fadeY.addColorStop(0.86, "rgba(0,0,0,0)");
-      fadeY.addColorStop(1, "rgba(0,0,0,1)");
+      for (const [at, alpha] of [
+        [0, 1],
+        [0.05, 0.88],
+        [0.1, 0.58],
+        [0.15, 0.26],
+        [0.2, 0.06],
+        [0.24, 0],
+        [0.76, 0],
+        [0.8, 0.06],
+        [0.85, 0.26],
+        [0.9, 0.58],
+        [0.95, 0.88],
+        [1, 1],
+      ] as const) {
+        fadeY.addColorStop(at, `rgba(0,0,0,${alpha})`);
+      }
 
       fadeX = paper.createLinearGradient(0, 0, width, 0);
-      fadeX.addColorStop(0, "rgba(0,0,0,0.9)");
-      fadeX.addColorStop(0.07, "rgba(0,0,0,0)");
-      fadeX.addColorStop(0.93, "rgba(0,0,0,0)");
-      fadeX.addColorStop(1, "rgba(0,0,0,0.9)");
+      for (const [at, alpha] of [
+        [0, 0.95],
+        [0.03, 0.6],
+        [0.07, 0.2],
+        [0.11, 0],
+        [0.89, 0],
+        [0.93, 0.2],
+        [0.97, 0.6],
+        [1, 0.95],
+      ] as const) {
+        fadeX.addColorStop(at, `rgba(0,0,0,${alpha})`);
+      }
 
       /* Re-weaving reads back a whole bitmap, so it waits for the drag to stop.
          Doing it on every resize event turns a window drag into a slideshow. */
@@ -381,7 +410,13 @@ export function LoomStrings({
       if (!threads.length) return;
 
       const arrived = Math.min((now - born) / 1100, 1);
-      const reach = Math.max(28, Math.min(width / threads.length, 26));
+
+      /* Everything below is measured off the gap between threads, so crowding
+         them does not turn a pluck into a pile-up or the letters into a solid. */
+      const gap = width / (threads.length + 1);
+      const reach = Math.max(9, Math.min(gap * 3.2, 26));
+      const warpWidth = Math.max(0.7, Math.min(gap * 0.16, 1));
+      const inkWidth = Math.max(1.7, Math.min(gap * 0.62, 3.4));
 
       for (let at = 0; at < threads.length; at += 1) {
         const thread = threads[at];
@@ -419,19 +454,19 @@ export function LoomStrings({
           if (step === 0) paper.moveTo(x, y);
           else paper.lineTo(x, y);
         }
-        paper.lineWidth = 1;
+        paper.lineWidth = warpWidth;
         paper.strokeStyle = lit
           ? `rgba(37, 99, 235, ${0.16 + lit * 0.44})`
-          : "rgba(17, 24, 39, 0.085)";
+          : "rgba(17, 24, 39, 0.075)";
         paper.stroke();
 
         /* And the stretches that fall inside a letter, firm: the cloth is the
            word. Each run is walked with the same bow, so the letter bends with
            the thread instead of standing still behind it. */
-        paper.lineWidth = 2.7;
+        paper.lineWidth = inkWidth;
         paper.strokeStyle = lit
-          ? `rgba(37, 99, 235, ${0.62 + lit * 0.38})`
-          : "rgba(17, 24, 39, 0.9)";
+          ? `rgba(37, 99, 235, ${0.66 + lit * 0.34})`
+          : "rgba(17, 24, 39, 0.94)";
 
         for (let run = 0; run < thread.runs.length; run += 2) {
           const from = thread.runs[run];
@@ -540,7 +575,7 @@ export function LoomStrings({
         role="group"
         aria-label={`${word}, woven into a loom of strings. Move across it, or use the arrow keys, to play it.`}
         className="relative w-full cursor-crosshair rounded-card outline-none focus-visible:ring-2 focus-visible:ring-active"
-        style={{ height: "clamp(210px, 36svh, 380px)" }}
+        style={{ height: "clamp(250px, 44svh, 460px)" }}
       >
         <canvas ref={surface} aria-hidden className="block h-full w-full" />
       </div>
