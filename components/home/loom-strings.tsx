@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -20,21 +20,30 @@ import { cn } from "@/lib/utils";
 
    The notes are synthesised, not loaded. A plucked string is an oscillator, a
    falling filter and a decay envelope, which the Web Audio API has had all along
-   and which costs no download at all. Sound never starts on its own: browsers
-   rightly refuse, and a page that makes a noise at you unbidden has already lost
-   the argument.
+   and which costs no download at all.
+
+   Sound is on from the start, but no browser will let a page make a noise before
+   somebody has touched it, so the audio is unlocked by the first click, tap or
+   key anywhere on the document rather than by a button that has to be found and
+   pressed. Until that happens the threads still pluck, silently, and the caption
+   says why. The mute is still there for anyone who wants it.
 --------------------------------------------------------------------------- */
 
 /** Threads per hundred pixels. Close enough that letters read, far enough to see through. */
 const DENSITY = 7.5;
 
 /** Points down a thread. Enough for the curve to look drawn rather than folded. */
-const STEPS = 26;
+const STEPS = 34;
 
-/** The bow of a plucked string: still at the ends, furthest in the middle. */
-const PROFILE = Float32Array.from({ length: STEPS }, (_unused, at) =>
-  Math.sin((at / (STEPS - 1)) * Math.PI),
-);
+/**
+ * The bow of a plucked string: still at the ends, furthest in the middle.
+ *
+ * Computed rather than read from a table. A lookup meant rounding each point to
+ * the nearest of twenty-six, which put a visible facet in every curve where two
+ * samples landed on the same entry. A few thousand sines a frame is nothing, and
+ * the difference between a faceted curve and a smooth one is the whole effect.
+ */
+const bow = (t: number) => Math.sin(t * Math.PI);
 
 /**
  * A minor pentatonic, low to high, left to right.
@@ -82,20 +91,17 @@ export function LoomStrings({
   const frame = useRef<HTMLDivElement>(null);
   const surface = useRef<HTMLCanvasElement>(null);
 
-  const [sound, setSound] = useState(false);
+  const [sound, setSound] = useState(true);
+  /* Whether the browser has actually let the audio start. */
+  const [ready, setReady] = useState(false);
   const [touched, setTouched] = useState(false);
 
   /* Read by the animation loop, which is outside React and must not close over
      a stale value. */
-  const wantSound = useRef(false);
+  const wantSound = useRef(true);
   const audio = useRef<{ ctx: AudioContext; master: GainNode } | null>(null);
 
-  useEffect(() => {
-    wantSound.current = sound;
-    if (!sound) return;
-
-    /* Built on the click that asked for it, which is the only moment a browser
-       will allow it. */
+  const ensure = useCallback(() => {
     if (!audio.current) {
       const Ctor =
         window.AudioContext ??
@@ -126,8 +132,29 @@ export function LoomStrings({
       audio.current = { ctx, master };
     }
 
-    void audio.current?.ctx.resume();
-  }, [sound]);
+    const kit = audio.current;
+    if (!kit) return;
+
+    void kit.ctx.resume().then(() => setReady(kit.ctx.state === "running"));
+  }, []);
+
+  /* The first real gesture anywhere is what a browser counts as permission, so
+     that is what opens the audio. Resuming an already running context is free,
+     which is why this does not bother unhooking itself. */
+  useEffect(() => {
+    const unlock = () => ensure();
+    window.addEventListener("pointerdown", unlock);
+    window.addEventListener("keydown", unlock);
+    return () => {
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
+    };
+  }, [ensure]);
+
+  useEffect(() => {
+    wantSound.current = sound;
+    if (sound) ensure();
+  }, [sound, ensure]);
 
   useEffect(
     () => () => {
@@ -156,6 +183,10 @@ export function LoomStrings({
     let lastAt = -1;
     let alive = true;
     let rebuilding: number | undefined;
+
+    /* The fade, built once per resize rather than once per frame. */
+    let fadeY: CanvasGradient | null = null;
+    let fadeX: CanvasGradient | null = null;
 
     /**
      * Weave the word into the warp.
@@ -311,6 +342,26 @@ export function LoomStrings({
       canvas.style.height = `${height}px`;
       paper.setTransform(ratio, 0, 0, ratio, 0, 0);
       paper.lineCap = "round";
+      paper.lineJoin = "round";
+
+      /* Threads that stop dead at the edge of a box look cut off, and a cut off
+         edge is the one thing that says "canvas". Fading them out lets the warp
+         carry on past the frame, which is what gives it depth.
+
+         Erased with `destination-out` rather than masked in CSS: it works
+         everywhere, it composites once, and the horizontal pass doubles up in
+         the corners, which is a vignette for free. */
+      fadeY = paper.createLinearGradient(0, 0, 0, height);
+      fadeY.addColorStop(0, "rgba(0,0,0,1)");
+      fadeY.addColorStop(0.14, "rgba(0,0,0,0)");
+      fadeY.addColorStop(0.86, "rgba(0,0,0,0)");
+      fadeY.addColorStop(1, "rgba(0,0,0,1)");
+
+      fadeX = paper.createLinearGradient(0, 0, width, 0);
+      fadeX.addColorStop(0, "rgba(0,0,0,0.9)");
+      fadeX.addColorStop(0.07, "rgba(0,0,0,0)");
+      fadeX.addColorStop(0.93, "rgba(0,0,0,0)");
+      fadeX.addColorStop(1, "rgba(0,0,0,0.9)");
 
       /* Re-weaving reads back a whole bitmap, so it waits for the drag to stop.
          Doing it on every resize event turns a window drag into a slideshow. */
@@ -353,7 +404,7 @@ export function LoomStrings({
            and the word shifts like something hanging rather than printed. */
         const idle = still
           ? 0
-          : Math.sin(now * 0.0009 + thread.x * 0.013) * 1.3;
+          : Math.sin(now * 0.00075 + thread.x * 0.011) * 0.9;
 
         const swing = Math.sin(thread.phase) * thread.amp * reach + idle;
         const lit = Math.min(1, thread.amp * 1.7);
@@ -364,20 +415,20 @@ export function LoomStrings({
         for (let step = 0; step < STEPS; step += 1) {
           const t = step / (STEPS - 1);
           const y = bottom * t;
-          const x = thread.x + swing * PROFILE[step];
+          const x = thread.x + swing * bow(height ? y / height : t);
           if (step === 0) paper.moveTo(x, y);
           else paper.lineTo(x, y);
         }
         paper.lineWidth = 1;
         paper.strokeStyle = lit
-          ? `rgba(37, 99, 235, ${0.18 + lit * 0.42})`
-          : "rgba(17, 24, 39, 0.11)";
+          ? `rgba(37, 99, 235, ${0.16 + lit * 0.44})`
+          : "rgba(17, 24, 39, 0.085)";
         paper.stroke();
 
         /* And the stretches that fall inside a letter, firm: the cloth is the
            word. Each run is walked with the same bow, so the letter bends with
            the thread instead of standing still behind it. */
-        paper.lineWidth = 2.4;
+        paper.lineWidth = 2.7;
         paper.strokeStyle = lit
           ? `rgba(37, 99, 235, ${0.62 + lit * 0.38})`
           : "rgba(17, 24, 39, 0.9)";
@@ -390,18 +441,25 @@ export function LoomStrings({
           const end = Math.min(to, bottom);
           paper.beginPath();
 
-          const parts = Math.max(2, Math.round((end - from) / 9));
+          const parts = Math.max(2, Math.round((end - from) / 5));
           for (let step = 0; step <= parts; step += 1) {
             const y = from + ((end - from) * step) / parts;
-            const t = height ? y / height : 0;
-            const bow =
-              swing * PROFILE[Math.min(STEPS - 1, Math.round(t * (STEPS - 1)))];
-            if (step === 0) paper.moveTo(thread.x + bow, y);
-            else paper.lineTo(thread.x + bow, y);
+            const x = thread.x + swing * bow(height ? y / height : 0);
+            if (step === 0) paper.moveTo(x, y);
+            else paper.lineTo(x, y);
           }
 
           paper.stroke();
         }
+      }
+
+      if (fadeY && fadeX) {
+        paper.globalCompositeOperation = "destination-out";
+        paper.fillStyle = fadeY;
+        paper.fillRect(0, 0, width, height);
+        paper.fillStyle = fadeX;
+        paper.fillRect(0, 0, width, height);
+        paper.globalCompositeOperation = "source-over";
       }
     }
 
@@ -492,27 +550,30 @@ export function LoomStrings({
           type="button"
           onClick={() => setSound((was) => !was)}
           aria-pressed={sound}
+          aria-label={sound ? "Mute the loom" : "Unmute the loom"}
           className={cn(
-            "inline-flex cursor-pointer items-center gap-2 rounded-pill border py-2 pr-4 pl-3 text-[13.5px] font-semibold transition-colors",
+            "inline-flex cursor-pointer items-center gap-2 rounded-pill py-1.5 pr-3.5 pl-3 text-[13px] font-semibold transition-colors",
             sound
-              ? "border-active bg-active text-white"
-              : "border-border bg-field text-body hover:border-ink hover:text-ink",
+              ? "bg-ink text-white hover:opacity-85"
+              : "bg-well text-quiet hover:text-ink",
           )}
         >
           {sound ? (
-            <Volume2 aria-hidden className="size-4" />
+            <Volume2 aria-hidden className="size-[15px]" />
           ) : (
-            <VolumeX aria-hidden className="size-4" />
+            <VolumeX aria-hidden className="size-[15px]" />
           )}
-          {sound ? "Sound on" : "Turn the sound on"}
+          {sound ? "Sound on" : "Muted"}
         </button>
 
         <p className="font-mono text-[9.5px] font-bold tracking-[0.2em] text-planned uppercase">
-          {touched
-            ? sound
-              ? "Every note agrees with every other one"
-              : "Now turn the sound on"
-            : "Run your cursor across the name"}
+          {!sound
+            ? "Unmute to hear it"
+            : ready
+              ? touched
+                ? "Every note agrees with every other one"
+                : "Run your cursor across the name"
+              : "Click anywhere once to let it ring"}
         </p>
       </div>
     </div>
