@@ -28,6 +28,7 @@ export const ROUTES = {
   /* Two more home pages, kept beside the first so they can be compared. */
   homeV2: "/home-v2",
   homeV3: "/home-v3",
+  homeV4: "/home-v4",
   build: "/build",
   site: "/your-site",
 
@@ -105,6 +106,7 @@ export const RAIL_PAGES: readonly RailPage[] = [
     children: [
       { label: "Home v2", href: ROUTES.homeV2 },
       { label: "Home v3", href: ROUTES.homeV3 },
+      { label: "Home v4", href: ROUTES.homeV4 },
     ],
   },
   { label: "Build your website", href: ROUTES.build },

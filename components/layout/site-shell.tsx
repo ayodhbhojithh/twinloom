@@ -12,13 +12,14 @@ import { SiteRail } from "./site-rail";
  * The routes that end at the fold.
  *
  * Each home page is built to exactly one screenful, so a footer under one would
- * exist only to be scrolled past. The two variants follow the first so all three
+ * exist only to be scrolled past. Every variant follows the first, so all of them
  * can be judged on the same terms. Every other route keeps its footer.
  */
 const NO_FOOTER: readonly string[] = [
   ROUTES.home,
   ROUTES.homeV2,
   ROUTES.homeV3,
+  ROUTES.homeV4,
 ];
 
 /**
