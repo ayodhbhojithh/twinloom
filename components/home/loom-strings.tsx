@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { Volume2, VolumeX } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -70,6 +76,60 @@ function pitchOf(thread: number) {
   return ROOT * 2 ** (step / 12);
 }
 
+/* ---------------------------------------------------------------------------
+   Whether this visitor wants the sound, remembered.
+
+   Asked once and then never again. A page that puts the same question every
+   time somebody arrives is not asking, it is nagging, and the answer to "do you
+   want the sound" does not change between refreshes.
+
+   `pending` is what the server renders, because `localStorage` does not exist
+   there and guessing would put a question in the markup that hydration then
+   takes away.
+--------------------------------------------------------------------------- */
+
+type Answer = "on" | "off" | "ask" | "pending";
+
+const KEY = "twinloom.loom.sound";
+
+let answer: Answer | undefined;
+const listeners = new Set<() => void>();
+
+function readAnswer(): Answer {
+  if (answer !== undefined) return answer;
+
+  try {
+    const held = window.localStorage.getItem(KEY);
+    answer = held === "on" || held === "off" ? held : "ask";
+  } catch {
+    /* Storage can be blocked outright. Asking every time is a worse failure
+       than never asking, so a refusal means the sound simply stays on. */
+    answer = "on";
+  }
+
+  return answer;
+}
+
+function writeAnswer(next: "on" | "off") {
+  answer = next;
+  try {
+    window.localStorage.setItem(KEY, next);
+  } catch {
+    /* Nothing to do. It will be asked again next time, which is the least bad
+       outcome available when a browser will not remember anything. */
+  }
+  for (const listener of listeners) listener();
+}
+
+const subscribeAnswer = (listener: () => void) => {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+};
+
+const answerOnServer = (): Answer => "pending";
+
 interface Thread {
   x: number;
   /** Ink runs down this thread, as pairs of y. Where the letters are. */
@@ -97,14 +157,20 @@ export function LoomStrings({
   const frame = useRef<HTMLDivElement>(null);
   const surface = useRef<HTMLCanvasElement>(null);
 
-  const [sound, setSound] = useState(true);
+  const choice = useSyncExternalStore(
+    subscribeAnswer,
+    readAnswer,
+    answerOnServer,
+  );
+  const sound = choice === "on";
+
   /* Whether the browser has actually let the audio start. */
   const [ready, setReady] = useState(false);
   const [touched, setTouched] = useState(false);
 
   /* Read by the animation loop, which is outside React and must not close over
      a stale value. */
-  const wantSound = useRef(true);
+  const wantSound = useRef(false);
   const audio = useRef<{ ctx: AudioContext; master: GainNode } | null>(null);
 
   const ensure = useCallback(() => {
@@ -149,11 +215,15 @@ export function LoomStrings({
      which is why this does not bother unhooking itself. */
   useEffect(() => {
     const unlock = () => ensure();
-    window.addEventListener("pointerdown", unlock);
-    window.addEventListener("keydown", unlock);
+    /* Every kind of gesture a browser will accept as permission, because which
+       one arrives first is not ours to decide. Resuming a running context is
+       free, so there is no reason to be clever about unhooking these. */
+    const kinds = ["pointerdown", "touchstart", "keydown", "click"] as const;
+    for (const kind of kinds) {
+      window.addEventListener(kind, unlock, { passive: true });
+    }
     return () => {
-      window.removeEventListener("pointerdown", unlock);
-      window.removeEventListener("keydown", unlock);
+      for (const kind of kinds) window.removeEventListener(kind, unlock);
     };
   }, [ensure]);
 
@@ -161,6 +231,11 @@ export function LoomStrings({
     wantSound.current = sound;
     if (sound) ensure();
   }, [sound, ensure]);
+
+  /* Somebody who has already said yes should not have to say it again, so a
+     remembered answer opens the audio on the first gesture of the visit rather
+     than waiting for a button. Arriving from a link inside the site counts,
+     which is why it usually rings straight away. */
 
   useEffect(
     () => () => {
@@ -580,36 +655,76 @@ export function LoomStrings({
         <canvas ref={surface} aria-hidden className="block h-full w-full" />
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-3">
-        <button
-          type="button"
-          onClick={() => setSound((was) => !was)}
-          aria-pressed={sound}
-          aria-label={sound ? "Mute the loom" : "Unmute the loom"}
-          className={cn(
-            "inline-flex cursor-pointer items-center gap-2 rounded-pill py-1.5 pr-3.5 pl-3 text-[13px] font-semibold transition-colors",
-            sound
-              ? "bg-ink text-white hover:opacity-85"
-              : "bg-well text-quiet hover:text-ink",
-          )}
-        >
-          {sound ? (
-            <Volume2 aria-hidden className="size-[15px]" />
-          ) : (
-            <VolumeX aria-hidden className="size-[15px]" />
-          )}
-          {sound ? "Sound on" : "Muted"}
-        </button>
+      <div className="mt-6 flex min-h-9 flex-wrap items-center justify-center gap-x-5 gap-y-3">
+        {choice === "pending" ? null : choice === "ask" ? (
+          /* Asked once, on arrival. The click that answers it is also what a
+             browser counts as permission to make a noise, so saying yes both
+             records the answer and opens the audio in the same gesture. */
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2.5 rounded-pill border border-border bg-field py-1.5 pr-1.5 pl-4">
+            <span className="text-[13.5px] text-body">
+              This one plays notes. Sound on?
+            </span>
 
-        <p className="font-mono text-[9.5px] font-bold tracking-[0.2em] text-planned uppercase">
-          {!sound
-            ? "Unmute to hear it"
-            : ready
-              ? touched
-                ? "Every note agrees with every other one"
-                : "Run your cursor across the name"
-              : "Click anywhere once to let it ring"}
-        </p>
+            <span className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => writeAnswer("on")}
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-pill bg-ink px-3.5 py-1.5 text-[13px] font-semibold text-white transition-opacity hover:opacity-85"
+              >
+                <Volume2 aria-hidden className="size-[15px]" />
+                Yes, play it
+              </button>
+              <button
+                type="button"
+                onClick={() => writeAnswer("off")}
+                className="cursor-pointer rounded-pill px-3 py-1.5 text-[13px] font-semibold text-quiet transition-colors hover:text-ink"
+              >
+                No thanks
+              </button>
+            </span>
+          </div>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={() => writeAnswer(sound ? "off" : "on")}
+              aria-pressed={sound}
+              aria-label={sound ? "Mute the loom" : "Unmute the loom"}
+              className={cn(
+                "inline-flex cursor-pointer items-center gap-2 rounded-pill py-1.5 pr-3.5 pl-3 text-[13px] font-semibold transition-colors",
+                sound
+                  ? "bg-ink text-white hover:opacity-85"
+                  : "bg-well text-quiet hover:text-ink",
+              )}
+            >
+              {sound ? (
+                <Volume2 aria-hidden className="size-[15px]" />
+              ) : (
+                <VolumeX aria-hidden className="size-[15px]" />
+              )}
+              {sound ? "Sound on" : "Muted"}
+            </button>
+
+            <p
+              className={cn(
+                "font-mono text-[9.5px] font-bold tracking-[0.2em] uppercase",
+                sound && !ready ? "text-amber" : "text-planned",
+              )}
+            >
+              {!sound
+                ? "Unmute to hear it"
+                : ready
+                  ? touched
+                    ? "Every note agrees with every other one"
+                    : "Run your cursor across the name"
+                  : /* Not a choice being asked again: no browser lets a page make
+                       a sound until the visitor has touched it, and a refresh
+                       clears that. The answer is remembered; the permission
+                       cannot be. */
+                    "Click anywhere once to let it ring"}
+            </p>
+          </>
+        )}
       </div>
     </div>
   );

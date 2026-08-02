@@ -50,7 +50,7 @@ export default function HomeV3Page() {
 
         <LoomStrings word={SITE.name} className="mt-6" />
 
-        <div className="mt-12 grid gap-x-16 gap-y-8 border-t border-hair pt-10 lg:grid-cols-2 lg:items-end">
+        <div className="mt-14 grid gap-x-16 gap-y-8 lg:grid-cols-2 lg:items-end">
           <p
             style={{ "--in": "90ms" } as React.CSSProperties}
             className="rise max-w-[17ch] text-[clamp(28px,3.4vw,50px)] leading-[1.06] font-extrabold tracking-[-0.04em] text-ink"
