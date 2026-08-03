@@ -21,8 +21,8 @@ import { PROJECTS, type Project } from "./projects";
    Those outward curves are the whole job. `border-radius` only ever bends a
    corner inward, and a mask made of gradients gets the straight edges right and
    the corners visibly wrong. The outline is written as a path instead: every
-   corner is an arc, and the direction each one turns decides whether the surface
-   curves in or out.
+   corner is an arc, and which side of the arc its centre falls on decides
+   whether the surface curves in or out.
 --------------------------------------------------------------------------- */
 
 interface Cuts {
@@ -43,10 +43,20 @@ interface Cuts {
 /**
  * The outline, clockwise from just after the top left corner.
  *
- * Every turn is an arc of the same radius as the corner it rounds, and the sweep
- * flag is the entire trick: `1` turns the way a rectangle's corner turns, which
- * curves the surface in; `0` turns the other way, which curves it out. The
- * outward turns are the four places the card wraps around something.
+ * Two kinds of turn, and telling them apart is the whole job.
+ *
+ * A cut's own corners curve the way any rounded box curves: the centre of the
+ * arc sits inside the cut. Those are the notch's two bottom corners and the
+ * bite's inner corner, and they take sweep `0`.
+ *
+ * A flare is where a cut meets the card's edge, and it curves the other way: the
+ * centre of the arc sits in the card, so the edge sweeps outward and the cut is
+ * wider at the mouth than at its floor. Those take sweep `1`, the same as the
+ * card's own corners.
+ *
+ * Getting that backwards does not produce a subtle error. It puts the centre of
+ * each flare on the wrong side, which turns the gentle sweep into a full
+ * quarter-disc bitten out beside the notch, and the card grows two ears.
  */
 function outline(w: number, h: number, cut: Cuts): string {
   const {
@@ -67,27 +77,27 @@ function outline(w: number, h: number, cut: Cuts): string {
 
   return [
     `M ${r} 0`,
-    /* Top edge, up to where the bar begins. */
+    /* Top edge, then the flare down into the notch. */
     `L ${left - bf} 0`,
-    `A ${bf} ${bf} 0 0 0 ${left} ${bf}`,
+    `A ${bf} ${bf} 0 0 1 ${left} ${bf}`,
     `L ${left} ${bd - br}`,
     `A ${br} ${br} 0 0 0 ${left + br} ${bd}`,
     `L ${right - br} ${bd}`,
     `A ${br} ${br} 0 0 0 ${right} ${bd - br}`,
     `L ${right} ${bf}`,
-    `A ${bf} ${bf} 0 0 0 ${right + bf} 0`,
+    `A ${bf} ${bf} 0 0 1 ${right + bf} 0`,
     /* On to the top right corner and down the right side. */
     `L ${w - r} 0`,
     `A ${r} ${r} 0 0 1 ${w} ${r}`,
     `L ${w} ${h - r}`,
     `A ${r} ${r} 0 0 1 ${w - r} ${h}`,
-    /* Bottom edge, leftward, up to the bite. */
+    /* Bottom edge, leftward, then the flare up into the bite. */
     `L ${cw + cf} ${h}`,
-    `A ${cf} ${cf} 0 0 0 ${cw} ${h - cf}`,
+    `A ${cf} ${cf} 0 0 1 ${cw} ${h - cf}`,
     `L ${cw} ${h - ch + cr}`,
     `A ${cr} ${cr} 0 0 0 ${cw - cr} ${h - ch}`,
     `L ${cf} ${h - ch}`,
-    `A ${cf} ${cf} 0 0 0 0 ${h - ch - cf}`,
+    `A ${cf} ${cf} 0 0 1 0 ${h - ch - cf}`,
     /* Up the left side to where we started. */
     `L 0 ${r}`,
     `A ${r} ${r} 0 0 1 ${r} 0`,
@@ -118,19 +128,57 @@ export function NotchedCard({ className }: { className?: string }) {
   const shown = PROJECTS[at];
   const next = PROJECTS[(at + 1) % PROJECTS.length];
 
-  /* Scaled to the card rather than fixed, so the bar stays a bar on a phone
-     instead of a lid, and the bite stays a corner instead of half the picture. */
-  const cut: Cuts = {
-    radius: Math.min(34, size.w * 0.04 + 14),
-    barWidth: Math.max(148, Math.min(size.w * 0.24, 240)),
-    barDepth: Math.max(46, Math.min(size.h * 0.09, 62)),
-    barRadius: 24,
-    barFlare: 22,
-    biteWidth: Math.max(104, Math.min(size.w * 0.13, 158)),
-    biteHeight: Math.max(104, Math.min(size.h * 0.24, 172)),
-    biteRadius: 22,
-    biteFlare: 22,
-  };
+  /**
+   * The four numbers that decide whether this looks drawn or assembled.
+   *
+   * The flare is the outward curve where a cut meets the card's edge, and it has
+   * to be about as large as the cut is deep. Smaller than that and the edge drops
+   * into the notch rather than sweeping into it, which is the difference between
+   * a shape and a hole. The bar's own corners are half its depth, which makes it
+   * a pill rather than a rounded box.
+   *
+   * Everything scales with the card and is then held inside what the card can
+   * actually give: on a narrow screen a bar plus two flares can want more room
+   * than the top edge has, and a path that overruns its own box folds inside out.
+   */
+  const cut: Cuts = ((): Cuts => {
+    const w = Math.max(size.w, 1);
+    const h = Math.max(size.h, 1);
+
+    const radius = Math.max(22, Math.min(w * 0.03 + 20, 48));
+
+    /* The notch is about twice the height of the bar standing in it. That gap
+       underneath is what makes it read as a piece taken out of the card rather
+       than a slot the bar is jammed into. */
+    const barDepth = Math.max(84, Math.min(h * 0.145, 118));
+    const barWidth = Math.max(168, Math.min(w * 0.17, 250));
+    const barRadius = Math.max(24, Math.min(barWidth * 0.17, 42));
+
+    /* The outward sweep, held inside what the top edge can spare after the bar
+       and both card corners. A path that overruns its own box folds inside out. */
+    const spare = (w - barWidth - radius * 2) / 2;
+    const barFlare = Math.max(14, Math.min(barDepth * 0.5, spare, 60));
+
+    const biteWidth = Math.max(108, Math.min(w * 0.12, 168));
+    const biteHeight = Math.max(116, Math.min(h * 0.225, 180));
+    const biteRadius = Math.max(18, Math.min(biteWidth * 0.18, 30));
+    const biteFlare = Math.max(
+      14,
+      Math.min(biteHeight * 0.3, h - biteHeight - radius, 52),
+    );
+
+    return {
+      radius,
+      barWidth,
+      barDepth,
+      barRadius,
+      barFlare,
+      biteWidth,
+      biteHeight,
+      biteRadius,
+      biteFlare,
+    };
+  })();
 
   const path = size.w > 40 ? outline(size.w, size.h, cut) : "";
 
@@ -140,18 +188,25 @@ export function NotchedCard({ className }: { className?: string }) {
       <motion.div
         key={shown.id}
         layoutId={`shot-${shown.id}`}
-        className="absolute inset-0 rounded-[34px]"
+        className="absolute inset-0"
+        /* Graded rather than flat. White bites cut into a flat grey block on a
+           white page are nearly invisible: without a gradient there is no edge
+           for the eye to follow round the shape, and the whole point of the
+           outline is the shape. */
         style={{
-          backgroundColor: shown.tone,
+          backgroundImage: `linear-gradient(155deg, #f4f5f7 0%, ${shown.tone} 46%, #dcdfe4 100%)`,
           clipPath: path ? `path("${path}")` : undefined,
         }}
       />
 
-      {/* The bar, standing in the cut rather than on top of the picture. */}
+      {/* The bar: a pill standing in the top of the cut, with the rest of the
+          cut left empty beneath it. Three loose icons floating in a white gap
+          read as a hole in the picture rather than as something sitting in it. */}
       <div
-        className="absolute top-0 left-1/2 flex -translate-x-1/2 items-center justify-center gap-1"
-        style={{ width: cut.barWidth, height: cut.barDepth }}
+        className="absolute top-0 left-1/2 flex -translate-x-1/2 justify-center"
+        style={{ width: cut.barWidth, height: cut.barDepth, paddingTop: 6 }}
       >
+        <div className="flex h-11 items-center gap-0.5 rounded-pill border border-border bg-field px-1.5">
         <Tool
           label="Previous project"
           onClick={() =>
@@ -169,6 +224,7 @@ export function NotchedCard({ className }: { className?: string }) {
         >
           <ArrowRight className="size-[17px]" />
         </Tool>
+        </div>
       </div>
 
       {/* What is coming next, standing in the bite. */}
@@ -176,12 +232,14 @@ export function NotchedCard({ className }: { className?: string }) {
         type="button"
         onClick={() => setAt((was) => (was + 1) % PROJECTS.length)}
         aria-label={`Next: ${next.name}`}
-        className="group absolute bottom-0 left-0 cursor-pointer rounded-[22px] p-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-active"
-        style={{ width: cut.biteWidth - 14, height: cut.biteHeight - 14 }}
+        className="group absolute bottom-0 left-0 cursor-pointer rounded-[20px] p-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-active"
+        style={{ width: cut.biteWidth - 16, height: cut.biteHeight - 16 }}
       >
         <span
-          className="block size-full rounded-[20px] border border-border transition-transform duration-300 group-hover:-translate-y-1"
-          style={{ backgroundColor: next.tone }}
+          className="block size-full rounded-[18px] border border-border transition-transform duration-300 group-hover:-translate-y-1"
+          style={{
+            backgroundImage: `linear-gradient(155deg, #f6f7f8 0%, ${next.tone} 55%, #dcdfe4 100%)`,
+          }}
         />
       </button>
 
