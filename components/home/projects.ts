@@ -1,16 +1,17 @@
 /* ---------------------------------------------------------------------------
    The work, as data.
 
-   Placeholders until the real projects arrive, and named for what each build
-   does rather than for a client. Inventing client names to fill a carousel would
-   put fake credentials on a company's own site, which is the one lie a portfolio
-   must not tell. These describe kinds of work, which is true of every one of
-   them.
+   Four pieces, one per picture. Named for what each build does rather than for a
+   client: inventing client names to fill a carousel would put fake credentials on
+   a company's own site, which is the one lie a portfolio must not tell. These
+   describe kinds of work, which is true of every one of them.
 
-   The `tone` is the grey the picture sits in until there is a picture. Six
-   slightly different greys rather than one, because a row of identical blocks
-   reads as a loading state and a row of nearly identical ones reads as artwork
-   that has not arrived.
+   The `tone` is the colour a card sits on while its picture is still loading, so
+   the shape is there before the image is. It is read from the artwork rather than
+   guessed, which is why they differ.
+
+   Every screen that shows the work reads this one list, so a picture swapped here
+   appears on the landing page, the deck, the wall and the opened panel at once.
 --------------------------------------------------------------------------- */
 
 export interface Project {
@@ -20,6 +21,11 @@ export interface Project {
   year: string;
   summary: string;
   facts: readonly { term: string; value: string }[];
+  /** In `public`. Named for the project, so the mapping needs no lookup. */
+  image: string;
+  /** What the picture shows, for anybody who cannot see it. */
+  alt: string;
+  /** The colour under the picture until it arrives. */
   tone: string;
 }
 
@@ -36,6 +42,8 @@ export const PROJECTS: readonly Project[] = [
       { term: "Built in", value: "5 weeks" },
       { term: "Visitors", value: "Customers" },
     ],
+    image: "/work-shop.png",
+    alt: "A shop laid out across a laptop and a phone.",
     tone: "#e9ebee",
   },
   {
@@ -50,6 +58,8 @@ export const PROJECTS: readonly Project[] = [
       { term: "Built in", value: "8 weeks" },
       { term: "Visitors", value: "Business buyers" },
     ],
+    image: "/work-trade.png",
+    alt: "An account portal open on a laptop.",
     tone: "#e4e7ea",
   },
   {
@@ -64,6 +74,8 @@ export const PROJECTS: readonly Project[] = [
       { term: "Built in", value: "4 weeks" },
       { term: "Visitors", value: "Investors" },
     ],
+    image: "/work-investor.png",
+    alt: "A reporting dashboard on a large screen.",
     tone: "#eceef1",
   },
   {
@@ -78,34 +90,8 @@ export const PROJECTS: readonly Project[] = [
       { term: "Built in", value: "6 weeks" },
       { term: "Visitors", value: "Staff and candidates" },
     ],
+    image: "/work-careers.png",
+    alt: "A careers page with a person reading it.",
     tone: "#e7e9ed",
-  },
-  {
-    id: "press",
-    name: "A press room",
-    kind: "Media",
-    year: "2025",
-    summary:
-      "The facts in one place, the logos in another, and a named person who answers within the day. Built for somebody on a deadline who has never heard of the company.",
-    facts: [
-      { term: "Pages", value: "7" },
-      { term: "Built in", value: "3 weeks" },
-      { term: "Visitors", value: "Press" },
-    ],
-    tone: "#eaecef",
-  },
-  {
-    id: "governance",
-    name: "A compliance library",
-    kind: "Governance",
-    year: "2024",
-    summary:
-      "Registrations, policies and certificates, findable without having to ask. The dated record of what was published when, which is the whole point of it.",
-    facts: [
-      { term: "Pages", value: "22" },
-      { term: "Built in", value: "7 weeks" },
-      { term: "Visitors", value: "Regulators" },
-    ],
-    tone: "#e6e8ec",
   },
 ];

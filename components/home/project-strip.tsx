@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "motion/react";
 import { useState } from "react";
 
@@ -63,9 +64,18 @@ export function ProjectStrip({
                       second run exists solely to make the loop seamless. */}
                   <motion.div
                     layoutId={copy === 0 ? `shot-${project.id}` : undefined}
-                    className="w-full overflow-hidden rounded-[16px] border border-border transition-transform duration-300 group-hover/card:-translate-y-1.5"
+                    className="relative w-full overflow-hidden rounded-[16px] border border-border transition-transform duration-300 group-hover/card:-translate-y-1.5"
                     style={{ backgroundColor: project.tone, height }}
-                  />
+                  >
+                    <Image
+                      src={project.image}
+                      alt={copy === 0 ? project.alt : ""}
+                      fill
+                      quality={100}
+                      sizes="(max-width: 640px) 50vw, 250px"
+                      className="object-cover"
+                    />
+                  </motion.div>
 
                   {captions ? (
                     <span className="mt-3 block text-left">

@@ -197,6 +197,7 @@ export function Hero() {
                 width={999}
                 height={999}
                 preload
+                quality={100}
                 sizes="(max-width: 640px) 88vw, (max-width: 1024px) 400px, 560px"
                 className="float h-auto w-full"
               />

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
@@ -92,9 +93,22 @@ export function ProjectPanel({
             >
               <motion.div
                 layoutId={`shot-${project.id}`}
-                className="min-h-0 overflow-hidden"
+                className="relative min-h-0 overflow-hidden"
                 style={{ backgroundColor: project.tone }}
-              />
+              >
+                {/* `fill` because the panel's half is sized by the grid, not by
+                    the picture, and `cover` because a scope illustration reads
+                    from its middle. `sizes` keeps a 3360px master from being
+                    fetched to fill a phone. */}
+                <Image
+                  src={project.image}
+                  alt={project.alt}
+                  fill
+                  quality={100}
+                  sizes="(max-width: 1024px) 100vw, 55vw"
+                  className="object-cover"
+                />
+              </motion.div>
 
               <div className="quiet-scroll flex min-h-0 flex-col overflow-y-auto p-6 sm:p-9 lg:p-12">
                 <motion.div

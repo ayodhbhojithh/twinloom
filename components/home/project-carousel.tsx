@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Pause, Play } from "lucide-react";
@@ -184,14 +185,23 @@ export function ProjectCarousel({ className }: { className?: string }) {
               <motion.div
                 layoutId={`shot-${project.id}`}
                 /* A hairline rather than a shadow. Nothing else on this site
-                   casts one, and a grey card on white needs an edge to be a
-                   card, not a cloud under it to be a card. */
-                className="size-full overflow-hidden rounded-[18px] border border-border"
+                   casts one, and a card on white needs an edge to be a card, not
+                   a cloud under it to be a card. */
+                className="relative size-full overflow-hidden rounded-[18px] border border-border"
                 style={{ backgroundColor: project.tone }}
               >
+                <Image
+                  src={project.image}
+                  alt={project.alt}
+                  fill
+                  quality={100}
+                  sizes="(max-width: 640px) 60vw, 300px"
+                  className="object-cover"
+                />
+
                 {/* The picture, when there is one. Until then the grey it will
                     sit in, with the plate it will be captioned by. */}
-                <span className="flex size-full items-end p-3.5">
+                <span className="relative flex size-full items-end p-3.5">
                   <span
                     className={cn(
                       "block w-full rounded-[10px] bg-field/85 px-3 py-2.5 backdrop-blur-[2px] transition-opacity duration-300",

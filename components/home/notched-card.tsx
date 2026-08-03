@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Maximize2 } from "lucide-react";
@@ -195,16 +196,26 @@ export function NotchedCard({ className }: { className?: string }) {
       <motion.div
         key={shown.id}
         layoutId={`shot-${shown.id}`}
-        className="absolute inset-0"
-        /* Graded rather than flat. White bites cut into a flat grey block on a
-           white page are nearly invisible: without a gradient there is no edge
-           for the eye to follow round the shape, and the whole point of the
-           outline is the shape. */
+        className="absolute inset-0 overflow-hidden"
         style={{
-          backgroundImage: `linear-gradient(155deg, #f4f5f7 0%, ${shown.tone} 46%, #dcdfe4 100%)`,
+          backgroundColor: shown.tone,
           clipPath: path ? `path("${path}")` : undefined,
         }}
-      />
+      >
+        {/* `preload` rather than the deprecated `priority`: this is the largest
+            thing on the landing page and must not be lazy loaded. The clip is on
+            the parent, so the picture is cut to the notches without knowing they
+            exist. */}
+        <Image
+          src={shown.image}
+          alt={shown.alt}
+          fill
+          quality={100}
+          preload
+          sizes="100vw"
+          className="object-cover"
+        />
+      </motion.div>
 
       {/* The bar, standing in the top of the cut. No border on it: the cut is
           already the outline, and a second one drawn a few pixels inside reads
@@ -247,11 +258,18 @@ export function NotchedCard({ className }: { className?: string }) {
           /* No border. The bite around it is already the outline, and a second
              one a few pixels inside reads as a sticker on the card rather than
              as the thing the card was cut back for. */
-          className="block size-full rounded-[18px] transition-transform duration-300 group-hover:-translate-y-1"
-          style={{
-            backgroundImage: `linear-gradient(155deg, #f6f7f8 0%, ${next.tone} 55%, #dcdfe4 100%)`,
-          }}
-        />
+          className="relative block size-full overflow-hidden rounded-[18px] transition-transform duration-300 group-hover:-translate-y-1"
+          style={{ backgroundColor: next.tone }}
+        >
+          <Image
+            src={next.image}
+            alt=""
+            fill
+            quality={100}
+            sizes="200px"
+            className="object-cover"
+          />
+        </span>
       </button>
 
       {/* Which project this is, said in words rather than left to the picture. */}
