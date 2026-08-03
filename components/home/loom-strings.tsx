@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
-import { Volume2, VolumeX } from "lucide-react";
-
-import { cn } from "@/lib/utils";
+import { useCallback, useEffect, useRef } from "react";
 
 /* ---------------------------------------------------------------------------
    The name, woven, and playable.
@@ -28,11 +19,14 @@ import { cn } from "@/lib/utils";
    falling filter and a decay envelope, which the Web Audio API has had all along
    and which costs no download at all.
 
-   Sound is on from the start, but no browser will let a page make a noise before
-   somebody has touched it, so the audio is unlocked by the first click, tap or
-   key anywhere on the document rather than by a button that has to be found and
-   pressed. Until that happens the threads still pluck, silently, and the caption
-   says why. The mute is still there for anyone who wants it.
+   Sound is on, always, and there is no control for it. No browser will let a
+   page make a noise before somebody has touched it, so the audio is unlocked by
+   the first click, tap or key anywhere on the document: by the time anyone has
+   reached this and moved across it, they have already given permission without
+   being asked for it. Until then the threads still pluck, silently.
+
+   A toggle here would have been a question nobody came to answer, sitting under
+   the one thing on the page that is supposed to be played with.
 --------------------------------------------------------------------------- */
 
 /**
@@ -76,60 +70,6 @@ function pitchOf(thread: number) {
   return ROOT * 2 ** (step / 12);
 }
 
-/* ---------------------------------------------------------------------------
-   Whether this visitor wants the sound, remembered.
-
-   Asked once and then never again. A page that puts the same question every
-   time somebody arrives is not asking, it is nagging, and the answer to "do you
-   want the sound" does not change between refreshes.
-
-   `pending` is what the server renders, because `localStorage` does not exist
-   there and guessing would put a question in the markup that hydration then
-   takes away.
---------------------------------------------------------------------------- */
-
-type Answer = "on" | "off" | "ask" | "pending";
-
-const KEY = "twinloom.loom.sound";
-
-let answer: Answer | undefined;
-const listeners = new Set<() => void>();
-
-function readAnswer(): Answer {
-  if (answer !== undefined) return answer;
-
-  try {
-    const held = window.localStorage.getItem(KEY);
-    answer = held === "on" || held === "off" ? held : "ask";
-  } catch {
-    /* Storage can be blocked outright. Asking every time is a worse failure
-       than never asking, so a refusal means the sound simply stays on. */
-    answer = "on";
-  }
-
-  return answer;
-}
-
-function writeAnswer(next: "on" | "off") {
-  answer = next;
-  try {
-    window.localStorage.setItem(KEY, next);
-  } catch {
-    /* Nothing to do. It will be asked again next time, which is the least bad
-       outcome available when a browser will not remember anything. */
-  }
-  for (const listener of listeners) listener();
-}
-
-const subscribeAnswer = (listener: () => void) => {
-  listeners.add(listener);
-  return () => {
-    listeners.delete(listener);
-  };
-};
-
-const answerOnServer = (): Answer => "pending";
-
 interface Thread {
   x: number;
   /** Ink runs down this thread, as pairs of y. Where the letters are. */
@@ -157,20 +97,6 @@ export function LoomStrings({
   const frame = useRef<HTMLDivElement>(null);
   const surface = useRef<HTMLCanvasElement>(null);
 
-  const choice = useSyncExternalStore(
-    subscribeAnswer,
-    readAnswer,
-    answerOnServer,
-  );
-  const sound = choice === "on";
-
-  /* Whether the browser has actually let the audio start. */
-  const [ready, setReady] = useState(false);
-  const [touched, setTouched] = useState(false);
-
-  /* Read by the animation loop, which is outside React and must not close over
-     a stale value. */
-  const wantSound = useRef(false);
   const audio = useRef<{ ctx: AudioContext; master: GainNode } | null>(null);
 
   const ensure = useCallback(() => {
@@ -204,10 +130,7 @@ export function LoomStrings({
       audio.current = { ctx, master };
     }
 
-    const kit = audio.current;
-    if (!kit) return;
-
-    void kit.ctx.resume().then(() => setReady(kit.ctx.state === "running"));
+    void audio.current.ctx.resume();
   }, []);
 
   /* The first real gesture anywhere is what a browser counts as permission, so
@@ -226,16 +149,6 @@ export function LoomStrings({
       for (const kind of kinds) window.removeEventListener(kind, unlock);
     };
   }, [ensure]);
-
-  useEffect(() => {
-    wantSound.current = sound;
-    if (sound) ensure();
-  }, [sound, ensure]);
-
-  /* Somebody who has already said yes should not have to say it again, so a
-     remembered answer opens the audio on the first gesture of the visit rather
-     than waiting for a button. Arriving from a link inside the site counts,
-     which is why it usually rings straight away. */
 
   useEffect(
     () => () => {
@@ -293,10 +206,17 @@ export function LoomStrings({
 
       /* As large as the box will take, then backed off so the letters keep clear
          of the fade at the top and bottom and have air to be plucked into. */
-      let size = Math.min((width * 0.96) / (word.length * 0.52), height * 0.64);
+      let size = Math.min((width * 0.94) / (word.length * 0.52), height * 0.72);
       ink.font = `900 ${size}px ${family}`;
+
+      /* Measured and then set, in both directions. The guess above is per
+         character, so a phrase with spaces in it comes out far narrower than
+         the guess allowed for: only ever shrinking to fit left a short word
+         filling the cloth and a long one stranded in the middle of it. */
       const measured = ink.measureText(word).width;
-      if (measured > width * 0.96) size *= (width * 0.96) / measured;
+      if (measured > 0) {
+        size = Math.min((size * (width * 0.94)) / measured, height * 0.72);
+      }
 
       ink.font = `900 ${size}px ${family}`;
       ink.textAlign = "center";
@@ -364,7 +284,7 @@ export function LoomStrings({
       }
 
       const kit = audio.current;
-      if (!wantSound.current || !kit || kit.ctx.state !== "running") return;
+      if (!kit || kit.ctx.state !== "running") return;
 
       const t = kit.ctx.currentTime;
       const freq = pitchOf(at);
@@ -530,8 +450,12 @@ export function LoomStrings({
           else paper.lineTo(x, y);
         }
         paper.lineWidth = warpWidth;
+        /* A struck thread is not a different colour, it is a firmer one. There
+           is one ink on this site and the loom is not the place to introduce a
+           second: darkening from a hairline to something close to the letters
+           says "this one is ringing" without any hue at all. */
         paper.strokeStyle = lit
-          ? `rgba(37, 99, 235, ${0.16 + lit * 0.44})`
+          ? `rgba(17, 24, 39, ${0.075 + lit * 0.5})`
           : "rgba(17, 24, 39, 0.075)";
         paper.stroke();
 
@@ -539,8 +463,11 @@ export function LoomStrings({
            word. Each run is walked with the same bow, so the letter bends with
            the thread instead of standing still behind it. */
         paper.lineWidth = inkWidth;
+        /* The letters are already full ink, so a struck one lifts instead of
+           darkening: it is the one place on the cloth where movement has to be
+           read against something that was never faint. */
         paper.strokeStyle = lit
-          ? `rgba(37, 99, 235, ${0.66 + lit * 0.34})`
+          ? `rgba(17, 24, 39, ${0.94 - lit * 0.34})`
           : "rgba(17, 24, 39, 0.94)";
 
         for (let run = 0; run < thread.runs.length; run += 2) {
@@ -586,8 +513,7 @@ export function LoomStrings({
       if (at !== lastAt) {
         pluck(at, 0.9);
         lastAt = at;
-        setTouched(true);
-      }
+        }
     }
 
     function onLeave() {
@@ -609,14 +535,12 @@ export function LoomStrings({
           Math.min(threads.length - 1, (lastAt < 0 ? -step : lastAt) + step),
         );
         pluck(lastAt, 1);
-        setTouched(true);
         return;
       }
 
       if (event.key === " " || event.key === "Enter") {
         event.preventDefault();
         pluck(Math.max(0, lastAt), 1);
-        setTouched(true);
       }
     }
 
@@ -650,81 +574,14 @@ export function LoomStrings({
         role="group"
         aria-label={`${word}, woven into a loom of strings. Move across it, or use the arrow keys, to play it.`}
         className="relative w-full cursor-crosshair rounded-card outline-none focus-visible:ring-2 focus-visible:ring-ink"
-        style={{ height: "clamp(250px, 44svh, 460px)" }}
+        /* Height off the width, not off the viewport's height. The word is
+           sized to the width, so a cloth measured against the height changed
+           its proportions every time the window did: tall and nearly empty on a
+           short wide screen, cramped on a tall narrow one. Tied to the width it
+           keeps the same shape around the word at every size. */
+        style={{ height: "clamp(150px, 23vw, 480px)" }}
       >
         <canvas ref={surface} aria-hidden className="block h-full w-full" />
-      </div>
-
-      <div className="mt-6 flex min-h-9 flex-wrap items-center justify-center gap-x-5 gap-y-3">
-        {choice === "pending" ? null : choice === "ask" ? (
-          /* Asked once, on arrival. The click that answers it is also what a
-             browser counts as permission to make a noise, so saying yes both
-             records the answer and opens the audio in the same gesture. */
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2.5 rounded-pill border border-border bg-field py-1.5 pr-1.5 pl-4">
-            <span className="text-[13.5px] text-body">
-              This one plays notes. Sound on?
-            </span>
-
-            <span className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => writeAnswer("on")}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-pill bg-ink px-3.5 py-1.5 text-[13px] font-semibold text-white transition-opacity hover:opacity-85"
-              >
-                <Volume2 aria-hidden className="size-[15px]" />
-                Yes, play it
-              </button>
-              <button
-                type="button"
-                onClick={() => writeAnswer("off")}
-                className="cursor-pointer rounded-pill px-3 py-1.5 text-[13px] font-semibold text-quiet transition-colors hover:text-ink"
-              >
-                No thanks
-              </button>
-            </span>
-          </div>
-        ) : (
-          <>
-            <button
-              type="button"
-              onClick={() => writeAnswer(sound ? "off" : "on")}
-              aria-pressed={sound}
-              aria-label={sound ? "Mute the loom" : "Unmute the loom"}
-              className={cn(
-                "inline-flex cursor-pointer items-center gap-2 rounded-pill py-1.5 pr-3.5 pl-3 text-[13px] font-semibold transition-colors",
-                sound
-                  ? "bg-ink text-white hover:opacity-85"
-                  : "bg-well text-quiet hover:text-ink",
-              )}
-            >
-              {sound ? (
-                <Volume2 aria-hidden className="size-[15px]" />
-              ) : (
-                <VolumeX aria-hidden className="size-[15px]" />
-              )}
-              {sound ? "Sound on" : "Muted"}
-            </button>
-
-            <p
-              className={cn(
-                "font-mono text-[9.5px] font-bold tracking-[0.2em] uppercase",
-                sound && !ready ? "text-amber" : "text-planned",
-              )}
-            >
-              {!sound
-                ? "Unmute to hear it"
-                : ready
-                  ? touched
-                    ? "Every note agrees with every other one"
-                    : "Run your cursor across the name"
-                  : /* Not a choice being asked again: no browser lets a page make
-                       a sound until the visitor has touched it, and a refresh
-                       clears that. The answer is remembered; the permission
-                       cannot be. */
-                    "Click anywhere once to let it ring"}
-            </p>
-          </>
-        )}
       </div>
     </div>
   );
