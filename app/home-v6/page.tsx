@@ -35,8 +35,11 @@ export default function HomeV6Page() {
   const kinds = PROJECTS.map((project) => project.kind);
 
   return (
-    <section className="flex min-h-[var(--stage)] flex-col justify-center overflow-clip py-10">
-      <div className="page-frame mx-auto max-w-wide text-center">
+    /* A fixed screenful rather than a minimum, so the wall at the foot is cut by
+       the bottom of the window instead of pushing the page taller. The cards run
+       off the edge on purpose: a wall that ends is a shelf. */
+    <section className="flex h-[var(--stage)] flex-col overflow-clip pt-10">
+      <div className="page-frame mx-auto w-full max-w-wide shrink-0 text-center">
         <p className="rise mx-auto inline-flex items-center gap-2.5 rounded-pill bg-well py-2 pr-4 pl-3 text-[13.5px] font-semibold text-body">
           <span aria-hidden className="size-2 rounded-pill bg-ink" />
           A written scope, in your own words
@@ -87,7 +90,7 @@ export default function HomeV6Page() {
       {/* The kinds of work, drifting. Full bleed, so items leave the page rather
           than stopping at a margin, which is what lets the row have no edges
           without needing anything faded over them. */}
-      <div aria-hidden className="mt-14 overflow-hidden">
+      <div aria-hidden className="mt-12 shrink-0 overflow-hidden">
         <div className="drift flex w-max">
           {[0, 1].map((copy) => (
             <div key={copy} className="flex shrink-0">
@@ -105,7 +108,11 @@ export default function HomeV6Page() {
         </div>
       </div>
 
-      <ProjectStrip className="mt-12" />
+      <ProjectStrip
+        className="mt-10 min-h-0 flex-1"
+        captions={false}
+        height="clamp(260px, 42svh, 460px)"
+      />
     </section>
   );
 }

@@ -15,7 +15,7 @@ import { PROJECTS, type Project } from "./projects";
  * contact sheet; the same row with each card hung at its own height is a wall,
  * and which card sits where is a composition rather than a random number.
  */
-const HANG = [46, 0, 30, 62, 14, 52];
+const HANG = [64, 0, 40, 88, 18, 72];
 
 /**
  * The work, as a wall that drifts past.
@@ -29,7 +29,17 @@ const HANG = [46, 0, 30, 62, 14, 52];
  * measures where a card is at the moment it is clicked, and measuring something
  * still in motion would start the morph from the wrong place.
  */
-export function ProjectStrip({ className }: { className?: string }) {
+export function ProjectStrip({
+  className,
+  captions = true,
+  height = "clamp(200px, 24svh, 300px)",
+}: {
+  className?: string;
+  /** Off when the wall runs off the bottom of the screen and a caption under a
+      card would be cut in half rather than read. */
+  captions?: boolean;
+  height?: string;
+}) {
   const [open, setOpen] = useState<Project | null>(null);
 
   return (
@@ -46,25 +56,27 @@ export function ProjectStrip({ className }: { className?: string }) {
                   aria-label={`Open ${project.name}`}
                   onClick={() => setOpen(project)}
                   style={{ marginTop: HANG[index % HANG.length] }}
-                  className="group/card w-[clamp(160px,17vw,240px)] shrink-0 cursor-pointer rounded-[16px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-active"
+                  className="group/card w-[clamp(165px,17vw,250px)] shrink-0 cursor-pointer rounded-[16px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-active"
                 >
                   {/* Only the first run carries the shared identity. Two elements
                       claiming one `layoutId` is undefined behaviour, and the
                       second run exists solely to make the loop seamless. */}
                   <motion.div
                     layoutId={copy === 0 ? `shot-${project.id}` : undefined}
-                    className="aspect-[4/5] w-full overflow-hidden rounded-[16px] border border-border transition-transform duration-300 group-hover/card:-translate-y-1.5"
-                    style={{ backgroundColor: project.tone }}
+                    className="w-full overflow-hidden rounded-[16px] border border-border transition-transform duration-300 group-hover/card:-translate-y-1.5"
+                    style={{ backgroundColor: project.tone, height }}
                   />
 
-                  <span className="mt-3 block text-left">
-                    <span className="block truncate text-[13.5px] font-semibold text-ink">
-                      {project.name}
+                  {captions ? (
+                    <span className="mt-3 block text-left">
+                      <span className="block truncate text-[13.5px] font-semibold text-ink">
+                        {project.name}
+                      </span>
+                      <span className="mt-0.5 block truncate font-mono text-[9px] font-bold tracking-[0.14em] text-label uppercase">
+                        {project.kind} / {project.year}
+                      </span>
                     </span>
-                    <span className="mt-0.5 block truncate font-mono text-[9px] font-bold tracking-[0.14em] text-label uppercase">
-                      {project.kind} / {project.year}
-                    </span>
-                  </span>
+                  ) : null}
                 </button>
               ))}
             </div>
