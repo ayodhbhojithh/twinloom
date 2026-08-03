@@ -89,7 +89,7 @@ export function ProjectPanel({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: quiet ? 0 : 0.2 }}
-              className="pointer-events-auto relative grid h-full grid-rows-[minmax(0,34svh)_minmax(0,1fr)] overflow-hidden rounded-[20px] border border-border bg-field lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:grid-rows-1"
+              className="pointer-events-auto relative grid h-full grid-rows-[minmax(0,34svh)_minmax(0,1fr)] overflow-hidden rounded-[20px] bg-field lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:grid-rows-1"
             >
               <motion.div
                 layoutId={`shot-${project.id}`}

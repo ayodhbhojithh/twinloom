@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, UserRound, X } from "lucide-react";
 
 import { RailNav } from "./rail-nav";
 import { Wordmark } from "./wordmark";
@@ -98,6 +98,17 @@ export function SiteHeader() {
               {HEADER_CTA.label}
             </Link>
           )}
+
+          {/* No border on it. The header carries none, and a ring drawn round a
+              20px icon is more line than the icon has. */}
+          <Link
+            href={ROUTES.contact}
+            aria-label="Contact us"
+            title="Contact us"
+            className="flex size-8 shrink-0 items-center justify-center rounded-pill bg-well text-ink transition-colors hover:bg-hair"
+          >
+            <UserRound className="size-[17px]" strokeWidth={1.9} />
+          </Link>
 
           <button
             type="button"
