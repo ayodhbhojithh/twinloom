@@ -91,7 +91,13 @@ export function BuildTool({
   const mid = centred
     ? "mx-auto max-w-[1400px] text-center text-[17px] sm:text-[18.5px]"
     : undefined;
-  const midBlock = centred ? "mx-auto max-w-[1400px]" : undefined;
+  /* Blocks run to the page's width whether centred or not. The measure is a cap
+     on lines of text, and the site's own note on it says so: the extra width is
+     for tables and boxes, not for prose. A grid of six tiles and a row of four
+     numbers are boxes, and held to the measure they left a corridor of nothing
+     down the right of the build screen while the builder underneath them ran
+     the full width. */
+  const midBlock = centred ? "mx-auto max-w-[1400px]" : "max-w-wide";
 
   const answers = useSyncExternalStore(
     subscribe,
