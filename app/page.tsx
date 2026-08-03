@@ -50,7 +50,11 @@ export default function LandingPage() {
           <div className="min-w-0">
             <h1 className="rise max-w-[30ch] text-[clamp(28px,3.4vw,52px)] leading-[1.06] font-extrabold tracking-[-0.04em] text-ink">
               {claim}
-              {promise ? <span className="accent-text"> {promise}</span> : null}
+              {/* The second sentence a grade quieter, which is the same split
+                  the footer makes: the ask in ink, the promise behind it. Tone
+                  says what the gradient was saying, and says it in the one
+                  palette the page has. */}
+              {promise ? <span className="text-quiet"> {promise}</span> : null}
             </h1>
           </div>
 

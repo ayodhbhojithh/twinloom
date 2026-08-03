@@ -106,7 +106,7 @@ export function Builder() {
   }
 
   return (
-    <div className="mt-[22px] grid max-w-wide grid-cols-1 border-t border-hair lg:grid-cols-[minmax(0,1fr)_330px] 2xl:grid-cols-[minmax(0,1fr)_380px]">
+    <div className="mt-[22px] grid max-w-wide grid-cols-1 lg:grid-cols-[minmax(0,1fr)_330px] 2xl:grid-cols-[minmax(0,1fr)_380px]">
       <div className="min-w-0 lg:border-r lg:border-hair lg:pr-7">
         <Area
           open={open.who}
@@ -199,7 +199,7 @@ export function Builder() {
           first area's title across the rule. Matching the paddings instead would
           not have done it: 10.5px mono and 16px bold sit differently in their
           line boxes, so equal tops read as a step. */}
-      <aside className="min-w-0 self-start border-t border-hair pt-[22px] lg:sticky lg:top-[calc(var(--nav-height)+22px)] lg:border-t-0 lg:pt-5 lg:pl-7">
+      <aside className="min-w-0 self-start pt-[22px] lg:sticky lg:top-[calc(var(--nav-height)+22px)] lg:pt-5 lg:pl-7">
         <p className="mb-2.5 font-mono text-[10.5px] font-bold tracking-[0.14em] text-label uppercase">
           The site your answers describe
         </p>

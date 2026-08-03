@@ -14,20 +14,23 @@ import { BuildTool } from "@/components/build/build-tool";
  */
 export function BuildSection() {
   return (
-    <section className="page-frame border-t border-hair py-20 lg:py-24">
+    <section className="page-frame py-20 lg:py-24">
       {/* The head is centred and the tool under it is not. What is being said
           here is one address to the room, and it can sit in the middle of the
           page; what follows is work, and work has a left edge to read down. */}
-      <div className="max-w-wide">
-        <p className="text-center font-mono text-[12px] font-bold tracking-[0.18em] text-idx uppercase">
-          Build your website
-        </p>
-
-        <h2 className="mx-auto mt-4 max-w-[980px] text-center text-[30px] leading-[1.12] font-extrabold tracking-[-0.028em] text-ink sm:text-[38px]">
+      {/* `mx-auto`, or the section sits against the left gutter on any screen
+          wider than the container and the whole thing reads as off-centre no
+          matter how the type inside it is aligned. */}
+      <div className="mx-auto max-w-wide">
+        {/* Clamped rather than stepped, so it scales with the page the way the
+            hero above it does instead of jumping once at one breakpoint. It
+            stops just under the hero: this is the second thing on the page and
+            should not out-shout the first. */}
+        <h2 className="mx-auto max-w-[1400px] text-center text-[clamp(30px,3vw,48px)] leading-[1.08] font-extrabold tracking-[-0.032em] text-ink">
           Build your website
         </h2>
 
-        <p className="mx-auto mt-4 mb-8 max-w-measure text-center text-[17.5px] leading-[1.6] text-ink sm:text-[19px]">
+        <p className="mx-auto mt-4 mb-8 max-w-[1400px] text-center text-[17.5px] leading-[1.6] text-ink sm:text-[19px]">
           Read what this does, work through the areas, or just send us what you
           have.
         </p>

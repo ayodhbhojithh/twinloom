@@ -57,9 +57,14 @@ export function BuildTool({
 }) {
   const [tab, setTab] = useState<TabKey>("what");
 
-  /** The measure blocks and the writing in them, centred or not. */
-  const mid = centred ? "mx-auto text-center" : undefined;
-  const midBlock = centred ? "mx-auto" : undefined;
+  /* The measure blocks and the writing in them, centred or not. Centred, they
+     run the full width of the section rather than the site's prose
+     measure. The measure exists to stop lines running long down a page you are
+     reading top to bottom; this is a short address at the head of a section,
+     and a 720px column adrift in the middle of a 1600px page only read as a
+     narrow strip. */
+  const mid = centred ? "mx-auto max-w-[1400px] text-center" : undefined;
+  const midBlock = centred ? "mx-auto max-w-[1400px]" : undefined;
 
   const answers = useSyncExternalStore(
     subscribe,
@@ -74,7 +79,7 @@ export function BuildTool({
         role="tablist"
         aria-label="How to build"
         className={cn(
-          "mb-9 flex max-w-wide flex-wrap border-b border-hair",
+          "mb-9 flex max-w-wide flex-wrap",
           centred && "justify-center",
         )}
       >
@@ -91,7 +96,10 @@ export function BuildTool({
               id={`${idPrefix}-tab-${entry.key}`}
               onClick={() => setTab(entry.key)}
               className={cn(
-                "-mb-px cursor-pointer border-b-2 px-5 py-3 text-[15.5px] font-semibold transition-colors",
+                /* The rule under the row is gone, so the active tab's own is
+                   the only line here and it marks one tab rather than sitting
+                   across the page. */
+                "cursor-pointer border-b-2 px-5 py-3 text-[15.5px] font-semibold transition-colors",
                 /* Flush left only when the row is. The first tab's padding is
                    dropped so it lines up with the type below it, which centred
                    would just make the row look off-centre. */

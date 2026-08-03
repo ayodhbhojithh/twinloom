@@ -1,73 +1,145 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
-import { FOOTER_COLUMNS, FOOTER_LEGAL, LEGAL, SITE } from "@/lib/site";
+import {
+  FOOTER_COLUMNS,
+  FOOTER_LEGAL,
+  HEADER_CTA,
+  LEGAL,
+  ROUTES,
+  SITE,
+} from "@/lib/site";
+
+import { Threads, Wordmark } from "./wordmark";
 
 /**
- * The site footer.
+ * The site footer, as one panel.
  *
- * A grid rather than a wrapping row. Five equal columns of links wrapped to four
- * and then one, leaving a single column stranded beside four columns of nothing.
- * A grid with a column count per breakpoint cannot produce that: one column on a
- * phone, two on a tablet, four on a laptop, and every row full.
+ * A wash of grey set inside the page's gutters rather than a band ruled off the
+ * bottom of it. The page above is white, so a footer only has to stop being
+ * white to read as the end of it: one tone quieter is enough, and it does the
+ * job a heavy rule was doing without drawing a line at all.
  *
- * The legal links come out of the grid entirely and run as one line above the
- * company statement. There are seven of them, they are short, and they are the set
- * every site puts along its bottom edge, so that is where they go.
+ * Four bands inside, in the order somebody leaving a page actually wants them:
+ * the one thing we would like you to do, then where else you could go, then who
+ * we are and the paperwork. They are separated by hairlines and by space, and
+ * the type steps down a grade at each one, so the reading order is set by weight
+ * rather than by boxes.
  *
- * The column headings are mono because they are labels rather than links, which is
- * the one rule the draft states about mono: machine labels only.
+ * It invents nothing. There is no phone number, address or inbox here because
+ * the site does not have those written down anywhere, and a footer is the last
+ * place to start guessing at facts.
  */
 export function SiteFooter() {
   const year = new Date().getFullYear();
 
-  return (
-    <footer className="page-frame mt-[70px] border-t border-border pt-10 pb-14">
-      <div className="max-w-[1100px]">
-        <nav
-          aria-label="Footer"
-          className="grid grid-cols-1 gap-x-8 gap-y-9 sm:grid-cols-2 lg:grid-cols-4"
-        >
-          {FOOTER_COLUMNS.map((column) => (
-            <div key={column.title}>
-              <h2 className="mb-3 font-mono text-[11px] font-bold tracking-[0.14em] text-idx uppercase">
-                {column.title}
-              </h2>
+  /* The tagline is two sentences: an instruction and a promise. Split at the
+     stop so the promise can be set quieter than the ask, which is the order
+     they are meant to be read in. */
+  const at = SITE.tagline.indexOf(". ");
+  const ask = at > -1 ? SITE.tagline.slice(0, at + 1) : SITE.tagline;
+  const promise = at > -1 ? SITE.tagline.slice(at + 2) : "";
 
-              <ul className="flex flex-col gap-[7px]">
+  return (
+    <footer className="page-frame pt-16 pb-8">
+      {/* No width cap. Nothing here is a line of text you read across: it is a
+          mark, four short columns and a legal note, each held to its own
+          measure. Capping the panel would only leave two bands of white down
+          the sides of the one toned block on the page. */}
+      <div className="relative isolate w-full overflow-hidden rounded-[26px] bg-well px-7 py-12 sm:px-10 lg:px-14 lg:py-16">
+        {/* The mark, oversized and nearly out of sight, bleeding off the top
+            right corner. At three percent it is texture rather than a logo: it
+            gives the largest flat area on the site something to be, without
+            competing with a single word set on top of it. */}
+        <Threads className="pointer-events-none absolute -top-24 -right-20 -z-10 size-[380px] text-ink/[0.03] lg:-top-28 lg:-right-16 lg:size-[460px]" />
+
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
+          <h2 className="max-w-[20ch] text-[clamp(26px,2.6vw,42px)] leading-[1.1] font-extrabold tracking-[-0.032em] text-ink text-balance">
+            {ask}
+            {promise ? <span className="text-quiet"> {promise}</span> : null}
+          </h2>
+
+          <div className="flex flex-none flex-wrap items-center gap-x-7 gap-y-3">
+            <Link
+              href={HEADER_CTA.href}
+              className="group/cta inline-flex items-center gap-2.5 rounded-pill bg-ink py-3 pr-4 pl-5 text-[15px] font-semibold text-white transition-opacity hover:opacity-85"
+            >
+              {HEADER_CTA.label}
+              <ArrowRight
+                aria-hidden
+                className="size-[17px] transition-transform group-hover/cta:translate-x-0.5"
+                strokeWidth={2.2}
+              />
+            </Link>
+
+            <Link
+              href={ROUTES.book}
+              className="text-[15px] font-semibold text-ink underline decoration-planned decoration-1 underline-offset-4 transition-colors hover:decoration-ink"
+            >
+              Book a meeting
+            </Link>
+          </div>
+        </div>
+
+        <div className="mt-12 grid gap-x-12 gap-y-10 border-t border-border pt-12 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_repeat(3,minmax(0,auto))] lg:gap-x-20">
+          <div className="min-w-0">
+            <Wordmark />
+
+            <p className="mt-4 max-w-[34ch] text-[14px] leading-[1.6] text-quiet">
+              {SITE.description}
+            </p>
+          </div>
+
+          {FOOTER_COLUMNS.map((column) => (
+            <nav key={column.title} aria-label={column.title}>
+              <h3 className="mb-4 font-mono text-[10.5px] font-bold tracking-[0.16em] text-label uppercase">
+                {column.title}
+              </h3>
+
+              <ul className="flex flex-col gap-2.5">
                 {column.links.map((link) => (
                   <li key={`${column.title}-${link.href}`}>
                     <Link
                       href={link.href}
-                      className="text-[14.5px] leading-[1.45] text-quiet transition-colors hover:text-ink"
+                      className="text-[14.5px] leading-[1.4] text-quiet transition-colors hover:text-ink"
                     >
                       {link.label}
                     </Link>
                   </li>
                 ))}
               </ul>
-            </div>
+            </nav>
           ))}
-        </nav>
+        </div>
 
-        <div className="mt-12 border-t border-hair pt-6">
-          <nav aria-label="Legal">
-            <ul className="flex flex-wrap gap-x-6 gap-y-2">
-              {FOOTER_LEGAL.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-[13.5px] text-quiet transition-colors hover:text-ink"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+        <div className="mt-12 border-t border-border pt-7">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-4">
+            <p className="text-[13.5px] text-quiet">
+              &copy; {year} {LEGAL.entity}. {LEGAL.rights}
+              <span className="sr-only"> {SITE.name}.</span>
+            </p>
 
-          <p className="mt-5 max-w-[900px] text-[13px] leading-[1.6] text-label">
-            {LEGAL.line} &copy; {year} {LEGAL.entity}. {LEGAL.rights}
-            <span className="sr-only"> {SITE.name}.</span>
+            <nav aria-label="Legal">
+              <ul className="flex flex-wrap gap-x-5 gap-y-2">
+                {FOOTER_LEGAL.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-[13.5px] text-quiet transition-colors hover:text-ink"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+
+          {/* Last, smallest, and still legible. It is the one thing here nobody
+              reads by choice, and burying it any further would be a decision
+              about somebody else's rights. */}
+          <p className="mt-6 max-w-[92ch] text-[12.5px] leading-[1.6] text-label">
+            {LEGAL.line}
           </p>
         </div>
       </div>

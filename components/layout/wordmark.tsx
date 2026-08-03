@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
  *
  * Drawn, not loaded. Two paths, inheriting `currentColor`, sharp at any size.
  */
-function Threads({ className }: { className?: string }) {
+export function Threads({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -64,8 +64,8 @@ export function Wordmark({
     <>
       <span
         className={cn(
-          "shrink-0 text-ink transition-colors",
-          as === "link" && "group-hover/mark:text-active",
+          "shrink-0 text-ink transition-opacity",
+          as === "link" && "group-hover/mark:opacity-70",
         )}
       >
         <Threads className="size-[27px]" />
