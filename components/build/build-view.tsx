@@ -1,20 +1,21 @@
 import { PageMeta } from "@/components/blocks/page-meta";
 import { PageHeading, PageShell } from "@/components/layout";
 
-import { BuildTool } from "./build-tool";
+import { BuildFlow } from "./v5/flow";
 
 /**
  * Build your website.
  *
- * The prototype carries three versions of the picker side by side, because it is
- * a framework and it was still choosing. Only the newest is here: v3, the two
- * question version, which its own note describes as the answer that matters.
- * Shipping all three would ask a visitor to choose between our drafts.
+ * The v5.2 run-through, whole: two ways through, twelve steps, the layer two
+ * cards behind the rows, the layer three questions under the shop, and the
+ * panel that writes the answer while the questions are being answered.
  *
- * The tool itself lives in `BuildTool`, because the landing page shows the same
- * thing and two implementations of one screen drift apart on the first edit.
- * This file is the page around it: a heading, and the metadata block every
- * screen carries.
+ * The older two question picker is gone rather than kept beside it. It was an
+ * earlier draft of this same screen, and shipping both would ask a visitor to
+ * choose between our drafts.
+ *
+ * This file is only the page around the tool: a heading, and the metadata block
+ * every screen carries.
  */
 export function BuildView() {
   return (
@@ -22,16 +23,16 @@ export function BuildView() {
       <PageHeading
         tag="Build your website"
         title="Build your website"
-        lead="Read what this does, work through the areas, or just send us what you have."
+        lead="Two ways through, and you can move between them without losing anything. Two minutes gets you a shape. Everything after that is yours to give or to leave."
       />
 
-      <BuildTool />
+      <BuildFlow />
 
       <PageMeta
         values={{
           title: "Build your website",
           description:
-            "Two questions: who comes to your website, and what each of them should be able to do. Every answer changes the site we describe back to you.",
+            "Two ways through: say it in your own words and send it, or work through twelve steps and read the whole thing back. Nothing is priced, nothing is scored, and you can stop at any step.",
         }}
       />
     </PageShell>

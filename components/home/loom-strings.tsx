@@ -15,6 +15,11 @@ import { useCallback, useEffect, useRef } from "react";
    the letter with it, so the word ripples like fabric rather than sitting still
    while something happens behind it.
 
+   It hangs rather than being strung. Held along the top and loose at the bottom,
+   so the hem travels furthest and a gust crossing the cloth takes the word with
+   it. Pinning both ends made every thread a guitar string, which is right for
+   something clamped in a frame and wrong for something meant to be woven.
+
    The notes are synthesised, not loaded. A plucked string is an oscillator, a
    falling filter and a decay envelope, which the Web Audio API has had all along
    and which costs no download at all.
@@ -42,14 +47,24 @@ const DENSITY = 15;
 const STEPS = 34;
 
 /**
- * The bow of a plucked string: still at the ends, furthest in the middle.
+ * How far a thread has come away from where it was strung, down its length.
+ *
+ * Hung, not strung. A full sine pins both ends and puts the belly in the
+ * middle, which is a guitar string: correct for something clamped at two ends,
+ * and wrong for cloth. A quarter of a sine holds the top and lets the bottom go,
+ * so the hem travels furthest and the threads carry the movement down with them
+ * the way a hanging fabric does.
+ *
+ * The top is held rather than free because the cloth has to be hanging from
+ * something. Free at both ends is not a curtain in a draught, it is a sheet
+ * falling.
  *
  * Computed rather than read from a table. A lookup meant rounding each point to
  * the nearest of twenty-six, which put a visible facet in every curve where two
  * samples landed on the same entry. A few thousand sines a frame is nothing, and
  * the difference between a faceted curve and a smooth one is the whole effect.
  */
-const bow = (t: number) => Math.sin(t * Math.PI);
+const bow = (t: number) => Math.sin(t * Math.PI * 0.5);
 
 /**
  * A minor pentatonic, low to high, left to right.
@@ -430,11 +445,18 @@ export function LoomStrings({
           if (thread.amp < 0.0015) thread.amp = 0;
         }
 
-        /* A slow travelling breath, so the cloth is alive before it is touched
-           and the word shifts like something hanging rather than printed. */
+        /* The draught. Two waves rather than one, at different speeds and very
+           different wavelengths: a long slow swell that leans the whole cloth
+           one way, and a short ripple travelling across it. One wave alone is a
+           wobble with a period you can count; two that never line up read as
+           moving air.
+
+           Both are a function of the thread's own x, so the gust crosses the
+           cloth rather than every thread swaying together on the spot. */
         const idle = still
           ? 0
-          : Math.sin(now * 0.00075 + thread.x * 0.011) * 0.9;
+          : Math.sin(now * 0.00031 + thread.x * 0.0038) * 2.6 +
+            Math.sin(now * 0.00097 + thread.x * 0.0125) * 1.1;
 
         const swing = Math.sin(thread.phase) * thread.amp * reach + idle;
         const lit = Math.min(1, thread.amp * 1.7);
