@@ -196,22 +196,22 @@ export function ProjectCarousel({ className }: { className?: string }) {
                   fill
                   quality={100}
                   sizes="(max-width: 640px) 60vw, 300px"
-                  className="object-cover grayscale transition-[filter] duration-500 group-hover:grayscale-0"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"
                 />
 
                 {/* The picture, when there is one. Until then the grey it will
                     sit in, with the plate it will be captioned by. */}
-                <span className="relative flex size-full items-end p-3.5">
+                <span className="relative z-[3] flex size-full items-end p-3.5">
                   <span
                     className={cn(
-                      "block w-full rounded-[10px] bg-field/85 px-3 py-2.5 backdrop-blur-[2px] transition-opacity duration-300",
+                      "block w-full transition-opacity duration-300",
                       away === 0 ? "opacity-100" : "opacity-0",
                     )}
                   >
-                    <span className="block truncate text-[13px] font-bold text-ink">
+                    <span className="block truncate text-[13.5px] font-bold text-white">
                       {project.name}
                     </span>
-                    <span className="mt-0.5 block truncate font-mono text-[9px] font-bold tracking-[0.14em] text-label uppercase">
+                    <span className="mt-0.5 block truncate font-mono text-[9px] font-bold tracking-[0.14em] text-white/65 uppercase">
                       {project.kind} / {project.year}
                     </span>
                   </span>

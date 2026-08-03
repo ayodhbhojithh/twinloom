@@ -459,13 +459,15 @@
   /* ---------------------------------------------------------------------------
      Artwork.
 
-     Two things laid over every picture on the site, in this order: a wash of the
-     accent and then a layer of grain.
+     Two things laid over every picture on the site, in this order: an overlay
+     and then a layer of grain.
 
-     The wash is what puts a rendered illustration into this palette instead of
-     beside it. It runs blue to green like everything else, on `soft-light` so it
-     tints the light and shade already in the picture rather than painting a
-     colour flatly over the top of it.
+     The overlay is `ink` rather than pure black, because pure black over a page
+     whose darkest colour is #111827 reads as a hole punched in it rather than as
+     a picture in shadow. It is graded rather than flat: heaviest at the foot,
+     where captions sit, and lifting through the middle, where the picture is. A
+     flat scrim dulls a whole image to buy legibility in the one strip that
+     needed it.
 
      The grain is the same idea for texture. Rendered artwork is perfectly clean,
      and perfectly clean on a page made of hairlines looks like a screenshot
@@ -487,16 +489,25 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
+    /* Both have to be lifted, or neither is seen. A `::before` paints ahead of
+       the element's children, so without this the overlay sits underneath the
+       picture it is meant to be over. `isolation` above keeps these indexes from
+       reaching anything outside the card. */
+    z-index: 1;
+  }
+
+  .artwork::after {
+    z-index: 2;
   }
 
   .artwork::before {
     background-image: linear-gradient(
-      142deg,
-      color-mix(in oklab, var(--color-active) 34%, transparent) 0%,
-      transparent 46%,
-      color-mix(in oklab, var(--color-done) 26%, transparent) 100%
+      178deg,
+      color-mix(in oklab, var(--color-ink) 62%, transparent) 0%,
+      color-mix(in oklab, var(--color-ink) 34%, transparent) 34%,
+      color-mix(in oklab, var(--color-ink) 46%, transparent) 62%,
+      color-mix(in oklab, var(--color-ink) 88%, transparent) 100%
     );
-    mix-blend-mode: soft-light;
   }
 
   .artwork::after {

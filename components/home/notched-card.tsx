@@ -206,8 +206,6 @@ export function NotchedCard({ className }: { className?: string }) {
             thing on the landing page and must not be lazy loaded. The clip is on
             the parent, so the picture is cut to the notches without knowing they
             exist. */}
-        {/* Grey here and in colour once it is opened. The work is not being
-            shown off on the way past; it is being shown when somebody asks. */}
         <Image
           src={shown.image}
           alt={shown.alt}
@@ -215,7 +213,7 @@ export function NotchedCard({ className }: { className?: string }) {
           quality={100}
           preload
           sizes="100vw"
-          className="object-cover grayscale"
+          className="object-cover"
         />
       </motion.div>
 
@@ -269,7 +267,7 @@ export function NotchedCard({ className }: { className?: string }) {
             fill
             quality={100}
             sizes="200px"
-            className="object-cover grayscale transition-[filter] duration-500 group-hover:grayscale-0"
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
           />
         </span>
       </button>
@@ -277,11 +275,11 @@ export function NotchedCard({ className }: { className?: string }) {
       {/* Which project this is, said in words rather than left to the picture.
           On a plate, because the moment a real photograph went in behind it the
           text was being read against whatever happened to be there. */}
-      <p className="absolute right-5 bottom-5 rounded-[12px] bg-field/85 px-4 py-2.5 text-right backdrop-blur-[3px] sm:right-6 sm:bottom-6">
-        <span className="block text-[14.5px] font-bold text-ink">
+      <p className="absolute right-6 bottom-6 text-right sm:right-8 sm:bottom-7">
+        <span className="block text-[16px] font-bold text-white sm:text-[18px]">
           {shown.name}
         </span>
-        <span className="mt-0.5 block font-mono text-[9px] font-bold tracking-[0.14em] text-label uppercase">
+        <span className="mt-1 block font-mono text-[9.5px] font-bold tracking-[0.16em] text-white/65 uppercase">
           {shown.kind} / {shown.year}
         </span>
       </p>
