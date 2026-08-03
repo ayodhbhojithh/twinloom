@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, Maximize2 } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, Maximize2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -275,14 +275,33 @@ export function NotchedCard({ className }: { className?: string }) {
       {/* Which project this is, said in words rather than left to the picture.
           On a plate, because the moment a real photograph went in behind it the
           text was being read against whatever happened to be there. */}
-      <p className="absolute right-6 bottom-6 text-right sm:right-8 sm:bottom-7">
-        <span className="block text-[16px] font-bold text-white sm:text-[18px]">
-          {shown.name}
-        </span>
-        <span className="mt-1 block font-mono text-[9.5px] font-bold tracking-[0.16em] text-white/65 uppercase">
-          {shown.kind} / {shown.year}
-        </span>
-      </p>
+      <div className="absolute right-6 bottom-6 flex items-end gap-4 sm:right-8 sm:bottom-7">
+        <p className="text-right">
+          <span className="block text-[16px] font-bold text-white sm:text-[18px]">
+            {shown.name}
+          </span>
+          <span className="mt-1 block font-mono text-[9.5px] font-bold tracking-[0.16em] text-white/65 uppercase">
+            {shown.kind} / {shown.year}
+          </span>
+        </p>
+
+        {/* The way on, in the corner the eye finishes in. An anchor rather than
+            a scroll handler: it works before the JavaScript arrives, it can be
+            opened in a new tab or copied, and the smooth part is the browser's
+            job through `scroll-behavior`. The same white plate as the toolbar
+            standing in the notch above, because they are the same kind of
+            control on the same picture. */}
+        <a
+          href="#build"
+          aria-label="Go to Build your website"
+          className="group/down flex size-11 flex-none cursor-pointer items-center justify-center rounded-pill bg-field text-ink transition-opacity hover:opacity-85"
+        >
+          <ArrowDown
+            className="size-[18px] transition-transform duration-300 group-hover/down:translate-y-0.5"
+            strokeWidth={2.2}
+          />
+        </a>
+      </div>
 
       <ProjectPanel project={open} onClose={() => setOpen(null)} />
     </div>

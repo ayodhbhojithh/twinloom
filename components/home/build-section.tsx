@@ -13,8 +13,14 @@ import { BuildTool } from "@/components/build/build-tool";
  * this page already has one, so the same words are set as an `h2` instead.
  */
 export function BuildSection() {
+  /* The landing hero's down arrow points at this section's id, so it carries a
+     scroll margin: without one the anchor lands the heading underneath the
+     sticky header rather than under it. */
   return (
-    <section className="page-frame py-20 lg:py-24">
+    <section
+      id="build"
+      className="page-frame scroll-mt-[var(--nav-height)] py-20 lg:py-24"
+    >
       {/* The head is centred and the tool under it is not. What is being said
           here is one address to the room, and it can sit in the middle of the
           page; what follows is work, and work has a left edge to read down. */}
