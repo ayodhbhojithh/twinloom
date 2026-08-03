@@ -47,7 +47,7 @@ export default function HomeV6Page() {
 
         <h1
           style={{ "--in": "90ms" } as React.CSSProperties}
-          className="rise mx-auto mt-7 max-w-[26ch] text-[clamp(34px,5vw,76px)] leading-[1.04] font-extrabold tracking-[-0.045em] text-balance text-ink"
+          className="rise mx-auto mt-7 max-w-[30ch] text-[clamp(34px,5.4vw,84px)] leading-[1.04] font-extrabold tracking-[-0.045em] text-balance text-ink"
         >
           {claim}
           {promise ? <span className="text-active"> {promise}</span> : null}
@@ -55,7 +55,7 @@ export default function HomeV6Page() {
 
         <p
           style={{ "--in": "200ms" } as React.CSSProperties}
-          className="rise mx-auto mt-6 max-w-[66ch] text-[17px] leading-[1.65] text-quiet sm:text-[18.5px]"
+          className="rise mx-auto mt-6 max-w-[76ch] text-[17px] leading-[1.65] text-quiet sm:text-[19px]"
         >
           {SITE.description}
         </p>

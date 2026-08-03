@@ -33,16 +33,16 @@ export default function HomeV5Page() {
 
   return (
     <section className="page-frame flex min-h-[var(--stage)] flex-col justify-center py-10">
-      <div className="mx-auto grid w-full max-w-wide items-center gap-x-14 gap-y-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] xl:gap-x-20">
+      <div className="mx-auto grid w-full max-w-wide items-center gap-x-10 gap-y-14 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] xl:gap-x-14">
         <div className="min-w-0">
-          <p className="rise inline-flex items-center gap-2.5 rounded-pill bg-well py-2 pr-4 pl-3 text-[13.5px] font-semibold text-body">
+          <p className="rise inline-flex items-center gap-2.5 rounded-pill bg-well py-2 pr-4 pl-3 text-[14px] font-semibold text-body">
             <span aria-hidden className="size-2 rounded-pill bg-ink" />
             A written scope, in your own words
           </p>
 
           <h1
             style={{ "--in": "90ms" } as React.CSSProperties}
-            className="rise mt-7 max-w-[13ch] text-[clamp(36px,4.6vw,66px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink"
+            className="rise mt-7 max-w-[24ch] text-[clamp(36px,5.2vw,78px)] leading-[1.03] font-extrabold tracking-[-0.045em] text-ink"
           >
             {claim}
             {promise ? <span className="block text-active">{promise}</span> : null}
@@ -50,7 +50,7 @@ export default function HomeV5Page() {
 
           <p
             style={{ "--in": "200ms" } as React.CSSProperties}
-            className="rise mt-7 max-w-[44ch] text-[16.5px] leading-[1.65] text-quiet"
+            className="rise mt-7 max-w-[68ch] text-[17px] leading-[1.65] text-quiet sm:text-[18.5px]"
           >
             {SITE.description}
           </p>
