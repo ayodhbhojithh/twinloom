@@ -17,12 +17,12 @@ import { SiteRail } from "./site-rail";
  */
 const NO_FOOTER: readonly string[] = [
   ROUTES.home,
+  ROUTES.homeV1,
   ROUTES.homeV2,
   ROUTES.homeV3,
   ROUTES.homeV4,
   ROUTES.homeV5,
   ROUTES.homeV6,
-  ROUTES.homeV7,
 ];
 
 /**
@@ -44,7 +44,10 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <SiteHeader />
 
       <div className="flex flex-1 items-start">
-        <SiteRail />
+        {/* The landing page has no rail. It is a front door rather than a page
+            of the site, and a list of every other page beside a front door is a
+            corridor with a doormat in it. Everything reached from it has one. */}
+        {pathname === ROUTES.home ? null : <SiteRail />}
 
         <div className="flex min-w-0 flex-1 flex-col">
           <main className="flex-1">{children}</main>
