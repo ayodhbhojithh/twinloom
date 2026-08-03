@@ -8,7 +8,6 @@ import {
   FEELS,
   GROUPS,
   HAVE_ANSWERS,
-  HAVE_ROWS,
   MIN_MAP,
   PAY_WAYS,
   REPORT,
@@ -16,10 +15,13 @@ import {
   STATES,
 } from "@/lib/build/v5";
 import { CARD_BY, LAYER_THREE } from "@/lib/build/v5-cards";
+import { HAVE_GROUPS } from "@/lib/build/v5-have";
 import { STEP_COPY } from "@/lib/build/v5-copy";
 import { assumed, orderedActions, readiness, told } from "@/lib/build/v5-derive";
 import {
+  addRef,
   chipOn,
+  dropRefTied,
   isOn,
   picked,
   setAsk,
@@ -410,38 +412,86 @@ export function StepHave({ at, answers, onGo }: StepProps) {
     <StepFrame at={at} onGo={onGo} needs={copy.stop} showBack={copy.stback}>
       <Prose step="have" />
 
-      {copy.sh4[0] ? (
-        <SubHead title={copy.sh4[0][0]} note={copy.sh4[0][1]} />
-      ) : null}
+      {/* Four groups, and the grouping is an argument: what has to exist before
+          anything can go live, then the look, then the words, then what is
+          running now. Three answers a row, and the middle one is offered rather
+          than left as the gap between yes and no, because most of the time it
+          is the honest answer. */}
+      <div className="mt-8 flex max-w-wide flex-col gap-8">
+        {HAVE_GROUPS.map((group) => (
+          <div key={group.title} className="min-w-0">
+            <h4 className="mb-3 text-[17px] leading-[1.25] font-bold tracking-[-0.015em] text-ink sm:text-[19px]">
+              {group.title}
+            </h4>
 
-      <div className="max-w-wide">
-        {Object.entries(HAVE_ROWS).map(([key, label]) => (
-          <div
-            key={key}
-            className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-hair py-3 last:border-b-0"
-          >
-            <span className="min-w-[16ch] flex-1 text-[14.5px] font-semibold text-ink">
-              {label}
-            </span>
-
-            <span className="flex flex-wrap gap-2">
-              {Object.entries(HAVE_ANSWERS).map(([answerKey, answerLabel]) => (
-                <Chip
-                  key={answerKey}
-                  on={chipOn(answers, `have.${key}`, answerKey)}
-                  onClick={() =>
-                    toggleChip(`have.${key}`, answerKey, true, "have")
-                  }
+            <div className="overflow-hidden rounded-card bg-well">
+              {group.rows.map((row) => (
+                <div
+                  key={row.key}
+                  className="border-t border-border p-4 first:border-t-0 sm:p-5"
                 >
-                  {answerLabel}
-                </Chip>
+                  <b className="block text-[15px] leading-[1.3] font-bold text-ink">
+                    {row.title}
+                  </b>
+                  {row.note ? (
+                    <p className="mt-1 max-w-measure text-[13.5px] leading-[1.5] text-quiet">
+                      {row.note}
+                    </p>
+                  ) : null}
+
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    {Object.entries(HAVE_ANSWERS).map(([key, label]) => (
+                      <Chip
+                        key={key}
+                        on={chipOn(answers, row.q, key)}
+                        onClick={() => toggleChip(row.q, key, true, "have")}
+                      >
+                        {label}
+                      </Chip>
+                    ))}
+
+                    {row.attach ? (
+                      <>
+                        <Kicker className="ml-1">Attach</Kicker>
+                        <Chip
+                          on={answers.refs.some(
+                            (ref) => ref.tie === row.attach!.key,
+                          )}
+                          onClick={() => {
+                            const tie = row.attach!.key;
+                            if (answers.refs.some((ref) => ref.tie === tie)) {
+                              dropRefTied(tie);
+                              return;
+                            }
+                            addRef(
+                              {
+                                kind: "To send",
+                                text: `${row.title}: ${row.attach!.label}`,
+                                tie,
+                                where: {
+                                  stepKey: "have",
+                                  step: "What you already have",
+                                  qid: row.q,
+                                  q: row.title,
+                                },
+                              },
+                              "have",
+                            );
+                          }}
+                        >
+                          {row.attach.label}
+                        </Chip>
+                      </>
+                    ) : null}
+                  </div>
+                </div>
               ))}
-            </span>
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-6">
+      <div className="mt-8">
         <button
           type="button"
           onClick={() => setOpen(!open)}

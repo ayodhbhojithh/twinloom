@@ -18,8 +18,10 @@ export interface StepCopy {
   lay: string[];
   /** Body copy, in order. */
   says: string[];
-  /** Headings inside the step, as [title, note]. */
+  /** Headings that carry a note, as [title, note]. */
   sh4: [string, string][];
+  /** Every heading in the step, in order, including the ones with no note. */
+  heads: string[];
   /** Notes set underneath an answer. */
   und: string[];
   /** What the finished site shows back because of this step. */
@@ -52,6 +54,10 @@ export const STEP_COPY: Record<string, StepCopy> = {
     "A written scope, in your words, inside two working days. It is a description of a website, not a quote, and nothing in it carries a figure."
    ]
   ],
+  "heads": [
+   "What every website includes",
+   "What you get back"
+  ],
   "und": [
    "Everything you answer from here adds to that floor. It never replaces any of it, and it never takes any of it away. Your answers stay where they are while you read it."
   ],
@@ -75,6 +81,7 @@ export const STEP_COPY: Record<string, StepCopy> = {
    "The layout named in the running panel."
   ],
   "sh4": [],
+  "heads": [],
   "und": [
    "None of these is better than the others, and none of them costs more than the others. If two look right, pick either and say so in the box below."
   ],
@@ -99,6 +106,7 @@ export const STEP_COPY: Record<string, StepCopy> = {
    "A way in for each group, once more than one is named."
   ],
   "sh4": [],
+  "heads": [],
   "und": [
    "A group you name adds one way in, and only once you have named more than one. Name a single group and the whole site is for them, so it needs no signposting.",
    "What you add carries no weight. A group you write yourself never puts a page on the site by itself. It goes on the list of things to talk about, in your words, and we come back to it."
@@ -126,6 +134,7 @@ export const STEP_COPY: Record<string, StepCopy> = {
    "Each action that needs a screen puts one on the sitemap, and the home page leads on whatever you put first."
   ],
   "sh4": [],
+  "heads": [],
   "und": [
    "The middle column is the whole point of this screen. A tick does not move a price; it puts a screen on your site, and the column says which one.",
    "Leaving this alone is a real answer. If you leave it we choose the order, and your document says plainly that we chose it and what we chose."
@@ -155,6 +164,10 @@ export const STEP_COPY: Record<string, StepCopy> = {
     "How are you selling today",
     "It changes what has to move across, and what can simply start."
    ]
+  ],
+  "heads": [
+   "How are you selling today",
+   "How people pay"
   ],
   "und": [],
   "stback": "",
@@ -187,6 +200,9 @@ export const STEP_COPY: Record<string, StepCopy> = {
     "Four honest starting points. The last one is a good answer and a common one."
    ]
   ],
+  "heads": [
+   "Colour"
+  ],
   "und": [],
   "stback": "",
   "stop": "Nothing.",
@@ -209,9 +225,16 @@ export const STEP_COPY: Record<string, StepCopy> = {
   ],
   "sh4": [
    [
-    "Before anything can go live A domain nameThe address people type. Nothing goes live without one.We have itWe have something, it needs tidyingWe would like helpAttachAttach or name it A business email addressYour website has to send enquiries somewhere that is yours.We have itWe have something, it needs tidyingWe would like helpAttachName it The look A logoThe original file is the difference between sharp and blurry.We have itWe have something, it needs tidyingWe would like helpAttachAttach the original files, if you have them A written visual identityColours, type, and how they go together.We have itWe have something, it needs tidyingWe would like helpAttachAttach it Photographs of your ownPictures are usually what holds a design up.We have itWe have something, it needs tidyingWe would like helpAttachAttach a few Pictures of the things you sellTheir own job, with their own consistency to keep.We have itWe have something, it needs tidyingWe would like helpAttachAttach a few VideoRarely sitting ready. Worth settling early either way.We have itWe have something, it needs tidyingWe would like helpAttachLink or attach The words Words already writtenBrochures, emails you send often, anything you have said well once.We have itWe have something, it needs tidyingWe would like helpAttachAttach them Somebody who will keep writing after launchBlogs and articles are a commitment, not a page.We have itWe have something, it needs tidyingWe would like help What is running now A website that exists todayWhat is on it, and what is worth keeping.We have itWe have something, it needs tidyingWe would like helpAttachLink it A landing page you have already paid forSo it is not built twice.We have itWe have something, it needs tidyingWe would like helpAttachLink it Social accountsSet up, kept current, or neither.We have itWe have something, it needs tidyingWe would like helpAttachName them Advertising or campaign measurementAnything running now, on or off the internet.We have itWe have something, it needs tidyingWe would like help When a row needs tidying, or needs us",
+    "When a row needs tidying, or needs us",
     "One short card, shared by every row above, so the same two questions are never asked thirteen times."
    ]
+  ],
+  "heads": [
+   "Before anything can go live",
+   "The look",
+   "The words",
+   "What is running now",
+   "When a row needs tidying, or needs us"
   ],
   "und": [],
   "stback": "",
@@ -233,6 +256,9 @@ export const STEP_COPY: Record<string, StepCopy> = {
     "Everything you have put down, wherever you put it",
     "The panel and this step are the same list seen twice, in the same way the sitemap is. Anything typed into an \"in your own words\" box anywhere in the journey, and anything you said you would send us, is already here."
    ]
+  ],
+  "heads": [
+   "Everything you have put down, wherever you put it"
   ],
   "und": [
    "The panel tab carries a count and nothing else. It is not a score, there is no number you are aiming at, and an empty panel is a complete answer."
@@ -264,6 +290,9 @@ export const STEP_COPY: Record<string, StepCopy> = {
     "Eight sections, in this order, every time."
    ]
   ],
+  "heads": [
+   "And what the document itself contains"
+  ],
   "und": [
    "Unanswered means assumed, and it says so. Line by line, in your own document, kept apart from the things you actually told us."
   ],
@@ -282,6 +311,7 @@ export const STEP_COPY: Record<string, StepCopy> = {
    "Nothing shown back yet."
   ],
   "sh4": [],
+  "heads": [],
   "und": [
    "The part you play is never shown back to you as a grade. It decides who here picks the request up and how long the first call should be, and that is all it does."
   ],
@@ -300,6 +330,7 @@ export const STEP_COPY: Record<string, StepCopy> = {
    "A reference, and a way back in."
   ],
   "sh4": [],
+  "heads": [],
   "und": [
    "We never ask for a password on this screen. The way back in is a link sent to the address you have already given us, and either answer sends exactly the same request."
   ],
@@ -332,6 +363,11 @@ export const STEP_COPY: Record<string, StepCopy> = {
     "What you have, and what it is not",
     "A scope. It describes a website well enough for anybody to build it, and it carries no figure at all."
    ]
+  ],
+  "heads": [
+   "Where you are in how we work",
+   "When shall we talk it through",
+   "What you have, and what it is not"
   ],
   "und": [
    "Nothing on this screen is a score. Three named states, and the things still missing said in words with a link straight to the question. No bar, no percentage, no grade.",

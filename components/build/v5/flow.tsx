@@ -141,7 +141,7 @@ export function BuildFlow() {
         />
       ) : (
         <div className="grid max-w-wide gap-x-10 gap-y-10 lg:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[240px_minmax(0,1fr)_320px] 2xl:grid-cols-[260px_minmax(0,1fr)_360px]">
-          <div className="min-w-0 lg:sticky lg:top-[calc(var(--nav-height)+24px)] lg:self-start">
+          <div className="min-w-0 lg:sticky lg:top-[calc(var(--nav-height)+24px)] lg:max-h-[calc(100svh-var(--nav-height)-48px)] lg:self-start lg:overflow-y-auto lg:pr-3">
             <Spine step={step} answers={answers} onGo={setStep} />
           </div>
 
@@ -150,7 +150,16 @@ export function BuildFlow() {
             <Step at={step} answers={answers} onGo={setStep} onGoKey={goKey} />
           </div>
 
-          <div className="min-w-0 xl:sticky xl:top-[calc(var(--nav-height)+24px)] xl:self-start">
+          {/* Held to the screen and scrolled inside itself, rather than being
+              as tall as the answer happens to be. A panel taller than the
+              window stops following you down the page at the exact moment the
+              page gets long enough to need it.
+
+              Only from `xl`, where it is a third column. Below that it sits
+              under the questions as ordinary content, and capping the height of
+              something already in the flow would put a second scrollbar in the
+              middle of the page for no reason. */}
+          <div className="min-w-0 xl:sticky xl:top-[calc(var(--nav-height)+24px)] xl:max-h-[calc(100svh-var(--nav-height)-48px)] xl:self-start xl:overflow-y-auto xl:pr-3">
             <Panel answers={answers} where={where} onGoStep={goKey} />
           </div>
         </div>
