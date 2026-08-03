@@ -141,45 +141,49 @@ export function NotchedCard({ className }: { className?: string }) {
    * actually give: on a narrow screen a bar plus two flares can want more room
    * than the top edge has, and a path that overruns its own box folds inside out.
    */
+  /**
+   * Both cuts, from one set of numbers.
+   *
+   * There is one flare and one corner radius on this card, and the top notch and
+   * the bottom bite are both built from them. Given two of each they drift, and a
+   * card whose two cuts curve by different amounts looks like two decisions
+   * rather than one.
+   *
+   * The depth of the notch is not chosen at all: it is the flare plus the corner,
+   * which is exactly where those two arcs meet. Any other number puts a straight
+   * wall between them, and the cut reads as a shallow shelf with a deeper notch
+   * inside it rather than as one unbroken curve.
+   */
   const cut: Cuts = ((): Cuts => {
     const w = Math.max(size.w, 1);
     const h = Math.max(size.h, 1);
 
     const radius = Math.max(22, Math.min(w * 0.03 + 20, 48));
 
-    /* One notch, not two.
-       
-       The flare sweeps down from the top edge and the notch's own corner rounds
-       in at the bottom. If those two arcs do not meet, a straight wall runs
-       between them and the cut reads as a shallow shelf with a deeper notch
-       inside it. Making each exactly half the depth means they meet exactly, and
-       the profile becomes a single unbroken curve from the top edge to the floor
-       of the cut. */
-    const barDepth = Math.max(58, Math.min(h * 0.095, 78));
-    const barFlare = barDepth / 2;
-    const barRadius = barDepth / 2;
+    /* The one curve every cut on this card is made of. */
+    const flare = Math.max(22, Math.min(h * 0.04, 34));
 
-    /* Wide enough that the two corner arcs do not meet in the middle and turn
-       the floor of the notch into a point. */
-    const barWidth = Math.max(barRadius * 2 + 96, Math.min(w * 0.17, 250));
+    const barDepth = flare * 2;
+    /* Only as wide as the bar it holds, plus a little air. Wider and the notch
+       stops being a place for something and becomes a shape in its own right,
+       which is one shape too many. The floor still has to be flat, so the two
+       corner arcs are never allowed to meet in the middle. */
+    const barWidth = Math.max(flare * 2 + 40, Math.min(w * 0.11, 178));
 
-    const biteWidth = Math.max(108, Math.min(w * 0.12, 168));
-    const biteHeight = Math.max(116, Math.min(h * 0.225, 180));
-    const biteRadius = Math.max(18, Math.min(biteWidth * 0.2, 32));
-    /* The same rule on the bite: the flare and the inner corner together make up
-       the whole depth, so there is no straight run between them either. */
-    const biteFlare = Math.max(16, Math.min(biteHeight - biteRadius, 46));
+    /* The bite is square-ish and sized to the thumbnail standing in it, with the
+       same flare and the same corner as the notch above. */
+    const bite = Math.max(92, Math.min(Math.min(w * 0.1, h * 0.19), 140));
 
     return {
       radius,
       barWidth,
       barDepth,
-      barRadius,
-      barFlare,
-      biteWidth,
-      biteHeight,
-      biteRadius,
-      biteFlare,
+      barRadius: flare,
+      barFlare: flare,
+      biteWidth: bite,
+      biteHeight: bite,
+      biteRadius: flare,
+      biteFlare: flare,
     };
   })();
 
@@ -208,25 +212,25 @@ export function NotchedCard({ className }: { className?: string }) {
           made for. */}
       <div
         className="absolute top-0 left-1/2 flex -translate-x-1/2 justify-center"
-        style={{ width: cut.barWidth, height: cut.barDepth, paddingTop: 5 }}
+        style={{ width: cut.barWidth, height: cut.barDepth, paddingTop: 4 }}
       >
-        <div className="flex h-10 items-center gap-0.5 rounded-pill bg-field px-1.5">
+        <div className="flex h-9 items-center gap-0.5 rounded-pill bg-field px-1.5">
         <Tool
           label="Previous project"
           onClick={() =>
             setAt((was) => (was - 1 + PROJECTS.length) % PROJECTS.length)
           }
         >
-          <ArrowLeft className="size-[17px]" />
+          <ArrowLeft className="size-4" />
         </Tool>
         <Tool label={`Open ${shown.name}`} onClick={() => setOpen(shown)}>
-          <Maximize2 className="size-[16px]" />
+          <Maximize2 className="size-[15px]" />
         </Tool>
         <Tool
           label="Next project"
           onClick={() => setAt((was) => (was + 1) % PROJECTS.length)}
         >
-          <ArrowRight className="size-[17px]" />
+          <ArrowRight className="size-4" />
         </Tool>
         </div>
       </div>
@@ -237,10 +241,13 @@ export function NotchedCard({ className }: { className?: string }) {
         onClick={() => setAt((was) => (was + 1) % PROJECTS.length)}
         aria-label={`Next: ${next.name}`}
         className="group absolute bottom-0 left-0 cursor-pointer rounded-[20px] p-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-active"
-        style={{ width: cut.biteWidth - 16, height: cut.biteHeight - 16 }}
+        style={{ width: cut.biteWidth - 14, height: cut.biteHeight - 14 }}
       >
         <span
-          className="block size-full rounded-[18px] border border-border transition-transform duration-300 group-hover:-translate-y-1"
+          /* No border. The bite around it is already the outline, and a second
+             one a few pixels inside reads as a sticker on the card rather than
+             as the thing the card was cut back for. */
+          className="block size-full rounded-[18px] transition-transform duration-300 group-hover:-translate-y-1"
           style={{
             backgroundImage: `linear-gradient(155deg, #f6f7f8 0%, ${next.tone} 55%, #dcdfe4 100%)`,
           }}
