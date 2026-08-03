@@ -29,6 +29,8 @@ export const ROUTES = {
   homeV2: "/home-v2",
   homeV3: "/home-v3",
   homeV4: "/home-v4",
+  homeV5: "/home-v5",
+  homeV6: "/home-v6",
   build: "/build",
   site: "/your-site",
 
@@ -107,6 +109,8 @@ export const RAIL_PAGES: readonly RailPage[] = [
       { label: "Home v2", href: ROUTES.homeV2 },
       { label: "Home v3", href: ROUTES.homeV3 },
       { label: "Home v4", href: ROUTES.homeV4 },
+      { label: "Home v5", href: ROUTES.homeV5 },
+      { label: "Home v6", href: ROUTES.homeV6 },
     ],
   },
   { label: "Build your website", href: ROUTES.build },
