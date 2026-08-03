@@ -298,6 +298,27 @@
   ::-webkit-scrollbar-corner {
     background: transparent;
   }
+
+  /* ---------------------------------------------------------------------------
+     The page's own bar, hidden.
+
+     Only the document's. Every scroller inside the page keeps the thin bar
+     above, because a panel that scrolls with nothing showing gives no clue that
+     it does; the page itself needs no such clue, since a page scrolling is the
+     one thing every reader already assumes.
+
+     Hidden, not disabled. The wheel, the trackpad, the keyboard, the scrollbar
+     gestures and `scrollIntoView` all behave exactly as they did. What goes is
+     the strip of grey down the right hand side, which on a site made of white
+     and hairlines was the heaviest vertical line on the screen.
+  --------------------------------------------------------------------------- */
+  html {
+    scrollbar-width: none;
+  }
+
+  html::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @layer components {
