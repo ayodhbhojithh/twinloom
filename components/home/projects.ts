@@ -31,6 +31,22 @@ export interface Project {
 
 export const PROJECTS: readonly Project[] = [
   {
+    id: "investor",
+    name: "An investor reporting site",
+    kind: "Money and oversight",
+    year: "2025",
+    summary:
+      "A quiet corner for people who put money in and the board that watches it. Dated, filed, and never more current than the paperwork behind it.",
+    facts: [
+      { term: "Pages", value: "9" },
+      { term: "Built in", value: "4 weeks" },
+      { term: "Visitors", value: "Investors" },
+    ],
+    image: "/work-investor.png",
+    alt: "A reporting dashboard on a large screen.",
+    tone: "#eceef1",
+  },
+  {
     id: "maker",
     name: "A shop for a maker",
     kind: "Selling direct",
@@ -61,22 +77,6 @@ export const PROJECTS: readonly Project[] = [
     image: "/work-trade.png",
     alt: "An account portal open on a laptop.",
     tone: "#e4e7ea",
-  },
-  {
-    id: "investor",
-    name: "An investor reporting site",
-    kind: "Money and oversight",
-    year: "2025",
-    summary:
-      "A quiet corner for people who put money in and the board that watches it. Dated, filed, and never more current than the paperwork behind it.",
-    facts: [
-      { term: "Pages", value: "9" },
-      { term: "Built in", value: "4 weeks" },
-      { term: "Visitors", value: "Investors" },
-    ],
-    image: "/work-investor.png",
-    alt: "A reporting dashboard on a large screen.",
-    tone: "#eceef1",
   },
   {
     id: "careers",

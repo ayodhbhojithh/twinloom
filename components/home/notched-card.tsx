@@ -13,11 +13,11 @@ import { PROJECTS, type Project } from "./projects";
 /* ---------------------------------------------------------------------------
    A card with pieces taken out of it.
 
-   Two things sit against the card rather than on it: a bar of controls at the
-   top and the next project at the bottom left. The card is cut back around both,
-   and the cuts curve outward where they meet the edge, so the shape reads as one
-   continuous surface with bites out of it rather than as three rectangles
-   overlapping.
+   Three things sit against the card rather than on it: a bar of controls at the
+   top, the next project at the bottom left, and the way on at the bottom right.
+   The card is cut back around each, and the cuts curve outward where they meet
+   the edge, so the shape reads as one continuous surface with bites out of it
+   rather than as four rectangles overlapping.
 
    Those outward curves are the whole job. `border-radius` only ever bends a
    corner inward, and a mask made of gradients gets the straight edges right and
@@ -39,6 +39,11 @@ interface Cuts {
   biteHeight: number;
   biteRadius: number;
   biteFlare: number;
+  /** The corner taken out at the bottom right, for the way on. */
+  dropWidth: number;
+  dropHeight: number;
+  dropRadius: number;
+  dropFlare: number;
 }
 
 /**
@@ -70,6 +75,10 @@ function outline(w: number, h: number, cut: Cuts): string {
     biteHeight: ch,
     biteRadius: cr,
     biteFlare: cf,
+    dropWidth: dw,
+    dropHeight: dh,
+    dropRadius: dr,
+    dropFlare: df,
   } = cut;
 
   /* The bar is centred, so the top edge is cut from here to here. */
@@ -90,8 +99,15 @@ function outline(w: number, h: number, cut: Cuts): string {
     /* On to the top right corner and down the right side. */
     `L ${w - r} 0`,
     `A ${r} ${r} 0 0 1 ${w} ${r}`,
-    `L ${w} ${h - r}`,
-    `A ${r} ${r} 0 0 1 ${w - r} ${h}`,
+    /* The bottom right corner is not a corner. The cut eats it, so the right
+       side stops short and flares inward, exactly as the bite does at the other
+       end of the bottom edge. */
+    `L ${w} ${h - dh - df}`,
+    `A ${df} ${df} 0 0 1 ${w - df} ${h - dh}`,
+    `L ${w - dw + dr} ${h - dh}`,
+    `A ${dr} ${dr} 0 0 0 ${w - dw} ${h - dh + dr}`,
+    `L ${w - dw} ${h - df}`,
+    `A ${df} ${df} 0 0 1 ${w - dw - df} ${h}`,
     /* Bottom edge, leftward, then the flare up into the bite. */
     `L ${cw + cf} ${h}`,
     `A ${cf} ${cf} 0 0 1 ${cw} ${h - cf}`,
@@ -175,6 +191,12 @@ export function NotchedCard({ className }: { className?: string }) {
        same flare and the same corner as the notch above. */
     const bite = Math.max(124, Math.min(Math.min(w * 0.13, h * 0.26), 196));
 
+    /* The corner for the way on. Square, like the bite, and only as large as
+       the control standing in it needs: `flare * 2` is the smallest a cut can
+       be before its two arcs overlap, and the sixteen on top of it is the air
+       around a 44px target. */
+    const drop = Math.max(flare * 2 + 16, Math.min(w * 0.075, 96));
+
     return {
       radius,
       barWidth,
@@ -185,6 +207,10 @@ export function NotchedCard({ className }: { className?: string }) {
       biteHeight: bite,
       biteRadius: flare,
       biteFlare: flare,
+      dropWidth: drop,
+      dropHeight: drop,
+      dropRadius: flare,
+      dropFlare: flare,
     };
   })();
 
@@ -275,26 +301,34 @@ export function NotchedCard({ className }: { className?: string }) {
       {/* Which project this is, said in words rather than left to the picture.
           On a plate, because the moment a real photograph went in behind it the
           text was being read against whatever happened to be there. */}
-      <div className="absolute right-6 bottom-6 flex items-end gap-4 sm:right-8 sm:bottom-7">
-        <p className="text-right">
-          <span className="block text-[16px] font-bold text-white sm:text-[18px]">
-            {shown.name}
-          </span>
-          <span className="mt-1 block font-mono text-[9.5px] font-bold tracking-[0.16em] text-white/65 uppercase">
-            {shown.kind} / {shown.year}
-          </span>
-        </p>
+      <p
+        className="absolute bottom-6 text-right sm:bottom-7"
+        style={{ right: cut.dropWidth + 14 }}
+      >
+        <span className="block text-[16px] font-bold text-white sm:text-[18px]">
+          {shown.name}
+        </span>
+        <span className="mt-1 block font-mono text-[9.5px] font-bold tracking-[0.16em] text-white/65 uppercase">
+          {shown.kind} / {shown.year}
+        </span>
+      </p>
 
-        {/* The way on, in the corner the eye finishes in. An anchor rather than
-            a scroll handler: it works before the JavaScript arrives, it can be
-            opened in a new tab or copied, and the smooth part is the browser's
-            job through `scroll-behavior`. The same white plate as the toolbar
-            standing in the notch above, because they are the same kind of
-            control on the same picture. */}
+      {/* The way on, standing in the corner the card gives up for it.
+          On the page rather than on the picture, which is the rule the toolbar
+          and the thumbnail already follow: nothing floats over the artwork, and
+          anything you can press has a piece cut out for it to stand in.
+
+          An anchor rather than a scroll handler. It works before the JavaScript
+          arrives, it can be opened in a new tab or copied, and the smooth part
+          is the browser's job through `scroll-behavior`. */}
+      <div
+        className="absolute right-0 bottom-0 flex items-center justify-center"
+        style={{ width: cut.dropWidth, height: cut.dropHeight }}
+      >
         <a
           href="#build"
           aria-label="Go to Build your website"
-          className="group/down flex size-11 flex-none cursor-pointer items-center justify-center rounded-pill bg-field text-ink transition-opacity hover:opacity-85"
+          className="group/down flex size-11 cursor-pointer items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
         >
           <ArrowDown
             className="size-[18px] transition-transform duration-300 group-hover/down:translate-y-0.5"
