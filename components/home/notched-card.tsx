@@ -328,10 +328,24 @@ export function NotchedCard({ className }: { className?: string }) {
         <a
           href="#build"
           aria-label="Go to Build your website"
-          className="group/down flex size-11 cursor-pointer items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
+          className="group/down relative flex size-11 cursor-pointer items-center justify-center overflow-hidden rounded-pill bg-ink text-white transition-opacity hover:opacity-90 hover:[--drip:1s]"
         >
+          {/* The column above the arrowhead. One class, three indexes: `--i`
+              both places a dot and delays it, so the cascade always runs top to
+              bottom at the spacing it is drawn at. Hidden from anything reading
+              the page out, because it is the button's rhythm and not part of
+              what the button says. */}
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              aria-hidden
+              className="drip"
+              style={{ "--i": i } as React.CSSProperties}
+            />
+          ))}
+
           <ArrowDown
-            className="size-[18px] transition-transform duration-300 group-hover/down:translate-y-0.5"
+            className="relative size-[18px] transition-transform duration-300 group-hover/down:translate-y-0.5"
             strokeWidth={2.2}
           />
         </a>

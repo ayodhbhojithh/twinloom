@@ -421,6 +421,63 @@
   }
 
   /* ---------------------------------------------------------------------------
+     The way on: three dots above the arrow, lighting downward.
+
+     A signal running down into the arrowhead, over and over. A bouncing arrow
+     says "press me" and keeps saying it; this says which way the page runs,
+     which is the thing somebody looking at a full screen of picture actually
+     needs to know.
+
+     The dots are stacked rather than falling because of how little room there
+     is. In a 44px disc an 18px arrow leaves nothing but the 16px above its
+     stem, and a dot travelling that far reads as a twitch. Lighting three fixed
+     dots in turn covers the same distance with none of the travel, and stays
+     legible at the size it is actually drawn.
+
+     Each keeps a low glow between turns, so the column is always there and the
+     animation is the reading of it rather than its appearance. `--i` places a
+     dot and delays it from the same number, so the cascade cannot fall out of
+     step with the spacing. `--drip` is the cycle, set on the button, so hover
+     can pull it in without restarting anything.
+  --------------------------------------------------------------------------- */
+  .drip {
+    position: absolute;
+    top: calc(5px + var(--i) * 4px);
+    left: calc(50% - 1.5px);
+    width: 3px;
+    height: 3px;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.2;
+    animation: drip var(--drip, 1.5s) ease-in-out infinite;
+    animation-delay: calc(var(--i) * var(--drip, 1.5s) / 7);
+  }
+
+  @keyframes drip {
+    0%,
+    100% {
+      opacity: 0.2;
+      transform: translateY(0) scale(0.8);
+    }
+    20% {
+      opacity: 1;
+      transform: translateY(1px) scale(1);
+    }
+    55% {
+      opacity: 0.2;
+      transform: translateY(2px) scale(0.8);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Held at the glow rather than stopped mid cascade, so the column still
+       reads as part of the button instead of three specks left switched on. */
+    .drip {
+      animation: none;
+    }
+  }
+
+  /* ---------------------------------------------------------------------------
      The blank in the headline.
 
      The whole proposition is one sentence with one gap in it, so the gap is
