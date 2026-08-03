@@ -457,6 +457,55 @@
   }
 
   /* ---------------------------------------------------------------------------
+     Artwork.
+
+     Two things laid over every picture on the site, in this order: a wash of the
+     accent and then a layer of grain.
+
+     The wash is what puts a rendered illustration into this palette instead of
+     beside it. It runs blue to green like everything else, on `soft-light` so it
+     tints the light and shade already in the picture rather than painting a
+     colour flatly over the top of it.
+
+     The grain is the same idea for texture. Rendered artwork is perfectly clean,
+     and perfectly clean on a page made of hairlines looks like a screenshot
+     dropped in. A little noise gives it a surface. It is `feTurbulence` in a data
+     URI rather than an image file: nothing to download, and it tiles seamlessly
+     because `stitchTiles` matches the noise across the edges.
+
+     Both are pseudo elements, so any element can carry them by adding one class
+     and nothing has to make room in its markup for two more divs.
+  --------------------------------------------------------------------------- */
+  .artwork {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .artwork::before,
+  .artwork::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .artwork::before {
+    background-image: linear-gradient(
+      142deg,
+      color-mix(in oklab, var(--color-active) 34%, transparent) 0%,
+      transparent 46%,
+      color-mix(in oklab, var(--color-done) 26%, transparent) 100%
+    );
+    mix-blend-mode: soft-light;
+  }
+
+  .artwork::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+    opacity: 0.14;
+    mix-blend-mode: multiply;
+  }
+
+  /* ---------------------------------------------------------------------------
      The accent, as a gradient.
 
      Blue into green, at a shallow angle so the turn happens across the width of

@@ -187,7 +187,7 @@ export function ProjectCarousel({ className }: { className?: string }) {
                 /* A hairline rather than a shadow. Nothing else on this site
                    casts one, and a card on white needs an edge to be a card, not
                    a cloud under it to be a card. */
-                className="relative size-full overflow-hidden rounded-[18px] border border-border"
+                className="artwork size-full overflow-hidden rounded-[18px] border border-border"
                 style={{ backgroundColor: project.tone }}
               >
                 <Image

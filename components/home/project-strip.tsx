@@ -64,7 +64,7 @@ export function ProjectStrip({
                       second run exists solely to make the loop seamless. */}
                   <motion.div
                     layoutId={copy === 0 ? `shot-${project.id}` : undefined}
-                    className="relative w-full overflow-hidden rounded-[16px] border border-border transition-transform duration-300 group-hover/card:-translate-y-1.5"
+                    className="artwork w-full overflow-hidden rounded-[16px] border border-border transition-transform duration-300 group-hover/card:-translate-y-1.5"
                     style={{ backgroundColor: project.tone, height }}
                   >
                     <Image

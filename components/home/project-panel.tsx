@@ -93,7 +93,7 @@ export function ProjectPanel({
             >
               <motion.div
                 layoutId={`shot-${project.id}`}
-                className="relative min-h-0 overflow-hidden"
+                className="artwork min-h-0 overflow-hidden"
                 style={{ backgroundColor: project.tone }}
               >
                 {/* `fill` because the panel's half is sized by the grid, not by

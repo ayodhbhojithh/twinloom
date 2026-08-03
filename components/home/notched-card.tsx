@@ -196,7 +196,7 @@ export function NotchedCard({ className }: { className?: string }) {
       <motion.div
         key={shown.id}
         layoutId={`shot-${shown.id}`}
-        className="absolute inset-0 overflow-hidden"
+        className="artwork absolute inset-0 overflow-hidden"
         style={{
           backgroundColor: shown.tone,
           clipPath: path ? `path("${path}")` : undefined,
@@ -258,7 +258,7 @@ export function NotchedCard({ className }: { className?: string }) {
           /* No border. The bite around it is already the outline, and a second
              one a few pixels inside reads as a sticker on the card rather than
              as the thing the card was cut back for. */
-          className="relative block size-full overflow-hidden rounded-[18px] transition-transform duration-300 group-hover:-translate-y-1"
+          className="artwork block size-full overflow-hidden rounded-[18px] transition-transform duration-300 group-hover:-translate-y-1"
           style={{ backgroundColor: next.tone }}
         >
           <Image
@@ -272,12 +272,14 @@ export function NotchedCard({ className }: { className?: string }) {
         </span>
       </button>
 
-      {/* Which project this is, said in words rather than left to the picture. */}
-      <p className="absolute right-6 bottom-6 text-right">
-        <span className="block text-[15px] font-bold text-ink">
+      {/* Which project this is, said in words rather than left to the picture.
+          On a plate, because the moment a real photograph went in behind it the
+          text was being read against whatever happened to be there. */}
+      <p className="absolute right-5 bottom-5 rounded-[12px] bg-field/85 px-4 py-2.5 text-right backdrop-blur-[3px] sm:right-6 sm:bottom-6">
+        <span className="block text-[14.5px] font-bold text-ink">
           {shown.name}
         </span>
-        <span className="mt-0.5 block font-mono text-[9.5px] font-bold tracking-[0.14em] text-label uppercase">
+        <span className="mt-0.5 block font-mono text-[9px] font-bold tracking-[0.14em] text-label uppercase">
           {shown.kind} / {shown.year}
         </span>
       </p>
