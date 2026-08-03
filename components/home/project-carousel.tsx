@@ -159,7 +159,7 @@ export function ProjectCarousel({ className }: { className?: string }) {
               onClick={() => (away === 0 ? setOpen(project) : setFront(index))}
               /* Stacked and pushed apart rather than laid in a row, so the front
                  card is centred without measuring where the row has got to. */
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-[18px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-active"
+              className="group absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-[18px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-active"
               style={{
                 width: size.card,
                 height: size.card / 0.7,
@@ -196,7 +196,7 @@ export function ProjectCarousel({ className }: { className?: string }) {
                   fill
                   quality={100}
                   sizes="(max-width: 640px) 60vw, 300px"
-                  className="object-cover"
+                  className="object-cover grayscale transition-[filter] duration-500 group-hover:grayscale-0"
                 />
 
                 {/* The picture, when there is one. Until then the grey it will

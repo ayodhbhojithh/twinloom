@@ -206,6 +206,8 @@ export function NotchedCard({ className }: { className?: string }) {
             thing on the landing page and must not be lazy loaded. The clip is on
             the parent, so the picture is cut to the notches without knowing they
             exist. */}
+        {/* Grey here and in colour once it is opened. The work is not being
+            shown off on the way past; it is being shown when somebody asks. */}
         <Image
           src={shown.image}
           alt={shown.alt}
@@ -213,7 +215,7 @@ export function NotchedCard({ className }: { className?: string }) {
           quality={100}
           preload
           sizes="100vw"
-          className="object-cover"
+          className="object-cover grayscale"
         />
       </motion.div>
 
@@ -267,7 +269,7 @@ export function NotchedCard({ className }: { className?: string }) {
             fill
             quality={100}
             sizes="200px"
-            className="object-cover"
+            className="object-cover grayscale transition-[filter] duration-500 group-hover:grayscale-0"
           />
         </span>
       </button>

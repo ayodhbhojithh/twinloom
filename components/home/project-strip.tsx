@@ -73,7 +73,7 @@ export function ProjectStrip({
                       fill
                       quality={100}
                       sizes="(max-width: 640px) 50vw, 250px"
-                      className="object-cover"
+                      className="object-cover grayscale transition-[filter] duration-500 group-hover/card:grayscale-0"
                     />
                   </motion.div>
 
