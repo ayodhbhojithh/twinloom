@@ -43,8 +43,10 @@ export function TallyStrip({
       )}
     >
       {title ? (
-        <div className="flex items-baseline justify-between gap-3.5 border-b border-border px-5 pt-[15px] pb-[13px]">
-          <b className="text-[16px] font-normal text-ink">{title}</b>
+        <div className="flex items-baseline justify-between gap-3.5 border-b border-border px-5 pt-4 pb-3.5 sm:px-7 sm:pt-5 sm:pb-4">
+          <b className="text-[17px] font-normal text-ink sm:text-[19px]">
+            {title}
+          </b>
           <span className="font-mono text-[11px] font-bold tracking-[0.1em] text-label uppercase">
             Live
           </span>
@@ -59,29 +61,31 @@ export function TallyStrip({
           <div
             key={cell.label}
             className={cn(
-              "border-border px-5 py-[17px]",
+              "border-border px-5 py-5 sm:px-7 sm:py-7",
               at > 0 && "border-l",
               at >= 2 && "border-t sm:border-t-0",
               at === 2 && "border-l-0 sm:border-l",
             )}
           >
-            <b className="block text-[26px] leading-[1.1] font-extrabold tracking-[-0.02em] text-ink tabular-nums">
+            <b className="block text-[32px] leading-[1.05] font-extrabold tracking-[-0.03em] text-ink tabular-nums sm:text-[40px]">
               {cell.value}
             </b>
-            <span className="mt-[5px] block font-mono text-[10.5px] font-semibold tracking-[0.1em] text-quiet uppercase">
+            <span className="mt-2 block font-mono text-[10.5px] font-semibold tracking-[0.1em] text-quiet uppercase sm:text-[11px]">
               {cell.label}
             </span>
           </div>
         ))}
       </div>
 
-      <div className="flex flex-wrap items-baseline justify-between gap-3 border-t border-border px-5 py-[13px]">
-        <p className="text-[14px] leading-[1.5] text-quiet">{note}</p>
+      <div className="flex flex-wrap items-baseline justify-between gap-3 border-t border-border px-5 py-4 sm:px-7 sm:py-[18px]">
+        <p className="text-[14.5px] leading-[1.5] text-quiet sm:text-[15.5px]">
+          {note}
+        </p>
 
         {linkToSite ? (
           <Link
             href={ROUTES.site}
-            className="shrink-0 text-[14px] font-semibold text-ink underline decoration-planned decoration-1 underline-offset-4 transition-colors hover:decoration-ink"
+            className="shrink-0 text-[14.5px] font-semibold text-ink underline decoration-planned decoration-1 underline-offset-4 transition-colors hover:decoration-ink sm:text-[15.5px]"
           >
             See the full site description
           </Link>

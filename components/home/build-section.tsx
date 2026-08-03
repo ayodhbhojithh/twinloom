@@ -1,5 +1,7 @@
 import { BuildTool } from "@/components/build/build-tool";
 
+import { LoomStrings } from "./loom-strings";
+
 /**
  * The build screen, on the landing page.
  *
@@ -28,15 +30,20 @@ export function BuildSection() {
           wider than the container and the whole thing reads as off-centre no
           matter how the type inside it is aligned. */}
       <div className="mx-auto max-w-wide">
-        {/* Clamped rather than stepped, so it scales with the page the way the
-            hero above it does instead of jumping once at one breakpoint. It
-            stops just under the hero: this is the second thing on the page and
-            should not out-shout the first. */}
-        <h2 className="mx-auto max-w-[1400px] text-center text-[clamp(30px,3vw,48px)] leading-[1.08] font-extrabold tracking-[-0.032em] text-ink">
-          Build your website
-        </h2>
+        {/* The topic, woven rather than set.
+            The same loom the "play it" screen hangs the name in: each thread
+            samples the column of pixels it stands in and keeps the stretches
+            where it found ink, so the words are made of the cloth rather than
+            printed on it, and the whole thing answers to a pointer.
 
-        <p className="mx-auto mt-4 mb-8 max-w-[1400px] text-center text-[17.5px] leading-[1.6] text-ink sm:text-[19px]">
+            The real heading goes in beside it, for a screen reader and for the
+            document's outline. A canvas is a picture, and a picture is not a
+            heading however large the letters in it are. */}
+        <h2 className="sr-only">Build your website</h2>
+
+        <LoomStrings word="Build your website" className="mx-auto max-w-wide" />
+
+        <p className="mx-auto mt-8 mb-8 max-w-[1400px] text-center text-[17.5px] leading-[1.6] text-ink sm:text-[19px]">
           Read what this does, work through the areas, or just send us what you
           have.
         </p>

@@ -1,7 +1,15 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
-import { Check } from "lucide-react";
+import {
+  BookOpen,
+  Mail,
+  MapPin,
+  Phone,
+  SendHorizontal,
+  Tag,
+  type LucideIcon,
+} from "lucide-react";
 
 import { BuildNote, EmptyMark } from "@/components/blocks/build-note";
 import { Item, List, P } from "@/components/blocks/prose";
@@ -22,6 +30,23 @@ const TABS = [
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
+
+/**
+ * A picture for each of the six things every site can do.
+ *
+ * Keyed off the data rather than its order, so rewording a line or moving one
+ * up the list cannot quietly hand it somebody else's icon. It lives here and not
+ * in `data.ts` because it is how the thing is drawn, and the data has no
+ * business importing components.
+ */
+const INCLUDED_ICON: Record<string, LucideIcon> = {
+  who: BookOpen,
+  sell: Tag,
+  call: Phone,
+  mail: Mail,
+  form: SendHorizontal,
+  place: MapPin,
+};
 
 /**
  * The tool itself: three tabs and everything in them.
@@ -63,7 +88,9 @@ export function BuildTool({
      reading top to bottom; this is a short address at the head of a section,
      and a 720px column adrift in the middle of a 1600px page only read as a
      narrow strip. */
-  const mid = centred ? "mx-auto max-w-[1400px] text-center" : undefined;
+  const mid = centred
+    ? "mx-auto max-w-[1400px] text-center text-[17px] sm:text-[18.5px]"
+    : undefined;
   const midBlock = centred ? "mx-auto max-w-[1400px]" : undefined;
 
   const answers = useSyncExternalStore(
@@ -99,7 +126,7 @@ export function BuildTool({
                 /* The rule under the row is gone, so the active tab's own is
                    the only line here and it marks one tab rather than sitting
                    across the page. */
-                "cursor-pointer border-b-2 px-5 py-3 text-[15.5px] font-semibold transition-colors",
+                "cursor-pointer border-b-2 px-4 py-3 text-[16px] font-semibold transition-colors sm:px-5 sm:text-[17.5px]",
                 /* Flush left only when the row is. The first tab's padding is
                    dropped so it lines up with the type below it, which centred
                    would just make the row look off-centre. */
@@ -138,7 +165,7 @@ export function BuildTool({
 
             <h3
               className={cn(
-                "mt-9 text-[20px] font-bold tracking-[-0.015em] text-ink sm:text-[22px]",
+                "mt-10 text-[22px] font-bold tracking-[-0.02em] text-ink sm:text-[26px] lg:text-[29px]",
                 centred && "text-center",
               )}
             >
@@ -148,35 +175,58 @@ export function BuildTool({
               Nothing to tick. These are in every site we build.
             </P>
 
-            {/* Filled rather than outlined. On a monochrome screen a box drawn
-                round a list is one more line competing with the type; a wash of
-                grey says the same thing and draws nothing. */}
+            {/* A grid of tiles, not a stack of rows.
+                Six short lines down the full width of the page left most of
+                every row empty and made a list of six read as long. Three
+                across turns the same six into two rows you take in at once,
+                which is what "these come as standard" should feel like.
+
+                Each is a filled tile rather than an outlined one, and the
+                picture stands on a white disc inside it. Two tones and no
+                lines, so the grid reads as one block of six rather than
+                eighteen edges. */}
             <ul
               className={cn(
-                "mb-6 max-w-measure overflow-hidden rounded-card bg-well",
+                "mb-8 grid max-w-measure gap-3 sm:grid-cols-2 lg:grid-cols-3",
                 midBlock,
               )}
             >
-              {EVERY_SITE.map((thing) => (
-                <li
-                  key={thing}
-                  className="flex items-center gap-3 border-t border-border px-[17px] py-[11px] first:border-t-0"
-                >
-                  <Check
-                    aria-hidden
-                    className="size-[17px] shrink-0 text-ink"
-                    strokeWidth={2.3}
-                  />
-                  <span className="text-[14.5px] leading-[1.35] font-semibold text-ink">
-                    {thing}
-                  </span>
-                </li>
-              ))}
+              {EVERY_SITE.map((thing, index) => {
+                const Icon = INCLUDED_ICON[thing.key];
+
+                return (
+                  <li
+                    key={thing.key}
+                    className="group/inc flex items-center gap-4 rounded-card bg-well px-4 py-4 transition-colors hover:bg-hair sm:px-5 sm:py-5"
+                  >
+                    <span
+                      aria-hidden
+                      className="flex size-11 flex-none items-center justify-center rounded-pill bg-field text-ink transition-transform duration-300 group-hover/inc:-translate-y-0.5 sm:size-12"
+                    >
+                      {Icon ? <Icon className="size-[19px] sm:size-[21px]" /> : null}
+                    </span>
+
+                    <span className="min-w-0 text-left text-[15.5px] leading-[1.3] font-semibold text-ink sm:text-[16.5px]">
+                      {thing.label}
+                    </span>
+
+                    {/* Numbered, so six things read as a set rather than as six
+                        separate claims. Mono and quiet, the same way pages are
+                        numbered in the site map. */}
+                    <span
+                      aria-hidden
+                      className="ml-auto pl-3 font-mono text-[11px] font-bold tracking-[0.12em] text-idx tabular-nums"
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
 
             <h3
               className={cn(
-                "mt-9 text-[20px] font-bold tracking-[-0.015em] text-ink sm:text-[22px]",
+                "mt-10 text-[22px] font-bold tracking-[-0.02em] text-ink sm:text-[26px] lg:text-[29px]",
                 centred && "text-center",
               )}
             >
@@ -184,7 +234,7 @@ export function BuildTool({
             </h3>
 
             <TallyStrip
-              className={cn("mt-4", midBlock)}
+              className={cn("mt-5", midBlock)}
               tally={counts}
               title="The site your answers describe"
               note="Six things are in every site we build. Everything after that is yours to add."
@@ -195,7 +245,7 @@ export function BuildTool({
               <button
                 type="button"
                 onClick={() => setTab("build")}
-                className="cursor-pointer rounded-field bg-ink px-[18px] py-[10px] text-[14.5px] font-semibold text-white transition-opacity hover:opacity-85"
+                className="cursor-pointer rounded-field bg-ink px-6 py-3 text-[15.5px] font-semibold text-white transition-opacity hover:opacity-85 sm:px-7 sm:py-3.5 sm:text-[16.5px]"
               >
                 Start with the first area
               </button>

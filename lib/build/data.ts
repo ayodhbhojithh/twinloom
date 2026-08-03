@@ -370,14 +370,18 @@ export const INCLUDED: readonly Omit<VisitorAction, 'need' | 'page'>[] = [
  *
  * Nothing here is tickable, because nothing here is optional. It is the floor
  * under every answer the tool collects.
+ *
+ * The keys are here so the screen can put a picture to each one without
+ * matching on the wording or, worse, on the position in the list. Reword a line
+ * or reorder the six and the right icon still follows the right thing.
  */
-export const EVERY_SITE: readonly string[] = [
-  "Read who you are and what you do",
-  "See what you sell, in simple terms",
-  "Call you",
-  "Email you",
-  "Send an enquiry through a form",
-  "Get to your nearest location",
+export const EVERY_SITE: readonly { key: string; label: string }[] = [
+  { key: "who", label: "Read who you are and what you do" },
+  { key: "sell", label: "See what you sell, in simple terms" },
+  { key: "call", label: "Call you" },
+  { key: "mail", label: "Email you" },
+  { key: "form", label: "Send an enquiry through a form" },
+  { key: "place", label: "Get to your nearest location" },
 ];
 
 export const PRE_TICKED: readonly string[] = ["mail", "enq", "call"];

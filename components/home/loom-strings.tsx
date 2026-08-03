@@ -649,7 +649,7 @@ export function LoomStrings({
         tabIndex={0}
         role="group"
         aria-label={`${word}, woven into a loom of strings. Move across it, or use the arrow keys, to play it.`}
-        className="relative w-full cursor-crosshair rounded-card outline-none focus-visible:ring-2 focus-visible:ring-active"
+        className="relative w-full cursor-crosshair rounded-card outline-none focus-visible:ring-2 focus-visible:ring-ink"
         style={{ height: "clamp(250px, 44svh, 460px)" }}
       >
         <canvas ref={surface} aria-hidden className="block h-full w-full" />
