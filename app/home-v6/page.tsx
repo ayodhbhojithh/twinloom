@@ -50,7 +50,7 @@ export default function HomeV6Page() {
           className="rise mx-auto mt-7 max-w-[30ch] text-[clamp(34px,5.4vw,84px)] leading-[1.04] font-extrabold tracking-[-0.045em] text-balance text-ink"
         >
           {claim}
-          {promise ? <span className="text-active"> {promise}</span> : null}
+          {promise ? <span className="accent-text"> {promise}</span> : null}
         </h1>
 
         <p

@@ -90,7 +90,7 @@ export function SiteHeader() {
 
           <Link
             href={HEADER_CTA.href}
-            className="hidden h-8 shrink-0 items-center rounded-field bg-active px-3.5 text-[13.5px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90 sm:inline-flex"
+            className="hidden h-8 shrink-0 items-center rounded-field accent-fill px-3.5 text-[13.5px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90 sm:inline-flex"
           >
             {HEADER_CTA.label}
           </Link>
@@ -147,7 +147,7 @@ export function SiteHeader() {
             <Link
               href={HEADER_CTA.href}
               onClick={() => setOpen(false)}
-              className="block rounded-field bg-active px-3.5 py-2.5 text-center text-[15px] font-semibold text-white"
+              className="block rounded-field accent-fill px-3.5 py-2.5 text-center text-[15px] font-semibold text-white"
             >
               {HEADER_CTA.label}
             </Link>

@@ -6,7 +6,7 @@ export type ListTone = "planned" | "active" | "done" | "amber" | "blocked";
 
 const DOT: Record<ListTone, string> = {
   planned: "bg-planned",
-  active: "bg-active",
+  active: "accent-fill",
   done: "bg-done",
   amber: "bg-amber",
   blocked: "bg-blocked",

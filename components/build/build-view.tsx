@@ -152,7 +152,7 @@ export function BuildView() {
               <button
                 type="button"
                 onClick={() => setTab("build")}
-                className="rounded-field bg-active px-[18px] py-[10px] text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90"
+                className="rounded-field accent-fill px-[18px] py-[10px] text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90"
               >
                 Start with the first area
               </button>

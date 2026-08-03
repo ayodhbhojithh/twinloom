@@ -194,7 +194,7 @@ export function BookingFlow() {
                           className={cn(
                             "mt-0.5 flex size-[18px] shrink-0 items-center justify-center rounded-pill border transition-colors",
                             on
-                              ? "border-active bg-active text-white"
+                              ? "border-active accent-fill text-white"
                               : "border-border text-transparent",
                           )}
                         >
@@ -286,7 +286,7 @@ export function BookingFlow() {
                               "cursor-not-allowed border-hair bg-well text-label line-through",
                             !gone &&
                               on &&
-                              "border-active bg-active text-white",
+                              "border-active accent-fill text-white",
                             !gone &&
                               !on &&
                               "cursor-pointer border-border bg-field text-ink hover:border-ink",
@@ -414,7 +414,7 @@ export function BookingFlow() {
           <button
             type="button"
             onClick={() => setDone(true)}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-field bg-active px-6 py-2.5 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90"
+            className="inline-flex cursor-pointer items-center gap-2 rounded-field accent-fill px-6 py-2.5 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90"
           >
             Confirm booking
             <Check aria-hidden className="size-4" strokeWidth={2.5} />
@@ -424,7 +424,7 @@ export function BookingFlow() {
             type="button"
             disabled={at !== 2 && !canGoOn}
             onClick={next}
-            className="group inline-flex cursor-pointer items-center gap-2 rounded-field bg-active px-6 py-2.5 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-default disabled:bg-planned disabled:text-label"
+            className="group inline-flex cursor-pointer items-center gap-2 rounded-field accent-fill px-6 py-2.5 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-default disabled:bg-planned disabled:text-label"
           >
             Next
             <ArrowRight

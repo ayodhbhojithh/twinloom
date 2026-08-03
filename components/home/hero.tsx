@@ -91,7 +91,7 @@ export function Hero() {
           >
             {claim}
             {promise ? (
-              <span className="block text-active">{promise}</span>
+              <span className="block accent-text">{promise}</span>
             ) : null}
           </h1>
 
@@ -108,7 +108,7 @@ export function Hero() {
           >
             <Link
               href={ROUTES.build}
-              className="inline-flex items-center rounded-field bg-active px-6 py-[13px] text-[15.5px] font-semibold text-white transition-[opacity,transform] hover:opacity-90 active:translate-y-px sm:px-7 sm:py-[14px] sm:text-[16px]"
+              className="inline-flex items-center rounded-field accent-fill px-6 py-[13px] text-[15.5px] font-semibold text-white transition-[opacity,transform] hover:opacity-90 active:translate-y-px sm:px-7 sm:py-[14px] sm:text-[16px]"
             >
               Build your website
             </Link>

@@ -457,6 +457,51 @@
   }
 
   /* ---------------------------------------------------------------------------
+     The accent, as a gradient.
+
+     Blue into green, at a shallow angle so the turn happens across the width of
+     whatever it is filling rather than in one corner of it.
+
+     Two utilities because a gradient cannot be a colour: a fill paints a box, and
+     text has to have the fill clipped to the glyphs and its own colour taken
+     away. Wanting the same accent in both places is exactly the sort of thing
+     that ends up written eleven slightly different ways.
+
+     `text-transparent` is set here rather than left to a utility, because if
+     `background-clip: text` is ever unsupported the text would otherwise
+     disappear entirely. This way it falls back to the solid accent.
+  --------------------------------------------------------------------------- */
+  .accent-fill {
+    background-image: linear-gradient(
+      104deg,
+      var(--color-active) 0%,
+      color-mix(in oklab, var(--color-active) 55%, var(--color-done)) 52%,
+      var(--color-done) 100%
+    );
+  }
+
+  .accent-text {
+    color: var(--color-active);
+  }
+
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .accent-text {
+      background-image: linear-gradient(
+        104deg,
+        var(--color-active) 0%,
+        color-mix(in oklab, var(--color-active) 55%, var(--color-done)) 52%,
+        var(--color-done) 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      /* Without this a descender or an accent can be clipped by the box the
+         gradient is painted into. */
+      padding-bottom: 0.04em;
+    }
+  }
+
+  /* ---------------------------------------------------------------------------
      The home page's entrance.
 
      CSS rather than a motion library, and deliberately: the page is a server

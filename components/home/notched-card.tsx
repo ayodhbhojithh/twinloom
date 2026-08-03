@@ -172,7 +172,7 @@ export function NotchedCard({ className }: { className?: string }) {
 
     /* The bite is square-ish and sized to the thumbnail standing in it, with the
        same flare and the same corner as the notch above. */
-    const bite = Math.max(92, Math.min(Math.min(w * 0.1, h * 0.19), 140));
+    const bite = Math.max(124, Math.min(Math.min(w * 0.13, h * 0.26), 196));
 
     return {
       radius,

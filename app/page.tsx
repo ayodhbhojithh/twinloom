@@ -51,7 +51,7 @@ export default function LandingPage() {
             className="rise mt-5 max-w-[30ch] text-[clamp(28px,3.4vw,52px)] leading-[1.06] font-extrabold tracking-[-0.04em] text-ink"
           >
             {claim}
-            {promise ? <span className="text-active"> {promise}</span> : null}
+            {promise ? <span className="accent-text"> {promise}</span> : null}
           </h1>
         </div>
 

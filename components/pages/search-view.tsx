@@ -74,7 +74,7 @@ export function SearchView() {
 
         <button
           type="submit"
-          className="shrink-0 rounded-field bg-active px-[18px] py-[10px] text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90"
+          className="shrink-0 rounded-field accent-fill px-[18px] py-[10px] text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90"
         >
           Search
         </button>

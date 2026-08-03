@@ -234,7 +234,7 @@ export function Calendar({
                       aria-hidden
                       className={cn(
                         "absolute bottom-[5px] size-[3px] rounded-pill transition-colors",
-                        open && !chosen && "bg-active",
+                        open && !chosen && "accent-fill",
                         chosen && "bg-white/70",
                         !open && "bg-transparent",
                       )}
