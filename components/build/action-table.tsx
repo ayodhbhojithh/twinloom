@@ -95,7 +95,7 @@ export function ActionTable({
                       aria-pressed={on}
                       className={cn(
                         "cursor-pointer py-[11px] pl-3 font-mono text-[10px] font-bold tracking-[0.14em] whitespace-nowrap uppercase transition-colors",
-                        on ? "text-done" : "text-label hover:text-ink",
+                        on ? "text-ink" : "text-label hover:text-ink",
                       )}
                     >
                       {on ? "Picked" : "Pick"}
@@ -152,7 +152,7 @@ function Th({
     <th
       scope="col"
       className={cn(
-        "border-b border-border pr-3 pb-2 text-left font-mono text-[10px] font-bold tracking-[0.14em] text-label uppercase",
+        "border-b border-hair pr-3 pb-2 text-left font-mono text-[10px] font-bold tracking-[0.14em] text-label uppercase",
         className,
       )}
     >

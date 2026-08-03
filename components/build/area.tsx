@@ -51,7 +51,7 @@ export function Area({
       >
         <span
           aria-hidden
-          className="flex size-[23px] flex-none items-center justify-center rounded-[6px] border border-border text-quiet transition-colors"
+          className="flex size-[23px] flex-none items-center justify-center rounded-[6px] bg-well text-quiet transition-colors"
         >
           {open ? (
             <Minus className="size-3" strokeWidth={2.5} />
@@ -96,7 +96,7 @@ export function Area({
           {got} of {total}
         </span>
 
-        <span className="hidden w-[86px] flex-none text-right font-mono text-[10.5px] font-bold tracking-[0.08em] text-idx uppercase lg:block">
+        <span className="hidden w-[86px] flex-none text-right font-mono text-[10.5px] font-bold tracking-[0.08em] text-label uppercase lg:block">
           Built
         </span>
       </button>

@@ -15,21 +15,24 @@ import { BuildTool } from "@/components/build/build-tool";
 export function BuildSection() {
   return (
     <section className="page-frame border-t border-hair py-20 lg:py-24">
+      {/* The head is centred and the tool under it is not. What is being said
+          here is one address to the room, and it can sit in the middle of the
+          page; what follows is work, and work has a left edge to read down. */}
       <div className="max-w-wide">
-        <p className="font-mono text-[12px] font-bold tracking-[0.18em] text-idx uppercase">
+        <p className="text-center font-mono text-[12px] font-bold tracking-[0.18em] text-idx uppercase">
           Build your website
         </p>
 
-        <h2 className="mt-4 max-w-[980px] text-[30px] leading-[1.12] font-extrabold tracking-[-0.028em] text-ink sm:text-[38px]">
+        <h2 className="mx-auto mt-4 max-w-[980px] text-center text-[30px] leading-[1.12] font-extrabold tracking-[-0.028em] text-ink sm:text-[38px]">
           Build your website
         </h2>
 
-        <p className="mt-4 mb-8 max-w-measure text-[17.5px] leading-[1.6] text-ink sm:text-[19px]">
+        <p className="mx-auto mt-4 mb-8 max-w-measure text-center text-[17.5px] leading-[1.6] text-ink sm:text-[19px]">
           Read what this does, work through the areas, or just send us what you
           have.
         </p>
 
-        <BuildTool idPrefix="home-build" />
+        <BuildTool idPrefix="home-build" centred />
       </div>
     </section>
   );

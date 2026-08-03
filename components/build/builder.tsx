@@ -106,8 +106,8 @@ export function Builder() {
   }
 
   return (
-    <div className="mt-[22px] grid max-w-wide grid-cols-1 border-t border-border lg:grid-cols-[minmax(0,1fr)_330px] 2xl:grid-cols-[minmax(0,1fr)_380px]">
-      <div className="min-w-0 lg:border-r lg:border-border lg:pr-7">
+    <div className="mt-[22px] grid max-w-wide grid-cols-1 border-t border-hair lg:grid-cols-[minmax(0,1fr)_330px] 2xl:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="min-w-0 lg:border-r lg:border-hair lg:pr-7">
         <Area
           open={open.who}
           onToggle={() => setOpen((was) => ({ ...was, who: !was.who }))}
@@ -175,12 +175,14 @@ export function Builder() {
                 maxLength={70}
                 onChange={(event) => setDraft(event.target.value)}
                 placeholder="Anything we have not listed"
-                className="min-w-0 flex-1 rounded-field border border-border bg-field px-[13px] py-[11px] text-[14.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-active"
+                /* A filled box needs no outline to read as a box, and focus is
+                   the fill going one step darker rather than a coloured rule. */
+                className="min-w-0 flex-1 rounded-field bg-well px-[13px] py-[11px] text-[14.5px] text-ink outline-none transition-colors placeholder:text-label focus:bg-hair"
               />
               <button
                 type="submit"
                 disabled={!draft.trim()}
-                className="flex-none cursor-pointer rounded-field border border-border bg-well px-5 font-mono text-[10px] font-bold tracking-[0.14em] text-quiet uppercase transition-colors hover:border-label hover:text-ink disabled:cursor-default disabled:opacity-45 disabled:hover:border-border disabled:hover:text-quiet"
+                className="flex-none cursor-pointer rounded-field bg-ink px-5 font-mono text-[10px] font-bold tracking-[0.14em] text-white uppercase transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-well disabled:text-label"
               >
                 Add
               </button>
@@ -197,7 +199,7 @@ export function Builder() {
           first area's title across the rule. Matching the paddings instead would
           not have done it: 10.5px mono and 16px bold sit differently in their
           line boxes, so equal tops read as a step. */}
-      <aside className="min-w-0 self-start border-t border-border pt-[22px] lg:sticky lg:top-[calc(var(--nav-height)+22px)] lg:border-t-0 lg:pt-5 lg:pl-7">
+      <aside className="min-w-0 self-start border-t border-hair pt-[22px] lg:sticky lg:top-[calc(var(--nav-height)+22px)] lg:border-t-0 lg:pt-5 lg:pl-7">
         <p className="mb-2.5 font-mono text-[10.5px] font-bold tracking-[0.14em] text-label uppercase">
           The site your answers describe
         </p>
@@ -224,7 +226,7 @@ export function Builder() {
 
         <Link
           href={ROUTES.site}
-          className="mt-[18px] inline-block rounded-field border border-ink bg-ink px-4 py-2.5 text-[14px] font-semibold text-white transition-opacity hover:opacity-85"
+          className="mt-[18px] inline-block rounded-field bg-ink px-4 py-2.5 text-[14px] font-semibold text-white transition-opacity hover:opacity-85"
         >
           See the full site description
         </Link>

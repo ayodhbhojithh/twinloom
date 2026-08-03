@@ -38,14 +38,14 @@ export function TallyStrip({
   return (
     <section
       className={cn(
-        "max-w-measure overflow-hidden rounded-card border border-border",
+        "max-w-measure overflow-hidden rounded-card bg-well",
         className,
       )}
     >
       {title ? (
-        <div className="flex items-baseline justify-between gap-3.5 border-b border-hair px-5 pt-[15px] pb-[13px]">
+        <div className="flex items-baseline justify-between gap-3.5 border-b border-border px-5 pt-[15px] pb-[13px]">
           <b className="text-[16px] font-normal text-ink">{title}</b>
-          <span className="font-mono text-[11px] font-bold tracking-[0.1em] text-idx uppercase">
+          <span className="font-mono text-[11px] font-bold tracking-[0.1em] text-label uppercase">
             Live
           </span>
         </div>
@@ -59,7 +59,7 @@ export function TallyStrip({
           <div
             key={cell.label}
             className={cn(
-              "border-hair px-5 py-[17px]",
+              "border-border px-5 py-[17px]",
               at > 0 && "border-l",
               at >= 2 && "border-t sm:border-t-0",
               at === 2 && "border-l-0 sm:border-l",
@@ -75,13 +75,13 @@ export function TallyStrip({
         ))}
       </div>
 
-      <div className="flex flex-wrap items-baseline justify-between gap-3 border-t border-hair bg-well px-5 py-[13px]">
+      <div className="flex flex-wrap items-baseline justify-between gap-3 border-t border-border px-5 py-[13px]">
         <p className="text-[14px] leading-[1.5] text-quiet">{note}</p>
 
         {linkToSite ? (
           <Link
             href={ROUTES.site}
-            className="shrink-0 text-[14px] font-semibold text-active hover:underline"
+            className="shrink-0 text-[14px] font-semibold text-ink underline decoration-planned decoration-1 underline-offset-4 transition-colors hover:decoration-ink"
           >
             See the full site description
           </Link>

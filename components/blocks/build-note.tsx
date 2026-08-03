@@ -20,7 +20,7 @@ export function EmptyMark({
   return (
     <p
       className={cn(
-        "mb-[18px] inline-flex items-center gap-[7px] rounded-pill border border-border bg-well py-[5px] pr-3 pl-2.5 font-mono text-[10.5px] font-bold tracking-[0.1em] text-quiet uppercase",
+        "mb-[18px] inline-flex items-center gap-[7px] rounded-pill bg-well py-[5px] pr-3 pl-2.5 font-mono text-[10.5px] font-bold tracking-[0.1em] text-quiet uppercase",
         className,
       )}
     >
@@ -54,7 +54,7 @@ export function BuildNote({
   return (
     <aside
       className={cn(
-        "my-7 max-w-measure rounded-card border border-dashed border-[#d1d5db] px-5 py-4 text-[15px] text-quiet [&_li]:text-quiet [&>p:last-child]:mb-0 [&>ul]:mb-0",
+        "my-7 max-w-measure rounded-card border border-dashed border-planned px-5 py-4 text-[15px] text-quiet [&_li]:text-quiet [&>p:last-child]:mb-0 [&>ul]:mb-0",
         className,
       )}
     >

@@ -23,7 +23,7 @@ export function SiteMap({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-card border border-border",
+        "overflow-hidden rounded-card bg-well",
         compact ? "w-full" : "max-w-measure",
         className,
       )}
@@ -32,7 +32,7 @@ export function SiteMap({
         <div
           key={zone.key}
           className={cn(
-            "border-t border-hair first:border-t-0",
+            "border-t border-border first:border-t-0",
             compact ? "px-[15px] pt-[13px] pb-[11px]" : "px-[18px] pt-[15px] pb-[13px]",
           )}
         >

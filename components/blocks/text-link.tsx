@@ -47,7 +47,11 @@ export function TextLink({
   children: React.ReactNode;
 }) {
   const classes = cn(
-    "font-semibold text-active underline-offset-[3px] transition-colors hover:underline",
+    /* Underlined rather than coloured. A link in running text has to be
+       findable without reading it, and with no colour on the page the rule
+       under it is what does that. It sits light and goes to ink on hover, so
+       the mark is there before the pointer and confirms itself under it. */
+    "font-semibold text-ink underline decoration-planned decoration-1 underline-offset-[3px] transition-colors hover:decoration-ink",
     className,
   );
 

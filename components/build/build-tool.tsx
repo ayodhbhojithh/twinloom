@@ -39,8 +39,27 @@ type TabKey = (typeof TABS)[number]["key"];
  * a visitor should be able to move between them without losing what they have
  * already ticked, which is exactly what a tab does and a route does not.
  */
-export function BuildTool({ idPrefix = "build" }: { idPrefix?: string }) {
+export function BuildTool({
+  idPrefix = "build",
+  centred,
+}: {
+  idPrefix?: string;
+  /**
+   * Sets the writing in the middle of the column rather than against its left
+   * edge. For the landing page, where this section is addressed to the room and
+   * has the full width to sit in. The build screen keeps its left edge, because
+   * there it is one page in a rail of pages and has to line up with them.
+   *
+   * A flag rather than a second component: the alignment is the only thing that
+   * differs, and two copies would differ in more than that by the first edit.
+   */
+  centred?: boolean;
+}) {
   const [tab, setTab] = useState<TabKey>("what");
+
+  /** The measure blocks and the writing in them, centred or not. */
+  const mid = centred ? "mx-auto text-center" : undefined;
+  const midBlock = centred ? "mx-auto" : undefined;
 
   const answers = useSyncExternalStore(
     subscribe,
@@ -54,7 +73,10 @@ export function BuildTool({ idPrefix = "build" }: { idPrefix?: string }) {
       <div
         role="tablist"
         aria-label="How to build"
-        className="mb-9 flex max-w-wide flex-wrap border-b border-border"
+        className={cn(
+          "mb-9 flex max-w-wide flex-wrap border-b border-hair",
+          centred && "justify-center",
+        )}
       >
         {TABS.map((entry) => {
           const on = entry.key === tab;
@@ -69,7 +91,11 @@ export function BuildTool({ idPrefix = "build" }: { idPrefix?: string }) {
               id={`${idPrefix}-tab-${entry.key}`}
               onClick={() => setTab(entry.key)}
               className={cn(
-                "-mb-px cursor-pointer border-b-2 px-5 py-3 text-[15.5px] font-semibold transition-colors first:pl-0",
+                "-mb-px cursor-pointer border-b-2 px-5 py-3 text-[15.5px] font-semibold transition-colors",
+                /* Flush left only when the row is. The first tab's padding is
+                   dropped so it lines up with the type below it, which centred
+                   would just make the row look off-centre. */
+                !centred && "first:pl-0",
                 on
                   ? "border-ink text-ink"
                   : "border-transparent text-quiet hover:text-ink",
@@ -92,32 +118,45 @@ export function BuildTool({ idPrefix = "build" }: { idPrefix?: string }) {
       >
         {tab === "what" ? (
           <>
-            <P>
+            <P className={mid}>
               Answer as much or as little as you like. One question is enough to
               send.
             </P>
-            <P>
+            <P className={mid}>
               Every answer changes the site we describe back to you. Nothing here
               is a quote, and nothing is fixed until you have read the scope and
               agreed it.
             </P>
 
-            <h3 className="mt-9 text-[20px] font-bold tracking-[-0.015em] text-ink sm:text-[22px]">
+            <h3
+              className={cn(
+                "mt-9 text-[20px] font-bold tracking-[-0.015em] text-ink sm:text-[22px]",
+                centred && "text-center",
+              )}
+            >
               Included in every site
             </h3>
-            <P className="mt-1">
+            <P className={cn("mt-1", mid)}>
               Nothing to tick. These are in every site we build.
             </P>
 
-            <ul className="mb-6 max-w-measure overflow-hidden rounded-card border border-border">
+            {/* Filled rather than outlined. On a monochrome screen a box drawn
+                round a list is one more line competing with the type; a wash of
+                grey says the same thing and draws nothing. */}
+            <ul
+              className={cn(
+                "mb-6 max-w-measure overflow-hidden rounded-card bg-well",
+                midBlock,
+              )}
+            >
               {EVERY_SITE.map((thing) => (
                 <li
                   key={thing}
-                  className="flex items-center gap-3 border-t border-hair px-[17px] py-[11px] first:border-t-0"
+                  className="flex items-center gap-3 border-t border-border px-[17px] py-[11px] first:border-t-0"
                 >
                   <Check
                     aria-hidden
-                    className="size-[17px] shrink-0 text-done"
+                    className="size-[17px] shrink-0 text-ink"
                     strokeWidth={2.3}
                   />
                   <span className="text-[14.5px] leading-[1.35] font-semibold text-ink">
@@ -127,23 +166,28 @@ export function BuildTool({ idPrefix = "build" }: { idPrefix?: string }) {
               ))}
             </ul>
 
-            <h3 className="mt-9 text-[20px] font-bold tracking-[-0.015em] text-ink sm:text-[22px]">
+            <h3
+              className={cn(
+                "mt-9 text-[20px] font-bold tracking-[-0.015em] text-ink sm:text-[22px]",
+                centred && "text-center",
+              )}
+            >
               What you have said so far
             </h3>
 
             <TallyStrip
-              className="mt-4"
+              className={cn("mt-4", midBlock)}
               tally={counts}
               title="The site your answers describe"
               note="Six things are in every site we build. Everything after that is yours to add."
               linkToSite
             />
 
-            <div className="mt-6">
+            <div className={cn("mt-6", centred && "text-center")}>
               <button
                 type="button"
                 onClick={() => setTab("build")}
-                className="cursor-pointer rounded-field accent-fill px-[18px] py-[10px] text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90"
+                className="cursor-pointer rounded-field bg-ink px-[18px] py-[10px] text-[14.5px] font-semibold text-white transition-opacity hover:opacity-85"
               >
                 Start with the first area
               </button>
@@ -153,11 +197,11 @@ export function BuildTool({ idPrefix = "build" }: { idPrefix?: string }) {
 
         {tab === "build" ? (
           <>
-            <P>
+            <P className={mid}>
               Two questions. Who comes to your website, and what each of them
               should be able to do.
             </P>
-            <P>
+            <P className={mid}>
               The second question is written by the first. Name a group and the
               things that group needs turn up underneath, in a band of their own.
               Take a group away and its things go with it, so the site we describe
@@ -182,19 +226,21 @@ export function BuildTool({ idPrefix = "build" }: { idPrefix?: string }) {
 
         {tab === "free" ? (
           <>
-            <P>
+            <P className={mid}>
               Do not follow a structure. Send us what you have and tell us what
               you want.
             </P>
-            <P>
+            <P className={mid}>
               A brief on the back of an envelope, a competitor&rsquo;s site you
               like, three photos and a phone number. We read it and come back with
               questions.
             </P>
 
-            <EmptyMark />
+            <div className={centred ? "text-center" : undefined}>
+              <EmptyMark />
+            </div>
 
-            <BuildNote>
+            <BuildNote className={midBlock}>
               <List className="mb-0">
                 <Item>
                   A drop area for files, with what happens to them said plainly.
@@ -211,7 +257,7 @@ export function BuildTool({ idPrefix = "build" }: { idPrefix?: string }) {
               </List>
             </BuildNote>
 
-            <P>
+            <P className={mid}>
               If you would rather talk it through,{" "}
               <TextLink href={ROUTES.book} arrow>
                 book a meeting

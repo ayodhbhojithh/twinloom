@@ -40,8 +40,12 @@ export function PickCard({
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-col overflow-hidden rounded-card border bg-field transition-colors",
-        on ? "border-ink bg-well" : "border-border hover:border-[#d5d8de]",
+        /* Filled, not outlined. With no colour to carry the picked state it
+           has to be carried by tone, and a card that turns solid says it at a
+           glance across a grid of seven. It also takes the outline away: seven
+           boxes drawn on a white page were seven lines saying nothing. */
+        "flex min-w-0 flex-col overflow-hidden rounded-card transition-colors",
+        on ? "bg-ink" : "bg-well hover:bg-hair",
         wide && "sm:flex-row",
       )}
     >
@@ -57,8 +61,8 @@ export function PickCard({
         <span
           aria-hidden
           className={cn(
-            "mb-3 flex size-[34px] flex-none items-center justify-center rounded-pill border transition-colors",
-            on ? "border-ink bg-ink text-white" : "border-border text-quiet",
+            "mb-3 flex size-[34px] flex-none items-center justify-center rounded-pill transition-colors",
+            on ? "bg-white/15 text-white" : "bg-field text-quiet",
             wide && "sm:mb-0",
           )}
         >
@@ -67,18 +71,25 @@ export function PickCard({
 
         <span
           className={cn(
-            "mb-[5px] text-[15px] leading-[1.28] font-bold text-ink",
+            "mb-[5px] text-[15px] leading-[1.28] font-bold",
+            on ? "text-white" : "text-ink",
             wide && "sm:mb-0 sm:flex-none",
           )}
         >
           {name}
         </span>
-        <span className="flex-1 text-[13px] leading-[1.45] text-quiet">
+        <span
+          className={cn(
+            "flex-1 text-[13px] leading-[1.45]",
+            on ? "text-white/70" : "text-quiet",
+          )}
+        >
           {sub}
         </span>
         <span
           className={cn(
-            "mt-[11px] font-mono text-[10.5px] font-semibold tracking-[0.1em] text-idx uppercase",
+            "mt-[11px] font-mono text-[10.5px] font-semibold tracking-[0.1em] uppercase",
+            on ? "text-white/50" : "text-idx",
             wide && "sm:mt-0 sm:flex-none",
           )}
         >
@@ -88,7 +99,8 @@ export function PickCard({
 
       <div
         className={cn(
-          "flex items-stretch border-t border-hair",
+          "flex items-stretch border-t",
+          on ? "border-white/15" : "border-border",
           wide && "sm:flex-none sm:border-t-0 sm:border-l",
         )}
       >
@@ -99,7 +111,7 @@ export function PickCard({
           onClick={onToggle}
           className={cn(
             "flex-1 cursor-pointer px-[14px] py-[10px] text-left font-mono text-[10.5px] font-bold tracking-[0.1em] uppercase transition-colors",
-            on ? "text-done" : "text-quiet hover:text-ink",
+            on ? "text-white/75" : "text-quiet hover:text-ink",
             wide && "sm:flex sm:w-[112px] sm:items-center",
           )}
         >
