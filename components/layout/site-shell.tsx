@@ -22,6 +22,7 @@ const NO_FOOTER: readonly string[] = [
   ROUTES.homeV4,
   ROUTES.homeV5,
   ROUTES.homeV6,
+  ROUTES.homeV7,
 ];
 
 /**
