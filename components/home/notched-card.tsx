@@ -147,25 +147,28 @@ export function NotchedCard({ className }: { className?: string }) {
 
     const radius = Math.max(22, Math.min(w * 0.03 + 20, 48));
 
-    /* The notch is about twice the height of the bar standing in it. That gap
-       underneath is what makes it read as a piece taken out of the card rather
-       than a slot the bar is jammed into. */
-    const barDepth = Math.max(84, Math.min(h * 0.145, 118));
-    const barWidth = Math.max(168, Math.min(w * 0.17, 250));
-    const barRadius = Math.max(24, Math.min(barWidth * 0.17, 42));
+    /* One notch, not two.
+       
+       The flare sweeps down from the top edge and the notch's own corner rounds
+       in at the bottom. If those two arcs do not meet, a straight wall runs
+       between them and the cut reads as a shallow shelf with a deeper notch
+       inside it. Making each exactly half the depth means they meet exactly, and
+       the profile becomes a single unbroken curve from the top edge to the floor
+       of the cut. */
+    const barDepth = Math.max(58, Math.min(h * 0.095, 78));
+    const barFlare = barDepth / 2;
+    const barRadius = barDepth / 2;
 
-    /* The outward sweep, held inside what the top edge can spare after the bar
-       and both card corners. A path that overruns its own box folds inside out. */
-    const spare = (w - barWidth - radius * 2) / 2;
-    const barFlare = Math.max(14, Math.min(barDepth * 0.5, spare, 60));
+    /* Wide enough that the two corner arcs do not meet in the middle and turn
+       the floor of the notch into a point. */
+    const barWidth = Math.max(barRadius * 2 + 96, Math.min(w * 0.17, 250));
 
     const biteWidth = Math.max(108, Math.min(w * 0.12, 168));
     const biteHeight = Math.max(116, Math.min(h * 0.225, 180));
-    const biteRadius = Math.max(18, Math.min(biteWidth * 0.18, 30));
-    const biteFlare = Math.max(
-      14,
-      Math.min(biteHeight * 0.3, h - biteHeight - radius, 52),
-    );
+    const biteRadius = Math.max(18, Math.min(biteWidth * 0.2, 32));
+    /* The same rule on the bite: the flare and the inner corner together make up
+       the whole depth, so there is no straight run between them either. */
+    const biteFlare = Math.max(16, Math.min(biteHeight - biteRadius, 46));
 
     return {
       radius,
@@ -199,14 +202,15 @@ export function NotchedCard({ className }: { className?: string }) {
         }}
       />
 
-      {/* The bar: a pill standing in the top of the cut, with the rest of the
-          cut left empty beneath it. Three loose icons floating in a white gap
-          read as a hole in the picture rather than as something sitting in it. */}
+      {/* The bar, standing in the top of the cut. No border on it: the cut is
+          already the outline, and a second one drawn a few pixels inside reads
+          as a badge stuck over the notch rather than as the thing the notch was
+          made for. */}
       <div
         className="absolute top-0 left-1/2 flex -translate-x-1/2 justify-center"
-        style={{ width: cut.barWidth, height: cut.barDepth, paddingTop: 6 }}
+        style={{ width: cut.barWidth, height: cut.barDepth, paddingTop: 5 }}
       >
-        <div className="flex h-11 items-center gap-0.5 rounded-pill border border-border bg-field px-1.5">
+        <div className="flex h-10 items-center gap-0.5 rounded-pill bg-field px-1.5">
         <Tool
           label="Previous project"
           onClick={() =>
