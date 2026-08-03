@@ -7,7 +7,6 @@ import { Menu, X } from "lucide-react";
 
 import { RailNav } from "./rail-nav";
 import { Wordmark } from "./wordmark";
-import { SiteSearch } from "./site-search";
 
 import { HEADER_CTA, HEADER_NAV, ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -45,6 +44,7 @@ import { cn } from "@/lib/utils";
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const landing = pathname === ROUTES.home;
 
   /* No rule under it, and opaque. The two go together: a translucent bar shows the
      page sliding through it, and without a rule there is nothing left to mark where
@@ -86,14 +86,18 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
-          <SiteSearch className="hidden w-[200px] shrink-0 lg:block xl:w-[240px] 2xl:w-[260px]" />
-
-          <Link
-            href={HEADER_CTA.href}
-            className="hidden h-8 shrink-0 items-center rounded-field accent-fill px-3.5 text-[13.5px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90 sm:inline-flex"
-          >
-            {HEADER_CTA.label}
-          </Link>
+          {/* Not on the landing page. The hero already carries this exact button
+              one row below, and the same call to action twice in one eyeline
+              reads as a mistake rather than as emphasis. Every other route keeps
+              it, where it is the only standing way to the build page. */}
+          {landing ? null : (
+            <Link
+              href={HEADER_CTA.href}
+              className="hidden h-8 shrink-0 items-center rounded-field accent-fill px-3.5 text-[13.5px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90 sm:inline-flex"
+            >
+              {HEADER_CTA.label}
+            </Link>
+          )}
 
           <button
             type="button"
@@ -126,10 +130,6 @@ export function SiteHeader() {
             >
               <X className="size-[18px]" />
             </button>
-          </div>
-
-          <div className="border-b border-hair px-5 py-3 sm:px-8">
-            <SiteSearch />
           </div>
 
           <nav

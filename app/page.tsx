@@ -41,22 +41,14 @@ export default function LandingPage() {
     <section className="flex h-[var(--stage)] flex-col overflow-clip py-8">
       <div className="page-frame flex w-full shrink-0 flex-wrap items-end justify-between gap-x-12 gap-y-6">
         <div className="min-w-0">
-          <p className="rise inline-flex items-center gap-2.5 rounded-pill bg-well py-1.5 pr-4 pl-3 text-[13px] font-semibold text-body">
-            <span aria-hidden className="size-2 rounded-pill bg-ink" />
-            Recent work
-          </p>
-
-          <h1
-            style={{ "--in": "90ms" } as React.CSSProperties}
-            className="rise mt-5 max-w-[30ch] text-[clamp(28px,3.4vw,52px)] leading-[1.06] font-extrabold tracking-[-0.04em] text-ink"
-          >
+          <h1 className="rise max-w-[30ch] text-[clamp(28px,3.4vw,52px)] leading-[1.06] font-extrabold tracking-[-0.04em] text-ink">
             {claim}
             {promise ? <span className="accent-text"> {promise}</span> : null}
           </h1>
         </div>
 
         <div
-          style={{ "--in": "220ms" } as React.CSSProperties}
+          style={{ "--in": "120ms" } as React.CSSProperties}
           className="rise flex flex-wrap items-center gap-2.5"
         >
           <Link

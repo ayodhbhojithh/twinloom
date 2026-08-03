@@ -7,4 +7,3 @@ export { SiteHeader } from "./site-header";
 export { RailNav } from "./rail-nav";
 export { SiteRail } from "./site-rail";
 export { SiteShell } from "./site-shell";
-export { SiteSearch } from "./site-search";
