@@ -41,46 +41,49 @@ import { ParticleWordmark } from "./particle-wordmark";
    same lie as a logo of a client we do not have.
 --------------------------------------------------------------------------- */
 
+/**
+ * The six pieces on the shelf.
+ *
+ * A name, a mark and whether it runs. No line of copy under each one: the two
+ * that are live say what they are by running, and a sentence describing a thing
+ * the reader is looking at is a caption for a picture that is not a picture.
+ * The four that are not built carry their explanation on the stage instead,
+ * where there is nothing else to look at and it is the whole point.
+ */
 const PIECES = [
   {
     key: "particles",
     name: "Particle wordmark",
-    note: "A word read into points that turn, drift and follow the pointer. Written for TwinCoreTech.",
     icon: Sparkles,
     live: true,
   },
   {
     key: "loom",
     name: "The loom",
-    note: "Threads you can strike. Every note is synthesised rather than loaded, so it weighs nothing.",
     icon: Waves,
     live: true,
   },
   {
     key: "diary",
     name: "Availability, live",
-    note: "A diary on the page that holds a slot as it is chosen, rather than sending you somewhere else.",
     icon: CalendarClock,
     live: false,
   },
   {
     key: "estimate",
     name: "What it will cost",
-    note: "A figure that moves as the answers do, with the reason for it beside it.",
     icon: PoundSterling,
     live: false,
   },
   {
     key: "sitemap",
     name: "Your sitemap, drawn",
-    note: "The pages your answers describe, as a plan you can move things around on.",
     icon: Map,
     live: false,
   },
   {
     key: "colour",
     name: "A colour studio",
-    note: "Pull a palette out of a photograph. This one is built - it is inside the scoping run.",
     icon: Pipette,
     live: false,
     at: ROUTES.build,
@@ -95,17 +98,6 @@ const PIECES = [
  * presses play, because audio that arrives uninvited is not a feature.
  */
 const SCALE = [261.63, 293.66, 349.23, 392.0, 440.0, 523.25];
-
-/**
- * The showcase cards, and the one path they are cut with.
- *
- * A fixed size rather than a fluid one, because a clip path is drawn in pixels:
- * four cards of one size need one path worked out once, where four fluid cards
- * would need four paths recalculated on every resize.
- */
-const WORK = { w: 300, h: 214, cut: 60, mark: 44 };
-const WORK_PATH = cutCardPath(WORK.w, WORK.h, WORK.cut, 20, 18);
-const WORK_PATH_TOP = cutCardPathTop(WORK.w, WORK.h, WORK.cut, 20, 18);
 
 /** How the picture becomes something a name can be read off. */
 const SCRIM =
@@ -397,87 +389,112 @@ export function SandboxSection() {
             Where they end up
           </p>
 
-          {/* A rail rather than a wrap. The cards are a fixed size - a clip
-              path is drawn in pixels - so wrapping them left a ragged gap at
-              the end of the row on every width that was not a multiple of one
-              card. Scrolled, the row fills whatever it is given and the last
-              card cutting off at the edge is the cue that there is more. */}
-          <div className="quiet-scroll -mx-1 mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-1">
+          <div className="mt-3 grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {PROJECTS.map((project, n) => (
-              <article
-                key={project.id}
-                className="group/work relative flex-none snap-start transition-transform duration-300 hover:-translate-y-1"
-                style={{ width: WORK.w, height: WORK.h }}
-              >
-                {/* The picture is the card, cut to the outline the way the
-                    landing card carries its own, and faded into ink at the foot
-                    so the name is read off the picture rather than off a bar
-                    laid over it. */}
-                <span
-                  aria-hidden
-                  className="absolute inset-0 overflow-hidden bg-canvas"
-                  style={{
-                    clipPath: `path("${n % 2 ? WORK_PATH_TOP : WORK_PATH}")`,
-                  }}
-                >
-                  {/* `cover` and a real `sizes`. The card is 300 wide and the
-                      browser was being told 248, so it fetched a source too
-                      small for the box and stretched it; `cover` crops rather
-                      than distorts, and the quality is raised because these are
-                      shown large enough for the default to soften them. */}
-                  <Image
-                    src={project.image}
-                    alt=""
-                    fill
-                    quality={95}
-                    sizes="(max-width: 640px) 90vw, 300px"
-                    className="object-cover object-center transition-transform duration-500 group-hover/work:scale-[1.06]"
-                  />
-                  <span
-                    className="absolute inset-0"
-                    style={{ background: SCRIM }}
-                  />
-                </span>
-
-                <div
-                  className={cn(
-                    "relative flex size-full flex-col justify-end p-5",
-                    /* Only the card whose cut is at the foot has to keep out
-                       of its own corner. */
-                    n % 2 ? "" : "pr-16",
-                  )}
-                >
-                  <b className="block max-w-[16ch] text-[15px] leading-[1.18] font-extrabold tracking-[-0.025em] text-white">
-                    {project.name}
-                  </b>
-                  <span className="mt-1.5 block font-mono text-[8.5px] font-bold tracking-[0.14em] text-white/60 uppercase">
-                    {project.kind} / {project.year}
-                  </span>
-                </div>
-
-                {/* The number, standing in the corner the card gives up - and
-                    the cards alternate which corner that is, so a row of them
-                    reads as a run rather than as four of the same thing. */}
-                <span
-                  aria-hidden
-                  className={cn(
-                    "pointer-events-none absolute right-0 flex items-center justify-center",
-                    n % 2 ? "top-0" : "bottom-0",
-                  )}
-                  style={{ width: WORK.cut, height: WORK.cut }}
-                >
-                  <span
-                    className="flex items-center justify-center rounded-pill bg-ink font-mono text-[12px] font-bold text-white tabular-nums"
-                    style={{ width: WORK.mark, height: WORK.mark }}
-                  >
-                    {String(n + 1).padStart(2, "0")}
-                  </span>
-                </span>
-              </article>
+              <WorkCard key={project.id} project={project} n={n} />
             ))}
           </div>
         </div>
       </CutPanel>
     </section>
+  );
+}
+
+/**
+ * One piece of work, cut to whatever width the grid gives it.
+ *
+ * A clip path is drawn in pixels, so a fluid card has to measure itself: fixed
+ * sizes meant the row could only ever be a multiple of one card, and left a
+ * ragged gap at the end of every width that was not.
+ *
+ * The corner it gives up alternates, so a row reads as a run rather than as
+ * five of the same thing.
+ */
+function WorkCard({
+  project,
+  n,
+}: {
+  project: (typeof PROJECTS)[number];
+  n: number;
+}) {
+  const box = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState({ w: 0, h: 0 });
+
+  useEffect(() => {
+    const node = box.current;
+    if (!node) return;
+
+    const measure = () =>
+      setSize({ w: node.clientWidth, h: node.clientHeight });
+    const watcher = new ResizeObserver(measure);
+    watcher.observe(node);
+    measure();
+
+    return () => watcher.disconnect();
+  }, []);
+
+  /* The cut is held to what the card can give: on a narrow card a corner of
+     sixty would eat most of the bottom edge, and a path that overruns its own
+     box folds inside out. */
+  const cut = Math.max(46, Math.min(size.w * 0.22, 62));
+  const draw = n % 2 ? cutCardPathTop : cutCardPath;
+  const path = size.w > 60 ? draw(size.w, size.h, cut, 20, 18) : "";
+  const top = n % 2 === 1;
+
+  return (
+    <article
+      ref={box}
+      className="group/work relative h-[200px] min-w-0 transition-transform duration-300 hover:-translate-y-1 sm:h-[214px]"
+    >
+      {/* The picture is the card, cut to the outline and faded into ink at the
+          foot so the name is read off the picture rather than off a bar laid
+          over it. */}
+      <span
+        aria-hidden
+        className="absolute inset-0 overflow-hidden bg-canvas"
+        style={{ clipPath: path ? `path("${path}")` : undefined }}
+      >
+        <Image
+          src={project.image}
+          alt=""
+          fill
+          quality={95}
+          sizes="(max-width: 640px) 92vw, (max-width: 1280px) 34vw, 20vw"
+          className="object-cover object-center transition-transform duration-500 group-hover/work:scale-[1.06]"
+        />
+        <span className="absolute inset-0" style={{ background: SCRIM }} />
+      </span>
+
+      <div
+        className={cn(
+          "relative flex size-full flex-col justify-end p-5",
+          /* Only the card whose cut is at the foot has to keep out of it. */
+          top ? "" : "pr-16",
+        )}
+      >
+        <b className="block max-w-[18ch] text-[14.5px] leading-[1.18] font-extrabold tracking-[-0.025em] text-white">
+          {project.name}
+        </b>
+        <span className="mt-1.5 block font-mono text-[8.5px] font-bold tracking-[0.14em] text-white/60 uppercase">
+          {project.kind} / {project.year}
+        </span>
+      </div>
+
+      <span
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute right-0 flex items-center justify-center",
+          top ? "top-0" : "bottom-0",
+        )}
+        style={{ width: cut, height: cut }}
+      >
+        <span
+          className="flex items-center justify-center rounded-pill bg-ink font-mono text-[12px] font-bold text-white tabular-nums"
+          style={{ width: cut - 16, height: cut - 16 }}
+        >
+          {String(n + 1).padStart(2, "0")}
+        </span>
+      </span>
+    </article>
   );
 }
