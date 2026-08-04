@@ -212,7 +212,16 @@ export function Stage({
           /* Clear of the bite and then some. The content only has to miss the
              cut to be legal, and a last line that stops exactly where the
              corner starts reads as though it were trimmed by it. */
-          paddingBottom: (aside ? cut.biteHeight : 26) + 34,
+          /* Clear of whichever bottom cut is actually there, and then some.
+             The content only has to miss the cut to be legal, and a last line
+             that stops exactly where a corner starts reads as though it were
+             trimmed by it. */
+          paddingBottom:
+            Math.max(
+              aside ? cut.biteHeight : 0,
+              corner ? cut.dropHeight : 0,
+              26,
+            ) + 34,
           paddingLeft: pad,
           paddingRight: pad,
         }}

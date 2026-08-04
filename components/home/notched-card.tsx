@@ -85,36 +85,59 @@ export function outline(w: number, h: number, cut: Cuts): string {
   const left = (w - bw) / 2;
   const right = left + bw;
 
+  /* A cut asked for at nothing is not a tiny cut - it is no cut, and the corner
+     it would have eaten has to come back as an ordinary rounded corner.
+     Collapsing the numbers instead leaves a square corner where every other one
+     on the card is round, which reads as a surface that has broken rather than
+     one that was drawn. */
+  const off = (a: number, b: number) => a < 1 || b < 1;
+
+  const bite = off(cw, ch)
+    ? [`L ${r} ${h}`, `A ${r} ${r} 0 0 1 0 ${h - r}`]
+    : [
+        `L ${cw + cf} ${h}`,
+        `A ${cf} ${cf} 0 0 1 ${cw} ${h - cf}`,
+        `L ${cw} ${h - ch + cr}`,
+        `A ${cr} ${cr} 0 0 0 ${cw - cr} ${h - ch}`,
+        `L ${cf} ${h - ch}`,
+        `A ${cf} ${cf} 0 0 1 0 ${h - ch - cf}`,
+      ];
+
+  const drop = off(dw, dh)
+    ? [`L ${w} ${h - r}`, `A ${r} ${r} 0 0 1 ${w - r} ${h}`]
+    : [
+        `L ${w} ${h - dh - df}`,
+        `A ${df} ${df} 0 0 1 ${w - df} ${h - dh}`,
+        `L ${w - dw + dr} ${h - dh}`,
+        `A ${dr} ${dr} 0 0 0 ${w - dw} ${h - dh + dr}`,
+        `L ${w - dw} ${h - df}`,
+        `A ${df} ${df} 0 0 1 ${w - dw - df} ${h}`,
+      ];
+
+  const bar = off(bw, bd)
+    ? []
+    : [
+        `L ${left - bf} 0`,
+        `A ${bf} ${bf} 0 0 1 ${left} ${bf}`,
+        `L ${left} ${bd - br}`,
+        `A ${br} ${br} 0 0 0 ${left + br} ${bd}`,
+        `L ${right - br} ${bd}`,
+        `A ${br} ${br} 0 0 0 ${right} ${bd - br}`,
+        `L ${right} ${bf}`,
+        `A ${bf} ${bf} 0 0 1 ${right + bf} 0`,
+      ];
+
   return [
     `M ${r} 0`,
-    /* Top edge, then the flare down into the notch. */
-    `L ${left - bf} 0`,
-    `A ${bf} ${bf} 0 0 1 ${left} ${bf}`,
-    `L ${left} ${bd - br}`,
-    `A ${br} ${br} 0 0 0 ${left + br} ${bd}`,
-    `L ${right - br} ${bd}`,
-    `A ${br} ${br} 0 0 0 ${right} ${bd - br}`,
-    `L ${right} ${bf}`,
-    `A ${bf} ${bf} 0 0 1 ${right + bf} 0`,
+    /* Top edge, and the notch in it where there is one. */
+    ...bar,
     /* On to the top right corner and down the right side. */
     `L ${w - r} 0`,
     `A ${r} ${r} 0 0 1 ${w} ${r}`,
-    /* The bottom right corner is not a corner. The cut eats it, so the right
-       side stops short and flares inward, exactly as the bite does at the other
-       end of the bottom edge. */
-    `L ${w} ${h - dh - df}`,
-    `A ${df} ${df} 0 0 1 ${w - df} ${h - dh}`,
-    `L ${w - dw + dr} ${h - dh}`,
-    `A ${dr} ${dr} 0 0 0 ${w - dw} ${h - dh + dr}`,
-    `L ${w - dw} ${h - df}`,
-    `A ${df} ${df} 0 0 1 ${w - dw - df} ${h}`,
-    /* Bottom edge, leftward, then the flare up into the bite. */
-    `L ${cw + cf} ${h}`,
-    `A ${cf} ${cf} 0 0 1 ${cw} ${h - cf}`,
-    `L ${cw} ${h - ch + cr}`,
-    `A ${cr} ${cr} 0 0 0 ${cw - cr} ${h - ch}`,
-    `L ${cf} ${h - ch}`,
-    `A ${cf} ${cf} 0 0 1 0 ${h - ch - cf}`,
+    /* The bottom right corner, given up to the cut where there is one. */
+    ...drop,
+    /* Bottom edge, leftward, then the bite at the other end of it. */
+    ...bite,
     /* Up the left side to where we started. */
     `L 0 ${r}`,
     `A ${r} ${r} 0 0 1 ${r} 0`,

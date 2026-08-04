@@ -2,8 +2,6 @@
 
 import { useState, useSyncExternalStore } from "react";
 import {
-  ArrowLeft,
-  ArrowRight,
   CalendarDays,
   Check,
   Clock,
@@ -13,6 +11,7 @@ import {
   User,
 } from "lucide-react";
 
+import { CutPanel } from "@/components/layout/cut-panel";
 import { cn } from "@/lib/utils";
 
 import { Calendar } from "./calendar";
@@ -28,7 +27,7 @@ import {
   type Reader,
 } from "./diary";
 import { MEETINGS, STEPS, findMeeting, looksLikeEmail } from "./meetings";
-import { Stepper } from "./stepper";
+import { BookStage, StepRail } from "./shell";
 
 interface Details {
   name: string;
@@ -92,8 +91,7 @@ export function BookingFlow() {
       timeZone: zone,
     });
 
-  const when =
-    day && slotAt !== null ? instantOf(slotAt) : null;
+  const when = day && slotAt !== null ? instantOf(slotAt) : null;
 
   const whenLong = when
     ? format({
@@ -108,6 +106,12 @@ export function BookingFlow() {
     ? format({ hour: "2-digit", minute: "2-digit" }).format(when)
     : "";
 
+  /* Short enough to stand in a cut. The long form belongs on the check-over
+     screen, where there is a line to put it on. */
+  const whenShort = when
+    ? format({ weekday: "short", day: "numeric", month: "short" }).format(when)
+    : "";
+
   const nameBad = showErrors && !details.name.trim();
   const emailBad = showErrors && !looksLikeEmail(details.email);
 
@@ -115,6 +119,18 @@ export function BookingFlow() {
     (at === 0 && Boolean(meeting)) ||
     (at === 1 && Boolean(when)) ||
     (at === 2 && Boolean(details.name.trim()) && looksLikeEmail(details.email));
+
+  /* The furthest step reached, so the rail can offer everything already
+     answered and nothing that depends on an answer not yet given. */
+  const reached = meeting
+    ? when
+      ? details.name.trim() && looksLikeEmail(details.email)
+        ? 3
+        : 2
+      : 1
+    : 0;
+
+  const back = () => setAt((was) => Math.max(was - 1, 0));
 
   function next() {
     if (at === 2 && !canGoOn) {
@@ -148,325 +164,331 @@ export function BookingFlow() {
     );
   }
 
+  /* What has been settled, in the reader's own terms, so the rail is a record
+     of the booking rather than a row of numbers. */
+  const said = [
+    meeting ? meeting.name : "",
+    when ? `${whenShort} · ${whenTime}` : "",
+    details.name.trim(),
+    "",
+  ];
+
   return (
     <div>
-      <div className="border-b border-hair pb-6">
-        <Stepper at={at} onGo={setAt} />
-      </div>
+      <StepRail at={at} reached={reached} said={said} onGo={setAt} />
 
-      <div className="pt-8">
-        {at === 0 ? (
-          <Panel
-            n="01"
-            title="What kind of meeting"
-            note="Three to choose from. None of them commits you to anything."
-          >
-            <ul className="grid gap-2.5 md:grid-cols-3">
-              {MEETINGS.map((entry) => {
-                const on = entry.key === meetingKey;
+      {at === 0 ? (
+        <BookStage
+          at={at}
+          title="What kind of meeting?"
+          note="Three to choose from. None of them commits you to anything."
+          canGoOn={canGoOn}
+          last={false}
+          onBack={back}
+          onNext={next}
+        >
+          <ul className="grid gap-2.5 md:grid-cols-3">
+            {MEETINGS.map((entry) => {
+              const on = entry.key === meetingKey;
 
-                return (
-                  <li key={entry.key}>
-                    <button
-                      type="button"
-                      aria-pressed={on}
-                      onClick={() => setMeetingKey(entry.key)}
+              return (
+                <li key={entry.key}>
+                  <button
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => setMeetingKey(entry.key)}
+                    className={cn(
+                      "flex h-full w-full cursor-pointer flex-col rounded-[16px] p-4 text-left transition-colors",
+                      on ? "bg-ink" : "bg-field hover:bg-hair",
+                    )}
+                  >
+                    <span className="flex items-start justify-between gap-3">
+                      <span
+                        aria-hidden
+                        className={cn(
+                          "flex size-9 shrink-0 items-center justify-center rounded-pill transition-colors",
+                          on ? "bg-white/15 text-white" : "bg-well text-quiet",
+                        )}
+                      >
+                        <entry.icon className="size-[17px]" strokeWidth={2} />
+                      </span>
+
+                      <span
+                        aria-hidden
+                        className={cn(
+                          "mt-0.5 flex size-[20px] shrink-0 items-center justify-center rounded-pill transition-colors",
+                          on
+                            ? "bg-mark text-white"
+                            : "bg-well text-transparent",
+                        )}
+                      >
+                        <Check className="size-3" strokeWidth={3} />
+                      </span>
+                    </span>
+
+                    <span className="mt-3.5 flex items-baseline gap-2">
+                      <span
+                        className={cn(
+                          "text-[15.5px] font-bold",
+                          on ? "text-white" : "text-ink",
+                        )}
+                      >
+                        {entry.name}
+                      </span>
+                      <span
+                        className={cn(
+                          "font-mono text-[10px] font-bold tracking-[0.1em] uppercase tabular-nums",
+                          on ? "text-white/50" : "text-label",
+                        )}
+                      >
+                        {entry.minutes} min
+                      </span>
+                    </span>
+
+                    <span
                       className={cn(
-                        "flex h-full w-full cursor-pointer flex-col rounded-card border p-4 text-left transition-colors",
-                        on
-                          ? "border-mark bg-mark/[0.04]"
-                          : "border-border bg-field hover:border-ink",
+                        "mt-1.5 text-[13px] leading-[1.45]",
+                        on ? "text-white/70" : "text-quiet",
                       )}
                     >
-                      <span className="flex items-start justify-between gap-3">
-                        <span
-                          aria-hidden
-                          className={cn(
-                            "flex size-9 shrink-0 items-center justify-center rounded-pill",
-                            entry.tone,
-                          )}
-                        >
-                          <entry.icon className="size-[17px]" strokeWidth={2} />
-                        </span>
-
-                        <span
-                          aria-hidden
-                          className={cn(
-                            "mt-0.5 flex size-[18px] shrink-0 items-center justify-center rounded-pill border transition-colors",
-                            on
-                              ? "border-mark bg-mark text-white"
-                              : "border-border text-transparent",
-                          )}
-                        >
-                          <Check className="size-3" strokeWidth={3} />
-                        </span>
-                      </span>
-
-                      <span className="mt-3.5 flex items-baseline gap-2">
-                        <span className="text-[15.5px] font-bold text-ink">
-                          {entry.name}
-                        </span>
-                        <span className="font-mono text-[10px] font-bold tracking-[0.1em] text-label uppercase tabular-nums">
-                          {entry.minutes} min
-                        </span>
-                      </span>
-
-                      <span className="mt-1.5 text-[13px] leading-[1.45] text-quiet">
-                        {entry.note}
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </Panel>
-        ) : null}
-
-        {at === 1 ? (
-          <Panel
-            n="02"
-            title="When suits you"
-            note={
-              meeting
-                ? `${meeting.name}, ${meeting.minutes} minutes.`
-                : undefined
-            }
-          >
-            <div className="grid gap-x-10 gap-y-8 sm:grid-cols-[minmax(0,1fr)_11rem]">
-              <div className="min-w-0">
-                <Calendar
-                  reader={reader}
-                  selected={dayKeyChosen}
-                  onSelect={(key) => {
-                    setDayKey(key);
-                    /* The times belong to the day. Keeping one across a change
-                       would leave a slot selected that nobody picked. */
-                    setSlotAt(null);
-                  }}
-                />
-
-                <ZoneNote
-                  reader={reader}
-                  inOfficeZone={inOfficeZone}
-                  onToggle={() => setInOfficeZone((was) => !was)}
-                />
-              </div>
-
-              <div className="flex min-w-0 flex-col">
-                <p className="font-mono text-[9.5px] font-bold tracking-[0.18em] text-label uppercase">
-                  {day
-                    ? format({
-                        weekday: "short",
-                        day: "numeric",
-                        month: "short",
-                      }).format(day)
-                    : "Times"}
-                </p>
-
-                {day ? (
-                  <div
-                    role="group"
-                    aria-label="Available times"
-                    className="quiet-scroll mt-3 flex max-h-[17rem] flex-col gap-1.5 overflow-y-auto pr-0.5"
-                  >
-                    {SLOTS.map((_slot, index) => {
-                      const gone = takenSlots(day)[index];
-                      const on = slotAt === index;
-
-                      return (
-                        <button
-                          key={index}
-                          type="button"
-                          disabled={gone}
-                          aria-pressed={on}
-                          onClick={() => setSlotAt(index)}
-                          className={cn(
-                            "rounded-field border py-2 text-center text-[14px] font-semibold tabular-nums transition-colors",
-                            gone &&
-                              "cursor-not-allowed border-hair bg-well text-label line-through",
-                            !gone &&
-                              on &&
-                              "border-mark bg-mark text-white",
-                            !gone &&
-                              !on &&
-                              "cursor-pointer border-border bg-field text-ink hover:border-ink",
-                          )}
-                        >
-                          {format({
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          }).format(instantOf(index))}
-                        </button>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <p className="mt-3 rounded-card border border-dashed border-border px-3.5 py-4 text-[13px] leading-[1.5] text-quiet">
-                    Choose a day and its times appear here. A dot under a date
-                    means it has room.
-                  </p>
-                )}
-              </div>
-            </div>
-          </Panel>
-        ) : null}
-
-        {at === 2 ? (
-          <Panel
-            n="03"
-            title="Who we are meeting"
-            note="Two things we need, and one you can leave blank."
-          >
-            <div className="grid max-w-[46rem] gap-5 sm:grid-cols-2">
-              <Field
-                id="book-name"
-                label="Your name"
-                value={details.name}
-                autoComplete="name"
-                bad={nameBad}
-                error="We need a name to put on the invitation."
-                onChange={(value) =>
-                  setDetails((was) => ({ ...was, name: value }))
-                }
-              />
-
-              <Field
-                id="book-email"
-                label="Email address"
-                type="email"
-                inputMode="email"
-                autoComplete="email"
-                value={details.email}
-                bad={emailBad}
-                error="That does not look like an email address."
-                onChange={(value) =>
-                  setDetails((was) => ({ ...was, email: value }))
-                }
-              />
-
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="book-notes"
-                  className="mb-2 block text-[13.5px] font-semibold text-ink"
-                >
-                  Anything we should read first{" "}
-                  <span className="font-normal text-label">optional</span>
-                </label>
-                <textarea
-                  id="book-notes"
-                  rows={3}
-                  value={details.notes}
-                  onChange={(event) =>
-                    setDetails((was) => ({ ...was, notes: event.target.value }))
-                  }
-                  placeholder="A link, a competitor you like, or what you are stuck on."
-                  className="w-full resize-y rounded-field border border-border bg-field px-3.5 py-2.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-mark"
-                />
-              </div>
-            </div>
-          </Panel>
-        ) : null}
-
-        {at === 3 ? (
-          <Panel
-            n="04"
-            title="Check it over"
-            note="Nothing is sent until you say so."
-          >
-            <dl className="max-w-[40rem] overflow-hidden rounded-card border border-border">
-              <Line icon={Clock} term="Meeting">
-                {meeting?.name}, {meeting?.minutes} minutes
-              </Line>
-              <Line icon={CalendarDays} term="Date">
-                {whenLong}
-              </Line>
-              <Line icon={Globe} term="Time">
-                {whenTime} in {zone.replace(/_/g, " ")}
-              </Line>
-              <Line icon={User} term="Name">
-                {details.name}
-              </Line>
-              <Line icon={Mail} term="Email">
-                {details.email}
-              </Line>
-              {details.notes.trim() ? (
-                <Line icon={Mail} term="Notes" last>
-                  {details.notes}
-                </Line>
-              ) : null}
-            </dl>
-          </Panel>
-        ) : null}
-      </div>
-
-      <div className="mt-9 flex items-center justify-between gap-4 border-t border-hair pt-6">
-        <button
-          type="button"
-          disabled={at === 0}
-          onClick={() => setAt((was) => Math.max(was - 1, 0))}
-          className="inline-flex cursor-pointer items-center gap-2 rounded-field border border-border px-4 py-2.5 text-[14.5px] font-semibold text-quiet transition-colors hover:border-ink hover:text-ink disabled:cursor-default disabled:border-hair disabled:text-planned"
-        >
-          <ArrowLeft aria-hidden className="size-4" />
-          Back
-        </button>
-
-        {at === STEPS.length - 1 ? (
-          <button
-            type="button"
-            onClick={() => setDone(true)}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-field bg-mark px-6 py-2.5 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90"
-          >
-            Confirm booking
-            <Check aria-hidden className="size-4" strokeWidth={2.5} />
-          </button>
-        ) : (
-          <button
-            type="button"
-            disabled={at !== 2 && !canGoOn}
-            onClick={next}
-            className="group inline-flex cursor-pointer items-center gap-2 rounded-field bg-mark px-6 py-2.5 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-default disabled:bg-planned disabled:text-label"
-          >
-            Next
-            <ArrowRight
-              aria-hidden
-              className="size-4 transition-transform group-hover:translate-x-0.5"
-            />
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/** One step's heading and body, so all four are set the same way. */
-function Panel({
-  n,
-  title,
-  note,
-  children,
-}: {
-  n: string;
-  title: string;
-  note?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section>
-      <h2 className="flex items-baseline gap-3 text-[20px] leading-[1.2] font-bold tracking-[-0.022em] text-ink sm:text-[24px]">
-        <span className="font-mono text-[12px] font-bold text-idx tabular-nums">
-          {n}
-        </span>
-        {title}
-      </h2>
-
-      {note ? (
-        <p className="mt-2 max-w-[54ch] text-[14.5px] leading-[1.5] text-quiet">
-          {note}
-        </p>
+                      {entry.note}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </BookStage>
       ) : null}
 
-      <div className="mt-6">{children}</div>
-    </section>
+      {at === 1 ? (
+        <BookStage
+          at={at}
+          title="When suits you?"
+          note="Pick a day, then a time. Every time is shown in your own clock."
+          held={
+            meeting ? (
+              <>
+                <b className="font-mono text-[20px] leading-none font-bold text-ink tabular-nums">
+                  {meeting.minutes}
+                </b>
+                <span className="mt-1.5 font-mono text-[8px] font-bold tracking-[0.1em] text-label uppercase">
+                  Minutes
+                </span>
+              </>
+            ) : undefined
+          }
+          canGoOn={canGoOn}
+          last={false}
+          onBack={back}
+          onNext={next}
+          foot={
+            /* Which clock the times are in, on the very bottom of the surface.
+               It applies to the calendar and to the times equally, and the band
+               between the two cuts is the one place on this screen that belongs
+               to neither column. */
+            <div className="flex w-full justify-center text-center">
+              <ZoneNote
+                reader={reader}
+                inOfficeZone={inOfficeZone}
+                onToggle={() => setInOfficeZone((was) => !was)}
+              />
+            </div>
+          }
+        >
+          <div className="grid gap-x-10 gap-y-7 lg:grid-cols-[minmax(0,1fr)_16rem]">
+            <div className="min-w-0">
+              <Calendar
+                reader={reader}
+                selected={dayKeyChosen}
+                onSelect={(key) => {
+                  setDayKey(key);
+                  /* The times belong to the day. Keeping one across a change
+                       would leave a slot selected that nobody picked. */
+                  setSlotAt(null);
+                }}
+              />
+            </div>
+
+            <div className="flex min-w-0 flex-col">
+              <p className="font-mono text-[9.5px] font-bold tracking-[0.18em] text-label uppercase">
+                {day
+                  ? format({
+                      weekday: "short",
+                      day: "numeric",
+                      month: "short",
+                    }).format(day)
+                  : "Times"}
+              </p>
+
+              {day ? (
+                <div
+                  role="group"
+                  aria-label="Available times"
+                  /* Two abreast, not one long column. Eleven times stacked
+                       singly run past the bottom of the calendar beside them
+                       and have to be scrolled, while the space next to them
+                       sits empty. */
+                  className="mt-3 grid grid-cols-3 gap-1.5 sm:grid-cols-4 lg:grid-cols-2"
+                >
+                  {SLOTS.map((_slot, index) => {
+                    const gone = takenSlots(day)[index];
+                    const on = slotAt === index;
+
+                    return (
+                      <button
+                        key={index}
+                        type="button"
+                        disabled={gone}
+                        aria-pressed={on}
+                        onClick={() => setSlotAt(index)}
+                        className={cn(
+                          "rounded-pill py-2 text-center text-[14px] font-semibold tabular-nums transition-colors",
+                          gone &&
+                            "cursor-not-allowed bg-well text-planned line-through",
+                          !gone && on && "bg-ink text-white",
+                          !gone &&
+                            !on &&
+                            "cursor-pointer bg-field text-ink hover:bg-hair",
+                        )}
+                      >
+                        {format({
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }).format(instantOf(index))}
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="mt-3 rounded-[14px] bg-well px-3.5 py-4 text-[13px] leading-[1.5] text-quiet">
+                  Choose a day and its times appear here. A dot under a date
+                  means it has room.
+                </p>
+              )}
+            </div>
+          </div>
+
+        </BookStage>
+      ) : null}
+
+      {at === 2 ? (
+        <BookStage
+          at={at}
+          title="Who are we meeting?"
+          note="Two things we need, and one you can leave blank."
+          held={
+            when ? (
+              <>
+                <b className="font-mono text-[15px] leading-none font-bold text-ink tabular-nums">
+                  {whenTime}
+                </b>
+                <span className="mt-1.5 font-mono text-[8px] font-bold tracking-[0.1em] text-label uppercase">
+                  {whenShort}
+                </span>
+              </>
+            ) : undefined
+          }
+          canGoOn={canGoOn}
+          last={false}
+          onBack={back}
+          onNext={next}
+        >
+          <div className="grid max-w-[46rem] gap-5 sm:grid-cols-2">
+            <Field
+              id="book-name"
+              label="Your name"
+              value={details.name}
+              autoComplete="name"
+              bad={nameBad}
+              error="We need a name to put on the invitation."
+              onChange={(value) =>
+                setDetails((was) => ({ ...was, name: value }))
+              }
+            />
+
+            <Field
+              id="book-email"
+              label="Email address"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              value={details.email}
+              bad={emailBad}
+              error="That does not look like an email address."
+              onChange={(value) =>
+                setDetails((was) => ({ ...was, email: value }))
+              }
+            />
+
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="book-notes"
+                className="mb-2 block text-[13.5px] font-semibold text-ink"
+              >
+                Anything we should read first{" "}
+                <span className="font-normal text-label">optional</span>
+              </label>
+              <textarea
+                id="book-notes"
+                rows={3}
+                value={details.notes}
+                onChange={(event) =>
+                  setDetails((was) => ({ ...was, notes: event.target.value }))
+                }
+                placeholder="A link, a competitor you like, or what you are stuck on."
+                className="w-full resize-y rounded-field border border-border bg-field px-3.5 py-2.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-mark"
+              />
+            </div>
+          </div>
+        </BookStage>
+      ) : null}
+
+      {at === 3 ? (
+        <BookStage
+          at={at}
+          title="Check it over."
+          note="Nothing is sent until you press the tick."
+          held={
+            <>
+              <b className="font-mono text-[15px] leading-none font-bold text-ink tabular-nums">
+                {whenTime}
+              </b>
+              <span className="mt-1.5 font-mono text-[8px] font-bold tracking-[0.1em] text-label uppercase">
+                {whenShort}
+              </span>
+            </>
+          }
+          canGoOn
+          last
+          onBack={back}
+          onNext={() => setDone(true)}
+        >
+          <dl className="max-w-[42rem] overflow-hidden rounded-[16px] bg-field">
+            <Line icon={Clock} term="Meeting">
+              {meeting?.name}, {meeting?.minutes} minutes
+            </Line>
+            <Line icon={CalendarDays} term="Date">
+              {whenLong}
+            </Line>
+            <Line icon={Globe} term="Time">
+              {whenTime} in {zone.replace(/_/g, " ")}
+            </Line>
+            <Line icon={User} term="Name">
+              {details.name}
+            </Line>
+            <Line icon={Mail} term="Email">
+              {details.email}
+            </Line>
+            {details.notes.trim() ? (
+              <Line icon={Mail} term="Notes" last>
+                {details.notes}
+              </Line>
+            ) : null}
+          </dl>
+        </BookStage>
+      ) : null}
+    </div>
   );
 }
 
@@ -510,7 +532,9 @@ function Field({
         onChange={(event) => onChange(event.target.value)}
         className={cn(
           "w-full rounded-field border bg-field px-3.5 py-2.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-label",
-          bad ? "border-blocked focus:border-blocked" : "border-border focus:border-mark",
+          bad
+            ? "border-blocked focus:border-blocked"
+            : "border-border focus:border-mark",
         )}
       />
       {bad ? (
@@ -572,25 +596,44 @@ function Finished({
   onRestart: () => void;
 }) {
   return (
-    <div className="mx-auto max-w-[38rem] py-4 text-center">
-      <span
-        aria-hidden
-        className="mx-auto flex size-14 items-center justify-center rounded-pill bg-mark/10 text-mark"
-      >
-        <Check className="size-7" strokeWidth={2.5} />
-      </span>
-
-      <h2 className="mt-6 text-[24px] leading-[1.18] font-extrabold tracking-[-0.028em] text-ink sm:text-[30px]">
+    <CutPanel
+      className="w-full"
+      toolbar={
+        /* The tick stands in the notch, where the way between steps stood a
+           moment ago. It is the same surface, finished. */
+        <span className="flex h-10 w-full items-center justify-center gap-2.5 rounded-pill bg-field">
+          <span
+            aria-hidden
+            className="flex size-6 items-center justify-center rounded-pill bg-mark text-white"
+          >
+            <Check className="size-3.5" strokeWidth={3} />
+          </span>
+          <b className="text-[13px] font-bold text-ink">Written down</b>
+        </span>
+      }
+      corner={
+        <button
+          type="button"
+          aria-label="Start again"
+          title="Start again"
+          onClick={onRestart}
+          className="flex size-11 cursor-pointer items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
+        >
+          <RotateCcw className="size-[18px]" strokeWidth={2.2} />
+        </button>
+      }
+    >
+      <h2 className="max-w-[20ch] text-[clamp(26px,3vw,38px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink">
         Your request is written down.
       </h2>
 
-      <p className="mx-auto mt-4 max-w-[46ch] text-[15.5px] leading-[1.6] text-body">
+      <p className="mt-4 max-w-[58ch] text-[15px] leading-[1.6] text-body">
         Nothing has been sent. This calendar is not connected to a diary yet, so
         the time below is not held for you. When it is, a confirmation and a
         calendar invitation would arrive at {email || "your email address"}.
       </p>
 
-      <dl className="mt-8 overflow-hidden rounded-card border border-border text-left">
+      <dl className="mt-8 max-w-[42rem] overflow-hidden rounded-[16px] bg-field text-left">
         <Line icon={Clock} term="Meeting">
           {meeting?.name}, {meeting?.minutes} minutes
         </Line>
@@ -601,16 +644,7 @@ function Finished({
           {whenTime} in {zone.replace(/_/g, " ")}
         </Line>
       </dl>
-
-      <button
-        type="button"
-        onClick={onRestart}
-        className="mt-7 inline-flex cursor-pointer items-center gap-2 rounded-field border border-ink bg-field px-5 py-2.5 text-[14.5px] font-semibold text-ink transition-colors hover:bg-ink hover:text-white"
-      >
-        <RotateCcw aria-hidden className="size-4" />
-        Start again
-      </button>
-    </div>
+    </CutPanel>
   );
 }
 
@@ -621,22 +655,20 @@ function Finished({
 function Waiting() {
   return (
     <div aria-hidden>
-      <div className="flex items-center gap-3 border-b border-hair pb-6">
+      <div className="flex items-end gap-2.5">
         {[0, 1, 2, 3].map((step) => (
-          <div key={step} className="flex flex-1 items-center gap-3">
-            <span className="size-7 shrink-0 rounded-pill bg-well" />
-            <span className="hidden h-3 w-14 rounded-pill bg-well sm:block" />
-            {step < 3 ? <span className="h-px flex-1 bg-border" /> : null}
-          </div>
+          <span
+            key={step}
+            className="flex-none rounded-[15px] bg-well"
+            style={{
+              width: step === 0 ? 200 : 168,
+              height: step === 0 ? 114 : 96,
+            }}
+          />
         ))}
       </div>
 
-      <div className="mt-8 h-7 w-64 rounded-field bg-well" />
-      <div className="mt-6 grid gap-2.5 md:grid-cols-3">
-        {[0, 1, 2].map((card) => (
-          <div key={card} className="h-[124px] rounded-card bg-well" />
-        ))}
-      </div>
+      <div className="mt-6 min-h-[440px] w-full rounded-[28px] bg-canvas" />
     </div>
   );
 }

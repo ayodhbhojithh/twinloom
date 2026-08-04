@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 
 import { PHASES, STEPS } from "@/lib/build/v5";
 import { type Answers } from "@/lib/build/v5-store";
+import { cutCardPath } from "@/lib/shape";
 import { cn } from "@/lib/utils";
 
 import { stateOf, stepStatus } from "./kit";
@@ -51,42 +52,8 @@ const CARD = {
   flare: 17,
 };
 
-/**
- * The card's outline: a rounded rectangle with its bottom right corner given
- * up for the mark that stands in it.
- *
- * Written out rather than mirrored. The landing card's `outline` carries a
- * notch and a bite this card has no use for, and flipping its path to move the
- * cut carried a squared off corner along with it - which is what put a hard
- * angle at the top right.
- *
- * The rule is the same one, and that is what matters: one flare and one
- * radius. A flare is where the cut meets an edge and curves outward, so its
- * centre sits in the card and it takes sweep 1. The cut's own inner corner
- * curves the other way and takes sweep 0. Getting those backwards does not
- * produce a subtle error - it bites a quarter disc out beside the cut.
- */
-function cardPath(w: number, h: number, c: number, r: number, f: number) {
-  return [
-    `M ${r} 0`,
-    `L ${w - r} 0`,
-    `A ${r} ${r} 0 0 1 ${w} ${r}`,
-    `L ${w} ${h - c - f}`,
-    `A ${f} ${f} 0 0 1 ${w - f} ${h - c}`,
-    `L ${w - c + r} ${h - c}`,
-    `A ${r} ${r} 0 0 0 ${w - c} ${h - c + r}`,
-    `L ${w - c} ${h - f}`,
-    `A ${f} ${f} 0 0 1 ${w - c - f} ${h}`,
-    `L ${r} ${h}`,
-    `A ${r} ${r} 0 0 1 0 ${h - r}`,
-    `L 0 ${r}`,
-    `A ${r} ${r} 0 0 1 ${r} 0`,
-    "Z",
-  ].join(" ");
-}
-
-const CARD_PATH = cardPath(CARD.w, CARD.h, CARD.cut, CARD.radius, CARD.flare);
-const CARD_PATH_ON = cardPath(
+const CARD_PATH = cutCardPath(CARD.w, CARD.h, CARD.cut, CARD.radius, CARD.flare);
+const CARD_PATH_ON = cutCardPath(
   CARD.onW,
   CARD.onH,
   CARD.cut,

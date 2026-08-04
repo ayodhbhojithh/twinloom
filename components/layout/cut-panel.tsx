@@ -159,7 +159,11 @@ export function CutPanel({
           paddingTop: (toolbar ? cut.barDepth : 0) + 28,
           paddingBottom: band
             ? 28
-            : (aside || corner ? cut.biteHeight : 28) + 28,
+            : Math.max(
+                aside ? cut.biteHeight : 0,
+                corner ? cut.dropHeight : 0,
+                28,
+              ) + 28,
           paddingLeft: pad,
           paddingRight: pad,
         }}
