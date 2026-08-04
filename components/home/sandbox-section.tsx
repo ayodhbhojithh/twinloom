@@ -46,15 +46,25 @@ import { ParticleWordmark } from "./particle-wordmark";
 --------------------------------------------------------------------------- */
 
 /**
- * The six pieces on the shelf.
+ * The pieces on the shelf, in the order they are offered.
  *
- * A name, a mark and whether it runs. No line of copy under each one: the two
+ * A name, a mark and whether it runs. No line of copy under each one: the three
  * that are live say what they are by running, and a sentence describing a thing
  * the reader is looking at is a caption for a picture that is not a picture.
  * The four that are not built carry their explanation on the stage instead,
  * where there is nothing else to look at and it is the whole point.
+ *
+ * The live ones lead. The bench opens on whatever is first here, and opening on
+ * a piece that is only an idea would make the shelf a list of things we have
+ * not done.
  */
 const PIECES = [
+  {
+    key: "loom",
+    name: "The loom",
+    icon: Waves,
+    live: true,
+  },
   {
     key: "liquid",
     name: "Liquid wordmark",
@@ -65,12 +75,6 @@ const PIECES = [
     key: "particles",
     name: "Particle wordmark",
     icon: Sparkles,
-    live: true,
-  },
-  {
-    key: "loom",
-    name: "The loom",
-    icon: Waves,
     live: true,
   },
   {
@@ -337,7 +341,7 @@ export function SandboxSection() {
               Below `md` there is no shelf beside it to match, so it goes back
               into the flow with a height of its own. */}
           <div className="relative min-w-0">
-            <div className="relative h-[220px] overflow-hidden rounded-[18px] bg-canvas sm:h-[280px] md:absolute md:inset-0 md:h-auto">
+            <div className="relative h-[220px] overflow-hidden rounded-[18px] sm:h-[280px] md:absolute md:inset-0 md:h-auto">
               {piece.key === "particles" ? (
                 <ParticleWordmark word="TwinLoom" className="h-full w-full" />
               ) : null}
