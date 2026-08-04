@@ -1,4 +1,4 @@
-import { BuildTool } from "@/components/build/build-tool";
+import { BuildFlow } from "@/components/build/v5/flow";
 
 import { LoomStrings } from "./loom-strings";
 
@@ -43,12 +43,17 @@ export function BuildSection() {
 
         <LoomStrings word="Build your website" className="mx-auto max-w-wide" />
 
-        <p className="mx-auto mt-8 mb-8 max-w-[1400px] text-center text-[17.5px] leading-[1.6] text-ink sm:text-[19px]">
-          Read what this does, work through the areas, or just send us what you
-          have.
+        <p className="mx-auto mt-8 mb-12 max-w-[1400px] text-center text-[17.5px] leading-[1.6] text-ink sm:text-[19px]">
+          Two ways through, and you can move between them without losing
+          anything. Two minutes gets you a shape. Everything after that is yours
+          to give or to leave.
         </p>
 
-        <BuildTool idPrefix="home-build" centred />
+        {/* The run-through itself, not a shorter version of it. It reads the
+            same answers as the build page, so somebody who starts here and
+            follows a link through arrives at the step they were on with
+            everything they have already said still in it. */}
+        <BuildFlow />
       </div>
     </section>
   );
