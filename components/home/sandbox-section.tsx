@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import { CutPanel } from "@/components/layout/cut-panel";
 import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -184,148 +185,188 @@ export function SandboxSection() {
 
         <p className="mt-5 max-w-[74ch] text-[15px] leading-[1.6] text-quiet sm:text-[16.5px]">
           A bench rather than a showreel. Pick a piece up, let it run, and ask
-          for it in yours - every one of these is a component a site could carry.
+          for it in yours - every one of these is a component a site could
+          carry.
         </p>
       </div>
 
-      <div className="mt-10 overflow-hidden rounded-[24px] bg-field lg:mt-12">
-        <div className="grid lg:grid-cols-[300px_minmax(0,1fr)]">
-          {/* The shelf. Two you can pick up, four we would build. */}
-          <div className="border-b border-hair p-3 lg:border-r lg:border-b-0">
-            <p className="px-3 pt-2 pb-3 font-mono text-[8.5px] font-bold tracking-[0.16em] text-label uppercase">
-              On the bench
-            </p>
+      {/* The bench, cut the way every working surface on this site is cut: the
+          piece's name stands in the notch, which one of six it is stands in the
+          bite, and the way on is the disc in the corner.
 
-            <ul
-              role="listbox"
-              aria-label="Pieces"
-              className="flex flex-col gap-0.5"
+          No rules inside it. A plain box divided by hairlines was the one
+          surface on this page that did not belong to the site - here the shape
+          separates the parts and space does the rest. */}
+      <CutPanel
+        tone="field"
+        className="mt-10 w-full lg:mt-12"
+        toolbar={
+          <span className="flex h-10 w-full items-center justify-center gap-2.5">
+            <span className="truncate text-[13.5px] leading-none font-bold text-ink">
+              {piece.name}
+            </span>
+            <span
+              className={cn(
+                "flex-none font-mono text-[8.5px] font-bold tracking-[0.14em] uppercase",
+                piece.live ? "text-mark" : "text-idx",
+              )}
             >
-              {PIECES.map((entry) => {
-                const on = entry.key === at;
+              {piece.live ? "Live" : "Idea"}
+            </span>
+          </span>
+        }
+        aside={
+          <div className="flex size-full flex-col items-center justify-center">
+            <b className="font-mono text-[20px] leading-none font-bold text-ink tabular-nums">
+              {String(
+                PIECES.findIndex((entry) => entry.key === at) + 1,
+              ).padStart(2, "0")}
+            </b>
+            <span className="mt-1.5 font-mono text-[8px] font-bold tracking-[0.1em] text-label uppercase">
+              of {PIECES.length}
+            </span>
+          </div>
+        }
+        corner={
+          <Link
+            href={ROUTES.build}
+            aria-label="Add one to your journey"
+            title="Add one to your journey"
+            className="flex size-11 items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
+          >
+            <ArrowUpRight className="size-[18px]" strokeWidth={2.2} />
+          </Link>
+        }
+      >
+        <div className="grid gap-7 lg:grid-cols-[264px_minmax(0,1fr)]">
+          {/* The shelf. Ink for the one in hand, the ground for the rest. */}
+          <ul
+            role="listbox"
+            aria-label="Pieces"
+            className="flex flex-col gap-1.5"
+          >
+            {PIECES.map((entry) => {
+              const on = entry.key === at;
 
-                return (
-                  <li key={entry.key}>
-                    <button
-                      type="button"
-                      role="option"
-                      aria-selected={on}
-                      onClick={() => setAt(entry.key)}
+              return (
+                <li key={entry.key}>
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={on}
+                    onClick={() => setAt(entry.key)}
+                    className={cn(
+                      "flex w-full cursor-pointer items-center gap-3 rounded-[14px] px-3 py-2.5 text-left transition-colors",
+                      on ? "bg-ink" : "bg-canvas hover:bg-canvas-firm",
+                    )}
+                  >
+                    <span
+                      aria-hidden
                       className={cn(
-                        "flex w-full cursor-pointer items-center gap-3 rounded-[12px] px-3 py-2.5 text-left transition-colors",
-                        on ? "bg-canvas" : "hover:bg-canvas",
+                        "flex size-8 flex-none items-center justify-center rounded-pill transition-colors",
+                        on
+                          ? "bg-white/15 text-white"
+                          : entry.live
+                            ? "bg-field text-quiet"
+                            : "bg-field text-planned",
                       )}
                     >
-                      <span
-                        aria-hidden
-                        className={cn(
-                          "flex size-8 flex-none items-center justify-center rounded-pill transition-colors",
-                          on
-                            ? "bg-ink text-white"
-                            : entry.live
-                              ? "bg-canvas text-quiet"
-                              : "bg-canvas text-planned",
-                        )}
-                      >
-                        <entry.icon className="size-4" />
-                      </span>
+                      <entry.icon className="size-4" />
+                    </span>
 
-                      <span className="min-w-0 flex-1">
-                        <span
-                          className={cn(
-                            "block truncate text-[13.5px] font-semibold",
-                            on ? "text-ink" : "text-body",
-                          )}
-                        >
-                          {entry.name}
-                        </span>
-                      </span>
+                    <span
+                      className={cn(
+                        "min-w-0 flex-1 truncate text-[13.5px] font-semibold",
+                        on ? "text-white" : "text-body",
+                      )}
+                    >
+                      {entry.name}
+                    </span>
 
-                      <span
-                        className={cn(
-                          "flex-none font-mono text-[8px] font-bold tracking-[0.12em] uppercase",
-                          entry.live ? "text-mark" : "text-idx",
-                        )}
-                      >
-                        {entry.live ? "Live" : "Idea"}
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+                    <span
+                      className={cn(
+                        "flex-none font-mono text-[8px] font-bold tracking-[0.12em] uppercase",
+                        on
+                          ? "text-white/50"
+                          : entry.live
+                            ? "text-mark"
+                            : "text-idx",
+                      )}
+                    >
+                      {entry.live ? "Live" : "Idea"}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
 
-          {/* The bench itself. One piece at a time, with the whole stage. */}
-          <div className="flex min-w-0 flex-col">
-            <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3 px-6 pt-6">
-              <div className="min-w-0">
-                <h3 className="text-[17px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink">
-                  {piece.name}
-                </h3>
-                <p className="mt-1.5 max-w-[56ch] text-[13.5px] leading-[1.6] text-quiet">
-                  {piece.note}
-                </p>
-              </div>
+          {/* The stage. Clipped and given a height of its own: both widgets
+              size themselves to whatever box they are in, and without one they
+              grow until they are over the words above them. */}
+          <div className="min-w-0">
+            <p className="max-w-[62ch] text-[13.5px] leading-[1.6] text-quiet">
+              {piece.note}
+            </p>
 
-              {piece.key === "loom" ? (
-                <button
-                  type="button"
-                  onClick={toggle}
-                  aria-pressed={playing}
-                  className={cn(
-                    "flex flex-none cursor-pointer items-center gap-2 rounded-pill px-3.5 py-1.5 font-mono text-[8.5px] font-bold tracking-[0.12em] uppercase transition-colors",
-                    playing
-                      ? "bg-ink text-white"
-                      : "bg-canvas text-quiet hover:text-ink",
-                  )}
-                >
-                  {playing ? (
-                    <Pause className="size-3" />
-                  ) : (
-                    <Play className="size-3" />
-                  )}
-                  {playing ? "Stop the notes" : "Play the notes"}
-                </button>
-              ) : null}
-            </div>
-
-            {/* Clipped, and given a height of its own. Both of these size
-                themselves to whatever box they are in; without one they grow
-                until they are over the words above them, which is exactly what
-                a grid of small tiles did to them. */}
-            <div className="relative mt-4 h-[300px] min-w-0 overflow-hidden px-2 pb-2 sm:h-[340px]">
+            <div className="relative mt-4 h-[280px] overflow-hidden rounded-[18px] bg-canvas sm:h-[320px]">
               {piece.key === "particles" ? (
                 <ParticleWordmark word="TwinLoom" className="h-full w-full" />
               ) : null}
 
               {piece.key === "loom" ? (
-                <div className="flex h-full items-center">
-                  <LoomStrings word="Play it" className="w-full" />
-                </div>
+                <>
+                  <div className="flex h-full items-center px-2">
+                    <LoomStrings word="Play it" className="w-full" />
+                  </div>
+
+                  {/* The one control that belongs to a piece rather than to the
+                      bench, so it stands on the piece. */}
+                  <button
+                    type="button"
+                    onClick={toggle}
+                    aria-pressed={playing}
+                    className={cn(
+                      "absolute top-3 right-3 flex cursor-pointer items-center gap-2 rounded-pill px-3.5 py-1.5 font-mono text-[8.5px] font-bold tracking-[0.12em] uppercase transition-colors",
+                      playing
+                        ? "bg-ink text-white"
+                        : "bg-field text-quiet hover:text-ink",
+                    )}
+                  >
+                    {playing ? (
+                      <Pause className="size-3" />
+                    ) : (
+                      <Play className="size-3" />
+                    )}
+                    {playing ? "Stop" : "Play"}
+                  </button>
+                </>
               ) : null}
 
               {!piece.live ? (
-                /* Not built, and said so. The bench shows what it would carry
-                   rather than a picture of a thing that does not exist. */
+                /* Not built, and said so. The bench names what it would carry
+                   rather than drawing a picture of a thing that does not
+                   exist. */
                 <div className="flex h-full flex-col items-center justify-center px-6 text-center">
                   <span
                     aria-hidden
-                    className="flex size-12 items-center justify-center rounded-pill bg-canvas text-idx"
+                    className="flex size-12 items-center justify-center rounded-pill bg-field text-idx"
                   >
                     <piece.icon className="size-5" />
                   </span>
 
-                  <p className="mt-4 max-w-[42ch] text-[14px] leading-[1.6] text-quiet">
-                    Not built yet. It is a piece we would write into a build
-                    rather than a thing we are pretending to have finished.
+                  <p className="mt-4 max-w-[44ch] text-[13.5px] leading-[1.6] text-quiet">
+                    Not built yet. A piece we would write into a build rather
+                    than a thing we are pretending to have finished.
                   </p>
 
                   <Link
                     href={"at" in piece && piece.at ? piece.at : ROUTES.build}
                     className="group/ask mt-5 inline-flex items-center gap-2 rounded-pill bg-ink px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-85"
                   >
-                    {"at" in piece && piece.at ? "See it working" : "Ask for it"}
+                    {"at" in piece && piece.at
+                      ? "See it working"
+                      : "Ask for it"}
                     <ArrowUpRight
                       aria-hidden
                       className="size-3.5 transition-transform group-hover/ask:translate-x-0.5 group-hover/ask:-translate-y-0.5"
@@ -335,32 +376,18 @@ export function SandboxSection() {
               ) : null}
             </div>
 
-            {/* The foot: what picking one up actually leads to. */}
-            <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t border-hair px-6 py-4">
-              <p className="flex items-center gap-2.5 text-[12.5px] leading-[1.5] text-label">
-                <Check
-                  aria-hidden
-                  className="size-3.5 flex-none text-mark"
-                  strokeWidth={3}
-                />
-                Anything here can be written into a scope as a named piece of
-                work.
-              </p>
-
-              <Link
-                href={ROUTES.build}
-                className="group/add inline-flex items-center gap-2 rounded-pill bg-canvas px-4 py-2 text-[13px] font-semibold text-ink transition-colors hover:bg-hair"
-              >
-                Add one to your journey
-                <ArrowUpRight
-                  aria-hidden
-                  className="size-3.5 transition-transform group-hover/add:translate-x-0.5 group-hover/add:-translate-y-0.5"
-                />
-              </Link>
-            </div>
+            <p className="mt-4 flex items-center gap-2.5 text-[12.5px] leading-[1.5] text-label">
+              <Check
+                aria-hidden
+                className="size-3.5 flex-none text-mark"
+                strokeWidth={3}
+              />
+              Anything here can be written into a scope as a named piece of
+              work.
+            </p>
           </div>
         </div>
-      </div>
+      </CutPanel>
     </section>
   );
 }
