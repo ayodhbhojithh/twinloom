@@ -114,6 +114,19 @@ const PIECES = [
 const SCALE = [261.63, 293.66, 349.23, 392.0, 440.0, 523.25];
 
 /**
+ * One picture for every card on the bench, for now.
+ *
+ * The showcase stands in for work we have not photographed yet, and five
+ * different pictures make five different claims about what each of these looks
+ * like. One plate under all of them says what it is - a surface the names are
+ * printed on - and it changes in one place when there are real screenshots to
+ * put there.
+ *
+ * The landing carousel keeps its own images: there, the picture is the point.
+ */
+const WORK_PLATE = "/work-shop.png";
+
+/**
  * How the picture leaves the card: thinned out into it, never cut.
  *
  * A mask rather than a wash over the top. Painting white over a photograph
@@ -582,10 +595,10 @@ function WorkCard({
             scheme. */}
         <span className="absolute inset-x-0 top-0 block h-[78%]">
           <Image
-            src={project.image}
+            src={WORK_PLATE}
             alt=""
             fill
-            quality={95}
+            quality={100}
             sizes="(max-width: 640px) 92vw, (max-width: 1280px) 34vw, 20vw"
             className="object-cover object-center transition-transform duration-500 group-hover/work:scale-[1.06]"
             style={{ maskImage: SCRIM, WebkitMaskImage: SCRIM }}
@@ -735,10 +748,10 @@ function WorkOpen({
         className="relative block h-[clamp(220px,32vw,440px)] w-full cursor-pointer overflow-hidden"
       >
         <Image
-          src={project.image}
+          src={WORK_PLATE}
           alt={project.alt}
           fill
-          quality={95}
+          quality={100}
           sizes="(max-width: 1024px) 96vw, 60vw"
           className="object-cover object-center"
         />
