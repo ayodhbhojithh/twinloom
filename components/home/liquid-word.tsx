@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
+import { cn } from "@/lib/utils";
+
 /* ---------------------------------------------------------------------------
    The name, as a liquid.
 
@@ -288,10 +290,13 @@ export function LiquidWord({
   }, [word]);
 
   return (
+    /* The height is a class rather than an inline style so a caller can take it
+       off. An inline height beats every class, so anywhere this had to fill a
+       box it was stuck at its own clamp and left a strip of empty under itself.
+       Through the merge, a height passed in wins and this is the default. */
     <div
       ref={frame}
-      className={className}
-      style={{ height: "clamp(160px, 30svh, 300px)" }}
+      className={cn("h-[clamp(160px,30svh,300px)]", className)}
     >
       <canvas ref={surface} aria-hidden className="block h-full w-full" />
     </div>

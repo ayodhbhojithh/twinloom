@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowUpRight,
   CalendarClock,
+  Droplets,
   Map,
   Pause,
   Pipette,
@@ -20,6 +21,7 @@ import { cutCardPath, cutCardPathTop } from "@/lib/shape";
 import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
+import { LiquidWord } from "./liquid-word";
 import { LoomStrings } from "./loom-strings";
 import { PROJECTS } from "./projects";
 import { ParticleWordmark } from "./particle-wordmark";
@@ -36,7 +38,7 @@ import { ParticleWordmark } from "./particle-wordmark";
    thing you can actually try - and it gives each widget the whole stage rather
    than a quarter of a screen it immediately overran.
 
-   Two of these run. The rest are named as ideas rather than drawn as though
+   Three of these run. The rest are named as ideas rather than drawn as though
    they were finished, because a mock-up of something that does not exist is the
    same lie as a logo of a client we do not have.
 --------------------------------------------------------------------------- */
@@ -55,6 +57,12 @@ const PIECES = [
     key: "particles",
     name: "Particle wordmark",
     icon: Sparkles,
+    live: true,
+  },
+  {
+    key: "liquid",
+    name: "Liquid wordmark",
+    icon: Droplets,
     live: true,
   },
   {
@@ -196,31 +204,22 @@ export function SandboxSection() {
         </p>
       </div>
 
-      {/* The bench, cut the way every working surface on this site is cut: the
-          piece's name stands in the notch, which one of six it is stands in the
-          bite, and the way on is the disc in the corner.
+      {/* The bench, cut the way every working surface on this site is cut:
+          which one of the set you are on stands in the bite, and the way on is
+          the disc in the corner.
 
-          No rules inside it. A plain box divided by hairlines was the one
+          Nothing stands in the notch, so there is no notch. It named the piece
+          the shelf had already named one row to the left and lit in ink - the
+          surface was being cut open at the top to repeat a word the reader had
+          just pressed. Left empty the cut closes itself and the bench keeps a
+          clean top edge.
+
+          No rules inside it either. A plain box divided by hairlines was the one
           surface on this page that did not belong to the site - here the shape
           separates the parts and space does the rest. */}
       <CutPanel
         tone="field"
         className="mt-10 w-full lg:mt-12"
-        toolbar={
-          <span className="flex h-10 w-full items-center justify-center gap-2.5">
-            <span className="truncate text-[13.5px] leading-none font-bold text-ink">
-              {piece.name}
-            </span>
-            <span
-              className={cn(
-                "flex-none font-mono text-[8.5px] font-bold tracking-[0.14em] uppercase",
-                piece.live ? "text-mark" : "text-idx",
-              )}
-            >
-              {piece.live ? "Live" : "Idea"}
-            </span>
-          </span>
-        }
         aside={
           <div className="flex size-full flex-col items-center justify-center">
             <b className="font-mono text-[20px] leading-none font-bold text-ink tabular-nums">
@@ -312,16 +311,31 @@ export function SandboxSection() {
               themselves to whatever box they are in and without one they grow
               until they have taken the section.
 
-              Beside the shelf that height is the shelf's: six rows of a known
-              size are what the row is tall, and a stage cut to its own number
-              instead stopped an inch short of them and left the bench looking
-              like two panels that had been measured separately. Below `md`
-              there is no shelf beside it to match, so it is back to a height of
-              its own. */}
-          <div className="min-w-0">
-            <div className="relative h-[220px] overflow-hidden rounded-[18px] bg-canvas sm:h-[280px] md:h-full">
+              Beside the shelf that height is the shelf's, and it is taken by
+              lifting the stage out of the flow rather than by asking it for
+              `height: 100%`. The percentage cannot work here: it would resolve
+              against a column whose own height is whatever its content asks
+              for, and the content asking is the stage - so the browser drops
+              back to the canvas's intrinsic size and the stage runs to twice
+              the shelf. Out of the flow it adds nothing to the row, the row is
+              the six shelf rows tall, and the stage fills exactly that.
+
+              Below `md` there is no shelf beside it to match, so it goes back
+              into the flow with a height of its own. */}
+          <div className="relative min-w-0">
+            <div className="relative h-[220px] overflow-hidden rounded-[18px] bg-canvas sm:h-[280px] md:absolute md:inset-0 md:h-auto">
               {piece.key === "particles" ? (
                 <ParticleWordmark word="TwinLoom" className="h-full w-full" />
+              ) : null}
+
+              {piece.key === "liquid" ? (
+                /* The home page's own liquid, at the bench's height rather than
+                   its own clamp. Crosshair because it is a surface you disturb
+                   rather than a picture you look at. */
+                <LiquidWord
+                  word="TwinLoom"
+                  className="h-full w-full cursor-crosshair"
+                />
               ) : null}
 
               {piece.key === "loom" ? (
