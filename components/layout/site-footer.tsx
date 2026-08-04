@@ -1,21 +1,23 @@
+import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
-import { FOOTER_COLUMNS, FOOTER_LEGAL, LEGAL, SITE } from "@/lib/site";
+import { FOOTER_COLUMNS, FOOTER_LEGAL, LEGAL, ROUTES, SITE } from "@/lib/site";
 
+import { CutPanel, TopDisc } from "./cut-panel";
 import { Wordmark } from "./wordmark";
 
 /**
  * The site footer.
  *
- * The mark and what we do on the left, the sections beside it, and one rule
- * with the paperwork under it. No panel, no fill and no ornament: a footer on a
- * site built from white and hairlines should be the same site, quieter, rather
- * than a slab bolted to the bottom of it.
+ * One cut surface, the same shape the landing card and every working screen are
+ * built from. The mark stands in the notch at the top, the year stands in the
+ * bite at the bottom left, and the way back up is a disc in the corner cut - so
+ * the last thing on the page is recognisably the same site as the first, rather
+ * than a slab bolted underneath it.
  *
- * Large, and made of almost nothing. This is the last thing on every page and
- * the one place a reader is deciding whether to go somewhere else, so the links
- * are given room to be read rather than scanned. What separates the bands is
- * space, and the only rule on the whole thing is the one above the paperwork.
+ * Minimal by subtraction. There are no rules, no boxes and no fills inside the
+ * surface: what separates one band from the next is space, and the shape does
+ * the work an ornament would otherwise be asked to do.
  *
  * It invents nothing. There is no phone number, address or inbox here because
  * the site does not have those written down anywhere, and a footer is the last
@@ -25,70 +27,97 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="page-frame border-t border-hair py-10 lg:py-11">
-      {/* The sections take only the width they need and sit together on the
-          right, with the mark holding the left. Even columns across the whole
-          width read as four unrelated things rather than as one block of links
-          beside a name. */}
-      <div className="grid w-full grid-cols-2 gap-x-10 gap-y-8 lg:grid-cols-[minmax(0,1fr)_repeat(3,minmax(0,auto))] lg:gap-x-20">
-        <div className="col-span-2 min-w-0 lg:col-span-1">
-          <Wordmark />
+    <footer className="page-frame pt-6 pb-7">
+      <CutPanel
+        className="w-full"
+        toolbar={
+          /* Filling the notch, not floating in it. A plate narrower than the
+             cut leaves the cut showing either side of it, which reads as two
+             shapes that failed to line up rather than as one. */
+          <span className="flex h-10 w-full items-center justify-center rounded-pill bg-field">
+            <Wordmark />
+          </span>
+        }
+        corner={<TopDisc />}
+        foot={
+          /* Last, smallest, and still legible. It is the one thing here nobody
+             reads by choice, and burying it any further would be a decision
+             about somebody else's rights - so it runs along the bottom band
+             between the year and the way up, rather than above an empty
+             strip. */
+          <div className="flex w-full flex-col gap-x-10 gap-y-4 lg:flex-row lg:items-center lg:justify-between">
+            <p className="order-2 max-w-[68ch] text-[11.5px] leading-[1.55] text-label lg:order-1">
+              {LEGAL.line}
+              <span className="mt-1 block text-quiet">
+                &copy; {year} {LEGAL.entity}. {LEGAL.rights}
+                <span className="sr-only"> {SITE.name}.</span>
+              </span>
+            </p>
 
-          <p className="mt-3 max-w-[52ch] text-[14px] leading-[1.55] text-quiet">
-            {SITE.description}
-          </p>
+            <nav aria-label="Legal" className="order-1 flex-none lg:order-2">
+              <ul className="flex flex-wrap gap-x-5 gap-y-2">
+                {FOOTER_LEGAL.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-[12.5px] font-medium text-quiet underline decoration-planned decoration-1 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        }
+      >
+        {/* The ask, and everywhere else, on one line of the grid. The line is
+            given the weight of a heading because it is the only sentence down
+            here that anybody reads on purpose. */}
+        <div className="grid gap-x-10 gap-y-10 sm:grid-cols-3 lg:grid-cols-[minmax(0,1.25fr)_repeat(3,minmax(0,1fr))]">
+          <div className="min-w-0 sm:col-span-3 lg:col-span-1">
+            <p className="max-w-[24ch] text-[clamp(21px,2.1vw,30px)] leading-[1.12] font-extrabold tracking-[-0.035em] text-ink">
+              {SITE.tagline}
+            </p>
+
+            <Link
+              href={ROUTES.build}
+              className="group/go mt-5 inline-flex items-center gap-2 rounded-pill bg-ink px-5 py-2.5 text-[14px] font-semibold text-white transition-opacity hover:opacity-85"
+            >
+              Build your website
+              <ArrowUpRight
+                aria-hidden
+                className="size-4 transition-transform group-hover/go:translate-x-0.5 group-hover/go:-translate-y-0.5"
+              />
+            </Link>
+          </div>
+
+          {FOOTER_COLUMNS.map((column) => (
+            <nav
+              key={column.title}
+              aria-label={column.title}
+              className="min-w-0"
+            >
+              <h3 className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
+                {column.title}
+              </h3>
+
+              <ul className="mt-3.5 flex flex-col gap-2.5">
+                {column.links.map((link) => (
+                  <li key={`${column.title}-${link.href}`}>
+                    <Link
+                      href={link.href}
+                      className="text-[13.5px] leading-[1.3] font-medium text-quiet transition-colors hover:text-ink"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
         </div>
-
-        {FOOTER_COLUMNS.map((column) => (
-          <nav key={column.title} aria-label={column.title} className="min-w-0">
-            <h3 className="mb-3 text-[14px] font-semibold tracking-[-0.01em] text-ink">
-              {column.title}
-            </h3>
-
-            <ul className="flex flex-col gap-2.5">
-              {column.links.map((link) => (
-                <li key={`${column.title}-${link.href}`}>
-                  <Link
-                    href={link.href}
-                    className="text-[14px] leading-[1.3] font-medium text-quiet transition-colors hover:text-ink"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        ))}
-      </div>
-
-      <div className="mt-9 flex flex-col justify-between gap-3 border-t border-hair pt-5 lg:flex-row lg:items-center">
-        <p className="text-[13px] font-medium text-quiet">
-          &copy; {year} {LEGAL.entity}. {LEGAL.rights}
-          <span className="sr-only"> {SITE.name}.</span>
-        </p>
-
-        <nav aria-label="Legal">
-          <ul className="flex flex-wrap gap-x-5 gap-y-2">
-            {FOOTER_LEGAL.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="text-[13px] font-medium text-quiet underline decoration-planned decoration-1 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
-
-      {/* Last, smallest, and still legible. It is the one thing here nobody
-          reads by choice, and burying it any further would be a decision about
-          somebody else's rights. */}
-      <p className="mt-4 text-[12px] leading-[1.55] text-label">
-        {LEGAL.line}
-      </p>
+      </CutPanel>
     </footer>
   );
 }
