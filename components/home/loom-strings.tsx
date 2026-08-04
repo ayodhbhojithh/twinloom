@@ -68,7 +68,7 @@ const bow = (t: number) => Math.sin(t * Math.PI * 0.5);
 
 /** Ink, and the accent a ringing thread carries. */
 const REST = [17, 24, 39] as const;
-const RUNG = [189, 87, 48] as const;
+const RUNG = [37, 99, 235] as const;
 
 /**
  * A thread's colour, at rest through to fully struck.

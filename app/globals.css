@@ -32,15 +32,15 @@
 
   /* Surfaces, lightest to firmest.
 
-     `canvas` is the warm ground the shaped surfaces sit on: off-white with a
-     little of the accent in it, so a cut card reads as paper rather than as a
-     grey box, and set firmly enough that the shape of the cut is legible
-     against a white page. `canvas-firm` is the same paper one press darker,
-     for a card being hovered. Every other surface stays neutral, which is what
-     lets the warm one register at all. */
+     `canvas` is the ground the shaped surfaces sit on: off-white with a little
+     of the accent in it, so a cut card reads as paper rather than as a grey
+     box, and set firmly enough that the shape of the cut is legible against a
+     white page. `canvas-firm` is the same paper one press darker, for a card
+     being hovered. Every other surface stays neutral, which is what lets the
+     tinted one register at all. */
   --color-field: #ffffff;
-  --color-canvas: #f5efe8;
-  --color-canvas-firm: #ede5db;
+  --color-canvas: #eef2f9;
+  --color-canvas-firm: #e3eaf5;
   --color-well: #e6e9ee;
   --color-hair: #d1d6df;
   --color-border: #b7bfcc;
@@ -58,12 +58,17 @@
 
   /* The one accent in the system.
 
-     A warm terracotta rather than a blue or a green. Green means done and
-     nothing here is being completed; blue means a link and everything on a
-     working screen would then look like one. This is the colour of a mark made
-     by hand on a page, which is what every use of it stands for: a thing you
-     set, not a thing that passed. */
-  --color-mark: #bd5730;
+     Blue, and the same blue the system already had under the name `active`.
+     Green is out because it means done, and nothing on these screens is being
+     completed - a thing you set is not a thing that passed. What is left is one
+     colour, used for every mark, so a red or an orange anywhere on the site now
+     means something has genuinely gone wrong rather than that something has
+     been chosen.
+
+     Links are not painted in it. That was the old objection to a blue accent,
+     and it only holds if links are blue too; here they are ink with an
+     underline, so the accent is free to mean what it says. */
+  --color-mark: #2563eb;
 
   /* Kept because shadcn's primitives resolve against them, and because a form
      that genuinely fails still has to be able to say so. Neither is used to
