@@ -41,9 +41,9 @@
   --color-field: #ffffff;
   --color-canvas: #f5efe8;
   --color-canvas-firm: #ede5db;
-  --color-well: #eceef2;
-  --color-hair: #dbdfe6;
-  --color-border: #c6ccd6;
+  --color-well: #e6e9ee;
+  --color-hair: #d1d6df;
+  --color-border: #b7bfcc;
 
   /* Type, faintest to firmest.
 
@@ -72,10 +72,10 @@
   --color-done: #059669;
   --color-amber: #d97706;
   --color-blocked: #dc2626;
-  --color-planned: #b8bfcb;
+  --color-planned: #a8b1c0;
   --color-unrated: #e9ebef;
   /* The mono index grey, for numbers that are labels rather than data. */
-  --color-idx: #8b93a1;
+  --color-idx: #7e8798;
 
   --radius-card: 10px;
   --radius-field: 8px;

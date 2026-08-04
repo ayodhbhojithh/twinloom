@@ -78,13 +78,23 @@ export function StageStep({
       aside={
         /* What the answers add up to, standing where the next project stands
            on the landing card. One number: the panel carries the list, and
-           this only has to say the list is growing. */
-        <div className="flex size-full flex-col justify-center rounded-[18px] border border-border bg-field px-3.5">
+           this only has to say the list is growing.
+
+           No box round it. The cut is already the outline - a second one drawn
+           a few pixels inside reads as a sticker on the card rather than as
+           the thing the card was cut back for, which is the rule the landing
+           card's own thumbnail follows.
+
+           Centred in the cut, both ways. Set to the corner, the number and its
+           label were two left edges inside a square with nothing else in it,
+           which reads as a thing that slipped rather than a thing that was
+           placed. */
+        <div className="flex size-full flex-col items-center justify-center">
           <b className="font-mono text-[24px] leading-none font-bold text-ink tabular-nums">
             {pages}
           </b>
-          <span className="mt-1.5 font-mono text-[8.5px] font-bold tracking-[0.1em] text-label uppercase">
-            Pages so far
+          <span className="mt-1.5 font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase">
+            Pages
           </span>
         </div>
       }

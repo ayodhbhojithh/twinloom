@@ -120,8 +120,12 @@ export function Stage({
       Math.max(flare * 2 + 60, w - 2 * (radius + flare) - 8),
     );
 
-    const bite = Math.max(92, Math.min(Math.min(w * 0.15, h * 0.18), 140));
-    const drop = Math.max(flare * 2 + 14, Math.min(w * 0.07, 82));
+    /* One size for both cuts. The corner needs `flare * 2` before its arcs
+       overlap, and the fourteen on top of that is the air round a 44px
+       control. */
+    const cut = Math.max(flare * 2 + 22, Math.min(w * 0.08, 96));
+    const bite = cut;
+    const drop = cut;
 
     return {
       radius,
@@ -189,7 +193,10 @@ export function Stage({
         className="relative z-10"
         style={{
           paddingTop: (toolbar ? cut.barDepth : 0) + 22,
-          paddingBottom: (aside ? cut.biteHeight : 26) + 14,
+          /* Clear of the bite and then some. The content only has to miss the
+             cut to be legal, and a last line that stops exactly where the
+             corner starts reads as though it were trimmed by it. */
+          paddingBottom: (aside ? cut.biteHeight : 26) + 34,
           paddingLeft: pad,
           paddingRight: pad,
         }}
