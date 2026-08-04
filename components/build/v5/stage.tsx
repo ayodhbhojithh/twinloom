@@ -30,6 +30,7 @@ export function Stage({
   corner,
   aside,
   scrollKey,
+  tone = "canvas",
   className,
   children,
 }: {
@@ -44,6 +45,12 @@ export function Stage({
    * its own top.
    */
   scrollKey?: string;
+  /**
+   * The ground. `canvas` is the warm paper the run-through sits on; `field` is
+   * white, for a surface that opens over the page and has to separate itself
+   * from the canvas behind it.
+   */
+  tone?: "canvas" | "field";
   className?: string;
   children: React.ReactNode;
 }) {
@@ -114,11 +121,17 @@ export function Stage({
     const radius = Math.max(20, Math.min(w * 0.02 + 14, 32));
     const flare = Math.max(22, Math.min(h * 0.03, 28));
 
-    const barDepth = flare * 2;
-    const barWidth = Math.min(
-      Math.max(flare * 2 + 190, Math.min(w * 0.4, 430)),
-      Math.max(flare * 2 + 60, w - 2 * (radius + flare) - 8),
-    );
+    /* Collapsed when nothing stands in it, exactly as the other two cuts are.
+       A notch with nothing in it is not a quieter version of the toolbar - it
+       is a bite taken out of the top edge for no reason, and it reads as a
+       surface that has broken rather than one that was drawn. */
+    const barDepth = toolbar ? flare * 2 : 0.01;
+    const barWidth = toolbar
+      ? Math.min(
+          Math.max(flare * 2 + 190, Math.min(w * 0.4, 430)),
+          Math.max(flare * 2 + 60, w - 2 * (radius + flare) - 8),
+        )
+      : 0.01;
 
     /* One size for both cuts. The corner needs `flare * 2` before its arcs
        overlap, and the fourteen on top of that is the air round a 44px
@@ -131,8 +144,8 @@ export function Stage({
       radius,
       barWidth,
       barDepth,
-      barRadius: flare,
-      barFlare: flare,
+      barRadius: toolbar ? flare : 0.01,
+      barFlare: toolbar ? flare : 0.01,
       biteWidth: aside ? bite : 0.01,
       biteHeight: aside ? bite : 0.01,
       biteRadius: aside ? flare : 0.01,
@@ -153,7 +166,10 @@ export function Stage({
           it costs nothing and the words above it stay whole. */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-canvas"
+        className={cn(
+          "absolute inset-0",
+          tone === "field" ? "bg-field" : "bg-canvas",
+        )}
         style={{ clipPath: path ? `path("${path}")` : undefined }}
       />
 

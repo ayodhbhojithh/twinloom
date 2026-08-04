@@ -35,6 +35,7 @@ import {
   TickRow,
   TickSet,
 } from "./kit";
+import { ColourStudioPanel } from "./colour-studio";
 import { CardSurface, type CardLike } from "./stage-card";
 import { ActionRow } from "./stages-a";
 
@@ -265,6 +266,8 @@ export function StageStyle({ at, answers, onGo }: StepProps) {
           </section>
         ))}
       </div>
+
+      <ColourStudioPanel />
 
       <section className="mt-8 max-w-[1100px]">
         <SubTitle className="mt-0">Behind this, if you have them</SubTitle>
