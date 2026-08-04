@@ -234,6 +234,12 @@ export function StageKeep({ at, answers, onGo }: StepProps) {
 
 /* --------------------------------------------------------------- 12 submit */
 
+/** The length chosen for the meeting, or the half hour we would suggest. */
+const heldFor = (answers: Answers) =>
+  [15, 30, 45, 60].find((length) =>
+    chipOn(answers, "talk.len", String(length)),
+  ) ?? 30;
+
 const MINIMUMS = [
   { k: "who", title: "Who the site is for", why: "At least one group named, or the quick way round taken." },
   { k: "do", title: "What people do there", why: "One thing beyond the standard inclusions, told to us on purpose." },
@@ -387,9 +393,47 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
         {/* Choosing to book a time has to be able to book a time. The question
             was asked and the answer recorded, and then nothing happened - which
             is the one thing a booking question must not do. */}
+        {/* How long to hold, asked here so the diary opens with it already
+            chosen. A quarter of an hour to an hour: the shortest that is worth
+            anyone's diary, and the longest we will hold without knowing what it
+            is for. */}
+        {isOn(answers, "talk", "book") || isOn(answers, "talk", "times") ? (
+          <div className="mt-4">
+            <b className="block text-[13px] font-semibold text-ink">
+              How long shall we hold
+            </b>
+
+            <div
+              role="radiogroup"
+              aria-label="How long shall we hold"
+              className="mt-2 flex flex-wrap gap-2"
+            >
+              {[15, 30, 45, 60].map((length) => (
+                <button
+                  key={length}
+                  type="button"
+                  role="radio"
+                  aria-checked={chipOn(answers, "talk.len", String(length))}
+                  onClick={() => {
+                    toggleChip("talk.len", String(length), true, "submit");
+                  }}
+                  className={cn(
+                    "cursor-pointer rounded-pill px-4 py-1.5 text-[13px] font-semibold tabular-nums transition-colors",
+                    chipOn(answers, "talk.len", String(length))
+                      ? "bg-ink text-white"
+                      : "bg-field text-body hover:bg-hair hover:text-ink",
+                  )}
+                >
+                  {length} min
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
         {isOn(answers, "talk", "book") ? (
           <Link
-            href={ROUTES.book}
+            href={`${ROUTES.book}?mins=${heldFor(answers)}`}
             className="group/book mt-3 inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85"
           >
             Choose a time
@@ -402,6 +446,10 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
 
         {isOn(answers, "talk", "times") ? (
           <div className="mt-3">
+            <p className="mb-2 max-w-[58ch] text-[12.5px] leading-[1.5] text-label">
+              Days and time bands rather than a slot, and anything from two
+              working days out - that is the first day our diary opens.
+            </p>
             <AddRow
               placeholder="Mornings, or Tuesday and Thursday after two"
               label="The times that suit you"
