@@ -109,9 +109,15 @@ const PIECES = [
  */
 const SCALE = [261.63, 293.66, 349.23, 392.0, 440.0, 523.25];
 
-/** How the picture becomes something a name can be read off. */
+/**
+ * How the picture leaves the card: thinned out into it, never cut.
+ *
+ * A mask rather than a wash over the top. Painting white over a photograph
+ * dulls it; taking the photograph away lets the card's own white through, so
+ * the picture stays as bright as it was where it is still there.
+ */
 const SCRIM =
-  "linear-gradient(to top, rgba(11,13,18,0.9) 0%, rgba(11,13,18,0.62) 34%, rgba(11,13,18,0.2) 62%, transparent 86%)";
+  "linear-gradient(to bottom, black 0%, black 48%, rgba(0,0,0,0.78) 66%, rgba(0,0,0,0.4) 82%, rgba(0,0,0,0.12) 93%, transparent 100%)";
 
 function useNotes() {
   const rig = useRef<{ ctx: AudioContext; master: GainNode } | null>(null);
@@ -512,18 +518,24 @@ function WorkCard({
       <motion.span
         aria-hidden
         layoutId={`work-${project.id}`}
-        className="absolute inset-0 block overflow-hidden bg-canvas"
+        className="absolute inset-0 block overflow-hidden bg-field"
         style={{ clipPath: path ? `path("${path}")` : undefined }}
       >
-        <Image
-          src={project.image}
-          alt=""
-          fill
-          quality={95}
-          sizes="(max-width: 640px) 92vw, (max-width: 1280px) 34vw, 20vw"
-          className="object-cover object-center transition-transform duration-500 group-hover/work:scale-[1.06]"
-        />
-        <span className="absolute inset-0" style={{ background: SCRIM }} />
+        {/* The picture takes the top of the card and thins out before the
+            words. Run to the bottom it had to be darkened to be read over, and
+            a dark card on a light page is the one object here wearing another
+            scheme. */}
+        <span className="absolute inset-x-0 top-0 block h-[64%]">
+          <Image
+            src={project.image}
+            alt=""
+            fill
+            quality={95}
+            sizes="(max-width: 640px) 92vw, (max-width: 1280px) 34vw, 20vw"
+            className="object-cover object-center transition-transform duration-500 group-hover/work:scale-[1.06]"
+            style={{ maskImage: SCRIM, WebkitMaskImage: SCRIM }}
+          />
+        </span>
       </motion.span>
 
       <div
@@ -533,10 +545,10 @@ function WorkCard({
           top ? "" : "pr-16",
         )}
       >
-        <b className="block max-w-[18ch] text-[14.5px] leading-[1.18] font-extrabold tracking-[-0.025em] text-white">
+        <b className="block max-w-[18ch] text-[14.5px] leading-[1.18] font-extrabold tracking-[-0.025em] text-ink">
           {project.name}
         </b>
-        <span className="mt-1.5 block font-mono text-[8.5px] font-bold tracking-[0.14em] text-white/60 uppercase">
+        <span className="mt-1.5 block font-mono text-[8.5px] font-bold tracking-[0.14em] text-label uppercase">
           {project.kind} / {project.year}
         </span>
       </div>
