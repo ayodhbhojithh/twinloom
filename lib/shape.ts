@@ -50,3 +50,39 @@ export function cutCardPath(
     "Z",
   ].join(" ");
 }
+
+/**
+ * The same card with the corner taken out of its top right instead.
+ *
+ * Written out rather than mirrored. Flipping the path would carry the squared
+ * off corner it gives up round to somewhere it does not belong, which is how a
+ * card ends up with three round corners and one hard angle nobody asked for.
+ *
+ * The sweeps are the mirror of the other one: the flares still curve outward
+ * from the card and take sweep 1, and the cut's own corner still curves the
+ * other way and takes sweep 0.
+ */
+export function cutCardPathTop(
+  w: number,
+  h: number,
+  c: number,
+  r: number,
+  f: number,
+) {
+  return [
+    `M ${r} 0`,
+    `L ${w - c - f} 0`,
+    `A ${f} ${f} 0 0 1 ${w - c} ${f}`,
+    `L ${w - c} ${c - r}`,
+    `A ${r} ${r} 0 0 0 ${w - c + r} ${c}`,
+    `L ${w - f} ${c}`,
+    `A ${f} ${f} 0 0 1 ${w} ${c + f}`,
+    `L ${w} ${h - r}`,
+    `A ${r} ${r} 0 0 1 ${w - r} ${h}`,
+    `L ${r} ${h}`,
+    `A ${r} ${r} 0 0 1 0 ${h - r}`,
+    `L 0 ${r}`,
+    `A ${r} ${r} 0 0 1 ${r} 0`,
+    "Z",
+  ].join(" ");
+}

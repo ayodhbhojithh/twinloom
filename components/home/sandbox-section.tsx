@@ -16,7 +16,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { CutPanel } from "@/components/layout/cut-panel";
-import { cutCardPath } from "@/lib/shape";
+import { cutCardPath, cutCardPathTop } from "@/lib/shape";
 import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -103,8 +103,9 @@ const SCALE = [261.63, 293.66, 349.23, 392.0, 440.0, 523.25];
  * four cards of one size need one path worked out once, where four fluid cards
  * would need four paths recalculated on every resize.
  */
-const WORK = { w: 248, h: 172, cut: 52, mark: 38 };
-const WORK_PATH = cutCardPath(WORK.w, WORK.h, WORK.cut, 18, 16);
+const WORK = { w: 300, h: 214, cut: 60, mark: 44 };
+const WORK_PATH = cutCardPath(WORK.w, WORK.h, WORK.cut, 20, 18);
+const WORK_PATH_TOP = cutCardPathTop(WORK.w, WORK.h, WORK.cut, 20, 18);
 
 /** How the picture becomes something a name can be read off. */
 const SCRIM =
@@ -420,14 +421,22 @@ export function SandboxSection() {
                 <span
                   aria-hidden
                   className="absolute inset-0 overflow-hidden bg-canvas"
-                  style={{ clipPath: `path("${WORK_PATH}")` }}
+                  style={{
+                    clipPath: `path("${n % 2 ? WORK_PATH_TOP : WORK_PATH}")`,
+                  }}
                 >
+                  {/* `cover` and a real `sizes`. The card is 300 wide and the
+                      browser was being told 248, so it fetched a source too
+                      small for the box and stretched it; `cover` crops rather
+                      than distorts, and the quality is raised because these are
+                      shown large enough for the default to soften them. */}
                   <Image
                     src={project.image}
                     alt=""
                     fill
-                    sizes="248px"
-                    className="object-cover transition-transform duration-500 group-hover/work:scale-[1.06]"
+                    quality={95}
+                    sizes="(max-width: 640px) 90vw, 300px"
+                    className="object-cover object-center transition-transform duration-500 group-hover/work:scale-[1.06]"
                   />
                   <span
                     className="absolute inset-0"
@@ -435,23 +444,35 @@ export function SandboxSection() {
                   />
                 </span>
 
-                <div className="relative flex size-full flex-col justify-end p-4 pr-14">
-                  <b className="block max-w-[16ch] text-[13.5px] leading-[1.2] font-extrabold tracking-[-0.02em] text-white">
+                <div
+                  className={cn(
+                    "relative flex size-full flex-col justify-end p-5",
+                    /* Only the card whose cut is at the foot has to keep out
+                       of its own corner. */
+                    n % 2 ? "" : "pr-16",
+                  )}
+                >
+                  <b className="block max-w-[16ch] text-[15px] leading-[1.18] font-extrabold tracking-[-0.025em] text-white">
                     {project.name}
                   </b>
-                  <span className="mt-1 block font-mono text-[8px] font-bold tracking-[0.14em] text-white/60 uppercase">
+                  <span className="mt-1.5 block font-mono text-[8.5px] font-bold tracking-[0.14em] text-white/60 uppercase">
                     {project.kind} / {project.year}
                   </span>
                 </div>
 
-                {/* The number, standing in the corner the card gives up. */}
+                {/* The number, standing in the corner the card gives up - and
+                    the cards alternate which corner that is, so a row of them
+                    reads as a run rather than as four of the same thing. */}
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute right-0 bottom-0 flex items-center justify-center"
+                  className={cn(
+                    "pointer-events-none absolute right-0 flex items-center justify-center",
+                    n % 2 ? "top-0" : "bottom-0",
+                  )}
                   style={{ width: WORK.cut, height: WORK.cut }}
                 >
                   <span
-                    className="flex items-center justify-center rounded-pill bg-field font-mono text-[11px] font-bold text-ink tabular-nums"
+                    className="flex items-center justify-center rounded-pill bg-ink font-mono text-[12px] font-bold text-white tabular-nums"
                     style={{ width: WORK.mark, height: WORK.mark }}
                   >
                     {String(n + 1).padStart(2, "0")}
