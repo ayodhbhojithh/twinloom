@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, Maximize2 } from "lucide-react";
 
@@ -184,6 +184,27 @@ export function NotchedCard({ className }: { className?: string }) {
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [at, setAt] = useState(0);
   const [open, setOpen] = useState<Project | null>(null);
+  /* Paused while somebody is on the card, or while a project is open. */
+  const [held, setHeld] = useState(false);
+
+  /* The card turns itself over.
+
+     Five projects behind one arrow is five presses nobody makes, so it moves on
+     its own - slowly enough to be read rather than watched. It stops the moment
+     a pointer is on the card, because moving a picture out from under somebody
+     looking at it is the one thing an auto carousel must not do, and it stops
+     entirely where reduced motion is asked for. */
+  useEffect(() => {
+    if (held || open) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const turn = window.setInterval(
+      () => setAt((was) => (was + 1) % PROJECTS.length),
+      4000,
+    );
+
+    return () => window.clearInterval(turn);
+  }, [held, open]);
 
   useEffect(() => {
     const node = box.current;
@@ -274,31 +295,50 @@ export function NotchedCard({ className }: { className?: string }) {
   const path = size.w > 40 ? outline(size.w, size.h, cut) : "";
 
   return (
-    <div ref={box} className={cn("relative", className)}>
-      {/* The picture. Grey until there is one, and cut to the outline. */}
-      <motion.div
-        key={shown.id}
-        layoutId={`shot-${shown.id}`}
-        className="artwork absolute inset-0 overflow-hidden"
-        style={{
-          backgroundColor: shown.tone,
-          clipPath: path ? `path("${path}")` : undefined,
-        }}
-      >
+    <div
+      ref={box}
+      onPointerEnter={() => setHeld(true)}
+      onPointerLeave={() => setHeld(false)}
+      onFocusCapture={() => setHeld(true)}
+      onBlurCapture={() => setHeld(false)}
+      className={cn("relative", className)}
+    >
+      {/* The picture, and the one before it, crossing over.
+
+          Swapping the source under one element is a cut: the new picture simply
+          replaces the old one on the next frame, which is the pulse. Two
+          elements, the leaving one still drawn underneath while the arriving one
+          comes up over it, is a dissolve - and at nearly a second it reads as
+          the card turning rather than as a slide changing. */}
+      <AnimatePresence initial={false}>
+        <motion.div
+          key={shown.id}
+          layoutId={`shot-${shown.id}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
+          className="artwork absolute inset-0 overflow-hidden"
+          style={{
+            backgroundColor: shown.tone,
+            clipPath: path ? `path("${path}")` : undefined,
+          }}
+        >
         {/* `preload` rather than the deprecated `priority`: this is the largest
             thing on the landing page and must not be lazy loaded. The clip is on
             the parent, so the picture is cut to the notches without knowing they
             exist. */}
-        <Image
-          src={shown.image}
-          alt={shown.alt}
-          fill
-          quality={100}
-          preload
-          sizes="100vw"
-          className="object-cover"
-        />
-      </motion.div>
+          <Image
+            src={shown.image}
+            alt={shown.alt}
+            fill
+            quality={100}
+            preload
+            sizes="100vw"
+            className="object-cover"
+          />
+        </motion.div>
+      </AnimatePresence>
 
       {/* The bar, standing in the top of the cut. No border on it: the cut is
           already the outline, and a second one drawn a few pixels inside reads
