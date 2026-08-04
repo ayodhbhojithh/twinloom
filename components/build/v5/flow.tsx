@@ -16,7 +16,8 @@ import { cn } from "@/lib/utils";
 
 import { Panel } from "./panel";
 import { Kicker } from "./parts";
-import { PhaseBar, Spine } from "./spine";
+import { RouteMap } from "./route-map";
+import { Spine } from "./spine";
 import { StepArrive } from "./steps/arrive";
 import { StepLayout } from "./steps/layout";
 import {
@@ -200,7 +201,7 @@ export function BuildFlow() {
           </div>
 
           <div className="min-w-0">
-            <PhaseBar step={step} />
+            <RouteMap step={step} onGo={setStep} />
             <Step at={step} answers={answers} onGo={setStep} onGoKey={goKey} />
           </div>
 
