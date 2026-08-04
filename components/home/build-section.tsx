@@ -26,10 +26,11 @@ export function BuildSection() {
       {/* The head is centred and the tool under it is not. What is being said
           here is one address to the room, and it can sit in the middle of the
           page; what follows is work, and work has a left edge to read down. */}
-      {/* `mx-auto`, or the section sits against the left gutter on any screen
-          wider than the container and the whole thing reads as off-centre no
-          matter how the type inside it is aligned. */}
-      <div className="mx-auto max-w-wide">
+      {/* No cap of its own. Every other section on this page takes the frame's
+          full width, and one that stops short of it at 1600 reads as a narrower
+          page inserted into a wider one - the gutters stop lining up and the
+          tool below looks inset rather than placed. */}
+      <div className="w-full">
         {/* The topic, woven rather than set.
             The same loom the "play it" screen hangs the name in: each thread
             samples the column of pixels it stands in and keeps the stretches
@@ -41,7 +42,7 @@ export function BuildSection() {
             heading however large the letters in it are. */}
         <h2 className="sr-only">Build your website</h2>
 
-        <LoomStrings word="Build your website" className="mx-auto max-w-wide" />
+        <LoomStrings word="Build your website" className="w-full" />
 
 
         {/* The run-through itself, not a shorter version of it. It reads the
