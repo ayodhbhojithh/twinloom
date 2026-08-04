@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 import { CutPanel } from "@/components/layout/cut-panel";
@@ -89,43 +90,71 @@ export function BlogView() {
         </p>
       </CutPanel>
 
-      {/* The rest, as a numbered run. A short list of considered pieces reads
-          better down the page than across it: the eye takes one title at a
-          time, and the number says how few there are. */}
-      <ol className="mt-4">
+      {/* The rest. Cards of their own rather than rows on the page: each one
+          carries the ground, and each one carries its own picture on the right,
+          so the list reads as three more of the thing above it rather than as
+          an index underneath it. */}
+      <ol className="mt-4 flex flex-col gap-3">
         {rest.map((article, n) => (
           <li key={article.slug}>
             <Link
               href={`${ROUTES.blog}/${article.slug}`}
-              className="group/piece grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-5 gap-y-2 rounded-[20px] px-5 py-6 transition-colors hover:bg-canvas sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:px-7"
+              className="group/piece relative block overflow-hidden rounded-[22px] bg-canvas transition-colors hover:bg-canvas-firm"
             >
-              <span className="mt-1 font-mono text-[11px] font-bold text-idx tabular-nums">
-                {String(n + 2).padStart(2, "0")}
+              {/* The picture, on the right and faded into the ground it sits
+                  on. The same arrangement as the card above, at the size a row
+                  can carry. */}
+              <span
+                aria-hidden
+                className="absolute inset-y-0 right-0 hidden w-[46%] lg:block"
+              >
+                <Image
+                  src={plateFor(article.slug)}
+                  alt=""
+                  fill
+                  sizes="(min-width: 1024px) 46vw, 0px"
+                  className="object-cover object-center"
+                  style={{
+                    maskImage:
+                      "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.06) 14%, rgba(0,0,0,0.2) 26%, rgba(0,0,0,0.42) 38%, rgba(0,0,0,0.66) 52%, rgba(0,0,0,0.86) 68%, black 84%)",
+                    WebkitMaskImage:
+                      "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.06) 14%, rgba(0,0,0,0.2) 26%, rgba(0,0,0,0.42) 38%, rgba(0,0,0,0.66) 52%, rgba(0,0,0,0.86) 68%, black 84%)",
+                  }}
+                />
               </span>
 
-              <span className="min-w-0">
-                <span className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
-                  {article.topic}
+              <span className="relative grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-5 gap-y-3 p-6 sm:p-7 lg:max-w-[56%]">
+                <span className="mt-[3px] font-mono text-[11px] font-bold text-idx tabular-nums">
+                  {String(n + 2).padStart(2, "0")}
                 </span>
 
-                <b className="mt-1.5 block max-w-[30ch] text-[clamp(18px,1.7vw,24px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink">
-                  {article.title}
-                </b>
+                <span className="min-w-0">
+                  <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <span className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
+                      {article.topic}
+                    </span>
+                    <span className="font-mono text-[9px] font-bold tracking-[0.12em] text-idx uppercase tabular-nums">
+                      {article.minutes} min
+                    </span>
+                  </span>
 
-                <span className="mt-2 block max-w-[62ch] text-[13.5px] leading-[1.55] text-quiet">
-                  {article.note}
-                </span>
-              </span>
+                  <b className="mt-2 block max-w-[26ch] text-[clamp(18px,1.7vw,24px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink">
+                    {article.title}
+                  </b>
 
-              <span className="col-start-2 flex items-center gap-3 sm:col-start-3 sm:mt-1 sm:justify-end">
-                <span className="font-mono text-[9.5px] font-bold tracking-[0.12em] text-label uppercase tabular-nums">
-                  {article.minutes} min
-                </span>
-                <span
-                  aria-hidden
-                  className="flex size-8 flex-none items-center justify-center rounded-pill bg-well text-quiet transition-colors group-hover/piece:bg-ink group-hover/piece:text-white"
-                >
-                  <ArrowUpRight className="size-4" />
+                  <span className="mt-2 block max-w-[46ch] text-[13.5px] leading-[1.55] text-quiet">
+                    {article.note}
+                  </span>
+
+                  <span className="mt-4 inline-flex items-center gap-2 font-mono text-[9px] font-bold tracking-[0.14em] text-quiet uppercase transition-colors group-hover/piece:text-ink">
+                    Read it
+                    <span
+                      aria-hidden
+                      className="flex size-7 items-center justify-center rounded-pill bg-field text-quiet transition-colors group-hover/piece:bg-ink group-hover/piece:text-white"
+                    >
+                      <ArrowUpRight className="size-3.5" />
+                    </span>
+                  </span>
                 </span>
               </span>
             </Link>
