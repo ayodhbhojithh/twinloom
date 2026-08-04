@@ -32,15 +32,14 @@
 
   /* Surfaces, lightest to firmest.
 
-     `canvas` is the ground the shaped surfaces sit on: off-white with a little
-     of the accent in it, so a cut card reads as paper rather than as a grey
-     box, and set firmly enough that the shape of the cut is legible against a
-     white page. `canvas-firm` is the same paper one press darker, for a card
-     being hovered. Every other surface stays neutral, which is what lets the
-     tinted one register at all. */
+     `canvas` is the ground the whole page stands on, and the white surfaces
+     stand on it. A light grey rather than a tint: with the surfaces now white,
+     any colour in the ground reads as a colour choice, and the one thing this
+     page should not be doing is having an opinion about blue. `canvas-firm` is
+     the same grey one press darker, for a card being hovered. */
   --color-field: #ffffff;
-  --color-canvas: #eef2f9;
-  --color-canvas-firm: #e3eaf5;
+  --color-canvas: #f2f3f5;
+  --color-canvas-firm: #e9ebef;
   --color-well: #e6e9ee;
   --color-hair: #d1d6df;
   --color-border: #b7bfcc;
