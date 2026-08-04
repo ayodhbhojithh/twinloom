@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ArrowUp } from "lucide-react";
+import Image from "next/image";
 
 import { outline, type Cuts } from "@/components/home/notched-card";
 import { cn } from "@/lib/utils";
@@ -28,6 +29,7 @@ export function CutPanel({
   aside,
   corner,
   foot,
+  image,
   tone = "canvas",
   className,
   children,
@@ -43,6 +45,15 @@ export function CutPanel({
    * belongs on the same line as them rather than above an empty strip.
    */
   foot?: React.ReactNode;
+  /**
+   * A picture for the whole surface, cut to the same outline.
+   *
+   * The landing card's arrangement: the image is not in the card, it is the
+   * card. What keeps the words readable is a wash of the surface's own colour
+   * running in from the left, so the two are one thing rather than a panel with
+   * a photograph stuck to one side of it.
+   */
+  image?: string;
   tone?: "canvas" | "field";
   className?: string;
   children: React.ReactNode;
@@ -138,6 +149,40 @@ export function CutPanel({
         style={{ clipPath: path ? `path("${path}")` : undefined }}
       />
 
+      {image ? (
+        <div
+          aria-hidden
+          className="absolute inset-0 overflow-hidden"
+          style={{ clipPath: path ? `path("${path}")` : undefined }}
+        >
+          <Image
+            src={image}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-right"
+          />
+
+          {/* The wash. Solid where the words are, gone by the time the picture
+              has anything worth seeing in it. Written in the surface's own
+              colour so the picture arrives out of the ground rather than being
+              laid on top of it. */}
+          <span
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(to right, ${
+                tone === "field" ? "var(--color-field)" : "var(--color-canvas)"
+              } 0%, ${
+                tone === "field" ? "var(--color-field)" : "var(--color-canvas)"
+              } 42%, color-mix(in oklab, ${
+                tone === "field" ? "var(--color-field)" : "var(--color-canvas)"
+              } 55%, transparent) 62%, transparent 84%)`,
+            }}
+          />
+        </div>
+      ) : null}
+
       {toolbar ? (
         <div
           className="absolute top-0 left-1/2 z-20 flex -translate-x-1/2 items-start justify-center"
@@ -180,6 +225,11 @@ export function CutPanel({
           paddingTop: beside ? pad : (toolbar ? cut.barDepth : 0) + 12,
           /* What the heading may take before it would run under the bar. */
           ["--notch-free" as string]: headRoom,
+          /* How far the content is held off the edge, and how the edge turns.
+             A picture that has to reach the side of the surface needs both, and
+             neither is knowable from outside this component. */
+          ["--panel-pad" as string]: `${Math.round(pad)}px`,
+          ["--panel-radius" as string]: `${Math.round(cut.radius)}px`,
           paddingBottom: band
             ? 28
             : Math.max(

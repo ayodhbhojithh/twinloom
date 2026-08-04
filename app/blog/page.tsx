@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 
-import {
-  FrameworkPageView,
-  frameworkMetadata,
-} from "@/components/pages/framework-page";
-import { ROUTES } from "@/lib/site";
+import { BlogView } from "@/components/pages/blog-view";
 
-export const metadata: Metadata = frameworkMetadata(ROUTES.blog);
+export const metadata: Metadata = {
+  title: "Blogs and articles",
+  description:
+    "The decisions behind a website, written out: what each piece of technology touches, what it costs to run, and where we would tell you to do something other than what we sell.",
+};
 
 export default function Page() {
-  return <FrameworkPageView href={ROUTES.blog} />;
+  return <BlogView />;
 }

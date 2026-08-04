@@ -70,7 +70,7 @@ export const HEADER_NAV: readonly NavLink[] = [
   { label: "About", href: ROUTES.about },
   { label: "Partners", href: ROUTES.partners },
   { label: "FAQs", href: ROUTES.faq },
-  { label: "Blog", href: ROUTES.blog },
+  { label: "Articles", href: ROUTES.blog },
   { label: "Contact", href: ROUTES.contact },
 ];
 
@@ -125,7 +125,7 @@ export const RAIL_PAGES: readonly RailPage[] = [
     children: [{ label: "Book a meeting", href: ROUTES.book }],
   },
   { label: "FAQs", href: ROUTES.faq },
-  { label: "Blogs", href: ROUTES.blog },
+  { label: "Blogs and articles", href: ROUTES.blog },
   { label: "Privacy", href: ROUTES.privacy },
   { label: "Cookies", href: ROUTES.cookies },
   { label: "Terms of use", href: ROUTES.terms },
@@ -159,7 +159,7 @@ export const FOOTER_COLUMNS: readonly {
     title: "Reading",
     links: [
       { label: "FAQs", href: ROUTES.faq },
-      { label: "Blogs", href: ROUTES.blog },
+      { label: "Blogs and articles", href: ROUTES.blog },
     ],
   },
 ];
