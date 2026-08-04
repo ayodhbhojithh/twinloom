@@ -1,12 +1,14 @@
 "use client";
 
 import { ArrowUpRight, Check, Send } from "lucide-react";
+import Link from "next/link";
 
 import { MIN_MAP, REPORT, STATES } from "@/lib/build/v5";
 import { assumed, readiness, told } from "@/lib/build/v5-derive";
 import { OPTION_LISTS } from "@/lib/build/v5-options";
 import { HOW_WE_WORK } from "@/lib/build/v5-work";
 import {
+  addRef,
   chipOn,
   isOn,
   setAsk,
@@ -17,10 +19,21 @@ import {
   touchStep,
   type Answers,
 } from "@/lib/build/v5-store";
+import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 import { StageStep } from "./frame";
-import { Field, H, Kicker, Pill, Sub, SubTitle, TickRow, TickSet } from "./kit";
+import {
+  AddRow,
+  Field,
+  H,
+  Kicker,
+  Pill,
+  Sub,
+  SubTitle,
+  TickRow,
+  TickSet,
+} from "./kit";
 import { Disc } from "./stage";
 
 /* ---------------------------------------------------------------------------

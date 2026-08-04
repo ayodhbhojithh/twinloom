@@ -28,7 +28,7 @@ import {
   takenSlots,
   type Reader,
 } from "./diary";
-import { MEETINGS, STEPS, findMeeting, looksLikeEmail } from "./meetings";
+import { LENGTHS, MEETINGS, STEPS, findMeeting, looksLikeEmail } from "./meetings";
 import { BookStage, StepRail } from "./shell";
 
 interface Details {
@@ -55,7 +55,7 @@ const EMPTY: Details = { name: "", email: "", notes: "" };
  * locale, their clock convention and today's date are all the browser's to tell
  * us, and none are knowable while this renders on a server.
  */
-export function BookingFlow() {
+export function BookingFlow({ wanted }: { wanted?: number }) {
   const reader = useSyncExternalStore(
     subscribeToReader,
     getReader,
@@ -64,6 +64,11 @@ export function BookingFlow() {
 
   const [at, setAt] = useState(0);
   const [meetingKey, setMeetingKey] = useState<string | null>(null);
+  /* The length is the visitor's to set. It arrives already chosen when they
+     came from the scoping run, where the same question was asked. */
+  const [minutes, setMinutes] = useState<number>(() =>
+    wanted && LENGTHS.includes(wanted) ? wanted : 30,
+  );
   /* Opened on the first day that can actually be booked, so the times are
      there to look at rather than behind a click. Not today: today is inside the
      two clear days we ask for, and offering it would be offering something we
@@ -163,6 +168,7 @@ export function BookingFlow() {
     return (
       <Finished
         meeting={meeting}
+        minutes={minutes}
         whenLong={whenLong}
         whenTime={whenTime}
         zone={zone}
@@ -204,7 +210,10 @@ export function BookingFlow() {
                   <button
                     type="button"
                     aria-pressed={on}
-                    onClick={() => setMeetingKey(entry.key)}
+                    onClick={() => {
+                  setMeetingKey(entry.key);
+                  if (!wanted) setMinutes(entry.minutes);
+                }}
                     className={cn(
                       "flex h-full w-full cursor-pointer flex-col rounded-[16px] p-4 text-left transition-colors",
                       on ? "bg-ink" : "bg-field hover:bg-hair",
@@ -266,6 +275,39 @@ export function BookingFlow() {
               );
             })}
           </ul>
+
+          {/* How long to hold. A quarter of an hour to an hour, and the kind
+              chosen above only suggests it - the person who knows how long this
+              needs is the one asking for it. */}
+          <div className="mt-7">
+            <p className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
+              How long shall we hold
+            </p>
+
+            <div
+              role="radiogroup"
+              aria-label="How long shall we hold"
+              className="mt-2.5 flex flex-wrap gap-2"
+            >
+              {LENGTHS.map((length) => (
+                <button
+                  key={length}
+                  type="button"
+                  role="radio"
+                  aria-checked={minutes === length}
+                  onClick={() => setMinutes(length)}
+                  className={cn(
+                    "cursor-pointer rounded-pill px-4 py-2 text-[13.5px] font-semibold tabular-nums transition-colors",
+                    minutes === length
+                      ? "bg-ink text-white"
+                      : "bg-field text-body hover:bg-hair hover:text-ink",
+                  )}
+                >
+                  {length} min
+                </button>
+              ))}
+            </div>
+          </div>
         </BookStage>
       ) : null}
 
@@ -278,7 +320,7 @@ export function BookingFlow() {
             meeting ? (
               <>
                 <b className="font-mono text-[20px] leading-none font-bold text-ink tabular-nums">
-                  {meeting.minutes}
+                  {minutes}
                 </b>
                 <span className="mt-1.5 font-mono text-[8px] font-bold tracking-[0.1em] text-label uppercase">
                   Minutes
@@ -474,7 +516,7 @@ export function BookingFlow() {
         >
           <dl className="max-w-[42rem] overflow-hidden rounded-[16px] bg-field">
             <Line icon={Clock} term="Meeting">
-              {meeting?.name}, {meeting?.minutes} minutes
+              {meeting?.name}, {minutes} minutes
             </Line>
             <Line icon={CalendarDays} term="Date">
               {whenLong}
@@ -586,6 +628,7 @@ function Line({
  */
 function Finished({
   meeting,
+  minutes,
   whenLong,
   whenTime,
   zone,
@@ -593,6 +636,7 @@ function Finished({
   onRestart,
 }: {
   meeting: ReturnType<typeof findMeeting>;
+  minutes: number;
   whenLong: string;
   whenTime: string;
   zone: string;
@@ -639,7 +683,7 @@ function Finished({
 
       <dl className="mt-8 max-w-[42rem] overflow-hidden rounded-[16px] bg-field text-left">
         <Line icon={Clock} term="Meeting">
-          {meeting?.name}, {meeting?.minutes} minutes
+          {meeting?.name}, {minutes} minutes
         </Line>
         <Line icon={CalendarDays} term="Date">
           {whenLong}

@@ -143,9 +143,13 @@ export function SiteHeader() {
             </button>
           </div>
 
+          {/* The same gutter as the name above it and the button below it, so the
+              three parts of the sheet share one left edge. The list used to sit
+              on a tighter one and carry the difference as padding of its own,
+              which put the links a few pixels inside everything else. */}
           <nav
             aria-label="All pages, mobile"
-            className="flex-1 overflow-y-auto px-4 pb-8 sm:px-7"
+            className="flex-1 overflow-x-hidden overflow-y-auto px-5 pb-8 sm:px-8"
           >
             <RailNav
               size="menu"

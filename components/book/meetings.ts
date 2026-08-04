@@ -46,6 +46,16 @@ export const MEETINGS: readonly Meeting[] = [
   },
 ];
 
+/**
+ * How long to hold, in minutes.
+ *
+ * A quarter of an hour is the shortest that is worth anyone's diary, and an
+ * hour is the longest we will hold without knowing what it is for. The kind of
+ * meeting suggests a length; it does not decide one, because the person who
+ * knows how long this needs is the person asking for it.
+ */
+export const LENGTHS: readonly number[] = [15, 30, 45, 60];
+
 export const findMeeting = (key: string | null) =>
   MEETINGS.find((meeting) => meeting.key === key) ?? null;
 

@@ -101,10 +101,14 @@ export function SiteRail() {
       }}
     >
       <div className="flex h-full flex-col">
+        {/* The control sits on the same gutter the links do, so the panel has one
+            right edge rather than a button tucked closer to it than anything
+            underneath. Folded there is no gutter to keep: 52px of strip, and the
+            button centred in it. */}
         <div
           className={cn(
-            "flex flex-none items-center px-3 pt-4 pb-1",
-            shown ? "justify-end" : "justify-center",
+            "flex flex-none items-center pt-4 pb-1",
+            shown ? "justify-end px-(--rail-gutter)" : "justify-center px-2",
           )}
         >
           <button
@@ -136,7 +140,12 @@ export function SiteRail() {
           <nav
             id="site-rail-nav"
             aria-label="All pages"
-            className="quiet-scroll min-h-0 flex-1 overflow-y-auto pt-1 pb-10"
+            /* `overflow-x-hidden` is not decoration. `overflow-y-auto` alone
+               computes the other axis to `auto` as well, and with the bar hidden
+               that turns any wide row into a sideways scroll nothing announces:
+               the list ends up nudged off its own left edge and reads as cut
+               off, with no scrollbar to explain why. */
+            className="quiet-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-(--rail-gutter) pt-1 pb-10"
           >
             <RailNav pathname={pathname} />
           </nav>

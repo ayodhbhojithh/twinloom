@@ -112,6 +112,19 @@
      measured from it, so the two are set from one number at every width. */
   --page-gutter: 20px;
 
+  /* The rail's own side gutter.
+
+     One number for everything inside the rail - the page links and the control
+     that folds them away - so the panel has a single left edge and a single
+     right edge rather than a different inset per part. It was 24 for the links
+     and 12 for the button, which put the links almost against the window and
+     read as a list with its left side cut off.
+
+     Its own number rather than `--page-gutter`, because that runs to 80 at the
+     widest breakpoint and three hundred pixels of panel cannot spend eighty of
+     them on air. It steps on the same breakpoints, at the rail's scale. */
+  --rail-gutter: 32px;
+
   /* The section index, and the lane the copy leaves for it.
 
      The arithmetic lives here rather than in a utility class. Written as
@@ -230,7 +243,9 @@
     @apply border-border outline-ring/50;
   }
 
-  /* The gutter steps with the page padding: 20 / 32 / 48 / 64 / 80. */
+  /* The gutter steps with the page padding: 20 / 32 / 48 / 64 / 80. The rail
+     steps with it on the two widths where the rail is docked and wide enough to
+     notice: 32 / 36 / 40. */
   @media (min-width: 40rem) {
     :root {
       --page-gutter: 32px;
@@ -246,12 +261,14 @@
   @media (min-width: 80rem) {
     :root {
       --page-gutter: 64px;
+      --rail-gutter: 36px;
     }
   }
 
   @media (min-width: 96rem) {
     :root {
       --page-gutter: 80px;
+      --rail-gutter: 40px;
     }
   }
 

@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -p \"const p=require\\('./package.json'\\); JSON.stringify\\({tw:p.devDependencies?.tailwindcss||p.dependencies?.tailwindcss, next:p.dependencies?.next},null,1\\)\")"
+    ]
+  }
+}
