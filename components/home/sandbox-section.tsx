@@ -289,6 +289,11 @@ export function SandboxSection() {
                       <entry.icon className="size-4" />
                     </span>
 
+                    {/* The name, and nothing after it. Six rows each ending in
+                        LIVE or IDEA made a second column of shouting mono down
+                        the shelf, and it was saying twice over what the notch
+                        already says about the piece in hand and what the greyed
+                        mark already says about the rest. */}
                     <span
                       className={cn(
                         "min-w-0 flex-1 truncate text-[13.5px] font-semibold",
@@ -297,30 +302,24 @@ export function SandboxSection() {
                     >
                       {entry.name}
                     </span>
-
-                    <span
-                      className={cn(
-                        "flex-none font-mono text-[8px] font-bold tracking-[0.12em] uppercase",
-                        on
-                          ? "text-white/50"
-                          : entry.live
-                            ? "text-mark"
-                            : "text-idx",
-                      )}
-                    >
-                      {entry.live ? "Live" : "Idea"}
-                    </span>
                   </button>
                 </li>
               );
             })}
           </ul>
 
-          {/* The stage. Clipped and given a height of its own: both widgets
-              size themselves to whatever box they are in, and without one they
-              grow until they have taken the section. */}
+          {/* The stage. Clipped and given a height, because both widgets size
+              themselves to whatever box they are in and without one they grow
+              until they have taken the section.
+
+              Beside the shelf that height is the shelf's: six rows of a known
+              size are what the row is tall, and a stage cut to its own number
+              instead stopped an inch short of them and left the bench looking
+              like two panels that had been measured separately. Below `md`
+              there is no shelf beside it to match, so it is back to a height of
+              its own. */}
           <div className="min-w-0">
-            <div className="relative h-[220px] overflow-hidden rounded-[18px] bg-canvas sm:h-[280px] lg:h-[320px]">
+            <div className="relative h-[220px] overflow-hidden rounded-[18px] bg-canvas sm:h-[280px] md:h-full">
               {piece.key === "particles" ? (
                 <ParticleWordmark word="TwinLoom" className="h-full w-full" />
               ) : null}
