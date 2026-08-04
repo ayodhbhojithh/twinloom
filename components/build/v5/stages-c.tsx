@@ -3,14 +3,21 @@
 import { ArrowUpRight, Check, Send } from "lucide-react";
 import Link from "next/link";
 
-import { MIN_MAP, REPORT, STATES } from "@/lib/build/v5";
-import { assumed, readiness, told } from "@/lib/build/v5-derive";
+import { MIN_MAP, STATES } from "@/lib/build/v5";
+import {
+  assumed,
+  pagesFrom,
+  readiness,
+  told,
+  zonesFrom,
+} from "@/lib/build/v5-derive";
 import { OPTION_LISTS } from "@/lib/build/v5-options";
 import { HOW_WE_WORK } from "@/lib/build/v5-work";
 import {
   addRef,
   chipOn,
   isOn,
+  picked,
   setAsk,
   setKeep,
   setPick,
@@ -51,39 +58,182 @@ type StepProps = {
 
 /* ----------------------------------------------------------------- 09 read */
 
+/**
+ * Read it back: the scoping request as a document.
+ *
+ * Not a page of ticks. This is the one screen where somebody checks our account
+ * of their business before it goes anywhere, and the only form that can be
+ * checked is the form it will arrive in - a report, with a front, a contents,
+ * numbered sections, and the things we will assume stated as sentences rather
+ * than left as gaps.
+ *
+ * Every section carries the way back to the question that wrote it, because a
+ * document you cannot correct is not a draft, it is a claim.
+ */
 export function StageRead({ at, answers, onGo, onGoKey }: StepProps) {
   const lines = told(answers);
   const takenAsRead = assumed(answers);
+  const pages = pagesFrom(answers);
+  const zones = zonesFrom(pages);
+  const { state } = readiness(answers);
+  const [stateName] = STATES[state];
+
+  /* The sections, in the order they will be read, with what each one holds. A
+     section with nothing in it still appears: that it is empty is a fact about
+     the scope, and hiding it would leave the reader counting. */
+  const parts = [
+    {
+      key: "who",
+      title: "Who the site is for",
+      count: picked(answers, "who").length,
+    },
+    {
+      key: "do",
+      title: "What people can do",
+      count: picked(answers, "do").length,
+    },
+    {
+      key: "sell",
+      title: "What you sell",
+      count: picked(answers, "sell").length,
+    },
+    {
+      key: "style",
+      title: "How it should feel",
+      count: picked(answers, "feel").length,
+    },
+    {
+      key: "have",
+      title: "What you already have",
+      count: picked(answers, "have").length,
+    },
+    { key: "refs", title: "Reference points", count: answers.refs.length },
+  ];
+
+  const facts = [
+    { n: String(pages.length), label: "Pages described" },
+    { n: String(lines.length), label: "Things you told us" },
+    { n: String(takenAsRead.length), label: "Taken as read" },
+  ];
 
   return (
     <StageStep at={at} answers={answers} onGo={onGo}>
       <H>Read it back.</H>
       <Sub>
-        Everything you have said, and everything we will take as read. A change
-        button on every section.
+        Your scoping request, in the shape it will arrive in. Change anything
+        from the section it sits in.
       </Sub>
 
-      <div className="mt-6 grid max-w-[720px] gap-x-6 sm:grid-cols-2">
-        {REPORT.map(([key, heading]) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => onGoKey(key)}
-            className="group/sec flex cursor-pointer items-center justify-between gap-3 rounded-[10px] px-3 py-2.5 text-left transition-colors hover:bg-field"
-          >
-            <span className="text-[14px] font-semibold text-ink">{heading}</span>
-            <span className="flex-none font-mono text-[9px] font-bold tracking-[0.12em] text-idx uppercase transition-colors group-hover/sec:text-ink">
-              Change
-            </span>
-          </button>
-        ))}
+      {/* The front of the document: whose it is, and what it adds up to. */}
+      <div className="mt-6 max-w-[1100px] rounded-[18px] bg-field p-6 sm:p-7">
+        <div className="flex flex-wrap items-start justify-between gap-x-10 gap-y-5">
+          <div className="min-w-0">
+            <Kicker className="block">Scoping request</Kicker>
+            <b className="mt-2 block max-w-[24ch] text-[clamp(19px,1.7vw,25px)] leading-[1.1] font-extrabold tracking-[-0.03em] text-ink">
+              {answers.ask.company?.trim() || "Your website"}
+            </b>
+            <p className="mt-1.5 text-[12.5px] text-quiet">
+              {answers.ask.name?.trim()
+                ? `Prepared with ${answers.ask.name.trim()}`
+                : "Prepared from your answers"}
+            </p>
+          </div>
+
+          <div className="flex flex-none flex-wrap gap-x-9 gap-y-4">
+            {facts.map((fact) => (
+              <div key={fact.label}>
+                <b className="block font-mono text-[24px] leading-none font-bold text-ink tabular-nums">
+                  {fact.n}
+                </b>
+                <span className="mt-1.5 block font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase">
+                  {fact.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <p className="mt-5 border-t border-hair pt-4 max-w-[76ch] text-[13px] leading-[1.6] text-body">
+          <b className="font-semibold text-ink">{stateName}.</b> Nothing here is
+          priced, scored or graded. What is written down is what you said, and
+          what you left alone is written down as an assumption you can correct.
+        </p>
       </div>
 
-      <div className="mt-8 grid max-w-[1100px] gap-x-10 gap-y-7 lg:grid-cols-2">
+      {/* Contents. Numbered, and each line the way back to the question that
+          writes that section. */}
+      <section className="mt-8 max-w-[1100px]">
+        <SubTitle className="mt-0">Contents</SubTitle>
+
+        <ol className="mt-2.5 grid gap-x-10 sm:grid-cols-2">
+          {parts.map((part, n) => (
+            <li key={part.key}>
+              <button
+                type="button"
+                onClick={() => onGoKey(part.key)}
+                className="group/sec flex w-full cursor-pointer items-baseline gap-4 border-b border-hair py-3 text-left transition-colors hover:border-ink"
+              >
+                <span className="w-5 flex-none font-mono text-[10px] font-bold text-idx tabular-nums">
+                  {String(n + 1).padStart(2, "0")}
+                </span>
+
+                <span className="min-w-0 flex-1 text-[14px] font-semibold text-ink">
+                  {part.title}
+                </span>
+
+                <span
+                  className={cn(
+                    "flex-none font-mono text-[9px] font-bold tracking-[0.1em] uppercase tabular-nums",
+                    part.count ? "text-mark" : "text-idx",
+                  )}
+                >
+                  {part.count ? `${part.count} said` : "Assumed"}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* The site itself, since it is the thing being scoped. */}
+      <section className="mt-9 max-w-[1100px]">
+        <SubTitle className="mt-0" count={pages.length}>
+          The site your answers describe
+        </SubTitle>
+
+        <div className="mt-3 grid gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+          {zones.map((zone) => (
+            <div key={zone.key} className="min-w-0">
+              <Kicker className="block text-ink">{zone.title}</Kicker>
+
+              <ul className="mt-2 flex flex-col">
+                {zone.pages.map((page) => (
+                  <li
+                    key={page.name}
+                    className="flex items-baseline gap-2.5 py-[3px]"
+                  >
+                    <span className="w-[18px] flex-none font-mono text-[9.5px] text-idx tabular-nums">
+                      {page.index}
+                    </span>
+                    <span className="min-w-0 flex-1 text-[13.5px] leading-[1.35] font-medium text-ink">
+                      {page.name}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* What was said, and what will be assumed. Side by side, because the
+          second is only readable against the first. */}
+      <div className="mt-9 grid max-w-[1100px] gap-x-10 gap-y-8 lg:grid-cols-2">
         <section className="min-w-0">
           <SubTitle count={lines.length} className="mt-0">
             What you told us
           </SubTitle>
+
           {lines.length ? (
             <ul className="mt-2.5 flex flex-col gap-2">
               {lines.map((line, n) => (
@@ -93,7 +243,7 @@ export function StageRead({ at, answers, onGo, onGoKey }: StepProps) {
                     className="mt-0.5 size-3.5 flex-none text-mark"
                     strokeWidth={3}
                   />
-                  <span className="text-[13.5px] leading-[1.5] text-body">
+                  <span className="text-[13.5px] leading-[1.55] text-body">
                     {line.line}
                   </span>
                 </li>
@@ -110,21 +260,29 @@ export function StageRead({ at, answers, onGo, onGoKey }: StepProps) {
           <SubTitle count={takenAsRead.length} className="mt-0">
             What we will take as read
           </SubTitle>
-          <ul className="mt-2.5 flex flex-col gap-2">
-            {takenAsRead.map((sentence) => (
-              <li
-                key={sentence}
-                className="text-[13.5px] leading-[1.5] text-quiet"
-              >
-                {sentence}
-              </li>
-            ))}
-          </ul>
+
           {takenAsRead.length ? (
-            <p className="mt-3 text-[12px] leading-[1.5] text-label">
-              A sentence in your document, not a gap. Answer the step and it
-              stops being an assumption.
-            </p>
+            <>
+              <ul className="mt-2.5 flex flex-col gap-2">
+                {takenAsRead.map((sentence) => (
+                  <li
+                    key={sentence}
+                    className="flex items-start gap-2.5 text-[13.5px] leading-[1.55] text-quiet"
+                  >
+                    <span
+                      aria-hidden
+                      className="mt-[7px] size-1 flex-none rounded-pill bg-planned"
+                    />
+                    {sentence}
+                  </li>
+                ))}
+              </ul>
+
+              <p className="mt-3 text-[12px] leading-[1.5] text-label">
+                A sentence in your document, not a gap. Answer the step and it
+                stops being an assumption.
+              </p>
+            </>
           ) : (
             <p className="mt-2.5 text-[13px] text-quiet">
               Nothing assumed - every step so far has been answered.
@@ -132,6 +290,12 @@ export function StageRead({ at, answers, onGo, onGoKey }: StepProps) {
           )}
         </section>
       </div>
+
+      {/* The foot of it: what this is, and what happens to it. */}
+      <p className="mt-9 max-w-[64ch] border-t border-hair pt-5 text-[12.5px] leading-[1.6] text-label">
+        A draft of what we will read, not a proposal and not a quotation. A
+        person reads it and replies in writing within two working days.
+      </p>
     </StageStep>
   );
 }
@@ -139,11 +303,36 @@ export function StageRead({ at, answers, onGo, onGoKey }: StepProps) {
 /* --------------------------------------------------------------- 10 asking */
 
 const FIELDS = [
-  { k: "name", label: "Your name", req: true, why: "So the reply has somebody to go to." },
-  { k: "company", label: "Company", req: true, why: "So we can look at what exists before we call." },
-  { k: "email", label: "Email", req: true, why: "Where your scoping request is sent." },
-  { k: "phone", label: "Phone", req: false, why: "Only if a reply bounces or a meeting moves." },
-  { k: "when", label: "When do you need it live", req: false, why: "It changes the order of the work, not the price." },
+  {
+    k: "name",
+    label: "Your name",
+    req: true,
+    why: "So the reply has somebody to go to.",
+  },
+  {
+    k: "company",
+    label: "Company",
+    req: true,
+    why: "So we can look at what exists before we call.",
+  },
+  {
+    k: "email",
+    label: "Email",
+    req: true,
+    why: "Where your scoping request is sent.",
+  },
+  {
+    k: "phone",
+    label: "Phone",
+    req: false,
+    why: "Only if a reply bounces or a meeting moves.",
+  },
+  {
+    k: "when",
+    label: "When do you need it live",
+    req: false,
+    why: "It changes the order of the work, not the price.",
+  },
 ] as const;
 
 const PARTS = [
@@ -241,10 +430,26 @@ const heldFor = (answers: Answers) =>
   ) ?? 30;
 
 const MINIMUMS = [
-  { k: "who", title: "Who the site is for", why: "At least one group named, or the quick way round taken." },
-  { k: "do", title: "What people do there", why: "One thing beyond the standard inclusions, told to us on purpose." },
-  { k: "sell", title: "The shop's front door, if there is one", why: "If you picked buying: what you sell, roughly how much of it." },
-  { k: "you", title: "A way to reach you", why: "Name, company, your part in it, and an email address." },
+  {
+    k: "who",
+    title: "Who the site is for",
+    why: "At least one group named, or the quick way round taken.",
+  },
+  {
+    k: "do",
+    title: "What people do there",
+    why: "One thing beyond the standard inclusions, told to us on purpose.",
+  },
+  {
+    k: "sell",
+    title: "The shop's front door, if there is one",
+    why: "If you picked buying: what you sell, roughly how much of it.",
+  },
+  {
+    k: "you",
+    title: "A way to reach you",
+    why: "Name, company, your part in it, and an email address.",
+  },
 ] as const;
 
 export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
@@ -298,7 +503,11 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
       answers={answers}
       onGo={onGo}
       corner={
-        <Disc label="Send my scoping request" tone="ink" onClick={() => setSent(true)}>
+        <Disc
+          label="Send my scoping request"
+          tone="ink"
+          onClick={() => setSent(true)}
+        >
           <Send className="size-4" strokeWidth={2.2} />
         </Disc>
       }
@@ -336,7 +545,10 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
             const done = Boolean(value);
 
             return (
-              <li key={minimum.k} className="border-b border-hair last:border-b-0">
+              <li
+                key={minimum.k}
+                className="border-b border-hair last:border-b-0"
+              >
                 <button
                   type="button"
                   onClick={() => onGoKey(MIN_MAP[minimum.k])}
