@@ -479,6 +479,22 @@ export const ARTICLES: readonly Article[] = [
   },
 ];
 
+/**
+ * A picture each, so four heads are not one head four times.
+ *
+ * Held here rather than in the view, because the index shows the same picture
+ * for the same article and two lists of these would drift apart the first time
+ * one of them was edited.
+ */
+const PLATES: Record<string, string> = {
+  "how-your-website-is-made": "/work-investor.png",
+  "why-shopify": "/work-shop.png",
+  "selling-online-options": "/work-trade.png",
+  "systems-behind-selling": "/work-careers.png",
+};
+
+export const plateFor = (slug: string) => PLATES[slug] ?? "/right-image.png";
+
 export const articleBy = (slug: string) =>
   ARTICLES.find((article) => article.slug === slug) ?? null;
 

@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { CutPanel } from "@/components/layout/cut-panel";
 import { PageShell } from "@/components/layout";
-import { ARTICLES, TOPICS } from "@/lib/articles";
+import { ARTICLES, TOPICS, plateFor } from "@/lib/articles";
 import { ROUTES } from "@/lib/site";
 
 /**
@@ -36,15 +36,16 @@ export function BlogView() {
         </div>
 
         <p className="max-w-[46ch] text-[14px] leading-[1.55] text-quiet">
-          The decisions behind a website, written out in full: what each piece of
-          technology actually touches, what it costs to run, and where we would
-          tell you to do something other than what we sell.
+          The decisions behind a website, written out in full: what each piece
+          of technology actually touches, what it costs to run, and where we
+          would tell you to do something other than what we sell.
         </p>
       </header>
 
       {/* The lead piece, on the surface. */}
       <CutPanel
         className="w-full"
+        image={plateFor(lead.slug)}
         toolbar={
           <span className="flex h-10 w-full items-center justify-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
             Start here
@@ -74,7 +75,7 @@ export function BlogView() {
           {lead.topic}
         </p>
 
-        <h2 className="mt-3 max-w-[min(20ch,var(--notch-free,62ch))] text-[clamp(24px,2.6vw,38px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink">
+        <h2 className="mt-3 max-w-[min(18ch,var(--notch-free,62ch))] text-[clamp(24px,2.6vw,38px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink">
           <Link
             href={`${ROUTES.blog}/${lead.slug}`}
             className="transition-opacity hover:opacity-70"
@@ -83,7 +84,7 @@ export function BlogView() {
           </Link>
         </h2>
 
-        <p className="mt-4 max-w-[64ch] text-[15px] leading-[1.6] text-body">
+        <p className="mt-4 max-w-[46ch] text-[15px] leading-[1.6] text-body lg:max-w-[42%]">
           {lead.lead}
         </p>
       </CutPanel>

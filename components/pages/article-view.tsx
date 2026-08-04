@@ -8,17 +8,10 @@ import {
   type Article,
   type Block,
   type Section,
+  plateFor,
 } from "@/lib/articles";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/site";
-
-/** A picture each, so the four heads are not one head four times. */
-const PLATE: Record<string, string> = {
-  "how-your-website-is-made": "/work-investor.png",
-  "why-shopify": "/work-shop.png",
-  "selling-online-options": "/work-trade.png",
-  "systems-behind-selling": "/work-careers.png",
-};
 
 /**
  * One article.
@@ -43,7 +36,7 @@ export function ArticleView({ article }: { article: Article }) {
     <PageShell>
       <CutPanel
         className="w-full"
-        image={PLATE[article.slug] ?? "/right-image.png"}
+        image={plateFor(article.slug)}
         toolbar={
           <Link
             href={ROUTES.blog}
