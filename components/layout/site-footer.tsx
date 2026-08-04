@@ -56,26 +56,33 @@ export function SiteFooter() {
           <div className="flex w-full flex-col gap-x-10 gap-y-4 lg:flex-row lg:items-end lg:justify-between">
             <p className="order-2 min-w-0 max-w-[74ch] text-[11.5px] leading-[1.55] text-label lg:order-1">
               {LEGAL.line}
-              <span className="mt-1 block text-quiet">
-                &copy; {year} {LEGAL.entity}. {LEGAL.rights}
-                <span className="sr-only"> {SITE.name}.</span>
-              </span>
             </p>
 
-            <nav aria-label="Legal" className="order-1 flex-none lg:order-2">
-              <ul className="flex flex-wrap gap-x-5 gap-y-2 lg:justify-end">
-                {FOOTER_LEGAL.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-[12.5px] font-medium text-quiet underline decoration-planned decoration-1 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+            {/* The right-hand side of the band: the links, and the line that
+                names who this belongs to under them. It belongs with the legal
+                links rather than under the registration wording - one is
+                paperwork about the company, the other is the notice itself. */}
+            <div className="order-1 flex-none lg:order-2 lg:text-right">
+              <nav aria-label="Legal">
+                <ul className="flex flex-wrap gap-x-5 gap-y-2 lg:justify-end">
+                  {FOOTER_LEGAL.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-[12.5px] font-medium text-quiet underline decoration-planned decoration-1 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+
+              <p className="mt-2.5 text-[11.5px] leading-[1.55] text-quiet">
+                &copy; {year} {LEGAL.entity}. {LEGAL.rights}
+                <span className="sr-only"> {SITE.name}.</span>
+              </p>
+            </div>
           </div>
         }
       >
