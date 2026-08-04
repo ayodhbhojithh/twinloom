@@ -92,12 +92,16 @@ export interface RailPage extends NavLink {
 }
 
 /**
- * Every page, in reading order.
+ * The pages the rail carries, in reading order.
  *
  * Flat, with no headings over it. Named groups made the rail look like four
  * small navigations stacked up, and each one needed a control to open and shut
- * it before any page could be read. Fifteen links do not need chapters; they
- * need to be short, in a sensible order, and always visible.
+ * it before any page could be read. A handful of links do not need chapters;
+ * they need to be short, in a sensible order, and always visible.
+ *
+ * The legal pages are deliberately not here. They are a set, they belong to the
+ * footer, and seven of them at the foot of the rail buried the pages a reader
+ * actually came for.
  *
  * The order is the order the site is meant to be read in, which is also what
  * gives every page its previous and next.
@@ -116,7 +120,6 @@ export const RAIL_PAGES: readonly RailPage[] = [
     ],
   },
   { label: "Build your website", href: ROUTES.build },
-  { label: "The site your answers describe", href: ROUTES.site },
   { label: "About us", href: ROUTES.about },
   { label: "Our partners", href: ROUTES.partners },
   {
@@ -126,13 +129,6 @@ export const RAIL_PAGES: readonly RailPage[] = [
   },
   { label: "FAQs", href: ROUTES.faq },
   { label: "Blogs and articles", href: ROUTES.blog },
-  { label: "Privacy", href: ROUTES.privacy },
-  { label: "Cookies", href: ROUTES.cookies },
-  { label: "Terms of use", href: ROUTES.terms },
-  { label: "Terms of business", href: ROUTES.termsOfBusiness },
-  { label: "Accessibility", href: ROUTES.accessibility },
-  { label: "Complaints", href: ROUTES.complaints },
-  { label: "Sub-processors", href: ROUTES.subProcessors },
 ];
 
 export const FOOTER_COLUMNS: readonly {
