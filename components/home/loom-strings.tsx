@@ -66,6 +66,28 @@ const STEPS = 34;
  */
 const bow = (t: number) => Math.sin(t * Math.PI * 0.5);
 
+/** Ink, and the green a ringing thread carries. */
+const REST = [17, 24, 39] as const;
+const RUNG = [5, 150, 105] as const;
+
+/**
+ * A thread's colour, at rest through to fully struck.
+ *
+ * Mixed rather than switched. Choosing between two colours on whether the
+ * thread is ringing at all makes the note end on a cut: at the moment the
+ * amplitude reaches zero the stroke jumps from green straight back to ink, and
+ * a jump is what the eye notices however small the note was. Interpolating both
+ * the hue and the alpha means the colour arrives with the pluck and leaves with
+ * it, on the same curve the movement is already using.
+ */
+function ring(lit: number, from: number, to: number) {
+  const t = lit <= 0 ? 0 : lit >= 1 ? 1 : lit;
+  const r = Math.round(REST[0] + (RUNG[0] - REST[0]) * t);
+  const g = Math.round(REST[1] + (RUNG[1] - REST[1]) * t);
+  const b = Math.round(REST[2] + (RUNG[2] - REST[2]) * t);
+  return `rgba(${r}, ${g}, ${b}, ${from + (to - from) * t})`;
+}
+
 /**
  * A minor pentatonic, low to high, left to right.
  *
@@ -472,27 +494,17 @@ export function LoomStrings({
           else paper.lineTo(x, y);
         }
         paper.lineWidth = warpWidth;
-        /* Colour only while it rings.
-           The cloth at rest is ink and hairline grey, like the rest of the
-           site. A struck thread takes the green the build screen uses for a
-           thing that is done, and gives it straight back as the note decays,
-           so the colour is the sound rather than a decoration: nothing on
-           screen is coloured unless it is moving. */
-        paper.strokeStyle = lit
-          ? `rgba(5, 150, 105, ${0.14 + lit * 0.5})`
-          : "rgba(17, 24, 39, 0.075)";
+        paper.strokeStyle = ring(lit, 0.075, 0.64);
         paper.stroke();
 
         /* And the stretches that fall inside a letter, firm: the cloth is the
            word. Each run is walked with the same bow, so the letter bends with
            the thread instead of standing still behind it. */
         paper.lineWidth = inkWidth;
-        /* The letters take the same colour, and keep more of their weight: they
-           are the word, and a word that goes pale as it is played would read as
-           being rubbed out rather than struck. */
-        paper.strokeStyle = lit
-          ? `rgba(5, 150, 105, ${0.7 + lit * 0.3})`
-          : "rgba(17, 24, 39, 0.94)";
+        /* The letters keep their weight: they are the word, and a word that
+           went pale as it was played would read as being rubbed out rather than
+           struck. */
+        paper.strokeStyle = ring(lit, 0.94, 1);
 
         for (let run = 0; run < thread.runs.length; run += 2) {
           const from = thread.runs[run];
