@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { BuildNote, EmptyMark } from "@/components/blocks/build-note";
-import { PageMeta } from "@/components/blocks/page-meta";
 import { Item, List } from "@/components/blocks/prose";
 import { PageHeading, PageShell } from "@/components/layout";
 import { frameworkPage } from "@/lib/pages";
@@ -37,10 +36,6 @@ export function FrameworkPageView({ href }: { href: string }) {
           <p>{page.belongs as string}</p>
         )}
       </BuildNote>
-
-      <PageMeta
-        values={{ title: page.title, description: page.description }}
-      />
     </PageShell>
   );
 }

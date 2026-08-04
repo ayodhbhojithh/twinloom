@@ -4,7 +4,6 @@ import { useMemo, useSyncExternalStore } from "react";
 
 import { ActionLink, Actions } from "@/components/blocks/action-link";
 import { BuildNote } from "@/components/blocks/build-note";
-import { PageMeta } from "@/components/blocks/page-meta";
 import { Item, List } from "@/components/blocks/prose";
 import { PageHeading, PageShell } from "@/components/layout";
 import { derivedPages, namedGroups, pageCount, tally } from "@/lib/build/derive";
@@ -87,14 +86,6 @@ export function SiteView() {
           <Item>Whether a page here can be opened to say what goes on it.</Item>
         </List>
       </BuildNote>
-
-      <PageMeta
-        values={{
-          title: "The site your answers describe",
-          description:
-            "The pages your answers have produced so far, each one shown under the answer that put it there.",
-        }}
-      />
     </PageShell>
   );
 }

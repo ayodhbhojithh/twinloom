@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation";
 
 import { Actions, ActionLink } from "@/components/blocks/action-link";
-import { PageMeta } from "@/components/blocks/page-meta";
 import { P } from "@/components/blocks/prose";
 import { TextLink } from "@/components/blocks/text-link";
 import { SimpleList } from "@/components/blocks/simple-list";
@@ -90,15 +89,6 @@ export function NotFoundView() {
         </TextLink>{" "}
         so that we can fix it.
       </P>
-
-      <PageMeta
-        values={{
-          title: "Page not found",
-          description:
-            "The address may be old, incomplete or mistyped. Search the site or start again from the homepage.",
-          indexing: "Noindex",
-        }}
-      />
     </PageShell>
   );
 }

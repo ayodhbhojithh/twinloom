@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { TextLink } from "@/components/blocks/text-link";
-import { PageMeta } from "@/components/blocks/page-meta";
 import { P } from "@/components/blocks/prose";
 import { SimpleList } from "@/components/blocks/simple-list";
 import { PageHeading, PageShell } from "@/components/layout";
@@ -120,14 +119,6 @@ export function SearchView() {
           </P>
         </>
       )}
-
-      <PageMeta
-        values={{
-          title: "Search",
-          description: "Search every page on this website.",
-          indexing: "Normally noindex",
-        }}
-      />
     </PageShell>
   );
 }

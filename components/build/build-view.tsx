@@ -1,4 +1,3 @@
-import { PageMeta } from "@/components/blocks/page-meta";
 import { PageShell } from "@/components/layout";
 
 import { BuildFlow } from "./v5/flow";
@@ -18,14 +17,6 @@ export function BuildView() {
   return (
     <PageShell>
       <BuildFlow />
-
-      <PageMeta
-        values={{
-          title: "Build your website",
-          description:
-            "Two ways through: say it in your own words and send it, or work through twelve steps and read the whole thing back. Nothing is priced, nothing is scored, and you can stop at any step.",
-        }}
-      />
     </PageShell>
   );
 }
