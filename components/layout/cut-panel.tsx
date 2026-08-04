@@ -150,36 +150,36 @@ export function CutPanel({
       />
 
       {image ? (
+        /* Clipped to the surface's own outline, so whatever is inside it takes
+           the notch and the corners with it. */
         <div
           aria-hidden
           className="absolute inset-0 overflow-hidden"
           style={{ clipPath: path ? `path("${path}")` : undefined }}
         >
-          <Image
-            src={image}
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-right"
-          />
-
-          {/* The wash. Solid where the words are, gone by the time the picture
-              has anything worth seeing in it. Written in the surface's own
-              colour so the picture arrives out of the ground rather than being
-              laid on top of it. */}
-          <span
-            className="absolute inset-0"
-            style={{
-              background: `linear-gradient(to right, ${
-                tone === "field" ? "var(--color-field)" : "var(--color-canvas)"
-              } 0%, ${
-                tone === "field" ? "var(--color-field)" : "var(--color-canvas)"
-              } 42%, color-mix(in oklab, ${
-                tone === "field" ? "var(--color-field)" : "var(--color-canvas)"
-              } 55%, transparent) 62%, transparent 84%)`,
-            }}
-          />
+          {/* The picture holds the right fifty five and no more. Stretched
+              across the whole width and hidden under a wash it was still a full
+              width picture - the left of it was being paid for and then painted
+              over. */}
+          <div className="absolute inset-y-0 right-0 hidden w-[55%] lg:block">
+            <Image
+              src={image}
+              alt=""
+              fill
+              priority
+              sizes="(min-width: 1024px) 55vw, 0px"
+              className="object-cover object-center"
+              style={{
+                /* Faded in from its own left edge. The other three are the
+                   surface's edges, and an edge that is already the end of the
+                   card wants nothing on top of it. */
+                maskImage:
+                  "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 12%, black 34%)",
+                WebkitMaskImage:
+                  "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 12%, black 34%)",
+              }}
+            />
+          </div>
         </div>
       ) : null}
 

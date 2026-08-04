@@ -67,10 +67,11 @@ export function ArticleView({ article }: { article: Article }) {
           </div>
         }
       >
-        {/* The words sit in the left half of the surface; the picture is the
-            surface. Fifty five to the one and forty five to the other, but as
-            one card rather than as two columns. */}
-        <div className="max-w-full lg:max-w-[55%]">
+        {/* The picture holds the right fifty five, the words what is left of
+            the left. One card rather than two columns: the picture is cut to
+            the surface's own outline, so there is no second edge in it - and
+            the words stop short of the fade rather than running into it. */}
+        <div className="max-w-full lg:max-w-[46%]">
           <p className="font-mono text-[9px] font-bold tracking-[0.16em] text-mark uppercase">
             {article.topic}
           </p>
@@ -79,7 +80,7 @@ export function ArticleView({ article }: { article: Article }) {
             {article.title}
           </h1>
 
-          <p className="mt-4 max-w-[52ch] text-[clamp(15px,1.2vw,17px)] leading-[1.6] text-body">
+          <p className="mt-4 max-w-[46ch] text-[clamp(15px,1.2vw,17px)] leading-[1.6] text-body">
             {article.lead}
           </p>
         </div>
