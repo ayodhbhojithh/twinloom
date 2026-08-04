@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 
 import { BuildSection } from "@/components/home/build-section";
 import { NotchedCard } from "@/components/home/notched-card";
+import { ReadingSection } from "@/components/home/reading-section";
 import { ROUTES, SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -33,7 +34,8 @@ export const metadata: Metadata = {
  * content so a line of prose stays readable; there is no prose here, so the card
  * takes the window and leaves only the page gutter at each side.
  *
- * The card holds exactly one screenful and the tool follows it. Describing what
+ * The card holds exactly one screenful, the tool follows it, and what we have
+ * written follows that. Describing what
  * this company does takes a paragraph nobody reads, so the second screen asks
  * the first question instead, and whatever is answered there is already answered
  * on the build page.
@@ -91,6 +93,11 @@ export default function LandingPage() {
       </section>
 
       <BuildSection />
+
+      {/* Third: what we have written. Somebody who has read the card and tried
+          the tool either wants to start or wants to know how we think, and this
+          is the answer to the second. */}
+      <ReadingSection />
     </>
   );
 }
