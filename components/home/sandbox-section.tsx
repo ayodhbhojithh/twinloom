@@ -233,6 +233,15 @@ export function SandboxSection() {
             </span>
           </div>
         }
+        foot={
+          /* On the bottom edge itself, in the band between the two cuts. A
+             caption above a set of pictures tells you what you are about to
+             see; on the foot of the surface it names what the whole thing was
+             - which is the only version of it worth reading. */
+          <p className="w-full text-center font-mono text-[13px] font-bold tracking-[0.24em] text-label uppercase sm:text-[15px]">
+            Immersive projects
+          </p>
+        }
         corner={
           <Link
             href={ROUTES.build}
@@ -385,11 +394,7 @@ export function SandboxSection() {
             section of its own, because this is the answer to "what is any of
             this for" and that is the question the bench raises. */}
         <div className="mt-9">
-          <p className="font-mono text-[8.5px] font-bold tracking-[0.16em] text-label uppercase">
-            Where they end up
-          </p>
-
-          <div className="mt-3 grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {PROJECTS.map((project, n) => (
               <WorkCard key={project.id} project={project} n={n} />
             ))}
