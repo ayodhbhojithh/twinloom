@@ -235,12 +235,13 @@ export function SandboxSection() {
             </span>
           </div>
         }
+        footIn="notch"
         foot={
           /* On the bottom edge itself, in the band between the two cuts. A
              caption above a set of pictures tells you what you are about to
              see; on the foot of the surface it names what the whole thing was
              - which is the only version of it worth reading. */
-          <p className="w-full text-center font-mono text-[13px] font-bold tracking-[0.24em] text-label uppercase sm:text-[15px]">
+          <p className="w-full text-center font-mono text-[12.5px] font-bold tracking-[0.22em] text-label uppercase sm:text-[14px]">
             Immersive projects
           </p>
         }

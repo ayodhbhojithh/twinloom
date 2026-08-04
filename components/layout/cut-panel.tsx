@@ -238,12 +238,8 @@ export function CutPanel({
 
       {notch ? (
         <div
-          className="absolute bottom-0 left-1/2 z-20 flex -translate-x-1/2 items-end justify-center"
-          style={{
-            width: cut.footWidth,
-            height: cut.footDepth,
-            paddingBottom: 2,
-          }}
+          className="absolute bottom-0 left-1/2 z-20 flex -translate-x-1/2 items-center justify-center"
+          style={{ width: cut.footWidth, height: cut.footDepth }}
         >
           {foot}
         </div>
