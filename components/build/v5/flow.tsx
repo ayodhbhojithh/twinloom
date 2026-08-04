@@ -72,9 +72,13 @@ export function BuildFlow() {
 
   return (
     <>
-      {/* Two ways in, on top. Cards rather than a tab bar, because the choice
-          is between two different amounts of work and that has to be readable
-          before either is pressed. */}
+      {/* Two ways in, on top.
+
+          Not one slab of black beside one wash of near-white. That pairing said
+          the chosen route was the only real one and left the other barely
+          drawn, when the whole point of this screen is that both are complete
+          answers. Both are cards with a real edge; the chosen one is marked by
+          its edge going to ink and by saying so in words. */}
       <div
         role="tablist"
         aria-label="How you want to do this"
@@ -84,45 +88,61 @@ export function BuildFlow() {
           [
             {
               key: "quick",
+              n: "01",
               title: "Quick submission",
               note: "Say it in your own words and send it. A few minutes.",
             },
             {
               key: "full",
+              n: "02",
               title: "Detailed scoping",
               note: "Answer as much as you like and read it back. Twelve steps.",
             },
           ] as const
-        ).map((entry) => (
-          <button
-            key={entry.key}
-            type="button"
-            role="tab"
-            aria-selected={tab === entry.key}
-            onClick={() => setTab(entry.key)}
-            className={cn(
-              "cursor-pointer rounded-card p-5 text-left transition-colors",
-              tab === entry.key ? "bg-ink" : "bg-well hover:bg-hair",
-            )}
-          >
-            <b
+        ).map((entry) => {
+          const on = tab === entry.key;
+
+          return (
+            <button
+              key={entry.key}
+              type="button"
+              role="tab"
+              aria-selected={on}
+              onClick={() => setTab(entry.key)}
               className={cn(
-                "block text-[16.5px] font-bold",
-                tab === entry.key ? "text-white" : "text-ink",
+                "group/way cursor-pointer rounded-card border bg-field p-5 text-left transition-colors",
+                on ? "border-ink" : "border-border hover:border-planned",
               )}
             >
-              {entry.title}
-            </b>
-            <span
-              className={cn(
-                "mt-1 block text-[14px] leading-[1.5]",
-                tab === entry.key ? "text-white/65" : "text-quiet",
-              )}
-            >
-              {entry.note}
-            </span>
-          </button>
-        ))}
+              <span className="flex items-center justify-between gap-4">
+                <span className="flex items-baseline gap-3">
+                  <span className="font-mono text-[11px] font-bold text-idx tabular-nums">
+                    {entry.n}
+                  </span>
+                  <b className="text-[16.5px] font-bold text-ink">
+                    {entry.title}
+                  </b>
+                </span>
+
+                {/* The mark is a word, not a colour. A reader should not have to
+                    work out which of two shades means "this one". */}
+                <span
+                  className={cn(
+                    "flex flex-none items-center gap-1.5 font-mono text-[9.5px] font-bold tracking-[0.14em] uppercase",
+                    on ? "text-done" : "text-transparent",
+                  )}
+                >
+                  <span aria-hidden className="size-1.5 rounded-pill bg-current" />
+                  On this
+                </span>
+              </span>
+
+              <span className="mt-2 block text-[14px] leading-[1.55] text-quiet">
+                {entry.note}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       <p className="mt-3 mb-10 max-w-measure text-[14px] leading-[1.6] text-quiet">

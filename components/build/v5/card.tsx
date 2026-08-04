@@ -196,7 +196,9 @@ function Question({
                 onClick={() => toggleChip(swatch.q, swatch.v, false, stepKey)}
                 className={cn(
                   "flex cursor-pointer items-center gap-2 rounded-pill py-1.5 pr-3.5 pl-2 text-[13px] font-semibold transition-colors",
-                  on ? "bg-ink text-white" : "bg-field text-quiet hover:text-ink",
+                  on
+                    ? "bg-done text-white"
+                    : "bg-planned text-body hover:bg-border hover:text-ink",
                 )}
               >
                 <span
@@ -422,7 +424,7 @@ export function CardDialog({
         aria-modal="true"
         aria-label={card.title}
         tabIndex={-1}
-        className="quiet-scroll relative max-h-[86svh] w-full max-w-[760px] overflow-y-auto rounded-t-[18px] bg-field outline-none sm:rounded-[18px]"
+        className="quiet-scroll relative max-h-[88svh] w-full max-w-[1040px] overflow-y-auto rounded-t-[18px] bg-field outline-none sm:rounded-[18px]"
       >
         <DetailCard
           card={card}

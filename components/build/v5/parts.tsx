@@ -162,7 +162,7 @@ export function Chip({
         "cursor-pointer rounded-pill px-3.5 py-2 text-[13.5px] font-semibold transition-colors",
         on
           ? "bg-done text-white"
-          : "bg-well text-quiet hover:bg-hair hover:text-ink",
+          : "bg-planned text-body hover:bg-border hover:text-ink",
       )}
     >
       {children}
