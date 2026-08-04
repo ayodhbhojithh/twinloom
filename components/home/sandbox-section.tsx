@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import {
   ArrowUpRight,
   CalendarClock,
@@ -12,6 +13,7 @@ import {
   PoundSterling,
   Sparkles,
   Waves,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -188,6 +190,8 @@ export function SandboxSection() {
      here. Named, the two drifted apart the moment the order changed and the
      bench opened on the second row with the first one lit. */
   const [at, setAt] = useState<string>(PIECES[0].key);
+  /* Which piece of work is open, if any. */
+  const [open, setOpen] = useState<string | null>(null);
   const { playing, toggle } = useNotes();
 
   const piece = PIECES.find((entry) => entry.key === at) ?? PIECES[0];
@@ -411,11 +415,40 @@ export function SandboxSection() {
             section of its own, because this is the answer to "what is any of
             this for" and that is the question the bench raises. */}
         <div className="mt-9">
-          <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-            {PROJECTS.map((project, n) => (
-              <WorkCard key={project.id} project={project} n={n} />
-            ))}
-          </div>
+          {/* One of these opens in place. The card does not go anywhere: its
+              picture is the same element, carried into the open panel by
+              `layoutId`, so the two states are one object moving rather than a
+              card fading out while a dialog fades in. */}
+          <LayoutGroup>
+            <AnimatePresence mode="wait" initial={false}>
+              {open ? (
+                <WorkOpen
+                  key="open"
+                  project={PROJECTS[PROJECTS.findIndex((e) => e.id === open)]}
+                  n={PROJECTS.findIndex((e) => e.id === open)}
+                  onClose={() => setOpen(null)}
+                />
+              ) : (
+                <motion.div
+                  key="grid"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+                >
+                  {PROJECTS.map((project, n) => (
+                    <WorkCard
+                      key={project.id}
+                      project={project}
+                      n={n}
+                      onOpen={() => setOpen(project.id)}
+                    />
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </LayoutGroup>
         </div>
       </CutPanel>
     </section>
@@ -435,11 +468,13 @@ export function SandboxSection() {
 function WorkCard({
   project,
   n,
+  onOpen,
 }: {
   project: (typeof PROJECTS)[number];
   n: number;
+  onOpen: () => void;
 }) {
-  const box = useRef<HTMLDivElement>(null);
+  const box = useRef<HTMLButtonElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
 
   useEffect(() => {
@@ -464,16 +499,20 @@ function WorkCard({
   const top = n % 2 === 1;
 
   return (
-    <article
+    <button
       ref={box}
-      className="group/work relative h-[200px] min-w-0 transition-transform duration-300 hover:-translate-y-1 sm:h-[214px]"
+      type="button"
+      onClick={onOpen}
+      aria-label={`Open ${project.name}`}
+      className="group/work relative h-[200px] min-w-0 cursor-pointer text-left transition-transform duration-300 hover:-translate-y-1 sm:h-[214px]"
     >
       {/* The picture is the card, cut to the outline and faded into ink at the
           foot so the name is read off the picture rather than off a bar laid
           over it. */}
-      <span
+      <motion.span
         aria-hidden
-        className="absolute inset-0 overflow-hidden bg-canvas"
+        layoutId={`work-${project.id}`}
+        className="absolute inset-0 block overflow-hidden bg-canvas"
         style={{ clipPath: path ? `path("${path}")` : undefined }}
       >
         <Image
@@ -485,7 +524,7 @@ function WorkCard({
           className="object-cover object-center transition-transform duration-500 group-hover/work:scale-[1.06]"
         />
         <span className="absolute inset-0" style={{ background: SCRIM }} />
-      </span>
+      </motion.span>
 
       <div
         className={cn(
@@ -517,6 +556,153 @@ function WorkCard({
           {String(n + 1).padStart(2, "0")}
         </span>
       </span>
-    </article>
+    </button>
+  );
+}
+
+/**
+ * One piece of work, opened in place.
+ *
+ * The picture arrives from the card rather than appearing: it carries the same
+ * `layoutId`, so the browser is moving one element between two positions rather
+ * than crossing two of them over. That is the difference between a transition
+ * and a cut.
+ *
+ * What it adds is what a card cannot hold - the summary, the facts as pills,
+ * and the way to talk about one like it.
+ */
+function WorkOpen({
+  project,
+  n,
+  onClose,
+}: {
+  project: (typeof PROJECTS)[number];
+  n: number;
+  onClose: () => void;
+}) {
+  const box = useRef<HTMLElement>(null);
+
+  /* Escape, and a press anywhere outside it. Something opened in place has no
+     scrim to press, so the page itself is the way out - and a reader who has
+     finished with it will press away from it long before they look for a
+     button. */
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    const onDown = (event: PointerEvent) => {
+      if (!box.current?.contains(event.target as Node)) onClose();
+    };
+
+    window.addEventListener("keydown", onKey);
+    /* On the next frame: the press that opened this is still travelling up the
+       document, and listening now would close it in the same gesture. */
+    const armed = requestAnimationFrame(() =>
+      window.addEventListener("pointerdown", onDown),
+    );
+
+    return () => {
+      cancelAnimationFrame(armed);
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("pointerdown", onDown);
+    };
+  }, [onClose]);
+
+  return (
+    <motion.article
+      ref={box}
+      layout
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+      className="relative overflow-hidden rounded-[22px] bg-canvas"
+    >
+      {/* The picture, and it fades into the ground it sits on rather than
+          stopping at a line - so the panel is one surface that happens to begin
+          as a photograph. */}
+      <motion.span
+        layoutId={`work-${project.id}`}
+        onClick={onClose}
+        className="relative block h-[240px] w-full cursor-pointer overflow-hidden sm:h-[300px]"
+      >
+        <Image
+          src={project.image}
+          alt={project.alt}
+          fill
+          quality={95}
+          sizes="(max-width: 1024px) 96vw, 60vw"
+          className="object-cover object-center"
+        />
+        <span
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to top, var(--color-canvas) 0%, color-mix(in oklab, var(--color-canvas) 55%, transparent) 34%, transparent 68%)",
+          }}
+        />
+      </motion.span>
+
+      <div className="relative -mt-12 px-6 pb-6 sm:px-8 sm:pb-8">
+        <span className="font-mono text-[9px] font-bold tracking-[0.16em] text-mark uppercase">
+          {String(n + 1).padStart(2, "0")} · {project.kind} / {project.year}
+        </span>
+
+        <h4 className="mt-2 max-w-[24ch] text-[clamp(20px,2.2vw,30px)] leading-[1.08] font-extrabold tracking-[-0.035em] text-ink">
+          {project.name}
+        </h4>
+
+        <p className="mt-3 max-w-[68ch] text-[14px] leading-[1.65] text-body">
+          {project.summary}
+        </p>
+
+        {/* The facts as pills, and the two ways on. A preview is only offered
+            where there is one to open: a dead "live preview" is worse than no
+            preview at all. */}
+        <div className="mt-5 flex flex-wrap items-center gap-2">
+          {project.facts.map((fact) => (
+            <span
+              key={fact.term}
+              className="inline-flex items-center gap-2 rounded-pill bg-field px-3.5 py-1.5 text-[12.5px] text-body"
+            >
+              <span className="font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase">
+                {fact.term}
+              </span>
+              <b className="font-semibold text-ink">{fact.value}</b>
+            </span>
+          ))}
+
+          <span className="inline-flex items-center gap-2 rounded-pill bg-field px-3.5 py-1.5 text-[12.5px] text-body">
+            <span className="font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase">
+              Preview
+            </span>
+            <b className="font-semibold text-quiet">On request</b>
+          </span>
+        </div>
+
+        <div className="mt-6 flex flex-wrap items-center gap-2.5">
+          <Link
+            href={ROUTES.build}
+            className="group/like inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85"
+          >
+            Ask for one like this
+            <ArrowUpRight
+              aria-hidden
+              className="size-4 transition-transform group-hover/like:translate-x-0.5 group-hover/like:-translate-y-0.5"
+            />
+          </Link>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="inline-flex cursor-pointer items-center gap-2 rounded-pill bg-field px-4 py-2 text-[13px] font-semibold text-quiet transition-colors hover:text-ink"
+          >
+            <X className="size-3.5" />
+            Back to the work
+          </button>
+        </div>
+      </div>
+    </motion.article>
   );
 }
