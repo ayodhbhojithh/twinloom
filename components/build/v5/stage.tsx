@@ -108,7 +108,7 @@ export function Stage({
           it costs nothing and the words above it stay whole. */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-well"
+        className="absolute inset-0 bg-canvas"
         style={{ clipPath: path ? `path("${path}")` : undefined }}
       />
 

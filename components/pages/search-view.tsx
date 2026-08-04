@@ -69,12 +69,12 @@ export function SearchView() {
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           placeholder="What are you looking for?"
-          className="min-w-0 flex-1 rounded-field border border-border bg-field px-3.5 py-2.5 text-[15.5px] text-body outline-none transition-colors placeholder:text-label focus:border-active"
+          className="min-w-0 flex-1 rounded-field border border-border bg-field px-3.5 py-2.5 text-[15.5px] text-body outline-none transition-colors placeholder:text-label focus:border-mark"
         />
 
         <button
           type="submit"
-          className="shrink-0 rounded-field accent-fill px-[18px] py-[10px] text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90"
+          className="shrink-0 rounded-field bg-mark px-[18px] py-[10px] text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90"
         >
           Search
         </button>

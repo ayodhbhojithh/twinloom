@@ -174,7 +174,7 @@ export function BookingFlow() {
                       className={cn(
                         "flex h-full w-full cursor-pointer flex-col rounded-card border p-4 text-left transition-colors",
                         on
-                          ? "border-active bg-active/[0.04]"
+                          ? "border-mark bg-mark/[0.04]"
                           : "border-border bg-field hover:border-ink",
                       )}
                     >
@@ -194,7 +194,7 @@ export function BookingFlow() {
                           className={cn(
                             "mt-0.5 flex size-[18px] shrink-0 items-center justify-center rounded-pill border transition-colors",
                             on
-                              ? "border-active accent-fill text-white"
+                              ? "border-mark bg-mark text-white"
                               : "border-border text-transparent",
                           )}
                         >
@@ -286,7 +286,7 @@ export function BookingFlow() {
                               "cursor-not-allowed border-hair bg-well text-label line-through",
                             !gone &&
                               on &&
-                              "border-active accent-fill text-white",
+                              "border-mark bg-mark text-white",
                             !gone &&
                               !on &&
                               "cursor-pointer border-border bg-field text-ink hover:border-ink",
@@ -360,7 +360,7 @@ export function BookingFlow() {
                     setDetails((was) => ({ ...was, notes: event.target.value }))
                   }
                   placeholder="A link, a competitor you like, or what you are stuck on."
-                  className="w-full resize-y rounded-field border border-border bg-field px-3.5 py-2.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-active"
+                  className="w-full resize-y rounded-field border border-border bg-field px-3.5 py-2.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-mark"
                 />
               </div>
             </div>
@@ -414,7 +414,7 @@ export function BookingFlow() {
           <button
             type="button"
             onClick={() => setDone(true)}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-field accent-fill px-6 py-2.5 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90"
+            className="inline-flex cursor-pointer items-center gap-2 rounded-field bg-mark px-6 py-2.5 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90"
           >
             Confirm booking
             <Check aria-hidden className="size-4" strokeWidth={2.5} />
@@ -424,7 +424,7 @@ export function BookingFlow() {
             type="button"
             disabled={at !== 2 && !canGoOn}
             onClick={next}
-            className="group inline-flex cursor-pointer items-center gap-2 rounded-field accent-fill px-6 py-2.5 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-default disabled:bg-planned disabled:text-label"
+            className="group inline-flex cursor-pointer items-center gap-2 rounded-field bg-mark px-6 py-2.5 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-default disabled:bg-planned disabled:text-label"
           >
             Next
             <ArrowRight
@@ -510,7 +510,7 @@ function Field({
         onChange={(event) => onChange(event.target.value)}
         className={cn(
           "w-full rounded-field border bg-field px-3.5 py-2.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-label",
-          bad ? "border-blocked focus:border-blocked" : "border-border focus:border-active",
+          bad ? "border-blocked focus:border-blocked" : "border-border focus:border-mark",
         )}
       />
       {bad ? (
@@ -575,7 +575,7 @@ function Finished({
     <div className="mx-auto max-w-[38rem] py-4 text-center">
       <span
         aria-hidden
-        className="mx-auto flex size-14 items-center justify-center rounded-pill bg-done/10 text-done"
+        className="mx-auto flex size-14 items-center justify-center rounded-pill bg-mark/10 text-mark"
       >
         <Check className="size-7" strokeWidth={2.5} />
       </span>
@@ -687,7 +687,7 @@ function ZoneNote({
           type="button"
           aria-pressed={inOfficeZone}
           onClick={onToggle}
-          className="cursor-pointer font-mono text-[9.5px] font-bold tracking-[0.14em] text-active uppercase transition-opacity hover:opacity-75"
+          className="cursor-pointer font-mono text-[9.5px] font-bold tracking-[0.14em] text-mark uppercase transition-opacity hover:opacity-75"
         >
           {inOfficeZone ? "Show my own time" : "Show London time"}
         </button>

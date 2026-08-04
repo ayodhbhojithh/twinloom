@@ -51,8 +51,8 @@ export function Stepper({
                 <span
                   className={cn(
                     "flex size-7 shrink-0 items-center justify-center rounded-pill border font-mono text-[11px] font-bold tabular-nums transition-colors",
-                    done && "border-active accent-fill text-white",
-                    here && "border-active text-active",
+                    done && "border-mark bg-mark text-white",
+                    here && "border-mark text-mark",
                     !done && !here && "border-border text-label",
                   )}
                 >
@@ -80,7 +80,7 @@ export function Stepper({
                   aria-hidden
                   className={cn(
                     "mx-2 h-px min-w-4 flex-1 transition-colors",
-                    done ? "accent-fill" : "bg-border",
+                    done ? "bg-mark" : "bg-border",
                   )}
                 />
               )}

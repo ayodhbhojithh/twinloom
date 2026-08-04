@@ -30,7 +30,7 @@ export function ActionLink({
       className={cn(
         "inline-block rounded-field px-[18px] py-[10px] text-[14.5px] font-semibold transition-colors",
         variant === "primary" &&
-          "accent-fill text-white hover:opacity-90",
+          "bg-mark text-white hover:opacity-90",
         variant === "secondary" &&
           "border border-ink bg-field text-ink hover:bg-ink hover:text-white",
         variant === "quiet" &&

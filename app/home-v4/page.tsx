@@ -51,7 +51,7 @@ export default function HomeV4Page() {
             className="rise max-w-[17ch] text-[clamp(28px,3.4vw,50px)] leading-[1.06] font-extrabold tracking-[-0.04em] text-ink"
           >
             {claim}
-            {promise ? <span className="accent-text"> {promise}</span> : null}
+            {promise ? <span className="text-mark"> {promise}</span> : null}
           </p>
 
           <div style={{ "--in": "220ms" } as React.CSSProperties} className="rise">
@@ -62,7 +62,7 @@ export default function HomeV4Page() {
             <div className="mt-7 flex flex-wrap items-center gap-2.5">
               <Link
                 href={ROUTES.build}
-                className="inline-flex items-center rounded-field accent-fill px-5 py-2.5 text-[15px] font-semibold text-white transition-[opacity,transform] hover:opacity-90 active:translate-y-px"
+                className="inline-flex items-center rounded-field bg-mark px-5 py-2.5 text-[15px] font-semibold text-white transition-[opacity,transform] hover:opacity-90 active:translate-y-px"
               >
                 Build your website
               </Link>

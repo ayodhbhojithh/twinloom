@@ -52,7 +52,7 @@ export default function HomeV2Page() {
         >
           <Link
             href={ROUTES.build}
-            className="inline-flex items-center rounded-field accent-fill px-7 py-[14px] text-[16px] font-semibold text-white transition-[opacity,transform] hover:opacity-90 active:translate-y-px"
+            className="inline-flex items-center rounded-field bg-mark px-7 py-[14px] text-[16px] font-semibold text-white transition-[opacity,transform] hover:opacity-90 active:translate-y-px"
           >
             Build your website
           </Link>

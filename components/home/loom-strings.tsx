@@ -66,9 +66,9 @@ const STEPS = 34;
  */
 const bow = (t: number) => Math.sin(t * Math.PI * 0.5);
 
-/** Ink, and the green a ringing thread carries. */
+/** Ink, and the accent a ringing thread carries. */
 const REST = [17, 24, 39] as const;
-const RUNG = [5, 150, 105] as const;
+const RUNG = [189, 87, 48] as const;
 
 /**
  * A thread's colour, at rest through to fully struck.

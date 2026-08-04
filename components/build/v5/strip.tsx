@@ -65,7 +65,7 @@ export function StepStrip({
         ref={rail}
         role="tablist"
         aria-label="Steps"
-        className="quiet-scroll -mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-2"
+        className="quiet-scroll -mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pt-2 pb-3"
         onKeyDown={(event) => {
           if (event.key === "ArrowRight") onGo(step + 1);
           if (event.key === "ArrowLeft") onGo(step - 1);
@@ -87,7 +87,7 @@ export function StepStrip({
                 "group/step flex w-[236px] flex-none snap-start cursor-pointer flex-col rounded-[20px] p-4 text-left transition-all",
                 on
                   ? "-translate-y-0.5 bg-ink text-white"
-                  : "bg-well hover:-translate-y-0.5 hover:bg-hair",
+                  : "bg-canvas hover:-translate-y-0.5 hover:bg-hair",
               )}
             >
               <span className="flex items-center justify-between gap-3">

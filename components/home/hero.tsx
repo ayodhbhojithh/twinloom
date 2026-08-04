@@ -17,7 +17,7 @@ const POINTS = [
     icon: Check,
     title: "One question",
     note: "Easy to answer",
-    ring: "bg-active/10 text-active",
+    ring: "bg-mark/10 text-mark",
   },
   {
     icon: FileText,
@@ -29,7 +29,7 @@ const POINTS = [
     icon: Clock,
     title: "Two working days",
     note: "Straight to your inbox",
-    ring: "bg-done/10 text-done",
+    ring: "bg-mark/10 text-mark",
   },
 ] as const;
 
@@ -91,7 +91,7 @@ export function Hero() {
           >
             {claim}
             {promise ? (
-              <span className="block accent-text">{promise}</span>
+              <span className="block text-mark">{promise}</span>
             ) : null}
           </h1>
 
@@ -108,7 +108,7 @@ export function Hero() {
           >
             <Link
               href={ROUTES.build}
-              className="inline-flex items-center rounded-field accent-fill px-6 py-[13px] text-[15.5px] font-semibold text-white transition-[opacity,transform] hover:opacity-90 active:translate-y-px sm:px-7 sm:py-[14px] sm:text-[16px]"
+              className="inline-flex items-center rounded-field bg-mark px-6 py-[13px] text-[15.5px] font-semibold text-white transition-[opacity,transform] hover:opacity-90 active:translate-y-px sm:px-7 sm:py-[14px] sm:text-[16px]"
             >
               Build your website
             </Link>
@@ -170,7 +170,7 @@ export function Hero() {
                   }}
                   className={cn(
                     "ring-in absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-pill border",
-                    ring < 2 ? "border-active/25" : "border-border",
+                    ring < 2 ? "border-mark/25" : "border-border",
                     /* The two widest are noise on a small screen, where they
                        are mostly cropped anyway. */
                     ring > 2 && "hidden sm:block",
@@ -181,7 +181,7 @@ export function Hero() {
               {/* One ring leaving, on a long loop: the question going out. */}
               <span
                 style={{ width: `${RINGS[0]}%`, aspectRatio: "1" }}
-                className="ping absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-pill border border-active/40"
+                className="ping absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-pill border border-mark/40"
               />
             </div>
 

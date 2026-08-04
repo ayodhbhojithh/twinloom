@@ -45,7 +45,7 @@ export default function HomeV5Page() {
             className="rise mt-7 max-w-[24ch] text-[clamp(36px,5.2vw,78px)] leading-[1.03] font-extrabold tracking-[-0.045em] text-ink"
           >
             {claim}
-            {promise ? <span className="block accent-text">{promise}</span> : null}
+            {promise ? <span className="block text-mark">{promise}</span> : null}
           </h1>
 
           <p

@@ -90,7 +90,7 @@ export function OnThisPage({ sections }: { sections: readonly PageSection[] }) {
                 aria-current={on ? "true" : undefined}
                 className={cn(
                   "block py-[7px] text-[14px] leading-[1.35] transition-colors",
-                  on ? "text-active" : "text-quiet hover:text-ink",
+                  on ? "text-mark" : "text-quiet hover:text-ink",
                 )}
               >
                 {section.title}

@@ -30,8 +30,14 @@
   --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo,
     Consolas, monospace;
 
-  /* Surfaces, lightest to firmest. */
+  /* Surfaces, lightest to firmest.
+
+     `canvas` is the warm ground the shaped surfaces sit on: off-white with a
+     little of the accent in it, so a cut card reads as paper rather than as a
+     grey box. Every other surface stays neutral, which is what lets the warm
+     one register at all. */
   --color-field: #ffffff;
+  --color-canvas: #faf8f5;
   --color-well: #fafafa;
   --color-hair: #f4f5f7;
   --color-border: #e5e7eb;
@@ -47,15 +53,22 @@
   --color-body: #374151;
   --color-ink: #111827;
 
-  /* State. `active` is the only blue in the system and the whole accent. */
+  /* The one accent in the system.
+
+     A warm terracotta rather than a blue or a green. Green means done and
+     nothing here is being completed; blue means a link and everything on a
+     working screen would then look like one. This is the colour of a mark made
+     by hand on a page, which is what every use of it stands for: a thing you
+     set, not a thing that passed. */
+  --color-mark: #bd5730;
+
+  /* Kept because shadcn's primitives resolve against them, and because a form
+     that genuinely fails still has to be able to say so. Neither is used to
+     decorate anything. */
   --color-active: #2563eb;
   --color-done: #059669;
   --color-amber: #d97706;
   --color-blocked: #dc2626;
-  /* The build screens' accent: the one colour that marks an answer as set.
-     The same red as `blocked`, under a name that says what it is doing there,
-     so a class list reads as intent rather than as an error state. */
-  --color-mark: #dc2626;
   --color-planned: #dbdfe6;
   --color-unrated: #e9ebef;
   /* The mono index grey, for numbers that are labels rather than data. */
@@ -247,7 +260,7 @@
   }
 
   ::selection {
-    background: color-mix(in oklab, var(--color-active) 18%, white);
+    background: color-mix(in oklab, var(--color-mark) 16%, white);
     color: var(--color-ink);
   }
 
@@ -391,7 +404,7 @@
     background-image:
       radial-gradient(
         40rem 26rem at 50% -6%,
-        color-mix(in oklab, var(--color-active) 10%, transparent),
+        color-mix(in oklab, var(--color-mark) 10%, transparent),
         transparent 66%
       ),
       radial-gradient(
@@ -613,34 +626,19 @@
      `background-clip: text` is ever unsupported the text would otherwise
      disappear entirely. This way it falls back to the solid accent.
   --------------------------------------------------------------------------- */
+  /* The accent, retired.
+
+     It was a blue to green gradient, and both of those colours are now out of
+     the system: green claimed things were done that were only set, and blue
+     made every filled control look like a link. What is left is one warm mark
+     used flat, so these two classes are a solid fill and its text.
+  --------------------------------------------------------------------------- */
   .accent-fill {
-    background-image: linear-gradient(
-      104deg,
-      var(--color-active) 0%,
-      color-mix(in oklab, var(--color-active) 55%, var(--color-done)) 52%,
-      var(--color-done) 100%
-    );
+    background-color: var(--color-mark);
   }
 
   .accent-text {
-    color: var(--color-active);
-  }
-
-  @supports (background-clip: text) or (-webkit-background-clip: text) {
-    .accent-text {
-      background-image: linear-gradient(
-        104deg,
-        var(--color-active) 0%,
-        color-mix(in oklab, var(--color-active) 55%, var(--color-done)) 52%,
-        var(--color-done) 100%
-      );
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      /* Without this a descender or an accent can be clipped by the box the
-         gradient is painted into. */
-      padding-bottom: 0.04em;
-    }
+    color: var(--color-mark);
   }
 
   /* ---------------------------------------------------------------------------
