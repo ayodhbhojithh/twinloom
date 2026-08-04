@@ -14,7 +14,7 @@ import {
 } from "@/lib/build/v5-store";
 import { cn } from "@/lib/utils";
 
-import { Chip, Kicker, SubHead, Under } from "./parts";
+import { Chip, SubHead, Under } from "./parts";
 
 /* ---------------------------------------------------------------------------
    The short way round.
@@ -46,7 +46,7 @@ export function QuickPane({
   const [draft, setDraft] = useState("");
 
   return (
-    <div className="grid max-w-wide gap-x-12 gap-y-10 lg:grid-cols-2">
+    <div className="grid max-w-wide items-start gap-x-12 gap-y-10 lg:grid-cols-2">
       <div className="min-w-0">
         <div className="rounded-card border border-border bg-well p-5 sm:p-6">
           <h4 className="text-[19px] leading-[1.25] font-bold tracking-[-0.015em] text-ink sm:text-[21px]">
@@ -94,8 +94,14 @@ export function QuickPane({
               key={page}
               className="flex items-center gap-3 border-t border-border px-4 py-3 first:border-t-0"
             >
-              <Check aria-hidden className="size-[17px] flex-none text-done" strokeWidth={2.3} />
-              <b className="text-[14.5px] font-semibold text-ink">{page}</b>
+              <Check
+                aria-hidden
+                className="size-4 flex-none text-done"
+                strokeWidth={2.6}
+              />
+              <b className="text-[14.5px] leading-none font-semibold text-ink">
+                {page}
+              </b>
             </li>
           ))}
         </ul>
@@ -113,11 +119,10 @@ export function QuickPane({
       </div>
 
       <div className="min-w-0">
-        <Kicker className="block">In your own words</Kicker>
-        <b className="mt-1.5 block text-[17px] font-bold text-ink">
+        <h4 className="text-[19px] leading-[1.25] font-bold tracking-[-0.015em] text-ink sm:text-[21px]">
           Say it however you would say it
-        </b>
-        <p className="mt-1.5 text-[14.5px] leading-[1.6] text-quiet">
+        </h4>
+        <p className="mt-2 text-[14.5px] leading-[1.6] text-quiet">
           No questions, no order, no structure. As much or as little as you like.
           It goes with the request exactly as you typed it, and nobody tidies it
           up on the way.
@@ -129,13 +134,13 @@ export function QuickPane({
           value={answers.text["quick.words"] ?? ""}
           placeholder="What the business does, who it is for, what the website has to do, and anything you already know you want."
           onChange={(event) => setText("quick.words", event.target.value)}
-          className="mt-4 w-full resize-y rounded-card bg-well px-4 py-3.5 text-[15px] leading-[1.65] text-ink outline-none transition-colors placeholder:text-label focus:bg-hair"
+          className="mt-4 w-full resize-y rounded-card border border-border bg-field px-4 py-3.5 text-[15px] leading-[1.65] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
         />
 
-        <Kicker className="mt-8 block">
+        <h4 className="mt-9 text-[19px] leading-[1.25] font-bold tracking-[-0.015em] text-ink sm:text-[21px]">
           And anything you would rather show us
-        </Kicker>
-        <p className="mt-1.5 text-[14.5px] leading-[1.6] text-quiet">
+        </h4>
+        <p className="mt-2 text-[14.5px] leading-[1.6] text-quiet">
           A document, an image, a screenshot, or a link to a website. Say which
           kind it is, add it, then write against it what you like about it. That
           sentence is worth more to us than the link on its own.
@@ -155,7 +160,7 @@ export function QuickPane({
         </div>
 
         <form
-          className="mt-3 flex items-stretch gap-2.5"
+          className="mt-3 flex items-stretch gap-2"
           onSubmit={(event) => {
             event.preventDefault();
             const said = draft.trim();
@@ -169,64 +174,73 @@ export function QuickPane({
             aria-label="Write it, paste it, or name the file"
             placeholder="A sentence, a link, or the name of a file"
             onChange={(event) => setDraft(event.target.value)}
-            className="min-w-0 flex-1 rounded-field bg-well px-4 py-2.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-label focus:bg-hair"
+            className="min-w-0 flex-1 rounded-field border border-border bg-field px-4 py-2.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
           />
           <button
             type="submit"
             disabled={!draft.trim()}
-            className="flex-none cursor-pointer rounded-field bg-ink px-5 font-mono text-[10px] font-bold tracking-[0.14em] text-white uppercase transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-planned disabled:text-label"
+            className="flex-none cursor-pointer rounded-field bg-ink px-6 text-[14px] font-semibold text-white transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-planned disabled:text-white"
           >
             Add
           </button>
         </form>
 
         {answers.refs.length ? (
-          <table className="mt-5 w-full border-collapse">
-            <thead>
-              <tr>
-                {["Kind", "What it is", "What you like about it", ""].map(
-                  (head) => (
+          <div className="mt-5 overflow-hidden rounded-card border border-border">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-well">
+                  {[
+                    { head: "Kind", className: "w-[104px]" },
+                    { head: "What it is", className: "" },
+                    { head: "What you like about it", className: "w-[38%]" },
+                    { head: "", className: "w-[86px] text-right" },
+                  ].map((column) => (
                     <th
-                      key={head}
+                      key={column.head || "remove"}
                       scope="col"
-                      className="border-b border-hair pr-3 pb-2 text-left font-mono text-[10px] font-bold tracking-[0.14em] text-label uppercase"
+                      className={cn(
+                        "border-b border-border px-3 py-2.5 text-left font-mono text-[9.5px] font-bold tracking-[0.14em] text-label uppercase",
+                        column.className,
+                      )}
                     >
-                      {head}
+                      {column.head}
                     </th>
-                  ),
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {answers.refs.map((ref) => (
-                <tr key={ref.n} className="border-b border-hair">
-                  <td className="py-2.5 pr-3 align-top font-mono text-[10px] font-bold tracking-[0.1em] text-quiet uppercase">
-                    {ref.kind}
-                  </td>
-                  <td className="py-2.5 pr-3 align-top text-[14px] leading-[1.45] text-ink">
-                    {ref.text}
-                  </td>
-                  <td className="py-2.5 pr-3 align-top">
-                    <input
-                      value={answers.like[ref.n] ?? ""}
-                      placeholder="What you like about it"
-                      onChange={(event) => setLike(ref.n, event.target.value)}
-                      className="w-full rounded-field bg-well px-3 py-2 text-[13.5px] text-ink outline-none placeholder:text-label"
-                    />
-                  </td>
-                  <td className="py-2.5 text-right align-top">
-                    <button
-                      type="button"
-                      onClick={() => dropRef(ref.n)}
-                      className="cursor-pointer font-mono text-[9.5px] font-bold tracking-[0.12em] text-label uppercase transition-colors hover:text-ink"
-                    >
-                      Remove
-                    </button>
-                  </td>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {answers.refs.map((ref) => (
+                  <tr key={ref.n} className="border-b border-border last:border-b-0">
+                    <td className="px-3 py-2.5 align-middle font-mono text-[9.5px] font-bold tracking-[0.1em] text-quiet uppercase">
+                      {ref.kind}
+                    </td>
+                    <td className="px-3 py-2.5 align-middle text-[14px] leading-[1.4] text-ink">
+                      {ref.text}
+                    </td>
+                    <td className="px-3 py-2.5 align-middle">
+                      <input
+                        value={answers.like[ref.n] ?? ""}
+                        placeholder="What you like about it"
+                        onChange={(event) => setLike(ref.n, event.target.value)}
+                        className="w-full rounded-field border border-border bg-field px-3 py-2 text-[13.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
+                      />
+                    </td>
+                    <td className="px-3 py-2.5 text-right align-middle">
+                      <button
+                        type="button"
+                        onClick={() => dropRef(ref.n)}
+                        className="cursor-pointer font-mono text-[9.5px] font-bold tracking-[0.12em] text-label uppercase transition-colors hover:text-ink"
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
           <p className="mt-5 text-[14px] leading-[1.55] text-quiet">
             Nothing added yet. This is a real answer on its own - the box above is
