@@ -174,13 +174,10 @@ export function SandboxSection() {
 
   return (
     <section className="page-frame pt-20 pb-20 lg:pt-32 lg:pb-28">
-      {/* Right. The three heads take a side each - left, right, then centred
-          over the wall - so a page of four stacked sections has a rhythm across
-          it rather than one column of centred blocks. */}
-      <div className="flex flex-col items-end text-right">
-        <h2 className="section-head max-w-[38ch] text-ink">
+      <div className="flex flex-col items-center text-center">
+        <h2 className="section-head max-w-[26ch] text-ink">
           Things we built.
-          <span className="text-quiet"> Running, rather than described.</span>
+          <span className="text-quiet"> Running, not described.</span>
         </h2>
 
         <p className="mt-5 max-w-[74ch] text-[15px] leading-[1.6] text-quiet sm:text-[16.5px]">
@@ -375,16 +372,6 @@ export function SandboxSection() {
                 </div>
               ) : null}
             </div>
-
-            <p className="mt-4 flex items-center gap-2.5 text-[12.5px] leading-[1.5] text-label">
-              <Check
-                aria-hidden
-                className="size-3.5 flex-none text-mark"
-                strokeWidth={3}
-              />
-              Anything here can be written into a scope as a named piece of
-              work.
-            </p>
           </div>
         </div>
       </CutPanel>

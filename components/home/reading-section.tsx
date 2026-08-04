@@ -23,9 +23,11 @@ export function ReadingSection() {
 
   return (
     <section className="page-frame pt-20 pb-16 lg:pt-32 lg:pb-20">
-      {/* Left, over the wide surface that starts on the left. */}
-      <div className="flex flex-col items-start text-left">
-        <h2 className="section-head max-w-[38ch] text-ink">
+      {/* Down the middle. Every section head on this page sits on the same
+          axis, so four stacked sections read as one page rather than as four
+          layouts that happen to follow each other. */}
+      <div className="flex flex-col items-center text-center">
+        <h2 className="section-head max-w-[26ch] text-ink">
           How we think.
           <span className="text-quiet">
             {" "}
