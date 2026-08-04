@@ -51,8 +51,8 @@
      where it means a pale surface rather than grey text, and the two would resolve
      to whichever was declared last. It is `quiet` here for that reason, and that
      is the one place this file departs from the draft's vocabulary. */
-  --color-label: #767e8d;
-  --color-quiet: #6b7280;
+  --color-label: #626b7c;
+  --color-quiet: #565e6b;
   --color-body: #374151;
   --color-ink: #111827;
 
@@ -75,7 +75,7 @@
   --color-planned: #a8b1c0;
   --color-unrated: #e9ebef;
   /* The mono index grey, for numbers that are labels rather than data. */
-  --color-idx: #7e8798;
+  --color-idx: #6f7889;
 
   --radius-card: 10px;
   --radius-field: 8px;
