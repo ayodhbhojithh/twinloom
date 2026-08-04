@@ -188,14 +188,6 @@ export function told(a: Answers): { tick: boolean; line: string }[] {
     out.push({ tick: true, line: `You sell: ${selling.join(", ")}` });
   }
 
-  const layout = picked(a, "layout");
-  if (layout.length) {
-    out.push({
-      tick: true,
-      line: `Layout: ${LAYOUTS[layout[0]] ?? layout[0]}`,
-    });
-  }
-
   const feel = picked(a, "feel");
   if (feel.length) {
     out.push({

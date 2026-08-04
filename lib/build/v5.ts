@@ -57,12 +57,6 @@ export const STEPS: readonly Step[] = [
   "can": true
  },
  {
-  "k": "layout",
-  "ph": "shape",
-  "n": "Pick a shape",
-  "can": true
- },
- {
   "k": "who",
   "ph": "detail",
   "n": "Your visitors",
@@ -574,10 +568,6 @@ export const PAY_WAYS: readonly SellKind[] = [
 /** The read-back, in order: `[step key, heading]`. */
 export const REPORT: readonly (readonly [string, string])[] = [
  [
-  "layout",
-  "The shape of it"
- ],
- [
   "who",
   "Who the site is for"
  ],
@@ -730,7 +720,6 @@ export const REF_KINDS: Record<string, string> = {
  * website rather than listing what is missing.
  */
 export const ASSUMPTIONS: Record<string, string> = {
- "layout": "We choose a layout to suit what you tell us.",
  "who": "We assume the site is for customers buying for themselves.",
  "do": "We assume the standard inclusions and nothing beyond them, and we choose what the home page leads with.",
  "sell": "We assume nothing is bought on the website.",
