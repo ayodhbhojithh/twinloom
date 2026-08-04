@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
  *
  * Drawn, not loaded. Two paths, inheriting `currentColor`, sharp at any size.
  */
-export function Threads({ className }: { className?: string }) {
+function Threads({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"

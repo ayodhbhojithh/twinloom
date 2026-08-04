@@ -94,7 +94,7 @@ export function QuickPane({
               key={page}
               className="flex items-center gap-3 border-t border-border px-4 py-3 first:border-t-0"
             >
-              <Check aria-hidden className="size-4 flex-none text-ink" strokeWidth={2.5} />
+              <Check aria-hidden className="size-[17px] flex-none text-done" strokeWidth={2.3} />
               <b className="text-[14.5px] font-semibold text-ink">{page}</b>
             </li>
           ))}

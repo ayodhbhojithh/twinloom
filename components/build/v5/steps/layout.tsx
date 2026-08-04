@@ -4,6 +4,9 @@ import { WIRES, type Wire } from "@/lib/build/v5-wires";
 import { isOn, setPick, touchStep, type Answers } from "@/lib/build/v5-store";
 import { cn } from "@/lib/utils";
 
+import { STEP_COPY } from "@/lib/build/v5-copy";
+
+import { OwnWords } from "../card";
 import { LayerMark, Under } from "../parts";
 import { Lead, Say, StepFrame } from "../step-frame";
 
@@ -53,6 +56,19 @@ export function StepLayout({
           />
         ))}
       </div>
+
+      {/* Six shapes are six of our guesses, and the one somebody has in mind
+          is often not among them. */}
+      {STEP_COPY.layout.miss.map((box) => (
+        <OwnWords
+          key={box.id}
+          listId={box.id}
+          label={box.label}
+          placeholder={box.ph}
+          answers={answers}
+          stepKey="layout"
+        />
+      ))}
 
       <Under>
         Nothing else moves when you change this. The shape decides what the first
@@ -135,7 +151,7 @@ function WireCard({
       <span
         className={cn(
           "mt-2.5 block font-mono text-[10px] font-semibold tracking-[0.1em] uppercase",
-          on ? "text-white/55" : "text-idx",
+          on ? "text-white/70" : "text-idx",
         )}
       >
         {wire.w}

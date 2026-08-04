@@ -223,17 +223,14 @@ function Row({
               /* Not a control. These two are on every site we build, so a
                  button beside them would be offering a choice that is not
                  there. */
-              <span
-                aria-label="Always included"
-                className="flex size-7 items-center justify-center rounded-pill bg-ink text-white"
-              >
-                <Check aria-hidden className="size-[13px]" strokeWidth={3} />
+              <span aria-label="Always included" className="text-done">
+                <Check aria-hidden className="size-[17px]" strokeWidth={2.3} />
               </span>
             ) : (
               <span
                 className={cn(
                   "font-mono text-[10px] font-bold tracking-[0.14em] uppercase",
-                  on ? "text-ink" : "text-label",
+                  on ? "text-done" : "text-label",
                 )}
               >
                 {on ? "Picked" : "Pick"}

@@ -4,8 +4,6 @@ import { ArrowRight, Check } from "lucide-react";
 
 import {
   ACTIONS,
-  COLOUR_ANSWERS,
-  FEELS,
   GROUPS,
   HAVE_ANSWERS,
   MIN_MAP,
@@ -16,6 +14,8 @@ import {
 } from "@/lib/build/v5";
 import { CARD_BY, LAYER_THREE } from "@/lib/build/v5-cards";
 import { HAVE_GROUPS } from "@/lib/build/v5-have";
+import { HOW_WE_WORK } from "@/lib/build/v5-work";
+import { OPTION_LISTS } from "@/lib/build/v5-options";
 import { STEP_COPY } from "@/lib/build/v5-copy";
 import { assumed, orderedActions, readiness, told } from "@/lib/build/v5-derive";
 import {
@@ -36,6 +36,7 @@ import { cn } from "@/lib/utils";
 
 import { DetailCard, OwnWords } from "../card";
 import { Chip, Kicker, LayerMark, SubHead, Under } from "../parts";
+import { OptionLists } from "../option-list";
 import { RowTable } from "../row-table";
 import { Lead, Say, StepFrame } from "../step-frame";
 import { useState } from "react";
@@ -298,6 +299,8 @@ export function StepSell({ at, answers, onGo }: StepProps) {
         answers={answers}
       />
 
+      <OptionLists lists={OPTION_LISTS.sell} answers={answers} step="sell" />
+
       <Miss step="sell" answers={answers} />
 
       {/* Layer three only once there is a shop. None of it holds anything up,
@@ -339,42 +342,18 @@ export function StepStyle({ at, answers, onGo }: StepProps) {
     <StepFrame at={at} onGo={onGo} needs={copy.stop} showBack={copy.stback}>
       <Prose step="style" />
 
-      <div className="mt-6">
-        <b className="block text-[15.5px] font-bold text-ink">
-          How it should feel
-        </b>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {Object.entries(FEELS).map(([key, label]) => (
-            <Chip
-              key={key}
-              on={isOn(answers, "feel", key)}
-              onClick={() => togglePick("feel", key, "style")}
-            >
-              {label}
-            </Chip>
-          ))}
-        </div>
-      </div>
+      {/* Four lists, and every answer carries a sentence. This is the one step
+          where somebody is allowed to answer with a feeling rather than a fact,
+          so the answers have to say what they mean before they can be picked.
 
-      {copy.sh4[0] ? (
-        <SubHead title={copy.sh4[0][0]} note={copy.sh4[0][1]} />
-      ) : null}
-
-      <div className="flex flex-wrap gap-2">
-        {Object.entries(COLOUR_ANSWERS).map(([key, label]) => (
-          <Chip
-            key={key}
-            on={chipOn(answers, "colour", key)}
-            onClick={() => toggleChip("colour", key, true, "style")}
-          >
-            {label}
-          </Chip>
-        ))}
-      </div>
+          How it should feel takes as many as are true, because they pull
+          against each other and that is useful to see. The other three take
+          one. */}
+      <OptionLists lists={OPTION_LISTS.style} answers={answers} step="style" />
 
       {/* The three cards behind this step: your colours, the swatches, and the
           typeface. They open in place, like every other layer two. */}
-      <div className="mt-6 flex flex-wrap gap-2.5">
+      <div className="mt-8 flex flex-wrap gap-2.5">
         {["dw-brandfiles", "dw-picker", "dw-typeface"].map((id) => (
           <button
             key={id}
@@ -703,7 +682,12 @@ export function StepKeep({ at, answers, onGo }: StepProps) {
 
       <div className="max-w-measure rounded-card bg-well p-5">
         <Kicker className="mb-2 block">Your copy of this</Kicker>
-        <b className="block text-[16px] font-bold text-ink">
+        <b
+          className={cn(
+            "block text-[16px] font-bold",
+            on ? "text-done" : "text-ink",
+          )}
+        >
           {on ? "Registered" : "Not registered"}
         </b>
         <p className="mt-1.5 text-[14.5px] leading-[1.6] text-quiet">
@@ -776,7 +760,7 @@ export function StepSubmit({ at, answers, onGo, onGoKey }: StepProps) {
             className={cn(
               "mt-1.5 size-2.5 flex-none rounded-pill",
               state === "ready"
-                ? "bg-ink"
+                ? "bg-done"
                 : state === "near"
                   ? "bg-quiet"
                   : "bg-planned",
@@ -808,7 +792,7 @@ export function StepSubmit({ at, answers, onGo, onGoKey }: StepProps) {
                     aria-hidden
                     className={cn(
                       "mt-px flex size-[22px] flex-none items-center justify-center rounded-pill",
-                      done ? "bg-ink text-white" : "bg-field text-planned",
+                      done ? "bg-done text-white" : "bg-field text-planned",
                     )}
                   >
                     <Check className="size-[13px]" strokeWidth={3} />
@@ -853,7 +837,81 @@ export function StepSubmit({ at, answers, onGo, onGoKey }: StepProps) {
         </p>
       </div>
 
-      <div className="mt-6">
+      {/* Where the press lands. Second of thirteen, with the other eleven
+          named: a form that ends in "thank you" tells you nothing about what
+          happens next, and this is the moment a reader most wants to know. */}
+      <SubHead
+        title="Where you are in how we work"
+        note="Thirteen steps, from the run-through you have just done to the end of early life support. You are on the second one."
+      />
+
+      <ol className="max-w-wide">
+        {HOW_WE_WORK.map((entry) => (
+          <li
+            key={entry.ix}
+            className="flex items-start gap-4 border-b border-hair py-3.5 last:border-b-0"
+          >
+            <span
+              className={cn(
+                "w-6 flex-none font-mono text-[11px] font-bold tabular-nums",
+                entry.state === "done"
+                  ? "text-done"
+                  : entry.state === "here"
+                    ? "text-ink"
+                    : "text-idx",
+              )}
+            >
+              {entry.ix}
+            </span>
+
+            <span className="min-w-0 flex-1">
+              <b
+                className={cn(
+                  "block text-[15px] leading-[1.3] font-bold",
+                  entry.state === "ahead" ? "text-quiet" : "text-ink",
+                )}
+              >
+                {entry.n}
+              </b>
+              <span className="mt-1 block max-w-[62ch] text-[13.5px] leading-[1.5] text-quiet">
+                {entry.sub}
+              </span>
+            </span>
+
+            {entry.mark ? (
+              <span
+                className={cn(
+                  "mt-0.5 flex-none font-mono text-[9.5px] font-bold tracking-[0.12em] uppercase",
+                  entry.state === "done" ? "text-done" : "text-ink",
+                )}
+              >
+                {entry.mark}
+              </span>
+            ) : null}
+          </li>
+        ))}
+      </ol>
+
+      <OptionLists lists={OPTION_LISTS.submit} answers={answers} step="submit" />
+
+      <SubHead
+        title="What you have, and what it is not"
+        note="A scope. It describes a website well enough for anybody to build it, and it carries no figure at all."
+      />
+
+      <p className="max-w-measure rounded-card bg-well p-5 text-[15px] leading-[1.6] text-quiet">
+        What you have made is a scope, not a quote. Nothing in it is priced, and
+        no number in it is a number we bill from. The price comes at step seven,
+        against this document, in writing.
+      </p>
+
+      <Under>
+        Your document stays yours. If you take it somewhere else and have the
+        work built there, it still describes the site properly, and that is a
+        fine outcome.
+      </Under>
+
+      <div className="mt-8">
         <button
           type="button"
           onClick={() => setSent(true)}

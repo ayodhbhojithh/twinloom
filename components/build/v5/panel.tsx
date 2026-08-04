@@ -94,7 +94,7 @@ export function Panel({
               className={cn(
                 "size-2 rounded-pill",
                 state === "ready"
-                  ? "bg-ink"
+                  ? "bg-done"
                   : state === "near"
                     ? "bg-quiet"
                     : "bg-planned",

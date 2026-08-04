@@ -97,15 +97,19 @@ function SpineStep({
         here ? "bg-well" : "hover:bg-well",
       )}
     >
+      {/* A ring that fills, not a disc that changes colour. Empty means the
+          step has not been answered, and an empty ring says that on its own;
+          a grey disc with a grey tick in it reads as a tick either way, which
+          is the one thing this mark must never do. */}
       <span
         aria-hidden
         className={cn(
-          "mt-px flex size-[19px] flex-none items-center justify-center rounded-pill transition-colors",
+          "mt-px flex size-[19px] flex-none items-center justify-center rounded-pill border transition-colors",
           state === "done"
-            ? "bg-ink text-white"
+            ? "border-done bg-done text-white"
             : here
-              ? "bg-ink/15 text-ink"
-              : "bg-hair text-planned",
+              ? "border-ink text-transparent"
+              : "border-border text-transparent",
         )}
       >
         <Check className="size-[11px]" strokeWidth={3.2} />
@@ -123,7 +127,12 @@ function SpineStep({
           {name}
         </span>
 
-        <span className="mt-0.5 block font-mono text-[9.5px] font-bold tracking-[0.14em] text-label uppercase">
+        <span
+          className={cn(
+            "mt-0.5 block font-mono text-[9.5px] font-bold tracking-[0.14em] uppercase",
+            state === "done" ? "text-done" : "text-label",
+          )}
+        >
           {state === "past" ? "Assumed" : can ? "Can be skipped" : "Required"}
         </span>
       </span>
