@@ -6,19 +6,17 @@ import { BuildFlow } from "./v5/flow";
 /**
  * Build your website.
  *
- * The header speaks the landing page's language: one extrabold line with the
- * ask in ink and the promise behind it in quiet, and nothing else. Everything
- * that used to be explained here is now said by the tool itself, one step at a
- * time, which is where somebody answering can actually use it.
+ * Only the frame. The heading belongs to the tool rather than to the page,
+ * because it shares a row with the choice of route and the two have to be laid
+ * out together - the landing page arranges its own hero the same way, headline
+ * on the left and the way in on the right.
+ *
+ * Everything that used to be explained here is now said by the tool itself,
+ * one step at a time, which is where somebody answering can use it.
  */
 export function BuildView() {
   return (
     <PageShell>
-      <h1 className="mb-7 max-w-[30ch] text-[clamp(28px,2.8vw,44px)] leading-[1.06] font-extrabold tracking-[-0.04em] text-ink">
-        Build your website.
-        <span className="text-quiet"> Answer what you like - we write it down.</span>
-      </h1>
-
       <BuildFlow />
 
       <PageMeta

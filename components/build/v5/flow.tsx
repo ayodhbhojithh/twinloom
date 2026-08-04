@@ -95,42 +95,54 @@ export function BuildFlow() {
 
   return (
     <>
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-x-8 gap-y-3">
-        {/* The two ways in. A segmented pill rather than two cards: it is one
-            choice with two settings, and the header is not the place for a
-            second surface. */}
-        <div
-          role="radiogroup"
-          aria-label="How you want to do this"
-          className="inline-flex rounded-pill bg-well p-1"
-        >
-          {(
-            [
-              { key: "full", label: "Detailed scoping" },
-              { key: "quick", label: "Quick submission" },
-            ] as const
-          ).map((entry) => (
-            <button
-              key={entry.key}
-              type="button"
-              role="radio"
-              aria-checked={tab === entry.key}
-              onClick={() => setTab(entry.key)}
-              className={cn(
-                "cursor-pointer rounded-pill px-4 py-1.5 text-[13.5px] font-semibold transition-colors",
-                tab === entry.key
-                  ? "bg-ink text-white"
-                  : "text-quiet hover:text-ink",
-              )}
-            >
-              {entry.label}
-            </button>
-          ))}
-        </div>
+      {/* The head, arranged the way the landing page arranges its own: the
+          line on the left, the way in on the right, both on one baseline and
+          both reaching the edges. A control dropped under a headline with a
+          note floating off at the far margin is three things placed
+          separately; this is one row. */}
+      <div className="mb-7 flex flex-wrap items-end justify-between gap-x-12 gap-y-5">
+        <h1 className="min-w-0 max-w-[24ch] text-[clamp(28px,2.9vw,46px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink">
+          Build your website.
+          <span className="text-quiet">
+            {" "}
+            Answer what you like - we write it down.
+          </span>
+        </h1>
 
-        <p className="hidden text-[12.5px] text-quiet lg:block">
-          Moving between them keeps every answer you have given.
-        </p>
+        <div className="flex flex-none flex-col items-start gap-2 sm:items-end">
+          <div
+            role="radiogroup"
+            aria-label="How you want to do this"
+            className="inline-flex rounded-pill bg-well p-1"
+          >
+            {(
+              [
+                { key: "full", label: "Detailed scoping" },
+                { key: "quick", label: "Quick submission" },
+              ] as const
+            ).map((entry) => (
+              <button
+                key={entry.key}
+                type="button"
+                role="radio"
+                aria-checked={tab === entry.key}
+                onClick={() => setTab(entry.key)}
+                className={cn(
+                  "cursor-pointer rounded-pill px-4 py-1.5 text-[13.5px] font-semibold transition-colors",
+                  tab === entry.key
+                    ? "bg-ink text-white"
+                    : "text-quiet hover:text-ink",
+                )}
+              >
+                {entry.label}
+              </button>
+            ))}
+          </div>
+
+          <p className="text-[12px] text-quiet sm:text-right">
+            Moving between them keeps every answer you have given.
+          </p>
+        </div>
       </div>
 
       {tab === "quick" ? (
