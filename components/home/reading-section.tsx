@@ -23,10 +23,8 @@ export function ReadingSection() {
 
   return (
     <section className="page-frame pt-20 pb-16 lg:pt-32 lg:pb-20">
-      {/* Down the middle. The section under it is one wide surface beside a
-          column, and a heading pinned to the left of that reads as a caption on
-          the first of the two rather than as the title of both. */}
-      <div className="flex flex-col items-center text-center">
+      {/* Left, over the wide surface that starts on the left. */}
+      <div className="flex flex-col items-start text-left">
         <h2 className="section-head max-w-[26ch] text-ink">
           How we think.
           <span className="text-quiet">

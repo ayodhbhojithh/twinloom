@@ -173,7 +173,10 @@ export function SandboxSection() {
 
   return (
     <section className="page-frame pt-20 pb-20 lg:pt-32 lg:pb-28">
-      <div className="flex flex-col items-center text-center">
+      {/* Right. The three heads take a side each - left, right, then centred
+          over the wall - so a page of four stacked sections has a rhythm across
+          it rather than one column of centred blocks. */}
+      <div className="flex flex-col items-end text-right">
         <h2 className="section-head max-w-[26ch] text-ink">
           Things we built.
           <span className="text-quiet"> Running, rather than described.</span>
