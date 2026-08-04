@@ -25,11 +25,11 @@ export function ReadingSection() {
     <section className="page-frame pt-20 pb-16 lg:pt-32 lg:pb-20">
       {/* Left, over the wide surface that starts on the left. */}
       <div className="flex flex-col items-start text-left">
-        <h2 className="section-head max-w-[26ch] text-ink">
+        <h2 className="section-head max-w-[38ch] text-ink">
           How we think.
           <span className="text-quiet">
             {" "}
-            The decisions behind a website, written out.
+            Decisions behind a website, written out.
           </span>
         </h2>
 

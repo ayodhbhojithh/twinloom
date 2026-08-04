@@ -177,12 +177,12 @@ export function SandboxSection() {
           over the wall - so a page of four stacked sections has a rhythm across
           it rather than one column of centred blocks. */}
       <div className="flex flex-col items-end text-right">
-        <h2 className="section-head max-w-[26ch] text-ink">
+        <h2 className="section-head max-w-[38ch] text-ink">
           Things we built.
           <span className="text-quiet"> Running, rather than described.</span>
         </h2>
 
-        <p className="mt-5 max-w-[62ch] text-[15px] leading-[1.6] text-quiet sm:text-[16.5px]">
+        <p className="mt-5 max-w-[74ch] text-[15px] leading-[1.6] text-quiet sm:text-[16.5px]">
           A bench rather than a showreel. Pick a piece up, let it run, and ask
           for it in yours - every one of these is a component a site could carry.
         </p>
