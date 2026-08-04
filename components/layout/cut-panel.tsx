@@ -107,7 +107,19 @@ export function CutPanel({
   })();
 
   const path = size.w > 40 ? outline(size.w, size.h, cut) : "";
+
+  /* The room to the left of the notch.
+
+     The bar is centred and narrow, so on a wide surface there is a column of
+     empty top edge either side of it. The heading belongs in the left one -
+     level with the notch rather than below it - and the only thing standing
+     between the two is width. Below the floor there is not enough of it to
+     hold a heading, and the content goes back under the bar instead. */
   const pad = Math.max(22, Math.min(size.w * 0.035, 56));
+  const beside = Boolean(toolbar) && (size.w - cut.barWidth) / 2 - pad >= 240;
+  const headRoom = beside
+    ? `${Math.round((size.w - cut.barWidth) / 2 - pad - 16)}px`
+    : "62ch";
 
   /* Below this there is not enough width left between two cuts to put anything
      readable between them, so the band gives up and the foot goes back into
@@ -156,7 +168,18 @@ export function CutPanel({
       <div
         className="relative z-10"
         style={{
-          paddingTop: (toolbar ? cut.barDepth : 0) + 28,
+          /* Under the notch, not a whole band under it. The bar is only as
+             deep as its own arcs, and on a wide surface it leaves most of the
+             top edge free - so the heading starts where the cut ends rather
+             than clearing the whole width of it. */
+          /* Beside the notch, the top inset is the side inset: the heading is
+             then the same distance from the top edge as it is from the left
+             one, which is the only reading of "the corner" that holds at every
+             width. Under the notch there is no choice - the bar owns that band
+             - so it clears the bar and keeps a hair of air below it. */
+          paddingTop: beside ? pad : (toolbar ? cut.barDepth : 0) + 12,
+          /* What the heading may take before it would run under the bar. */
+          ["--notch-free" as string]: headRoom,
           paddingBottom: band
             ? 28
             : Math.max(

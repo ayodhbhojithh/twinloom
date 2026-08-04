@@ -64,7 +64,7 @@ export function Kicker({
 /** The one question a step asks, at the landing page's weight. */
 export function H({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="max-w-[24ch] text-[clamp(23px,2.2vw,32px)] leading-[1.08] font-extrabold tracking-[-0.035em] text-ink">
+    <h2 className="max-w-[min(24ch,var(--notch-free,62ch))] text-[clamp(20px,1.9vw,27px)] leading-[1.08] font-extrabold tracking-[-0.032em] text-ink">
       {children}
     </h2>
   );
@@ -73,7 +73,7 @@ export function H({ children }: { children: React.ReactNode }) {
 /** The one line under it. Anything longer belongs in the document, not here. */
 export function Sub({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mt-2.5 max-w-[56ch] text-[14.5px] leading-[1.5] text-quiet">
+    <p className="mt-1.5 max-w-[58ch] text-[13.5px] leading-[1.5] text-quiet sm:text-[14px]">
       {children}
     </p>
   );

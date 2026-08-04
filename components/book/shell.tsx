@@ -1,10 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 
 import { CutPanel } from "@/components/layout/cut-panel";
-import { cutCardPath } from "@/lib/shape";
 import { cn } from "@/lib/utils";
 
 import { STEPS } from "./meetings";
@@ -22,26 +20,6 @@ import { STEPS } from "./meetings";
    joined by a rule. A circle can carry a number; a card can carry what you
    chose, which is the thing somebody actually wants to check before moving on.
 --------------------------------------------------------------------------- */
-
-const CARD = {
-  w: 168,
-  h: 96,
-  onW: 200,
-  onH: 114,
-  cut: 42,
-  mark: 32,
-  radius: 15,
-  flare: 15,
-};
-
-const PATH = cutCardPath(CARD.w, CARD.h, CARD.cut, CARD.radius, CARD.flare);
-const PATH_ON = cutCardPath(
-  CARD.onW,
-  CARD.onH,
-  CARD.cut,
-  CARD.radius,
-  CARD.flare,
-);
 
 /** A round control, as the landing card draws its arrows. */
 export function Disc({
@@ -79,12 +57,20 @@ export function Disc({
 }
 
 /**
- * The four steps, as cards.
+ * The four steps, as a line.
  *
- * `said` is what has been chosen at each one, so the rail is a record of the
- * booking rather than a progress bar. A step ahead of the furthest one reached
- * is not pressable: it would be asking a question whose answer depends on one
- * that has not been given yet.
+ * Not cards. The surface below is the shape on this page, and a row of cut
+ * cards above it was a second one competing with it - two strong shapes, one of
+ * them only saying where you are. So this is a line with four marks on it: the
+ * plainest thing that can carry an order, a position and what was chosen at
+ * each stop.
+ *
+ * The line fills behind you as you go, so progress is readable from the shape
+ * of it before any of the labels are.
+ *
+ * `said` is what has been chosen at each step, which is what turns a progress
+ * bar into a record. A step ahead of the furthest one reached is not pressable:
+ * it would be asking a question whose answer depends on one not given yet.
  */
 export function StepRail({
   at,
@@ -97,116 +83,81 @@ export function StepRail({
   said: readonly string[];
   onGo: (step: number) => void;
 }) {
-  const clip = useMemo(() => `path("${PATH}")`, []);
-  const clipOn = useMemo(() => `path("${PATH_ON}")`, []);
-
   return (
-    <nav aria-label="Booking steps" className="mb-6">
-      <div className="quiet-scroll -mx-1 flex items-end gap-2.5 overflow-x-auto px-1 pt-1 pb-2">
+    <nav aria-label="Booking steps" className="mb-9 flex justify-center">
+      <ol className="flex items-start">
         {STEPS.map((label, n) => {
           const here = n === at;
-          const done = n < reached && !here;
+          const done = n < reached;
           const open = n <= reached;
 
           return (
-            <div
-              key={label}
-              className="group/step relative flex-none transition-[width,height] duration-300 ease-out"
-              style={{
-                width: here ? CARD.onW : CARD.w,
-                height: here ? CARD.onH : CARD.h,
-              }}
-            >
-              <span
-                aria-hidden
-                className={cn(
-                  "absolute inset-0 transition-[clip-path,background-color] duration-300 ease-out",
-                  here
-                    ? "bg-ink"
-                    : open
-                      ? "bg-canvas group-hover/step:bg-canvas-firm"
-                      : "bg-well",
-                )}
-                style={{ clipPath: here ? clipOn : clip }}
-              />
-
+            <li key={label} className="flex items-start">
               <button
                 type="button"
                 disabled={!open}
                 aria-current={here ? "step" : undefined}
                 onClick={() => onGo(n)}
                 className={cn(
-                  "relative flex size-full flex-col px-3.5 pt-2.5 pb-3 text-left",
+                  "group/step flex w-[104px] flex-col items-center gap-2.5 px-1 sm:w-[132px]",
                   open ? "cursor-pointer" : "cursor-default",
                 )}
               >
+                {/* The mark. A ring round the one you are on rather than a
+                    larger dot, so the line through them all stays straight. */}
                 <span
+                  aria-hidden
                   className={cn(
-                    "font-mono text-[8.5px] font-bold tracking-[0.14em] uppercase",
-                    here ? "text-white/45" : "text-idx",
-                  )}
-                >
-                  Step {String(n + 1).padStart(2, "0")}
-                </span>
-
-                <b
-                  className={cn(
-                    "mt-1 block leading-[1.15] font-bold tracking-[-0.02em] transition-[font-size] duration-300",
+                    "flex size-3 items-center justify-center rounded-pill transition-all",
                     here
-                      ? "text-[15px] text-white"
-                      : open
-                        ? "text-[13.5px] text-ink"
-                        : "text-[13.5px] text-label",
-                  )}
-                >
-                  {label}
-                </b>
-
-                <span
-                  className={cn(
-                    "mt-auto block max-w-[15ch] truncate text-[11px] font-semibold",
-                    here
-                      ? "text-white/65"
+                      ? "bg-ink ring-4 ring-ink/15"
                       : done
-                        ? "text-mark"
-                        : open
-                          ? "text-quiet"
-                          : "text-planned",
+                        ? "bg-mark"
+                        : "bg-planned group-hover/step:bg-idx",
                   )}
-                >
-                  {said[n] || (open ? "Nothing yet" : "Not yet")}
+                />
+
+                <span className="flex min-w-0 flex-col items-center">
+                  <b
+                    className={cn(
+                      "block text-[13px] leading-[1.2] font-bold tracking-[-0.01em] transition-colors",
+                      here
+                        ? "text-ink"
+                        : open
+                          ? "text-quiet group-hover/step:text-ink"
+                          : "text-planned",
+                    )}
+                  >
+                    {label}
+                  </b>
+
+                  <span
+                    className={cn(
+                      "mt-1 block max-w-full truncate font-mono text-[9px] font-bold tracking-[0.1em] uppercase",
+                      done ? "text-mark" : "text-idx",
+                    )}
+                  >
+                    {said[n] || (open ? "Open" : "Locked")}
+                  </span>
                 </span>
               </button>
 
-              <span
-                aria-hidden
-                className="pointer-events-none absolute right-0 bottom-0 flex items-center justify-center"
-                style={{ width: CARD.cut, height: CARD.cut }}
-              >
+              {n < STEPS.length - 1 ? (
+                /* The line between two marks, and it is the line: it sits at
+                   the height of the marks rather than under the labels, so the
+                   four of them read as one run. */
                 <span
+                  aria-hidden
                   className={cn(
-                    "flex items-center justify-center rounded-pill font-mono text-[10.5px] font-bold tabular-nums transition-colors",
-                    done
-                      ? "bg-mark text-white"
-                      : here
-                        ? "bg-ink text-white"
-                        : open
-                          ? "bg-field text-quiet"
-                          : "bg-hair text-label",
+                    "mt-[5px] -mx-6 h-0.5 w-12 rounded-pill transition-colors sm:w-16",
+                    n < reached ? "bg-mark" : "bg-hair",
                   )}
-                  style={{ width: CARD.mark, height: CARD.mark }}
-                >
-                  {done ? (
-                    <Check className="size-[15px]" strokeWidth={3} />
-                  ) : (
-                    String(n + 1).padStart(2, "0")
-                  )}
-                </span>
-              </span>
-            </div>
+                />
+              ) : null}
+            </li>
           );
         })}
-      </div>
+      </ol>
     </nav>
   );
 }
@@ -299,17 +250,17 @@ export function BookStage({
         </button>
       }
     >
-      <h2 className="max-w-[24ch] text-[clamp(24px,2.6vw,34px)] leading-[1.08] font-extrabold tracking-[-0.035em] text-ink">
+      <h2 className="max-w-[min(24ch,var(--notch-free,62ch))] text-[clamp(20px,1.9vw,27px)] leading-[1.08] font-extrabold tracking-[-0.032em] text-ink">
         {title}
       </h2>
 
       {note ? (
-        <p className="mt-2 max-w-[62ch] text-[14px] leading-[1.5] text-quiet">
+        <p className="mt-1.5 max-w-[62ch] text-[13.5px] leading-[1.5] text-quiet sm:text-[14px]">
           {note}
         </p>
       ) : null}
 
-      <div className="mt-6">{children}</div>
+      <div className="mt-5">{children}</div>
     </CutPanel>
   );
 }

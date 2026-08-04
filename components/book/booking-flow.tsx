@@ -20,6 +20,8 @@ import {
   SLOTS,
   getReader,
   getReaderOnServer,
+  dayKey,
+  firstBookable,
   keyToDate,
   officeInstant,
   subscribeToReader,
@@ -62,7 +64,13 @@ export function BookingFlow() {
 
   const [at, setAt] = useState(0);
   const [meetingKey, setMeetingKey] = useState<string | null>(null);
-  const [dayKeyChosen, setDayKey] = useState<string | null>(null);
+  /* Opened on the first day that can actually be booked, so the times are
+     there to look at rather than behind a click. Not today: today is inside the
+     two clear days we ask for, and offering it would be offering something we
+     cannot give. */
+  const [dayKeyChosen, setDayKey] = useState<string | null>(() =>
+    dayKey(firstBookable()),
+  );
   const [slotAt, setSlotAt] = useState<number | null>(null);
   const [details, setDetails] = useState<Details>(EMPTY);
   const [showErrors, setShowErrors] = useState(false);

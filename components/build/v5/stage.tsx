@@ -126,9 +126,13 @@ export function Stage({
        is a bite taken out of the top edge for no reason, and it reads as a
        surface that has broken rather than one that was drawn. */
     const barDepth = toolbar ? flare * 2 : 0.01;
+    /* The bar takes what it needs and no more. It held two fifths of the top
+       edge, which on a middling screen left too little either side of it for
+       the heading to stand beside it - so the heading dropped underneath and
+       the whole left corner sat empty. */
     const barWidth = toolbar
       ? Math.min(
-          Math.max(flare * 2 + 190, Math.min(w * 0.4, 430)),
+          Math.max(flare * 2 + 170, Math.min(w * 0.3, 380)),
           Math.max(flare * 2 + 60, w - 2 * (radius + flare) - 8),
         )
       : 0.01;
@@ -158,7 +162,19 @@ export function Stage({
   })();
 
   const path = size.w > 40 ? outline(size.w, size.h, cut) : "";
+
+  /* The room to the left of the notch.
+
+     The bar is centred and narrow, so on a wide surface there is a column of
+     empty top edge either side of it. The heading belongs in the left one -
+     level with the notch rather than below it - and the only thing standing
+     between the two is width. Below the floor there is not enough of it to
+     hold a heading, and the content goes back under the bar instead. */
   const pad = Math.max(20, Math.min(size.w * 0.032, 34));
+  const beside = Boolean(toolbar) && (size.w - cut.barWidth) / 2 - pad >= 240;
+  const headRoom = beside
+    ? `${Math.round((size.w - cut.barWidth) / 2 - pad - 16)}px`
+    : "62ch";
 
   return (
     <div ref={box} className={cn("relative", className)}>
@@ -208,7 +224,18 @@ export function Stage({
       <div
         className="relative z-10"
         style={{
-          paddingTop: (toolbar ? cut.barDepth : 0) + 22,
+          /* Under the notch, not a whole band under it. The bar is only as
+             deep as its own arcs, and on a wide surface it leaves most of the
+             top edge free - so the heading starts where the cut ends rather
+             than clearing the whole width of it. */
+          /* Beside the notch, the top inset is the side inset: the heading is
+             then the same distance from the top edge as it is from the left
+             one, which is the only reading of "the corner" that holds at every
+             width. Under the notch there is no choice - the bar owns that band
+             - so it clears the bar and keeps a hair of air below it. */
+          paddingTop: beside ? pad : (toolbar ? cut.barDepth : 0) + 12,
+          /* What the heading may take before it would run under the bar. */
+          ["--notch-free" as string]: headRoom,
           /* Clear of the bite and then some. The content only has to miss the
              cut to be legal, and a last line that stops exactly where the
              corner starts reads as though it were trimmed by it. */
