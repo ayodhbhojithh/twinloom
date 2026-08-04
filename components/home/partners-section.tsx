@@ -17,7 +17,7 @@ import { ROUTES } from "@/lib/site";
  */
 export function PartnersSection() {
   return (
-    <section className="page-frame pb-16 lg:pb-24">
+    <section className="page-frame pt-20 pb-20 lg:pt-32 lg:pb-28">
       {/* Down the middle, and the wall crosses underneath it. That is the
           whole reason a centred heading works here: a column of centred text
           has no second reading direction on its own, and something drifting
@@ -39,9 +39,9 @@ export function PartnersSection() {
         </Link>
       </div>
 
-      <PartnerWall className="mt-6" />
+      <PartnerWall className="mt-10 lg:mt-12" />
 
-      <p className="mx-auto mt-4 max-w-[64ch] text-center text-[13.5px] leading-[1.6] text-quiet">
+      <p className="mx-auto mt-6 max-w-[64ch] text-center text-[13.5px] leading-[1.6] text-quiet">
         One contract, one invoice, and named in the proposal before the work
         starts. Most projects need none of them - a specialist is added because
         the work justifies one.

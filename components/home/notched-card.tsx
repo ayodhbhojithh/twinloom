@@ -274,7 +274,10 @@ export function NotchedCard({ className }: { className?: string }) {
         className="absolute top-0 left-1/2 flex -translate-x-1/2 justify-center"
         style={{ width: cut.barWidth, height: cut.barDepth, paddingTop: 4 }}
       >
-        <div className="flex h-9 items-center gap-0.5 rounded-pill bg-field px-1.5">
+        {/* Nothing behind it. The notch is already a shape cut out of the
+            card, so the controls standing in it need no ground of their own -
+            a pill drawn there as well is a second shape inside the first. */}
+        <div className="flex h-9 items-center gap-0.5 rounded-pill px-1.5">
         <Tool
           label="Previous project"
           onClick={() =>

@@ -22,7 +22,7 @@ export function ReadingSection() {
   const [lead, ...rest] = ARTICLES;
 
   return (
-    <section className="page-frame py-16 lg:py-24">
+    <section className="page-frame pt-20 pb-16 lg:pt-32 lg:pb-20">
       {/* Down the middle. The section under it is one wide surface beside a
           column, and a heading pinned to the left of that reads as a caption on
           the first of the two rather than as the title of both. */}
@@ -43,7 +43,7 @@ export function ReadingSection() {
         </Link>
       </div>
 
-      <div className="mt-8 grid gap-4 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:items-stretch">
+      <div className="mt-10 grid gap-4 lg:mt-12 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:items-stretch">
         {/* The lead piece, on the surface, with the picture cut to its own
             outline the way the landing card carries its photograph. */}
         <CutPanel
