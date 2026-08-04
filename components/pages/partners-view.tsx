@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { CutPanel } from "@/components/layout/cut-panel";
 import { ROUTES } from "@/lib/site";
+import { cn } from "@/lib/utils";
 
 /* ---------------------------------------------------------------------------
    Our partners.
@@ -28,6 +29,16 @@ import { ROUTES } from "@/lib/site";
  * rather than a random number.
  */
 const HANG = [48, 0, 30, 66, 14, 54];
+
+/**
+ * How the picture leaves the card.
+ *
+ * Curved rather than linear, and over most of the lower half: a short straight
+ * fade reads as a band with an edge at each end, which is the one thing a blend
+ * must not have.
+ */
+const FADE =
+  "linear-gradient(to bottom, black 34%, rgba(0,0,0,0.92) 48%, rgba(0,0,0,0.72) 62%, rgba(0,0,0,0.44) 76%, rgba(0,0,0,0.18) 88%, transparent 100%)";
 
 const DISCIPLINES = [
   {
@@ -88,6 +99,92 @@ const RULES = [
   "Their part of the result is our responsibility.",
   "Where they handle personal data, they are listed as a sub-processor.",
 ] as const;
+
+/**
+ * The disciplines, as a wall that drifts past.
+ *
+ * The same arrangement the work uses on the landing page: one track holding the
+ * run twice and shifting by exactly half its width, so the loop has no seam and
+ * no gap, and each card hung at its own height so the row reads as a wall
+ * rather than as a contact sheet. It stops under the pointer, because a card
+ * nobody can hold still is a card nobody can read.
+ *
+ * Its own component because the landing page carries it too. Two copies of six
+ * disciplines would disagree the first week one of them changed.
+ */
+export function PartnerWall({ className }: { className?: string }) {
+  return (
+    /* Clipped to its column, not to the window.
+
+       The usual full bleed trick - a negative margin of `50vw - 50%` - assumes
+       the content is centred in the viewport. Every page but the landing one
+       carries the rail, so it is not: the wall escaped to the left and ran
+       underneath the sidebar. Running off the edges of the column says the same
+       thing and is true on both kinds of page. */
+    <div
+      className={cn(
+        "group -mx-4 overflow-hidden px-4 py-3 sm:-mx-6 sm:px-6",
+        className,
+      )}
+    >
+      <div className="drift drift-slow flex w-max gap-4 group-hover:[animation-play-state:paused] group-focus-within:[animation-play-state:paused]">
+        {[0, 1].map((copy) => (
+          <div
+            key={copy}
+            aria-hidden={copy === 1}
+            className="flex shrink-0 gap-4"
+          >
+            {DISCIPLINES.map((entry, index) => (
+              <article
+                key={`${copy}-${entry.n}`}
+                style={{ marginTop: HANG[index % HANG.length] }}
+                className="group/card flex w-[clamp(260px,24vw,330px)] shrink-0 flex-col overflow-hidden rounded-[20px] bg-field transition-transform duration-300 hover:-translate-y-1.5"
+              >
+                {/* The picture first, and faded out into the card rather than
+                    stopped by an edge. A photograph with a hard bottom line is
+                    a photograph stuck on a card; faded, the card is one thing
+                    that happens to begin as a picture. */}
+                <span className="relative block aspect-[16/10] w-full overflow-hidden">
+                  <Image
+                    src={entry.plate}
+                    alt=""
+                    fill
+                    sizes="(max-width: 640px) 70vw, 330px"
+                    className="object-cover transition-transform duration-500 group-hover/card:scale-[1.05]"
+                    style={{
+                      maskImage: FADE,
+                      WebkitMaskImage: FADE,
+                    }}
+                  />
+
+                  <span className="absolute top-3 left-3 flex size-7 items-center justify-center rounded-pill bg-field/85 font-mono text-[10px] font-bold text-ink backdrop-blur-sm tabular-nums">
+                    {entry.n}
+                  </span>
+                </span>
+
+                <h3 className="-mt-3 px-5 max-w-[18ch] text-[17px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink">
+                  {entry.name}
+                </h3>
+
+                <p className="mt-2.5 px-5 text-[13.5px] leading-[1.6] text-body">
+                  {entry.covers}
+                </p>
+
+                <p className="mt-auto flex gap-2.5 px-5 pt-4 pb-5 text-[12.5px] leading-[1.5] text-quiet">
+                  <span
+                    aria-hidden
+                    className="mt-[7px] size-1 flex-none rounded-pill bg-mark"
+                  />
+                  {entry.when}
+                </p>
+              </article>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function PartnersView() {
   const drift = [
@@ -159,84 +256,7 @@ export function PartnersView() {
       </div>
 
       <section className="page-frame pt-10 pb-16">
-        {/* What each one covers, as a wall that drifts past.
-
-            The same arrangement the work uses on the landing page: one track
-            holding the run twice and shifting by exactly half its width, so the
-            loop has no seam and no gap, and each card hung at its own height so
-            the row reads as a wall rather than as a contact sheet. It stops
-            under the pointer, because a card nobody can hold still is a card
-            nobody can read. */}
-        {/* Clipped to this column, not to the window.
-
-            The usual full bleed trick - a negative margin of `50vw - 50%` -
-            assumes the content is centred in the viewport. Every page but the
-            landing one carries the rail, so it is not: the wall escaped to the
-            left and ran underneath the sidebar. Running off the edges of the
-            column says the same thing and is true on both kinds of page. */}
-        <div className="group -mx-4 overflow-hidden px-4 py-3 sm:-mx-6 sm:px-6">
-          <div className="drift drift-slow flex w-max gap-4 group-hover:[animation-play-state:paused] group-focus-within:[animation-play-state:paused]">
-            {[0, 1].map((copy) => (
-              <div
-                key={copy}
-                aria-hidden={copy === 1}
-                className="flex shrink-0 gap-4"
-              >
-                {DISCIPLINES.map((entry, index) => (
-                  <article
-                    key={`${copy}-${entry.n}`}
-                    style={{ marginTop: HANG[index % HANG.length] }}
-                    className="group/card flex w-[clamp(260px,24vw,330px)] shrink-0 flex-col overflow-hidden rounded-[20px] bg-field transition-transform duration-300 hover:-translate-y-1.5"
-                  >
-                    {/* The picture first, and faded out into the card rather
-                        than stopped by an edge. A photograph with a hard bottom
-                        line is a photograph stuck on a card; faded, the card is
-                        one thing that happens to begin as a picture. */}
-                    <span className="relative block aspect-[16/10] w-full overflow-hidden">
-                      <Image
-                        src={entry.plate}
-                        alt=""
-                        fill
-                        sizes="(max-width: 640px) 70vw, 330px"
-                        className="object-cover transition-transform duration-500 group-hover/card:scale-[1.05]"
-                        style={{
-                          /* Curved rather than linear, and over most of the
-                             lower half: a short straight fade reads as a band
-                             with an edge at each end, which is the one thing a
-                             blend must not have. */
-                          maskImage:
-                            "linear-gradient(to bottom, black 34%, rgba(0,0,0,0.92) 48%, rgba(0,0,0,0.72) 62%, rgba(0,0,0,0.44) 76%, rgba(0,0,0,0.18) 88%, transparent 100%)",
-                          WebkitMaskImage:
-                            "linear-gradient(to bottom, black 34%, rgba(0,0,0,0.92) 48%, rgba(0,0,0,0.72) 62%, rgba(0,0,0,0.44) 76%, rgba(0,0,0,0.18) 88%, transparent 100%)",
-                        }}
-                      />
-
-                      <span className="absolute top-3 left-3 flex size-7 items-center justify-center rounded-pill bg-field/85 font-mono text-[10px] font-bold text-ink backdrop-blur-sm tabular-nums">
-                        {entry.n}
-                      </span>
-                    </span>
-
-                    <h2 className="-mt-3 px-5 max-w-[18ch] text-[17px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink">
-                      {entry.name}
-                    </h2>
-
-                    <p className="mt-2.5 px-5 text-[13.5px] leading-[1.6] text-body">
-                      {entry.covers}
-                    </p>
-
-                    <p className="mt-auto flex gap-2.5 px-5 pt-4 pb-5 text-[12.5px] leading-[1.5] text-quiet">
-                      <span
-                        aria-hidden
-                        className="mt-[7px] size-1 flex-none rounded-pill bg-mark"
-                      />
-                      {entry.when}
-                    </p>
-                  </article>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
+        <PartnerWall />
 
         {/* How a partner is handled, on the surface the site uses for the thing
             a page is about. */}
