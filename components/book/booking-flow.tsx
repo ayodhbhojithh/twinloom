@@ -481,7 +481,7 @@ export function BookingFlow() {
               {details.email}
             </Line>
             {details.notes.trim() ? (
-              <Line icon={Mail} term="Notes" last>
+              <Line icon={Mail} term="Notes">
                 {details.notes}
               </Line>
             ) : null}
@@ -549,21 +549,17 @@ function Field({
 function Line({
   icon: Icon,
   term,
-  last,
   children,
 }: {
   icon: typeof Clock;
   term: string;
-  last?: boolean;
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className={cn(
-        "grid grid-cols-[minmax(0,8rem)_minmax(0,1fr)] items-start gap-4 px-4 py-3 sm:px-5",
-        !last && "border-b border-hair",
-      )}
-    >
+    /* No rule between the rows. The list already sits on a ground of its own,
+       and a hairline under every line of a six line list is more drawing than
+       the list is worth. */
+    <div className="grid grid-cols-[minmax(0,8rem)_minmax(0,1fr)] items-start gap-4 px-4 py-2.5 sm:px-5">
       <dt className="flex items-center gap-2.5 text-[13.5px] font-semibold text-quiet">
         <Icon aria-hidden className="size-4 shrink-0 text-label" />
         {term}
@@ -640,7 +636,7 @@ function Finished({
         <Line icon={CalendarDays} term="Date">
           {whenLong}
         </Line>
-        <Line icon={Globe} term="Time" last>
+        <Line icon={Globe} term="Time">
           {whenTime} in {zone.replace(/_/g, " ")}
         </Line>
       </dl>
@@ -701,7 +697,7 @@ function ZoneNote({
       .find((part) => part.type === "timeZoneName")?.value ?? "";
 
   return (
-    <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-hair pt-4">
+    <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
       <p className="flex items-center gap-2 text-[12.5px] text-quiet">
         <Globe aria-hidden className="size-3.5 shrink-0 text-label" />
         <span>
