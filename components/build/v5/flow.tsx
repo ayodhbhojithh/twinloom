@@ -94,7 +94,9 @@ export function BuildFlow() {
   })();
 
   return (
-    <>
+    /* Positioned, so the notes tab can hang off the right edge of the tool
+       rather than off the edge of the window. */
+    <div className="relative">
       {/* The head, arranged the way the landing page arranges its own: the
           line on the left, the way in on the right, both on one baseline and
           both reaching the edges. A control dropped under a headline with a
@@ -170,9 +172,7 @@ export function BuildFlow() {
         </>
       )}
 
-      {/* Reachable from every step and belonging to none, so it lives against
-          the edge of the window rather than inside one column of one step. */}
       <NotesDock answers={answers} where={where} onGoStep={goKey} />
-    </>
+    </div>
   );
 }

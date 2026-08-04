@@ -73,37 +73,50 @@ export function NotesDock({
 
   return (
     <>
-      {/* The tab, turned on its side.
+      {/* The tab, turned on its side, against the right edge of the tool.
 
-          Set upright it took a bite out of the page at every width and read as
-          a floating button somebody had left there. Rotated into the edge it
-          is furniture: it belongs to the window rather than to the page, which
-          is the truth of it - the desk is reachable from every step and
-          belongs to none of them. */}
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-expanded={open}
-        className={cn(
-          "fixed top-1/2 right-0 z-40 flex -translate-y-1/2 cursor-pointer flex-col items-center gap-2.5 rounded-l-[12px] bg-ink px-2.5 py-4 text-white transition-colors hover:bg-body",
-          open && "pointer-events-none opacity-0",
-        )}
+          It belongs to this tool, not to the window: fixed to the screen it
+          followed the reader onto pages that have no notes to keep and no step
+          to file them under. So it hangs off the edge of the run-through and
+          leaves with it, and it sticks to the middle of the screen for as long
+          as the run-through is on it - which is the whole of the time anybody
+          has something to write down. */}
+      <div
+        aria-hidden={open}
+        /* Out to the edge of the window, not the edge of the column.
+
+           `50% - 50vw` measures from the middle of a centred container to the
+           middle of the window, which is exactly the margin the page frame
+           holds back - so the tab reaches the glass without anything here
+           needing to know how wide that margin is. It still belongs to the
+           run-through: it is inside it, and it leaves with it. */
+        className="pointer-events-none absolute inset-y-0 right-[calc(50%-50vw)] z-30 w-0"
       >
-        <span
-          className="font-mono text-[9.5px] font-bold tracking-[0.16em] uppercase"
-          style={{ writingMode: "vertical-rl" }}
-        >
-          Your notes
-        </span>
-        <span
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-expanded={open}
           className={cn(
-            "flex min-w-[19px] items-center justify-center rounded-pill px-1 py-0.5 font-mono text-[9.5px] font-bold tabular-nums",
-            count ? "bg-mark text-white" : "bg-white/15 text-white/60",
+            "sticky top-[46vh] flex -translate-x-full cursor-pointer flex-col items-center gap-2.5 rounded-l-[12px] bg-ink px-2.5 py-4 text-white transition-colors hover:bg-body",
+            open ? "pointer-events-none opacity-0" : "pointer-events-auto",
           )}
         >
-          {count}
-        </span>
-      </button>
+          <span
+            className="font-mono text-[9.5px] font-bold tracking-[0.16em] uppercase"
+            style={{ writingMode: "vertical-rl" }}
+          >
+            Your notes
+          </span>
+          <span
+            className={cn(
+              "flex min-w-[19px] items-center justify-center rounded-pill px-1 py-0.5 font-mono text-[9.5px] font-bold tabular-nums",
+              count ? "bg-mark text-white" : "bg-white/15 text-white/60",
+            )}
+          >
+            {count}
+          </span>
+        </button>
+      </div>
 
       {open ? (
         <div className="fixed inset-0 z-50 flex justify-end">
