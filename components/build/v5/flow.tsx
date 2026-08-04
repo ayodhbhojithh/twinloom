@@ -72,77 +72,111 @@ export function BuildFlow() {
 
   return (
     <>
-      {/* Two ways in, on top.
+      {/* Two ways in.
 
-          Not one slab of black beside one wash of near-white. That pairing said
-          the chosen route was the only real one and left the other barely
-          drawn, when the whole point of this screen is that both are complete
-          answers. Both are cards with a real edge; the chosen one is marked by
-          its edge going to ink and by saying so in words. */}
-      <div
-        role="tablist"
-        aria-label="How you want to do this"
-        className="grid max-w-wide gap-3 sm:grid-cols-2"
-      >
-        {(
-          [
-            {
-              key: "quick",
-              n: "01",
-              title: "Quick submission",
-              note: "Say it in your own words and send it. A few minutes.",
-            },
-            {
-              key: "full",
-              n: "02",
-              title: "Detailed scoping",
-              note: "Answer as much as you like and read it back. Twelve steps.",
-            },
-          ] as const
-        ).map((entry) => {
-          const on = tab === entry.key;
+          The picture came first and that was the mistake: a thread of knots
+          says how long each route is, but it does not say that either of them
+          is a thing you press. So the row leads with the one control everybody
+          already reads as "pick one of these" - a radio - and the thread sits
+          under the words as what it always was, the difference between them
+          drawn rather than described.
 
-          return (
-            <button
-              key={entry.key}
-              type="button"
-              role="tab"
-              aria-selected={on}
-              onClick={() => setTab(entry.key)}
-              className={cn(
-                "group/way cursor-pointer rounded-card border bg-field p-5 text-left transition-colors",
-                on ? "border-ink" : "border-border hover:border-planned",
-              )}
-            >
-              <span className="flex items-center justify-between gap-4">
-                <span className="flex items-baseline gap-3">
-                  <span className="font-mono text-[11px] font-bold text-idx tabular-nums">
-                    {entry.n}
-                  </span>
-                  <b className="text-[16.5px] font-bold text-ink">
-                    {entry.title}
-                  </b>
-                </span>
+          No instruction over it. Two radios side by side already say a choice
+          is being asked for, and the line under them says what pressing one
+          does and does not change. */}
+      <div className="max-w-wide">
+        {/* Both on one row, and two lines deep. Stacked, they were a list
+            of two things to read; side by side they are one question with two
+            answers, which is what they are. */}
+        <div
+          role="radiogroup"
+          aria-label="How you want to do this"
+          className="grid overflow-hidden rounded-card border border-border sm:grid-cols-2"
+        >
+          {(
+            [
+              {
+                key: "quick",
+                knots: 1,
+                title: "Quick submission",
+                length: "One step",
+                note: "Say it in your own words and send it. A few minutes.",
+              },
+              {
+                key: "full",
+                knots: STEPS.length,
+                title: "Detailed scoping",
+                length: `${STEPS.length} steps`,
+                note: "Answer as much as you like and read it back.",
+              },
+            ] as const
+          ).map((entry) => {
+            const on = tab === entry.key;
 
-                {/* The mark is a word, not a colour. A reader should not have to
-                    work out which of two shades means "this one". */}
+            return (
+              <button
+                key={entry.key}
+                type="button"
+                role="radio"
+                aria-checked={on}
+                onClick={() => setTab(entry.key)}
+                className={cn(
+                  "flex w-full cursor-pointer items-start gap-3.5 border-t border-border px-5 py-4 text-left transition-colors first:border-t-0 sm:border-t-0 sm:border-l sm:first:border-l-0",
+                  on ? "bg-done/[0.05]" : "hover:bg-well",
+                )}
+              >
                 <span
+                  aria-hidden
                   className={cn(
-                    "flex flex-none items-center gap-1.5 font-mono text-[9.5px] font-bold tracking-[0.14em] uppercase",
-                    on ? "text-done" : "text-transparent",
+                    "mt-px flex size-[19px] flex-none items-center justify-center rounded-pill border-2 transition-colors",
+                    on ? "border-done" : "border-planned",
                   )}
                 >
-                  <span aria-hidden className="size-1.5 rounded-pill bg-current" />
-                  On this
+                  <span
+                    className={cn(
+                      "size-[9px] rounded-pill transition-colors",
+                      on ? "bg-done" : "bg-transparent",
+                    )}
+                  />
                 </span>
-              </span>
 
-              <span className="mt-2 block text-[14px] leading-[1.55] text-quiet">
-                {entry.note}
-              </span>
-            </button>
-          );
-        })}
+                <span className="min-w-0 flex-1">
+                  <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+                    <b className="text-[15.5px] leading-[1.2] font-bold text-ink">
+                      {entry.title}
+                    </b>
+
+                    <span className="font-mono text-[9.5px] font-bold tracking-[0.12em] text-idx uppercase tabular-nums">
+                      {entry.length}
+                    </span>
+
+                    {/* Last on the line, and only as long as it needs to be.
+                        Held inside a fixed box, one knot left three quarters of
+                        it empty and pushed its label somewhere the other row's
+                        label never went. Trailing, the two threads start at
+                        different points and end at different points, which is
+                        the comparison rather than a broken alignment. */}
+                    <span aria-hidden className="flex items-center gap-[7px]">
+                      {Array.from({ length: entry.knots }, (_, n) => (
+                        <span
+                          key={n}
+                          className={cn(
+                            "size-[6px] flex-none rounded-pill transition-colors",
+                            on ? "bg-done" : "bg-planned",
+                          )}
+                        />
+                      ))}
+                    </span>
+                  </span>
+
+                  <span className="mt-1.5 block text-[13.5px] leading-[1.5] text-quiet">
+                    {entry.note}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <p className="mt-3 mb-10 max-w-measure text-[14px] leading-[1.6] text-quiet">
