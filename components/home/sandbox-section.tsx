@@ -12,13 +12,16 @@ import {
   Sparkles,
   Waves,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 import { CutPanel } from "@/components/layout/cut-panel";
+import { cutCardPath } from "@/lib/shape";
 import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 import { LoomStrings } from "./loom-strings";
+import { PROJECTS } from "./projects";
 import { ParticleWordmark } from "./particle-wordmark";
 
 /* ---------------------------------------------------------------------------
@@ -92,6 +95,20 @@ const PIECES = [
  * presses play, because audio that arrives uninvited is not a feature.
  */
 const SCALE = [261.63, 293.66, 349.23, 392.0, 440.0, 523.25];
+
+/**
+ * The showcase cards, and the one path they are cut with.
+ *
+ * A fixed size rather than a fluid one, because a clip path is drawn in pixels:
+ * four cards of one size need one path worked out once, where four fluid cards
+ * would need four paths recalculated on every resize.
+ */
+const WORK = { w: 248, h: 172, cut: 52, mark: 38 };
+const WORK_PATH = cutCardPath(WORK.w, WORK.h, WORK.cut, 18, 16);
+
+/** How the picture becomes something a name can be read off. */
+const SCRIM =
+  "linear-gradient(to top, rgba(11,13,18,0.9) 0%, rgba(11,13,18,0.62) 34%, rgba(11,13,18,0.2) 62%, transparent 86%)";
 
 function useNotes() {
   const rig = useRef<{ ctx: AudioContext; master: GainNode } | null>(null);
@@ -377,6 +394,71 @@ export function SandboxSection() {
                 </div>
               ) : null}
             </div>
+          </div>
+        </div>
+
+        {/* Where the pieces end up: the work, as numbered cards cut the way
+            everything else here is cut. A grid inside the bench rather than a
+            section of its own, because this is the answer to "what is any of
+            this for" and that is the question the bench raises. */}
+        <div className="mt-9">
+          <p className="font-mono text-[8.5px] font-bold tracking-[0.16em] text-label uppercase">
+            Where they end up
+          </p>
+
+          <div className="mt-3 flex flex-wrap gap-3">
+            {PROJECTS.map((project, n) => (
+              <article
+                key={project.id}
+                className="group/work relative flex-none transition-transform duration-300 hover:-translate-y-1"
+                style={{ width: WORK.w, height: WORK.h }}
+              >
+                {/* The picture is the card, cut to the outline the way the
+                    landing card carries its own, and faded into ink at the foot
+                    so the name is read off the picture rather than off a bar
+                    laid over it. */}
+                <span
+                  aria-hidden
+                  className="absolute inset-0 overflow-hidden bg-canvas"
+                  style={{ clipPath: `path("${WORK_PATH}")` }}
+                >
+                  <Image
+                    src={project.image}
+                    alt=""
+                    fill
+                    sizes="248px"
+                    className="object-cover transition-transform duration-500 group-hover/work:scale-[1.06]"
+                  />
+                  <span
+                    className="absolute inset-0"
+                    style={{ background: SCRIM }}
+                  />
+                </span>
+
+                <div className="relative flex size-full flex-col justify-end p-4 pr-14">
+                  <b className="block max-w-[16ch] text-[13.5px] leading-[1.2] font-extrabold tracking-[-0.02em] text-white">
+                    {project.name}
+                  </b>
+                  <span className="mt-1 block font-mono text-[8px] font-bold tracking-[0.14em] text-white/60 uppercase">
+                    {project.kind} / {project.year}
+                  </span>
+                </div>
+
+                {/* The number, standing in the corner the card gives up. */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute right-0 bottom-0 flex items-center justify-center"
+                  style={{ width: WORK.cut, height: WORK.cut }}
+                >
+                  <span
+                    className="flex items-center justify-center rounded-pill bg-field font-mono text-[11px] font-bold text-ink tabular-nums"
+                    style={{ width: WORK.mark, height: WORK.mark }}
+                  >
+                    {String(n + 1).padStart(2, "0")}
+                  </span>
+                </span>
+              </article>
+            ))}
           </div>
         </div>
       </CutPanel>
