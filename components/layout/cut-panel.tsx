@@ -293,7 +293,10 @@ export function CutPanel({
       >
         {children}
 
-        {foot && !band ? <div className="mt-9">{foot}</div> : null}
+        {/* Only where neither the band nor the notch took it. Without the
+            second test the foot was rendered twice on a wide screen: once
+            standing in the notch and once again in the content above it. */}
+        {foot && !band && !notch ? <div className="mt-9">{foot}</div> : null}
       </div>
 
       {/* The bottom band. Inset by the width of each cut, so it runs between
