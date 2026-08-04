@@ -74,7 +74,7 @@ export const PROJECTS: readonly Project[] = [
       { term: "Built in", value: "8 weeks" },
       { term: "Visitors", value: "Business buyers" },
     ],
-    image: "/work-trade.png",
+    image: "/partners/minimal.png",
     alt: "An account portal open on a laptop.",
     tone: "#e4e7ea",
   },
