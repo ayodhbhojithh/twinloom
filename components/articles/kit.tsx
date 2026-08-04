@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 /** The opening paragraph, at the one size that is larger than the rest. */
 export function Lede({ children }: { children: React.ReactNode }) {
   return (
-    <p className="max-w-[62ch] text-[clamp(16px,1.3vw,18.5px)] leading-[1.6] text-ink">
+    <p className="max-w-[72ch] text-[clamp(16.5px,1.35vw,19px)] leading-[1.6] text-ink">
       {children}
     </p>
   );
@@ -62,7 +62,7 @@ export const sectId = (title: string) =>
 /** A paragraph, at the article's one reading size. */
 export function P({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mt-4 max-w-[70ch] text-[15px] leading-[1.72] text-body first:mt-0">
+    <p className="mt-4 max-w-[80ch] text-[15.5px] leading-[1.72] text-body first:mt-0">
       {children}
     </p>
   );
@@ -71,7 +71,7 @@ export function P({ children }: { children: React.ReactNode }) {
 /** A short run of things, each one a fact rather than a sentence. */
 export function Points({ items }: { items: readonly string[] }) {
   return (
-    <ul className="mt-5 grid max-w-[74ch] gap-x-8 gap-y-2.5 sm:grid-cols-2">
+    <ul className="mt-5 grid gap-x-8 gap-y-2.5 sm:grid-cols-2 lg:grid-cols-3">
       {items.map((item) => (
         <li key={item} className="flex gap-2.5">
           <Check
@@ -99,18 +99,20 @@ export function Terms({
   rows: readonly { term: string; text: string; when?: string }[];
 }) {
   return (
-    <dl className="mt-6 flex max-w-[76ch] flex-col">
+    <dl className="mt-6 flex flex-col">
       {rows.map((row) => (
         <div
           key={row.term}
-          className="grid gap-x-7 gap-y-1 py-4 first:pt-0 sm:grid-cols-[minmax(0,11rem)_minmax(0,1fr)]"
+          className="grid gap-x-7 gap-y-1 py-4 first:pt-0 lg:grid-cols-[minmax(0,13rem)_minmax(0,1fr)]"
         >
-          <dt className="text-[14px] leading-[1.35] font-extrabold tracking-[-0.02em] text-ink sm:mt-[3px] sm:text-right">
+          <dt className="text-[14.5px] leading-[1.35] font-extrabold tracking-[-0.02em] text-ink lg:mt-[3px] lg:text-right">
             {row.term}
           </dt>
 
           <dd className="min-w-0">
-            <p className="text-[14.5px] leading-[1.65] text-body">{row.text}</p>
+            <p className="max-w-[76ch] text-[15px] leading-[1.65] text-body">
+              {row.text}
+            </p>
 
             {row.when ? (
               <p className="mt-1.5 flex gap-2 text-[13px] leading-[1.55] text-quiet">
@@ -135,7 +137,7 @@ export function Cards({
   cards: readonly { name: string; note: string; mark?: string }[];
 }) {
   return (
-    <div className="mt-6 grid max-w-[76ch] gap-3 sm:grid-cols-2">
+    <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
       {cards.map((card) => (
         <div key={card.name} className="rounded-[18px] bg-canvas p-5">
           {card.mark ? (
@@ -169,7 +171,7 @@ export function Figures({
   items: readonly { n: string; label: string; note: string }[];
 }) {
   return (
-    <div className="mt-6 grid max-w-[76ch] gap-3 sm:grid-cols-3">
+    <div className="mt-6 grid gap-3 sm:grid-cols-3">
       {items.map((item) => (
         <div key={item.label} className="rounded-[18px] bg-canvas p-5">
           <b className="block font-mono text-[26px] leading-none font-bold text-ink tabular-nums">
@@ -190,7 +192,7 @@ export function Figures({
 /** The one sentence in a section that the rest of it is there to support. */
 export function Pull({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mt-7 flex max-w-[62ch] gap-5 text-[clamp(17px,1.5vw,21px)] leading-[1.4] font-extrabold tracking-[-0.03em] text-ink">
+    <p className="mt-8 flex max-w-[70ch] gap-5 text-[clamp(18px,1.6vw,23px)] leading-[1.4] font-extrabold tracking-[-0.03em] text-ink">
       <span aria-hidden className="mt-[9px] h-[3px] w-8 flex-none bg-mark" />
       {children}
     </p>
@@ -198,13 +200,9 @@ export function Pull({ children }: { children: React.ReactNode }) {
 }
 
 /** Questions people ask, set so an answer can be found without reading past it. */
-export function Ask({
-  rows,
-}: {
-  rows: readonly { q: string; a: string }[];
-}) {
+export function Ask({ rows }: { rows: readonly { q: string; a: string }[] }) {
   return (
-    <div className="mt-6 flex max-w-[76ch] flex-col gap-2.5">
+    <div className="mt-6 grid gap-2.5 lg:grid-cols-2">
       {rows.map((row) => (
         <div key={row.q} className="rounded-[18px] bg-canvas p-5 sm:p-6">
           <b className="block max-w-[52ch] text-[15px] leading-[1.35] font-extrabold tracking-[-0.02em] text-ink">
