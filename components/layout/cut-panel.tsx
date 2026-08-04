@@ -74,9 +74,10 @@ export function CutPanel({
     return () => watcher.disconnect();
   }, []);
 
-  /* One flare and one radius, and every cut is built from them. A cut is at
-     least two flares deep, because that is where its two arcs meet - any less
-     and a straight wall appears between them.
+  /* One flare and one radius, and every cut is built from them. A cut is
+     exactly two flares deep, because that is where its two arcs meet - any less
+     and a straight wall appears between them, any more and it is deeper than
+     whatever stands in it needs.
 
      Everything is held inside what the surface can actually give: on a narrow
      screen a bar plus two flares can want more room than the top edge has, and
@@ -88,11 +89,23 @@ export function CutPanel({
     const radius = Math.max(20, Math.min(w * 0.02 + 14, 34));
     const flare = Math.max(20, Math.min(h * 0.035, 28));
 
-    const barDepth = toolbar ? flare * 2 : 0.01;
+    /* The notch draws its arcs tighter than the corners do.
+
+       A cut is exactly as deep as its flare plus its corner radius, because
+       that is where the two arcs meet, so the only way to make the notch
+       shallower is to curve it harder. Simply taking depth off it would put a
+       straight wall down each side instead.
+
+       The bottom cuts keep the full flare: they hold a 44px disc and have the
+       depth to spend on it. The notch holds a 40px plate and was being cut to
+       fifty-six, so a third of it was empty surface under the words. */
+    const barCurve = Math.min(flare, 22);
+
+    const barDepth = toolbar ? barCurve * 2 : 0.01;
     const barWidth = toolbar
       ? Math.min(
-          Math.max(flare * 2 + 120, Math.min(w * 0.22, 260)),
-          Math.max(flare * 2 + 60, w - 2 * (radius + flare) - 8),
+          Math.max(barCurve * 2 + 120, Math.min(w * 0.22, 260)),
+          Math.max(barCurve * 2 + 60, w - 2 * (radius + barCurve) - 8),
         )
       : 0.01;
 
@@ -104,8 +117,8 @@ export function CutPanel({
       radius,
       barWidth,
       barDepth,
-      barRadius: toolbar ? flare : 0.01,
-      barFlare: toolbar ? flare : 0.01,
+      barRadius: toolbar ? barCurve : 0.01,
+      barFlare: toolbar ? barCurve : 0.01,
       biteWidth: aside ? nook : 0.01,
       biteHeight: aside ? nook : 0.01,
       biteRadius: aside ? flare : 0.01,
