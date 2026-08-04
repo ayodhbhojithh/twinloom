@@ -200,7 +200,7 @@ export function NotchedCard({ className }: { className?: string }) {
 
     const turn = window.setInterval(
       () => setAt((was) => (was + 1) % PROJECTS.length),
-      4000,
+      5000,
     );
 
     return () => window.clearInterval(turn);
