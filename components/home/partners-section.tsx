@@ -40,7 +40,7 @@ export function PartnersSection() {
         </Link>
       </div>
 
-      <PartnerWall className="mt-10 lg:mt-12" />
+      <PartnerWall bleed className="mt-10 lg:mt-12" />
 
       <p className="mx-auto mt-6 max-w-[68ch] text-center text-[14px] leading-[1.6] text-quiet">
         One contract, one invoice, and named in the proposal before the work

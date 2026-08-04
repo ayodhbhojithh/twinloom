@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node -p \"const p=require\\('./package.json'\\); JSON.stringify\\({tw:p.devDependencies?.tailwindcss||p.dependencies?.tailwindcss, next:p.dependencies?.next},null,1\\)\")"
+      "Bash(node -p \"const p=require\\('./package.json'\\); JSON.stringify\\({tw:p.devDependencies?.tailwindcss||p.dependencies?.tailwindcss, next:p.dependencies?.next},null,1\\)\")",
+      "PowerShell(npm run lint)",
+      "PowerShell(if \\($?\\) { \"tsc: clean\" })",
+      "PowerShell(if \\($?\\) { \"lint: clean\" })"
     ]
   }
 }

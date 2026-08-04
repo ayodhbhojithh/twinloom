@@ -37,13 +37,26 @@ const HANG = [48, 0, 30, 66, 14, 54];
  * fade reads as a band with an edge at each end, which is the one thing a blend
  * must not have.
  */
+/** How the wall leaves the page: thinned at both ends, never cut. */
+const EDGES =
+  "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.35) 3%, black 12%, black 88%, rgba(0,0,0,0.35) 97%, transparent 100%)";
+
 const FADE =
   "linear-gradient(to bottom, black 34%, rgba(0,0,0,0.92) 48%, rgba(0,0,0,0.72) 62%, rgba(0,0,0,0.44) 76%, rgba(0,0,0,0.18) 88%, transparent 100%)";
+
+/**
+ * One picture for all six.
+ *
+ * Six different pictures made six different claims about what each discipline
+ * looks like, none of which we can stand behind - these are not photographs of
+ * the work. One plate under all of them is honest about that: it is a surface
+ * the cards are printed on, not an illustration of the thing.
+ */
+const PLATE = "/partners/minimal.png";
 
 const DISCIPLINES = [
   {
     n: "01",
-    plate: "/partners/arch.png",
     name: "Brand and identity",
     covers:
       "A mark, its type, its colours and the rules for using them. We apply a brand you already have; where one has to be made, this is who makes it.",
@@ -51,7 +64,6 @@ const DISCIPLINES = [
   },
   {
     n: "02",
-    plate: "/partners/hero-marble.png",
     name: "Photography and film",
     covers:
       "A shot list built from the page designs, the day itself, the selection and the licensing record afterwards.",
@@ -59,7 +71,6 @@ const DISCIPLINES = [
   },
   {
     n: "03",
-    plate: "/partners/spheres-1.png",
     name: "Copywriting",
     covers:
       "Interviews with the people who know the business, then drafts, revisions and copy prepared for approval.",
@@ -67,7 +78,6 @@ const DISCIPLINES = [
   },
   {
     n: "04",
-    plate: "/partners/minimal.png",
     name: "Accessibility audit",
     covers:
       "Testing beyond our own: assistive technology, and where the scope calls for it, testing with disabled people.",
@@ -75,7 +85,6 @@ const DISCIPLINES = [
   },
   {
     n: "05",
-    plate: "/partners/spheres-2.png",
     name: "Search and paid media",
     covers:
       "Demand research, campaign structure, measurement, and the ongoing work of it after launch.",
@@ -83,7 +92,6 @@ const DISCIPLINES = [
   },
   {
     n: "06",
-    plate: "/partners/banner-fold.png",
     name: "Regulated and legal review",
     covers:
       "Review of claims, terms and notices by somebody qualified to sign them off.",
@@ -112,20 +120,36 @@ const RULES = [
  * Its own component because the landing page carries it too. Two copies of six
  * disciplines would disagree the first week one of them changed.
  */
-export function PartnerWall({ className }: { className?: string }) {
+export function PartnerWall({
+  className,
+  bleed,
+}: {
+  className?: string;
+  /**
+   * Out to the edges of the window rather than the column.
+   *
+   * Only where the page has no rail. `50% - 50vw` measures from the middle of a
+   * centred container to the middle of the window, and on a page with a sidebar
+   * the container is not centred - the wall would run underneath it. The
+   * landing page has no rail, so it is true there and asked for explicitly
+   * rather than guessed at.
+   */
+  bleed?: boolean;
+}) {
   return (
-    /* Clipped to its column, not to the window.
-
-       The usual full bleed trick - a negative margin of `50vw - 50%` - assumes
-       the content is centred in the viewport. Every page but the landing one
-       carries the rail, so it is not: the wall escaped to the left and ran
-       underneath the sidebar. Running off the edges of the column says the same
-       thing and is true on both kinds of page. */
     <div
       className={cn(
-        "group -mx-4 overflow-hidden px-4 py-3 sm:-mx-6 sm:px-6",
+        "group overflow-hidden py-3",
+        bleed ? "mx-[calc(50%-50vw)] w-screen" : "-mx-4 px-4 sm:-mx-6 sm:px-6",
         className,
       )}
+      /* Faded out at both ends rather than cut off. A wall that stops at a
+         straight edge is a row that has been trimmed; one that thins into the
+         page carries on past it, which is the whole point of it drifting. */
+      style={{
+        maskImage: EDGES,
+        WebkitMaskImage: EDGES,
+      }}
     >
       <div className="drift drift-slow flex w-max gap-4 group-hover:[animation-play-state:paused] group-focus-within:[animation-play-state:paused]">
         {[0, 1].map((copy) => (
@@ -146,7 +170,7 @@ export function PartnerWall({ className }: { className?: string }) {
                     that happens to begin as a picture. */}
                 <span className="relative block aspect-[16/10] w-full overflow-hidden">
                   <Image
-                    src={entry.plate}
+                    src={PLATE}
                     alt=""
                     fill
                     sizes="(max-width: 640px) 70vw, 330px"
