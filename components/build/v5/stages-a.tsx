@@ -318,7 +318,7 @@ export function StageDo({ at, answers, onGo }: StepProps) {
 
   if (open && CARD_BY[open]) {
     return (
-      <StageStep at={at} answers={answers} onGo={onGo}>
+      <StageStep at={at} answers={answers} onGo={onGo} scrollKey={open ?? "card"}>
         <CardSurface
           card={CARD_BY[open]}
           answers={answers}

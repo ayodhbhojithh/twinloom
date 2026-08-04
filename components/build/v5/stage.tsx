@@ -29,6 +29,7 @@ export function Stage({
   toolbar,
   corner,
   aside,
+  scrollKey,
   className,
   children,
 }: {
@@ -38,6 +39,11 @@ export function Stage({
   corner?: React.ReactNode;
   /** Stands in the bite at the bottom left: what the answers add up to. */
   aside?: React.ReactNode;
+  /**
+   * What is on the surface. When it changes, the surface takes the reader to
+   * its own top.
+   */
+  scrollKey?: string;
   className?: string;
   children: React.ReactNode;
 }) {
@@ -57,6 +63,41 @@ export function Stage({
 
     return () => watcher.disconnect();
   }, []);
+
+  /* Changing what the surface shows means the thing somebody just pressed is
+     now a screen above them, and they are looking at the empty foot of a
+     question they cannot see the top of. So the surface brings itself back up.
+
+     Skipped on the first render, because arriving at the page is not a change
+     and nobody wants to be scrolled the moment they land. */
+  const landed = useRef(false);
+
+  useEffect(() => {
+    if (!landed.current) {
+      landed.current = true;
+      return;
+    }
+
+    const node = box.current;
+    if (!node) return;
+
+    const top = node.getBoundingClientRect().top + window.scrollY;
+    const header =
+      Number.parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue(
+          "--nav-height",
+        ),
+      ) || 53;
+
+    if (window.scrollY <= top - header - 24) return;
+
+    window.scrollTo({
+      top: Math.max(0, top - header - 16),
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    });
+  }, [scrollKey]);
 
   /* One flare and one radius, and every cut is built from them, exactly as on
      the landing card. The notch is as deep as the flare plus the corner
@@ -112,9 +153,13 @@ export function Stage({
         style={{ clipPath: path ? `path("${path}")` : undefined }}
       />
 
+      {/* The three slots sit above the content, not behind it. They are
+          absolute and the content is in normal flow after them, so without a
+          stacking order of their own the content painted over the cuts and
+          swallowed every press meant for the controls standing in them. */}
       {toolbar ? (
         <div
-          className="absolute top-0 left-1/2 flex -translate-x-1/2 items-start justify-center"
+          className="absolute top-0 left-1/2 z-20 flex -translate-x-1/2 items-start justify-center"
           style={{ width: cut.barWidth, height: cut.barDepth, paddingTop: 2 }}
         >
           {toolbar}
@@ -123,7 +168,7 @@ export function Stage({
 
       {aside ? (
         <div
-          className="absolute bottom-0 left-0 flex items-end"
+          className="absolute bottom-0 left-0 z-20 flex items-end"
           style={{ width: cut.biteWidth - 12, height: cut.biteHeight - 12 }}
         >
           {aside}
@@ -132,7 +177,7 @@ export function Stage({
 
       {corner ? (
         <div
-          className="absolute right-0 bottom-0 flex items-center justify-center"
+          className="absolute right-0 bottom-0 z-20 flex items-center justify-center"
           style={{ width: cut.dropWidth, height: cut.dropHeight }}
         >
           {corner}
@@ -141,7 +186,7 @@ export function Stage({
 
       {/* The content, held clear of every cut by the numbers that made them. */}
       <div
-        className="relative"
+        className="relative z-10"
         style={{
           paddingTop: (toolbar ? cut.barDepth : 0) + 22,
           paddingBottom: (aside ? cut.biteHeight : 26) + 14,

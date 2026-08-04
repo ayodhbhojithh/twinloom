@@ -39,11 +39,11 @@
      for a card being hovered. Every other surface stays neutral, which is what
      lets the warm one register at all. */
   --color-field: #ffffff;
-  --color-canvas: #f7f2ec;
-  --color-canvas-firm: #f0e9e1;
-  --color-well: #fafafa;
-  --color-hair: #f4f5f7;
-  --color-border: #e5e7eb;
+  --color-canvas: #f5efe8;
+  --color-canvas-firm: #ede5db;
+  --color-well: #eceef2;
+  --color-hair: #dbdfe6;
+  --color-border: #c6ccd6;
 
   /* Type, faintest to firmest.
 
@@ -51,7 +51,7 @@
      where it means a pale surface rather than grey text, and the two would resolve
      to whichever was declared last. It is `quiet` here for that reason, and that
      is the one place this file departs from the draft's vocabulary. */
-  --color-label: #9ca3af;
+  --color-label: #767e8d;
   --color-quiet: #6b7280;
   --color-body: #374151;
   --color-ink: #111827;
@@ -72,10 +72,10 @@
   --color-done: #059669;
   --color-amber: #d97706;
   --color-blocked: #dc2626;
-  --color-planned: #dbdfe6;
+  --color-planned: #b8bfcb;
   --color-unrated: #e9ebef;
   /* The mono index grey, for numbers that are labels rather than data. */
-  --color-idx: #b3b8c2;
+  --color-idx: #8b93a1;
 
   --radius-card: 10px;
   --radius-field: 8px;

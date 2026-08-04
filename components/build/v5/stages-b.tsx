@@ -73,7 +73,7 @@ export function StageSell({ at, answers, onGo }: StepProps) {
 
     if (card) {
       return (
-        <StageStep at={at} answers={answers} onGo={onGo}>
+        <StageStep at={at} answers={answers} onGo={onGo} scrollKey={open ?? "card"}>
           <CardSurface
             card={card}
             answers={answers}
@@ -199,7 +199,7 @@ export function StageStyle({ at, answers, onGo }: StepProps) {
 
   if (open && CARD_BY[open]) {
     return (
-      <StageStep at={at} answers={answers} onGo={onGo}>
+      <StageStep at={at} answers={answers} onGo={onGo} scrollKey={open ?? "card"}>
         <CardSurface
           card={CARD_BY[open]}
           answers={answers}
@@ -305,7 +305,7 @@ export function StageHave({ at, answers, onGo }: StepProps) {
 
   if (open) {
     return (
-      <StageStep at={at} answers={answers} onGo={onGo}>
+      <StageStep at={at} answers={answers} onGo={onGo} scrollKey="dw-have">
         <CardSurface
           card={CARD_BY["dw-have"]}
           answers={answers}

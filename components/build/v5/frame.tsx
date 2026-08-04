@@ -25,6 +25,7 @@ export function StageStep({
   answers,
   onGo,
   corner,
+  scrollKey,
   children,
 }: {
   at: number;
@@ -32,6 +33,9 @@ export function StageStep({
   onGo: (at: number) => void;
   /** Replaces the default way-on disc, for the step that ends the run. */
   corner?: React.ReactNode;
+  /** What the surface is showing, when a step can show more than its own
+   *  question: the card that is open, so opening one scrolls to its top. */
+  scrollKey?: string;
   children: React.ReactNode;
 }) {
   const step = STEPS[at];
@@ -41,6 +45,7 @@ export function StageStep({
 
   return (
     <Stage
+      scrollKey={`${step.k}:${scrollKey ?? ""}`}
       className="min-h-[540px] w-full"
       toolbar={
         <Plate>
@@ -48,14 +53,21 @@ export function StageStep({
             <ArrowLeft className="size-4" />
           </Disc>
 
-          <span className="flex min-w-0 flex-1 flex-col px-2 text-center">
-            <span className="font-mono text-[8.5px] font-bold tracking-[0.16em] text-label uppercase tabular-nums">
-              {String(at + 1).padStart(2, "0")} / {STEPS.length}
-              {step.can ? "" : " · Required"}
+          {/* One line, not two. The count and the name are one label - stacked
+              they made the plate a block of text with arrows either side, and
+              a bar this small has the width to say it in a row. */}
+          <span className="flex min-w-0 flex-1 items-baseline justify-center gap-2.5 px-2">
+            <span className="flex-none font-mono text-[9.5px] font-bold tracking-[0.12em] text-label tabular-nums">
+              {String(at + 1).padStart(2, "0")}/{STEPS.length}
             </span>
-            <span className="truncate text-[13px] leading-[1.2] font-bold text-ink">
+            <span className="truncate text-[13.5px] leading-none font-bold text-ink">
               {step.n}
             </span>
+            {step.can ? null : (
+              <span className="flex-none font-mono text-[8.5px] font-bold tracking-[0.14em] text-mark uppercase">
+                Required
+              </span>
+            )}
           </span>
 
           <Disc label="Next step" onClick={() => onGo(at + 1)} disabled={last}>
@@ -67,11 +79,11 @@ export function StageStep({
         /* What the answers add up to, standing where the next project stands
            on the landing card. One number: the panel carries the list, and
            this only has to say the list is growing. */
-        <div className="flex size-full flex-col justify-end rounded-[16px] bg-field p-3">
+        <div className="flex size-full flex-col justify-center rounded-[18px] border border-border bg-field px-3.5">
           <b className="font-mono text-[24px] leading-none font-bold text-ink tabular-nums">
             {pages}
           </b>
-          <span className="mt-1 font-mono text-[8.5px] font-bold tracking-[0.1em] text-label uppercase">
+          <span className="mt-1.5 font-mono text-[8.5px] font-bold tracking-[0.1em] text-label uppercase">
             Pages so far
           </span>
         </div>
