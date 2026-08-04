@@ -106,10 +106,10 @@ export function SiteRail() {
       }}
     >
       <div className="flex h-full flex-col">
-        {/* The control sits on the same gutter the links do, so the panel has one
-            right edge rather than a button tucked closer to it than anything
-            underneath. Folded there is no gutter to keep: 52px of strip, and the
-            button centred in it. */}
+        {/* The control sits on the same right gutter the list does, so the panel
+            has one right edge rather than a button tucked closer to it than
+            anything underneath. Folded there is no gutter to keep: 52px of
+            strip, and the button centred in it. */}
         <div
           className={cn(
             "flex flex-none items-center pt-4 pb-1",
