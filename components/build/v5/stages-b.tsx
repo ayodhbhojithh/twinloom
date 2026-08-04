@@ -166,7 +166,7 @@ export function StageSell({ at, answers, onGo }: StepProps) {
           <button
             type="button"
             onClick={() => setOpen(three.id)}
-            className="flex w-full cursor-pointer items-center justify-between gap-4 rounded-[14px] bg-field px-4.5 py-3.5 text-left transition-colors hover:bg-hair"
+            className="flex w-full cursor-pointer items-center justify-between gap-4 rounded-[14px] bg-canvas px-4.5 py-3.5 text-left transition-colors hover:bg-hair"
           >
             <span className="min-w-0">
               <Kicker className="block">{three.kicker}</Kicker>
@@ -279,7 +279,7 @@ export function StageStyle({ at, answers, onGo }: StepProps) {
                 key={id}
                 type="button"
                 onClick={() => setOpen(id)}
-                className="flex cursor-pointer flex-col rounded-[14px] bg-field p-4 text-left transition-colors hover:bg-hair"
+                className="flex cursor-pointer flex-col rounded-[14px] bg-canvas p-4 text-left transition-colors hover:bg-hair"
               >
                 <b className="text-[14px] leading-[1.25] font-bold text-ink">
                   {card.title}
@@ -344,7 +344,7 @@ export function StageHave({ at, answers, onGo }: StepProps) {
                        title kept its answers beside it and a long one pushed
                        them onto the next line, so thirteen rows sat in two
                        different shapes for no reason a reader could see. */
-                    className="rounded-[10px] px-2.5 py-2 transition-colors hover:bg-field"
+                    className="rounded-[10px] px-2.5 py-2 transition-colors hover:bg-canvas"
                   >
                     <span className="block">
                       <span className="block text-[13.5px] leading-[1.25] font-semibold text-ink">
@@ -400,7 +400,7 @@ export function StageHave({ at, answers, onGo }: StepProps) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="cursor-pointer rounded-pill bg-field px-4 py-2 text-[13px] font-semibold text-body transition-colors hover:bg-hair hover:text-ink"
+          className="cursor-pointer rounded-pill bg-canvas px-4 py-2 text-[13px] font-semibold text-body transition-colors hover:bg-hair hover:text-ink"
         >
           {CARD_BY["dw-have"].title}
         </button>
@@ -445,7 +445,7 @@ export function StageRefs({ at, answers, onGo }: StepProps) {
             {answers.refs.map((ref) => (
               <li
                 key={ref.n}
-                className="flex flex-wrap items-center gap-x-3.5 gap-y-2 rounded-[12px] bg-field px-3.5 py-2.5"
+                className="flex flex-wrap items-center gap-x-3.5 gap-y-2 rounded-[12px] bg-canvas px-3.5 py-2.5"
               >
                 <Kicker className="w-[72px] flex-none">{ref.kind}</Kicker>
                 <span className="min-w-[16ch] flex-1 text-[13.5px] leading-[1.4] text-ink">

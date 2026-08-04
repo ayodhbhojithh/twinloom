@@ -273,7 +273,11 @@
   }
 
   body {
-    @apply bg-field text-body;
+    /* The ground is the tinted one and the surfaces are white, rather than the
+       other way round. A white page with tinted cards on it makes the cards the
+       objects; a tinted page with white cards makes the page the room and the
+       cards the things standing in it, which is what these screens are. */
+    @apply bg-canvas text-body;
     font-family: var(--font-sans);
     /* No `-webkit-font-smoothing: antialiased`. It disables ClearType on
        Windows, which makes text look thin and noisy rather than smooth. */
@@ -397,7 +401,7 @@
      version of it.
   --------------------------------------------------------------------------- */
   .glass {
-    background-color: color-mix(in oklab, var(--color-canvas) 94%, transparent);
+    background-color: color-mix(in oklab, var(--color-field) 94%, transparent);
     backdrop-filter: blur(18px) saturate(150%);
     -webkit-backdrop-filter: blur(18px) saturate(150%);
     box-shadow:
@@ -406,7 +410,7 @@
   }
 
   .glass-firm {
-    background-color: color-mix(in oklab, var(--color-canvas-firm) 96%, transparent);
+    background-color: color-mix(in oklab, var(--color-field) 100%, transparent);
     backdrop-filter: blur(18px) saturate(150%);
     -webkit-backdrop-filter: blur(18px) saturate(150%);
     box-shadow:
@@ -417,7 +421,7 @@
   /* The white surfaces that stand on the glass: plates, cards and the panel.
      Lighter, because they are meant to read as solid things resting on it. */
   .glass-pane {
-    background-color: color-mix(in oklab, var(--color-field) 90%, transparent);
+    background-color: color-mix(in oklab, var(--color-canvas) 88%, transparent);
     backdrop-filter: blur(22px) saturate(140%);
     -webkit-backdrop-filter: blur(22px) saturate(140%);
     box-shadow:

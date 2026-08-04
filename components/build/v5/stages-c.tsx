@@ -125,7 +125,7 @@ export function StageRead({ at, answers, onGo, onGoKey }: StepProps) {
       </Sub>
 
       {/* The front of the document: whose it is, and what it adds up to. */}
-      <div className="mt-6 max-w-[1100px] rounded-[18px] bg-field p-6 sm:p-7">
+      <div className="mt-6 max-w-[1100px] rounded-[18px] bg-canvas p-6 sm:p-7">
         <div className="flex flex-wrap items-start justify-between gap-x-10 gap-y-5">
           <div className="min-w-0">
             <Kicker className="block">Scoping request</Kicker>
@@ -520,7 +520,7 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
 
       {/* Where it stands, and the named things still missing, each a link
           straight to its question. */}
-      <section className="mt-6 max-w-[720px] rounded-[16px] bg-field p-5">
+      <section className="mt-6 max-w-[720px] rounded-[16px] bg-canvas p-5">
         <div className="flex items-center gap-2.5">
           <span
             aria-hidden
@@ -646,7 +646,7 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
                     "cursor-pointer rounded-pill px-4 py-1.5 text-[13px] font-semibold tabular-nums transition-colors",
                     chipOn(answers, "talk.len", String(length))
                       ? "bg-ink text-white"
-                      : "bg-field text-body hover:bg-hair hover:text-ink",
+                      : "bg-canvas text-body hover:bg-hair hover:text-ink",
                   )}
                 >
                   {length} min

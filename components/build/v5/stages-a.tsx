@@ -62,7 +62,7 @@ export function StageArrive({ at, answers, onGo }: StepProps) {
           than of paragraphs. */}
       <div className="mt-7 grid max-w-[820px] gap-3 sm:grid-cols-3">
         {facts.map((fact) => (
-          <div key={fact.label} className="rounded-[16px] bg-field p-5">
+          <div key={fact.label} className="rounded-[16px] bg-canvas p-5">
             <b className="block font-mono text-[30px] leading-none font-bold text-ink tabular-nums">
               {fact.n}
             </b>
@@ -250,7 +250,7 @@ export function ActionRow({
       }
       className={cn(
         "group/row flex w-full items-center gap-3.5 rounded-[12px] px-3 py-2.5 text-left transition-colors",
-        fixed ? "cursor-default" : "cursor-pointer hover:bg-field",
+        fixed ? "cursor-default" : "cursor-pointer hover:bg-canvas",
       )}
     >
       <span
@@ -414,7 +414,7 @@ function OrderList({ order }: { order: string[] }) {
       {order.map((key, n) => (
         <li
           key={key}
-          className="flex items-center gap-3 rounded-[10px] px-2 py-1.5 transition-colors hover:bg-field"
+          className="flex items-center gap-3 rounded-[10px] px-2 py-1.5 transition-colors hover:bg-canvas"
         >
           <span className="w-6 flex-none font-mono text-[10px] font-bold text-idx tabular-nums">
             {String(n + 1).padStart(2, "0")}
@@ -427,7 +427,7 @@ function OrderList({ order }: { order: string[] }) {
               type="button"
               aria-label="Move up"
               onClick={() => move(n, n - 1)}
-              className="cursor-pointer rounded-pill bg-field px-2.5 py-1 font-mono text-[9.5px] font-bold text-quiet transition-colors hover:text-ink"
+              className="cursor-pointer rounded-pill bg-canvas px-2.5 py-1 font-mono text-[9.5px] font-bold text-quiet transition-colors hover:text-ink"
             >
               Up
             </button>
@@ -435,7 +435,7 @@ function OrderList({ order }: { order: string[] }) {
               type="button"
               aria-label="Move down"
               onClick={() => move(n, n + 1)}
-              className="cursor-pointer rounded-pill bg-field px-2.5 py-1 font-mono text-[9.5px] font-bold text-quiet transition-colors hover:text-ink"
+              className="cursor-pointer rounded-pill bg-canvas px-2.5 py-1 font-mono text-[9.5px] font-bold text-quiet transition-colors hover:text-ink"
             >
               Down
             </button>

@@ -133,7 +133,7 @@ export function ColourStudioPanel() {
           </span>
         </button>
       ) : (
-        <p className="mt-3.5 rounded-[12px] bg-field px-4 py-3.5 text-[12.5px] leading-[1.5] text-quiet">
+        <p className="mt-3.5 rounded-[12px] bg-canvas px-4 py-3.5 text-[12.5px] leading-[1.5] text-quiet">
           Nothing picked. That is a finished answer - we choose the colours and
           check every pairing before it is used.
         </p>

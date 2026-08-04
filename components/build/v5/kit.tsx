@@ -226,7 +226,7 @@ export function TickRow({
       onClick={locked ? undefined : onToggle}
       className={cn(
         "group/tick flex w-full items-center gap-3.5 rounded-[12px] px-3 py-2.5 text-left transition-colors",
-        locked ? "cursor-default" : "cursor-pointer hover:bg-field",
+        locked ? "cursor-default" : "cursor-pointer hover:bg-canvas",
         className,
       )}
     >

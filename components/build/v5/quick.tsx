@@ -54,7 +54,7 @@ export function QuickPane({
             website and a complete answer - and the fastest route through this.
           </Sub>
 
-          <ul className="mt-6 max-w-[420px] overflow-hidden rounded-[16px] bg-field">
+          <ul className="mt-6 max-w-[420px] overflow-hidden rounded-[16px] bg-canvas">
             {ALWAYS_PAGES.map((page, n) => (
               <li
                 key={page}
@@ -140,7 +140,7 @@ export function QuickPane({
               {answers.refs.map((ref) => (
                 <li
                   key={ref.n}
-                  className="flex flex-wrap items-center gap-x-3.5 gap-y-2 rounded-[12px] bg-field px-3.5 py-2.5"
+                  className="flex flex-wrap items-center gap-x-3.5 gap-y-2 rounded-[12px] bg-canvas px-3.5 py-2.5"
                 >
                   <Kicker className="w-[72px] flex-none">{ref.kind}</Kicker>
                   <span className="min-w-[14ch] flex-1 text-[13.5px] leading-[1.4] text-ink">
