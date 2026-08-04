@@ -336,10 +336,13 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
                     </span>
                   </span>
 
-                  <span className="flex flex-none items-center gap-1 font-mono text-[9px] font-bold tracking-[0.1em] text-idx uppercase transition-colors group-hover/min:text-ink">
-                    Take me to it
-                    <ArrowUpRight aria-hidden className="size-3" />
-                  </span>
+                  {/* The arrow alone. The whole row is the control and it
+                      already names what it goes to, so "take me to it" was a
+                      caption on a door saying door - four times over. */}
+                  <ArrowUpRight
+                    aria-hidden
+                    className="size-3.5 flex-none text-idx transition-colors group-hover/min:text-ink"
+                  />
                 </button>
               </li>
             );
@@ -367,6 +370,38 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
             />
           ))}
         </div>
+
+        {/* Choosing to book a time has to be able to book a time. The question
+            was asked and the answer recorded, and then nothing happened - which
+            is the one thing a booking question must not do. */}
+        {isOn(answers, "talk", "book") ? (
+          <Link
+            href={ROUTES.book}
+            className="group/book mt-3 inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85"
+          >
+            Choose a time
+            <ArrowUpRight
+              aria-hidden
+              className="size-4 transition-transform group-hover/book:translate-x-0.5 group-hover/book:-translate-y-0.5"
+            />
+          </Link>
+        ) : null}
+
+        {isOn(answers, "talk", "times") ? (
+          <div className="mt-3">
+            <AddRow
+              placeholder="Mornings, or Tuesday and Thursday after two"
+              label="The times that suit you"
+              onAdd={(value) =>
+                addRef({
+                  kind: "Times that suit",
+                  text: value,
+                  where: { stepKey: "submit", step: "Submit" },
+                })
+              }
+            />
+          </div>
+        ) : null}
       </section>
 
       <section className="mt-8 max-w-[1100px]">
