@@ -123,7 +123,7 @@ export function BuildFlow() {
                 onClick={() => setTab(entry.key)}
                 className={cn(
                   "flex w-full cursor-pointer items-start gap-3.5 border-t border-border px-5 py-4 text-left transition-colors first:border-t-0 sm:border-t-0 sm:border-l sm:first:border-l-0",
-                  on ? "bg-ink" : "hover:bg-well",
+                  on ? "bg-ink" : "bg-hair hover:bg-planned",
                 )}
               >
                 <span
