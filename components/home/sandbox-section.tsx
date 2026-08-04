@@ -252,7 +252,7 @@ export function SandboxSection() {
           </Link>
         }
       >
-        <div className="grid gap-7 lg:grid-cols-[264px_minmax(0,1fr)]">
+        <div className="grid gap-7 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] lg:grid-cols-[264px_minmax(0,1fr)]">
           {/* The shelf. Ink for the one in hand, the ground for the rest. */}
           <ul
             role="listbox"
@@ -317,19 +317,9 @@ export function SandboxSection() {
 
           {/* The stage. Clipped and given a height of its own: both widgets
               size themselves to whatever box they are in, and without one they
-              grow until they are over the words above them. */}
+              grow until they have taken the section. */}
           <div className="min-w-0">
-            {/* Wide enough for the longest of the six notes to hold one line.
-                At 62 it broke every one of them in half against a stage three
-                times that wide, so the words above the bench sat in a narrow
-                column with a field of empty panel beside them. Still capped:
-                the stage runs past a thousand pixels on a wide window, and a
-                13.5px line that long is a measure nobody reads. */}
-            <p className="max-w-[96ch] text-[13.5px] leading-[1.6] text-quiet">
-              {piece.note}
-            </p>
-
-            <div className="relative mt-4 h-[280px] overflow-hidden rounded-[18px] bg-canvas sm:h-[320px]">
+            <div className="relative h-[220px] overflow-hidden rounded-[18px] bg-canvas sm:h-[280px] lg:h-[320px]">
               {piece.key === "particles" ? (
                 <ParticleWordmark word="TwinLoom" className="h-full w-full" />
               ) : null}
@@ -407,11 +397,16 @@ export function SandboxSection() {
             Where they end up
           </p>
 
-          <div className="mt-3 flex flex-wrap gap-3">
+          {/* A rail rather than a wrap. The cards are a fixed size - a clip
+              path is drawn in pixels - so wrapping them left a ragged gap at
+              the end of the row on every width that was not a multiple of one
+              card. Scrolled, the row fills whatever it is given and the last
+              card cutting off at the edge is the cue that there is more. */}
+          <div className="quiet-scroll -mx-1 mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-1">
             {PROJECTS.map((project, n) => (
               <article
                 key={project.id}
-                className="group/work relative flex-none transition-transform duration-300 hover:-translate-y-1"
+                className="group/work relative flex-none snap-start transition-transform duration-300 hover:-translate-y-1"
                 style={{ width: WORK.w, height: WORK.h }}
               >
                 {/* The picture is the card, cut to the outline the way the

@@ -94,4 +94,20 @@ export const PROJECTS: readonly Project[] = [
     alt: "A careers page with a person reading it.",
     tone: "#e7e9ed",
   },
+  {
+    id: "clinic",
+    name: "A clinic that fills its diary",
+    kind: "Booking",
+    year: "2026",
+    summary:
+      "Six practitioners, four rooms and one diary that finally agrees with itself. The site presents the availability; the booking system keeps the rules, which is the only arrangement that survives a busy week.",
+    facts: [
+      { term: "Pages", value: "11" },
+      { term: "Built in", value: "5 weeks" },
+      { term: "Visitors", value: "Patients and referrers" },
+    ],
+    image: "/work-shop.png",
+    alt: "A booking page showing the times available this week.",
+    tone: "#e9ecef",
+  },
 ];
