@@ -69,7 +69,11 @@ export function ProjectPanel({
             exit={{ opacity: 0 }}
             transition={{ duration: quiet ? 0 : 0.28 }}
             onClick={onClose}
-            className="fixed inset-0 z-50 bg-ink/45"
+            /* Darkened and blurred. A flat wash tells you the page is out of
+               play; blurring it takes the page out of focus as well, which is
+               what stops the eye trying to read the headline behind the
+               panel. */
+            className="fixed inset-0 z-50 bg-ink/65 backdrop-blur-[14px]"
           />
 
           <div
