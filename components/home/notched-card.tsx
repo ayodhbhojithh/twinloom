@@ -26,7 +26,7 @@ import { PROJECTS, type Project } from "./projects";
    whether the surface curves in or out.
 --------------------------------------------------------------------------- */
 
-interface Cuts {
+export interface Cuts {
   /** The card's own corners. */
   radius: number;
   /** The bar at the top: width, depth, its own corners, and the outward curve. */
@@ -64,7 +64,7 @@ interface Cuts {
  * each flare on the wrong side, which turns the gentle sweep into a full
  * quarter-disc bitten out beside the notch, and the card grows two ears.
  */
-function outline(w: number, h: number, cut: Cuts): string {
+export function outline(w: number, h: number, cut: Cuts): string {
   const {
     radius: r,
     barWidth: bw,

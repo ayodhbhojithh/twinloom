@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thoughts &amp; inspiration — the full component · The Very Good Website Company</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --field:#FFFFFF; --well:#FAFAFA; --hair:#F4F5F7; --border:#E5E7EB;
+  --label:#9CA3AF; --secondary:#6B7280; --body:#374151; --ink:#111827;
+  --done:#059669; --active:#2563EB; --planned:#DBDFE6; --blocked:#DC2626;
+  --amber:#D97706; --unrated:#E9EBEF; --idx:#B3B8C2;
+  --panel:360px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color:var(--body); background:var(--field);
+  font-size:16.5px; line-height:1.62; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0;color:var(--ink)}
+h1{font-size:40px;line-height:1.04;font-weight:800;letter-spacing:-.025em}
+h2{font-size:34px;line-height:1.14;font-weight:800;letter-spacing:-.025em}
+h3{font-size:21px;line-height:1.25;font-weight:700;letter-spacing:-.012em}
+h4{font-size:16.5px;line-height:1.3;font-weight:700}
+p{margin:0 0 14px}
+p,ul,ol,.measure{max-width:720px}
+a{color:var(--ink)}
+button{font-family:inherit}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+.tag{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--idx);display:block;margin-bottom:10px}
+.lab{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--label)}
+.ann{font-size:11px;line-height:1.5;color:var(--secondary)}
+.sec-copy{color:var(--secondary)}
+:focus-visible{outline:2px solid var(--active);outline-offset:2px}
+
+/* ---------- the demonstration page behind the panel ---------- */
+.page{transition:margin-right .22s cubic-bezier(.22,1,.36,1)}
+.inner{max-width:1100px;margin:0 auto;padding:56px 56px 0}
+.doc{padding-bottom:96px}
+.rule{border:0;border-top:1px solid var(--hair);margin:34px 0}
+.box{border:1px solid var(--border);border-radius:10px;background:var(--field);padding:22px 24px;margin:16px 0}
+.well{background:var(--well);border:1px solid #F0F1F4;border-radius:10px;padding:18px 22px;margin:16px 0}
+.act{border:1px solid var(--ink);border-radius:8px;background:var(--field);color:var(--ink);
+  padding:13px 22px;font-size:15.5px;font-weight:600;cursor:pointer}
+.act.pri{background:var(--ink);color:#fff}
+.act.sm{padding:8px 14px;font-size:13.5px;border-radius:8px}
+.act:disabled{opacity:.4;cursor:default}
+.modes{display:flex;gap:0;border:1px solid var(--border);border-radius:999px;padding:4px;width:max-content;margin:0 0 8px;flex-wrap:wrap}
+.modes button{border:0;background:none;border-radius:999px;padding:8px 16px;font-size:13.5px;
+  font-weight:600;color:var(--secondary);cursor:pointer}
+.modes button.on{background:var(--ink);color:#fff}
+table{border-collapse:collapse;width:100%;max-width:960px;margin:16px 0;font-size:15px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--hair);vertical-align:top}
+th{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--label);border-bottom:1px solid var(--border)}
+td.k{font-weight:600;color:var(--ink);white-space:nowrap}
+.list{margin:14px 0;max-width:720px}
+.row{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--hair)}
+.row .nm{font-weight:600;color:var(--ink)}
+.row .st{font-size:15px;color:var(--secondary)}
+
+/* ---------- the launcher tab ---------- */
+.ti-tab{position:fixed;top:110px;right:0;z-index:41;
+  border:1px solid var(--border);border-right:0;border-radius:10px 0 0 10px;
+  background:var(--field);color:var(--ink);cursor:pointer;
+  padding:18px 11px;writing-mode:vertical-rl;
+  font-size:13px;font-weight:700;letter-spacing:.02em;
+  transition:right .22s cubic-bezier(.22,1,.36,1)}
+.ti-tab .cnt{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11.5px;
+  font-weight:700;color:var(--active);margin-top:8px}
+body.ti-open .ti-tab{right:var(--panel)}
+body.mode-solo .ti-tab{display:none}
+
+/* ---------- the panel shell ---------- */
+.ti{position:fixed;top:0;right:0;width:var(--panel);height:100vh;z-index:40;
+  background:var(--field);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .22s cubic-bezier(.22,1,.36,1)}
+body.ti-open .ti{transform:translateX(0)}
+body.ti-open .page{margin-right:var(--panel)}
+.ti-hd{padding:20px 22px 14px;border-bottom:1px solid var(--border);flex:none}
+.ti-hd .x{float:right;border:0;background:none;font-size:19px;line-height:1;color:var(--secondary);cursor:pointer;padding:2px 4px}
+.ti-hd h3{font-size:19px}
+.ti-ctx{margin-top:8px}
+.ti-bd{flex:1;overflow-y:auto;padding:4px 22px 28px}
+.ti-ft{flex:none;border-top:1px solid var(--border);padding:14px 22px;background:var(--field)}
+
+/* solo mode — route 1 and the emailed capture link */
+body.mode-solo .ti{position:static;width:auto;max-width:820px;margin:0 auto 80px;
+  height:auto;border:1px solid var(--border);border-radius:10px;transform:none}
+body.mode-solo .ti-bd{overflow:visible;max-height:none}
+body.mode-solo .page{margin-right:0}
+body.mode-solo .demo{display:none}
+
+/* ---------- panel sections ---------- */
+.ti-sec{padding:20px 0;border-bottom:1px solid var(--hair)}
+.ti-sec:last-child{border-bottom:0}
+.ti-sec .hd{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}
+.ti-sec .hd h4{flex:1}
+.ti-sec .n{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11.5px;font-weight:700;color:var(--label)}
+.empty{font-size:14px;color:var(--secondary);margin:0 0 10px}
+.empty em{font-style:normal;color:var(--label)}
+
+/* fields */
+.ti input[type=text],.ti input[type=url],.ti textarea{
+  width:100%;border:1px solid var(--border);border-radius:8px;background:var(--field);
+  color:var(--body);font-family:inherit;font-size:14.5px;padding:9px 11px;margin:0 0 8px}
+.ti textarea{resize:vertical;min-height:88px;line-height:1.55}
+.ti input::placeholder,.ti textarea::placeholder{color:var(--label)}
+
+/* drop zone */
+.drop{border:1px dashed var(--border);border-radius:10px;background:var(--well);
+  padding:22px 16px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+.drop.drag{border-color:var(--active);background:#F7FAFF}
+.drop .t{font-weight:600;color:var(--ink);font-size:14.5px}
+.drop .s{font-size:12.5px;color:var(--secondary);margin-top:3px}
+
+/* file rows */
+.item{display:flex;gap:11px;padding:12px 0;border-bottom:1px solid var(--hair);align-items:flex-start}
+.item:last-child{border-bottom:0}
+.item .th{width:44px;height:44px;border-radius:8px;border:1px solid var(--border);
+  background:var(--well);flex:none;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.item .th img{width:100%;height:100%;object-fit:cover;display:block}
+.item .th span{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9.5px;font-weight:700;
+  letter-spacing:.06em;color:var(--label)}
+.item .bd{flex:1;min-width:0}
+.item .fn{font-size:14px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .mt{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;color:var(--label);letter-spacing:.06em}
+.item .rm{border:0;background:none;color:var(--secondary);font-size:15px;line-height:1;cursor:pointer;padding:2px 3px;flex:none}
+.item input.why{margin:7px 0 0;font-size:13.5px;padding:7px 9px}
+.st-add{color:var(--active)}
+.st-fail{color:var(--blocked)}
+.item.fail .th{border-color:var(--blocked)}
+
+/* colours */
+.wbar{display:flex;height:14px;border-radius:8px;overflow:hidden;border:1px solid var(--border);margin:2px 0 12px}
+.wbar div{height:100%}
+.crow{border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin:0 0 8px}
+.crow .top{display:flex;align-items:center;gap:9px}
+.csw{width:26px;height:26px;border-radius:8px;border:1px solid rgba(17,24,39,.12);flex:none}
+.crole{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10.5px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--label);width:74px;flex:none}
+.chex{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;color:var(--ink);flex:1}
+.crow .ord button{border:1px solid var(--border);background:var(--field);border-radius:8px;
+  width:24px;height:24px;font-size:9px;color:var(--secondary);cursor:pointer;padding:0}
+.crow .ord button:disabled{opacity:.3;cursor:default}
+.crow .wctl{display:flex;align-items:center;gap:9px;margin-top:9px}
+.crow .wctl input[type=range]{flex:1;accent-color:var(--ink);min-width:0}
+.ti input.cwt{width:52px;flex:none;border:0;border-bottom:1px solid var(--border);border-radius:0;
+  background:none;padding:3px 0;margin:0;text-align:right;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;font-weight:700;color:var(--ink)}
+.addc{display:flex;gap:8px;align-items:center;margin-top:4px}
+.addc input[type=color]{width:38px;height:36px;padding:0;border:1px solid var(--border);
+  border-radius:8px;background:var(--field);cursor:pointer;flex:none}
+.ti .addc input[type=text]{margin:0;flex:1}
+.studio-link{display:inline-block;margin-top:10px;font-size:14px;font-weight:600;color:var(--ink);
+  border:1px solid var(--ink);border-radius:8px;padding:9px 14px;cursor:pointer;background:var(--field)}
+
+/* links */
+.lrow{padding:11px 0;border-bottom:1px solid var(--hair);display:flex;gap:10px;align-items:flex-start}
+.lrow:last-child{border-bottom:0}
+.lrow .bd{flex:1;min-width:0}
+.lrow .u{font-size:13.5px;font-weight:600;color:var(--ink);word-break:break-all}
+.lrow .w{font-size:13.5px;color:var(--secondary);margin-top:2px}
+.lrow .w.none{color:var(--amber)}
+
+/* reflection strip */
+.refl{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:12px}
+.refl .rp{padding:18px 16px}
+.refl .rh{font-size:17px;font-weight:800;letter-spacing:-.015em;margin:0 0 6px}
+.refl .rt{font-size:13.5px;line-height:1.55;margin:0 0 12px}
+.refl .rb{display:inline-block;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600}
+.refl .rf{padding:9px 16px;font-size:11px;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:.06em}
+
+/* standing text, receipts, undo */
+.standing{font-size:11.5px;line-height:1.5;color:var(--secondary);margin-top:6px}
+.live{font-size:12.5px;color:var(--done);min-height:19px;font-weight:600}
+.undo{font-size:12.5px;color:var(--secondary)}
+.undo button{border:0;background:none;color:var(--ink);font-weight:700;font-size:12.5px;
+  text-decoration:underline;cursor:pointer;padding:0}
+.warn{font-size:12.5px;line-height:1.5;color:var(--amber);background:var(--well);
+  border:1px solid #F0F1F4;border-radius:10px;padding:9px 11px;margin:8px 0;display:none}
+
+/* ---------- the Colour Studio modal ---------- */
+.cs-veil{position:fixed;inset:0;background:rgba(17,24,39,.45);z-index:60;display:none}
+.cs-veil.on{display:block}
+.cs{position:fixed;inset:24px;z-index:61;background:var(--field);border:1px solid var(--border);
+  border-radius:10px;display:none;flex-direction:column;overflow:hidden}
+.cs.on{display:flex}
+.cs-hd{flex:none;padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px}
+.cs-hd h3{flex:1}
+.cs-bd{flex:1;overflow:auto;padding:20px 22px;display:grid;grid-template-columns:1fr 300px;gap:22px;align-items:start}
+@media(max-width:820px){.cs-bd{grid-template-columns:1fr}}
+.cs-col{min-width:0}
+.cs-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+#csCanvas{width:100%;height:auto;display:block;border:1px solid var(--border);border-radius:10px;
+  background:var(--well);cursor:crosshair;touch-action:none}
+.cs-tray{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.thumb{position:relative;width:52px;height:52px;border-radius:8px;overflow:hidden;
+  border:1px solid var(--border);cursor:pointer;background:var(--well);flex:none;padding:0}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb.on{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.thumb .tx{position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:999px;
+  background:rgba(17,24,39,.72);color:#fff;border:0;font-size:9px;line-height:1;cursor:pointer;padding:0}
+.thumb.add{display:flex;align-items:center;justify-content:center;color:var(--secondary);
+  font-size:18px;border-style:dashed;background:var(--field)}
+.zoomrow{display:flex;align-items:center;gap:10px;margin-top:10px}
+.zoomrow input[type=range]{flex:1;accent-color:var(--ink)}
+.loupe{position:fixed;width:132px;pointer-events:none;z-index:70;display:none;transform:translate(-50%,-118%)}
+.loupe canvas{width:120px;height:120px;border:3px solid #fff;border-radius:999px;display:block;margin:0 auto;
+  image-rendering:pixelated;background:#000;box-shadow:0 6px 22px rgba(17,24,39,.35)}
+.loupe .hx{margin:6px auto 0;width:max-content;background:var(--ink);color:#fff;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;padding:2px 8px;border-radius:8px}
+.cand{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.cand button{border:1px solid var(--border);border-radius:8px;background:var(--field);cursor:pointer;
+  padding:6px 8px 7px;display:flex;flex-direction:column;align-items:center;gap:5px;width:64px}
+.cand button .sw{width:100%;height:26px;border-radius:6px;border:1px solid rgba(17,24,39,.12)}
+.cand button .hx{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;color:var(--secondary)}
+.cand button.kept{border-color:var(--done)}
+.cand button.kept .hx{color:var(--done);font-weight:700}
+.sv{position:relative;width:100%;height:168px;border-radius:10px;border:1px solid var(--border);
+  cursor:crosshair;touch-action:none}
+.sv:focus-visible,.hue:focus-visible{outline:2px solid var(--active);outline-offset:2px}
+.knob{position:absolute;width:15px;height:15px;border-radius:999px;border:2px solid #fff;
+  box-shadow:0 0 0 1px rgba(17,24,39,.45);transform:translate(-50%,-50%);pointer-events:none}
+.hue{position:relative;height:15px;border-radius:999px;margin-top:12px;cursor:pointer;touch-action:none;
+  background:linear-gradient(to right,#f00 0%,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,#f00 100%)}
+.hue .knob{top:50%}
+.cur{display:flex;gap:11px;margin-top:14px;align-items:flex-start}
+.cur .sw{width:50px;height:50px;border-radius:10px;border:1px solid rgba(17,24,39,.12);flex:none}
+.flds{flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.flds label{display:block}
+.flds .lb{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--label)}
+.flds input{width:100%;border:1px solid var(--border);border-radius:8px;padding:6px 8px;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;color:var(--ink);background:var(--field)}
+.flds .hexf{grid-column:1/-1}
+.cs-note{font-size:12.5px;line-height:1.5;color:var(--amber);background:var(--well);
+  border:1px solid #F0F1F4;border-radius:10px;padding:9px 11px;margin-bottom:12px;display:none}
+
+@media(max-width:760px){
+  .inner{padding:34px 20px 0}
+  body.ti-open .page{margin-right:0}
+  .ti{width:100%;--panel:100%}
+  .ti-tab{top:auto;bottom:0;right:0;left:0;width:100%;writing-mode:horizontal-tb;
+    border-radius:10px 10px 0 0;border-right:1px solid var(--border);border-bottom:0;
+    display:flex;gap:10px;justify-content:center;padding:14px}
+  .ti-tab .cnt{margin:0}
+  body.ti-open .ti-tab{right:0;display:none}
+  .cs{inset:0;border-radius:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body class="mode-dock">
+<button class="ti-tab" id="tiTab" onclick="togglePanel()">Thoughts &amp; inspiration<span class="cnt" id="tiCnt">· 0</span></button>
+
+<div class="page">
+<div class="inner doc">
+
+  <span class="tag">A-47 · Thoughts &amp; inspiration · the full component</span>
+  <h1>The panel, built</h1>
+  <p class="measure" style="font-size:18px;color:var(--secondary);margin-top:14px">
+    Everything the specification describes, working in one file: files with per-file notes, the ten-colour
+    weighted palette, the full Colour Studio, sites with reasons, notes, context tagging, and the palette
+    reflection strip. Styled against the style guide. No browser storage anywhere — the state is one object
+    in memory, shaped like the session object it will become.
+  </p>
+
+  <hr class="rule">
+
+  <!-- ============ 01 THE ROUTING QUESTION ============ -->
+  <section>
+    <span class="tag">01 · The question</span>
+    <h2>Is this triggered from route 2?</h2>
+    <p class="measure">No. And it should not be.</p>
+    <p class="measure">
+      The panel is <strong>route-independent</strong>. It is not a feature of the guided journey that the other
+      two routes happen to lack — it is the capture surface that sits underneath all three, writing into one
+      session object. Route 2 is simply the route that shows it docked beside something else.
+    </p>
+    <p class="measure">
+      The reason is in the first line of the specification: most people cannot describe what they want a website
+      to look like, they can point at one. If the pointing only becomes possible after someone has committed to
+      answering twenty questions, we have put the hardest thing first and the easiest thing behind it.
+    </p>
+
+    <div class="well measure">
+      <h4>The decision, stated once</h4>
+      <p style="margin:8px 0 0">
+        One capture object per session. Available before a route is chosen, during whichever route is chosen,
+        and after submission until the session closes. Anything captured before a route is picked carries into
+        that route, tagged with where it was captured. No route has a private copy.
+      </p>
+    </div>
+
+    <h3 style="margin-top:30px">So how does it differ by route?</h3>
+    <p class="measure">Only in layout and in what sits next to it. Same component, same object, three chrome treatments.</p>
+
+    <table>
+      <tr><th>Route</th><th>What the visitor sees</th><th>What it actually is</th></tr>
+      <tr>
+        <td class="k">1 · Send it to us</td>
+        <td>A single page: drop your things, tell us what you like, send.</td>
+        <td>The panel standing alone, full width, with a send bar. Not a different feature — a different layout of this component.</td>
+      </tr>
+      <tr>
+        <td class="k">2 · Walk it through with us</td>
+        <td>The panel docked to the right of the questions, open or closed, on every step.</td>
+        <td>The same component, 360px, with the page moving aside for it.</td>
+      </tr>
+      <tr>
+        <td class="k">3 · Just talk to us</td>
+        <td>After the call is booked, a capture link by email: "anything you want to show us before we speak".</td>
+        <td>The same standalone layout as route 1, opened against the session the booking created.</td>
+      </tr>
+    </table>
+
+    <h3 style="margin-top:30px">And the second half of the question</h3>
+    <p class="measure">
+      Yes — the visitor can capture separately and attach it to a route-based submission later. That is the
+      point of one session object. Three cases, all of which happen:
+    </p>
+
+    <div class="list measure">
+      <div class="row"><div><div class="nm">Capture first, choose a route after</div>
+        <div class="st">Someone arrives with a photograph of their shopfront and nothing else. They add it on the landing page. When they then pick route 2, the file is already in the session, tagged <span class="mono" style="font-size:13px">before a route was chosen</span>.</div></div></div>
+      <div class="row"><div><div class="nm">Capture during, in place</div>
+        <div class="st">Halfway through a question about opening hours they drop in a menu PDF. It is tagged to that step, so the plan can say which answer it belongs to.</div></div></div>
+      <div class="row"><div><div class="nm">Capture after, against the same session</div>
+        <div class="st">They finish, then remember the competitor site they meant to show us. The resume link reopens the capture surface alone and adds it to the submission already made — which raises a change receipt, not a second submission.</div></div></div>
+    </div>
+
+    <div class="box measure">
+      <h4>What this rules out</h4>
+      <p style="margin:8px 0 0">
+        A separate "upload your brand assets" page that lives outside the journey and has to be reconciled with it
+        afterwards. Every version of that ends with two half-filled records and a person merging them by hand.
+      </p>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ 02 TRY IT ============ -->
+  <section class="demo">
+    <span class="tag">02 · Try it</span>
+    <h2>The component, live</h2>
+    <p class="measure">
+      Switch the mode to see the same object in each route's chrome. In docked mode the page moves aside;
+      it never sits on top.
+    </p>
+
+    <div class="modes" role="group" aria-label="Route">
+      <button id="mDock" class="on" onclick="setMode('dock')">Route 2 · docked</button>
+      <button id="mSolo" onclick="setMode('solo')">Route 1 · standalone</button>
+      <button id="mMail" onclick="setMode('mail')">Route 3 · emailed link</button>
+    </div>
+    <p class="ann" style="margin-top:10px">Docked is 360px and shifts the page. Standalone is the same markup, unpinned, with a send bar.</p>
+
+    <h3 style="margin-top:30px">A step to stand beside</h3>
+    <p class="measure">
+      The panel tags every contribution with the step it was made on. Change the step below and add something —
+      the tag on the new row changes with it.
+    </p>
+    <div class="modes" role="group" aria-label="Current step" style="margin-top:14px">
+      <button class="on" onclick="setStep(this,'What you do')">What you do</button>
+      <button onclick="setStep(this,'Who it is for')">Who it is for</button>
+      <button onclick="setStep(this,'How it should feel')">How it should feel</button>
+      <button onclick="setStep(this,'What it needs to do')">What it needs to do</button>
+    </div>
+
+    <div class="box measure" style="margin-top:24px">
+      <span class="lab">Step 3 of 9</span>
+      <h3 style="margin-top:8px">How should it feel to the people who use it?</h3>
+      <p style="margin:10px 0 0;color:var(--secondary)">
+        Plain, confident, unfussy — or warm and personal? There is no wrong answer here, and if you would rather
+        show us than tell us, the panel on the right takes photographs, colours and sites you like.
+      </p>
+    </div>
+  </section>
+
+  <hr class="rule demo">
+
+  <!-- ============ 03 WHAT IT HOLDS ============ -->
+  <section>
+    <span class="tag">03 · What it holds</span>
+    <h2>Five things, one object</h2>
+
+    <div class="list measure">
+      <div class="row"><div><div class="nm">1 · Files and screenshots</div>
+        <div class="st">Drop, browse or paste. Every file gets a thumbnail, its name, and an "explain this file" note. png · jpg · webp · svg · pdf · docx · pptx · xlsx · txt. 20&nbsp;MB each, 60&nbsp;MB across the session. Rejections say what was wrong in plain words.</div></div></div>
+      <div class="row"><div><div class="nm">2 · Colours</div>
+        <div class="st">An ordered list, maximum ten. Order sets the role. Every colour carries a weight that rebalances the rest to total 100%. Add by picker, by hex, or from the Studio.</div></div></div>
+      <div class="row"><div><div class="nm">3 · The Colour Studio</div>
+        <div class="st">Image tray, drag/paste/screen snapshot, pixel loupe, the system eyedropper anywhere on screen, auto-extract with tick-to-keep, and a fine-tune square. Adds straight into the palette.</div></div></div>
+      <div class="row"><div><div class="nm">4 · Websites you like</div>
+        <div class="st">A link and a reason. The reason matters more than the link — five sites tell us very little, five sites each with a sentence tell us almost everything. A link added without one is marked, not rejected.</div></div></div>
+      <div class="row"><div><div class="nm">5 · Notes</div>
+        <div class="st">Anything else about the business, the customers, the taste.</div></div></div>
+    </div>
+
+    <h3 style="margin-top:30px">And one thing it gives back</h3>
+    <p class="measure">
+      Once three colours exist, the panel shows the palette applied to a plain page at the weights set — a heading,
+      a paragraph, a button, a footer. Not a design. A demonstration that the weight slider means something.
+      Give something back before asking for more.
+    </p>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ 04 THE RULES ============ -->
+  <section>
+    <span class="tag">04 · The rules it obeys</span>
+    <h2>Two governing, five integrating</h2>
+
+    <table>
+      <tr><th>Rule</th><th>How it is enforced here</th></tr>
+      <tr><td class="k">Nothing is silently lost</td><td>Every addition writes a line to the live region and moves the tab count. A failed file stays in the list, marked, with a retry — it is never removed for you.</td></tr>
+      <tr><td class="k">Never a modal</td><td>The panel is docked; the page takes a right margin. Only the Colour Studio is modal, because it is a tool, not the journey.</td></tr>
+      <tr><td class="k">Context aware</td><td>Every file, colour and link records the step it was added on.</td></tr>
+      <tr><td class="k">Visible landing</td><td>The count on the tab, the per-section counts, and the reflection strip. Trust mechanism, not decoration.</td></tr>
+      <tr><td class="k">Into the submission</td><td>One object, mapped to areas at submission, files attached rather than referenced.</td></tr>
+      <tr><td class="k">Survives save and resume</td><td>The object is serialisable as it stands. Uploads carry a storage key, not a blob.</td></tr>
+      <tr><td class="k">Never blocks</td><td>Every field optional, every route reachable with the panel untouched.</td></tr>
+    </table>
+
+    <div class="well measure">
+      <h4>Removal is the one destructive action, so it gets the undo</h4>
+      <p style="margin:8px 0 0">
+        Remove a file, colour or link and an undo offer appears for eight seconds. Nothing else in the panel
+        can lose work.
+      </p>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ 05 STILL MISSING ============ -->
+  <section>
+    <span class="tag">05 · Honest gaps</span>
+    <h2>What this file still is not</h2>
+    <p class="measure">
+      This is the component, complete and working. It is not the production service. Twelve things stand between
+      the two and they are all server-side or policy, not interaction:
+    </p>
+    <div class="list measure">
+      <div class="row"><div><div class="nm">Storage and privacy</div><div class="st">Blob storage with signed uploads and automatic lifecycle deletion. EXIF and GPS stripped on upload. HEIC converted or rejected with an explanation. Virus scanning on anything that is not an image.</div></div></div>
+      <div class="row"><div><div class="nm">Abuse</div><div class="st">Rate limiting and a spam gate on an unauthenticated endpoint that accepts 20&nbsp;MB files.</div></div></div>
+      <div class="row"><div><div class="nm">Enforcement</div><div class="st">The weight invariant, the ten-colour cap and the size caps are enforced here in the client only, which means they are not enforced.</div></div></div>
+      <div class="row"><div><div class="nm">Reconciliation</div><div class="st">Two tabs on one session. Last write wins, but the badge has to agree.</div></div></div>
+      <div class="row"><div><div class="nm">Accessibility, partly closed</div><div class="st">The Studio was mouse-only. The fine-tune square and hue strip now take arrow keys and the hex field is the escape hatch. The modal traps focus and returns it. The loupe remains a pointer affordance by nature.</div></div></div>
+      <div class="row"><div><div class="nm">Registration</div><div class="st">ICO Tier-1 before the first real submission.</div></div></div>
+    </div>
+    <p class="ann measure" style="margin-top:18px">
+      The retention line in the panel says three days on abandoned drafts. That number has to be true in the
+      lifecycle rule before this goes anywhere near a stranger.
+    </p>
+  </section>
+
+  <div style="height:60px"></div>
+</div>
+</div>
+
+<!-- ============================ THE PANEL ============================ -->
+<aside class="ti" id="tiPanel" aria-label="Thoughts and inspiration">
+  <div class="ti-hd">
+    <button class="x" id="tiClose" onclick="closePanel()" aria-label="Close the panel">✕</button>
+    <h3>Thoughts &amp; inspiration</h3>
+    <div class="ti-ctx"><span class="lab">On · <span id="tiCtx">How it should feel</span></span></div>
+    <div class="live" id="tiLive" role="status" aria-live="polite"></div>
+    <div class="undo" id="tiUndo" style="display:none"></div>
+  </div>
+
+  <div class="ti-bd">
+
+    <!-- 1 FILES -->
+    <div class="ti-sec">
+      <div class="hd"><h4>Files &amp; screenshots</h4><span class="n" id="nFiles">0</span></div>
+      <p class="empty" id="eFiles">Anything that shows us what you mean — a photograph of the shop, your logo, a menu, a screenshot of something you liked. <em>Drop it, browse, or paste.</em></p>
+      <div class="drop" id="tiDrop" tabindex="0" role="button" aria-label="Add files">
+        <div class="t">Drop files here</div>
+        <div class="s">or click to browse · or paste a screenshot</div>
+      </div>
+      <div class="warn" id="wFiles"></div>
+      <div id="listFiles"></div>
+      <div class="ann" id="capLine" style="margin-top:8px">png · jpg · webp · svg · pdf · docx · pptx · xlsx · txt — 20 MB each, 60 MB in total.</div>
+      <input type="file" id="tiFile" multiple style="display:none">
+    </div>
+
+    <!-- 2 COLOURS -->
+    <div class="ti-sec">
+      <div class="hd"><h4>Colours</h4><span class="n" id="nCols">0</span></div>
+      <p class="empty" id="eCols">Colours you already use, or ones you like. <em>Order sets the role, weight sets how much of the design each one takes.</em></p>
+      <div class="wbar" id="tiWbar" style="display:none"></div>
+      <div id="listCols"></div>
+      <div class="warn" id="wCols"></div>
+      <div class="addc">
+        <input type="color" id="cPick" value="#2563EB" aria-label="Pick a colour">
+        <input type="text" id="cHex" placeholder="or type a hex code" aria-label="Hex code">
+        <button class="act sm" onclick="addFromInputs()">Add</button>
+      </div>
+      <button class="studio-link" onclick="openStudio()">Open the Colour Studio</button>
+      <div id="reflHost"></div>
+    </div>
+
+    <!-- 3 SITES -->
+    <div class="ti-sec">
+      <div class="hd"><h4>Websites you like</h4><span class="n" id="nSites">0</span></div>
+      <p class="empty" id="eSites">Not to copy — to understand. <em>The sentence about why matters more than the link.</em></p>
+      <div id="listSites"></div>
+      <input type="url" id="sUrl" placeholder="https://…" aria-label="Website address">
+      <input type="text" id="sWhy" placeholder="What do you like about it?" aria-label="What do you like about it">
+      <button class="act sm" onclick="addSite()">Add this site</button>
+    </div>
+
+    <!-- 4 NOTES -->
+    <div class="ti-sec">
+      <div class="hd"><h4>Notes</h4><span class="n" id="nNotes">0</span></div>
+      <p class="empty">Anything else — about the business, the customers, the taste, the things that annoy you about your current site.</p>
+      <textarea id="tiNotes" placeholder="Type anything…" aria-label="Notes"></textarea>
+    </div>
+
+    <!-- 5 STANDING -->
+    <div class="ti-sec">
+      <p class="standing">
+        Please don't upload anything with personal data in it — customer lists, invoices, anything with someone's
+        address on it. We only need to see what the site should look and feel like.
+      </p>
+      <p class="standing" style="margin-top:8px">
+        What happens to this: anything you add is kept for three days if you never send it, and for the life of the
+        project if you do. You can ask us to delete it at any point.
+      </p>
+    </div>
+  </div>
+
+  <div class="ti-ft" id="tiFoot">
+    <button class="act pri" style="width:100%" onclick="sendIt()">Send it to us</button>
+    <p class="ann" style="margin:9px 0 0">We'll read it and come back to you. No account, no forms.</p>
+  </div>
+</aside>
+
+<!-- ============================ THE COLOUR STUDIO ============================ -->
+<div class="cs-veil" id="csVeil" onclick="closeStudio()"></div>
+<div class="cs" id="csModal" role="dialog" aria-modal="true" aria-label="Colour Studio">
+  <div class="cs-hd">
+    <h3>Colour Studio</h3>
+    <span class="lab" id="csCtx">picking from an image</span>
+    <button class="act sm" id="csClose" onclick="closeStudio()">Close</button>
+  </div>
+  <div class="cs-bd">
+    <div class="cs-col">
+      <span class="lab">1 · Get an image in</span>
+      <div class="cs-tools" style="margin-top:10px">
+        <button class="act sm" onclick="document.getElementById('csFile').click()">Add an image</button>
+        <button class="act sm" onclick="snapScreen()">Snapshot a screen</button>
+        <button class="act sm" onclick="pickAnywhere()">Pick a colour anywhere</button>
+      </div>
+      <div class="cs-note" id="csNote"></div>
+      <div class="drop" id="csDrop" tabindex="0" role="button" aria-label="Add an image">
+        <div class="t">Drop an image here</div>
+        <div class="s">or click to browse · or paste a screenshot</div>
+      </div>
+      <div id="csStage" style="display:none">
+        <canvas id="csCanvas" width="620" height="400"></canvas>
+        <div class="zoomrow">
+          <span class="lab">Zoom</span>
+          <input type="range" id="csZoom" min="1" max="8" step="0.1" value="1" aria-label="Zoom">
+          <button class="act sm" onclick="resetView()">Reset</button>
+          <button class="act sm" onclick="autoExtract()">Auto-extract</button>
+        </div>
+        <p class="ann" style="margin-top:8px">Hover to magnify · click to take that exact pixel · drag to pan once zoomed.</p>
+        <div class="cand" id="csCand"></div>
+      </div>
+      <div class="cs-tray" id="csTray" style="display:none"></div>
+      <input type="file" id="csFile" accept="image/*" multiple style="display:none">
+    </div>
+
+    <div class="cs-col">
+      <span class="lab">2 · Fine-tune</span>
+      <div style="height:10px"></div>
+      <div class="sv" id="csSv" tabindex="0" role="slider" aria-label="Saturation and brightness"><div class="knob" id="csSvKnob"></div></div>
+      <div class="hue" id="csHue" tabindex="0" role="slider" aria-label="Hue" aria-valuemin="0" aria-valuemax="360"><div class="knob" id="csHueKnob"></div></div>
+      <div class="cur">
+        <div class="sw" id="csSw"></div>
+        <div class="flds">
+          <label><span class="lb">R</span><input id="csR" inputmode="numeric"></label>
+          <label><span class="lb">G</span><input id="csG" inputmode="numeric"></label>
+          <label><span class="lb">B</span><input id="csB" inputmode="numeric"></label>
+          <label class="hexf"><span class="lb">Hex</span><input id="csHex"></label>
+        </div>
+      </div>
+      <button class="act pri" style="width:100%;margin-top:14px" onclick="addCurrent()">Add to palette</button>
+      <p class="ann" style="margin-top:10px">Arrow keys work on the square and the strip. The hex field is always the way in if a pointer isn't.</p>
+    </div>
+  </div>
+</div>
+
+<div class="loupe" id="csLoupe"><canvas id="csLoupeCv" width="60" height="60"></canvas><div class="hx" id="csLoupeHx">#—</div></div>
+<style>
+body.mode-dock .ti-ft{display:none}
+body.mode-solo .ti-hd .x{display:none}
+body.mode-solo .ti-hd{padding:24px 26px 18px}
+body.mode-solo .ti-bd{padding:4px 26px 30px}
+body.mode-solo .ti-ft{padding:20px 26px 24px}
+body.mode-solo .ti-sec{padding:24px 0}
+#soloIntro{display:none;font-size:15px;line-height:1.55;color:var(--secondary);margin-top:10px;max-width:640px}
+</style>
+<script>
+/* =====================================================================
+   Thoughts & inspiration — one capture object, three route chromes.
+   No localStorage, no sessionStorage, no browser storage of any kind.
+   ===================================================================== */
+
+var CAP = { files:[], colours:[], links:[], notes:'', step:'How it should feel', mode:'dock' };
+
+var ROLES = ['Primary','Secondary','Tertiary','Colour 4','Colour 5','Colour 6',
+             'Colour 7','Colour 8','Colour 9','Colour 10'];
+var OK_TYPES = {png:'PNG',jpg:'JPG',jpeg:'JPG',webp:'WEBP',svg:'SVG',pdf:'PDF',
+                docx:'DOCX',pptx:'PPTX',xlsx:'XLSX',txt:'TXT'};
+var MAX_FILE = 20*1024*1024;
+var MAX_TOTAL = 60*1024*1024;
+var MAX_COLOURS = 10;
+var seq = 0;
+function uid(p){ seq++; return p+'-'+seq; }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+  .replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function el(id){ return document.getElementById(id); }
+function ctx(){ return CAP.step; }
+function kb(n){ return n<1024 ? n+' B' : n<1048576 ? (n/1024).toFixed(0)+' KB' : (n/1048576).toFixed(1)+' MB'; }
+function totalBytes(){ return CAP.files.reduce(function(a,f){ return a + (f.bytes||0); },0); }
+
+/* ---------- the live region: nothing is ever silently lost ---------- */
+var liveT=null;
+function live(msg){
+  var n=el('tiLive'); n.textContent=msg;
+  if(liveT) clearTimeout(liveT);
+  liveT=setTimeout(function(){ if(n.textContent===msg) n.textContent=''; },5000);
+}
+function warn(id,msg){
+  var n=el(id); if(!msg){ n.style.display='none'; n.textContent=''; return; }
+  n.textContent=msg; n.style.display='block';
+  setTimeout(function(){ if(n.textContent===msg){ n.style.display='none'; n.textContent=''; } },9000);
+}
+
+/* ---------- undo: removal is the one destructive action ---------- */
+var undoState=null, undoT=null;
+function offerUndo(label, restore){
+  undoState=restore;
+  var n=el('tiUndo');
+  n.innerHTML = esc(label)+' <button onclick="doUndo()">Undo</button>';
+  n.style.display='block';
+  if(undoT) clearTimeout(undoT);
+  undoT=setTimeout(clearUndo,8000);
+}
+function clearUndo(){ undoState=null; el('tiUndo').style.display='none'; el('tiUndo').innerHTML=''; }
+function doUndo(){ if(undoState){ undoState(); undoState=null; } clearUndo(); render(); live('Put back.'); }
+
+/* =====================================================================
+   COUNTS AND RENDER
+   ===================================================================== */
+function countAll(){
+  return CAP.files.length + CAP.colours.length + CAP.links.length + (CAP.notes.trim()?1:0);
+}
+function render(){
+  renderFiles(); renderPalette(); renderSites();
+  el('nNotes').textContent = CAP.notes.trim() ? '1' : '0';
+  el('tiCnt').textContent = '· ' + countAll();
+  renderReflection();
+}
+
+/* =====================================================================
+   1 · FILES
+   ===================================================================== */
+function extOf(name){ var m=String(name).toLowerCase().match(/\.([a-z0-9]+)$/); return m?m[1]:''; }
+
+function addFiles(list){
+  var arr = Array.prototype.slice.call(list||[]);
+  if(!arr.length) return;
+  var rejected=[];
+  arr.forEach(function(f){
+    var ext = extOf(f.name);
+    if(!OK_TYPES[ext]){ rejected.push('“'+f.name+'” is a '+(ext?'.'+ext:'file with no extension')+' — we can only take '+Object.keys(OK_TYPES).join(', ')+'.'); return; }
+    if(f.size > MAX_FILE){ rejected.push('“'+f.name+'” is '+kb(f.size)+'. The limit is 20 MB per file.'); return; }
+    if(totalBytes() + f.size > MAX_TOTAL){ rejected.push('“'+f.name+'” would take this session over the 60 MB total. Remove something first.'); return; }
+    var rec = { id:uid('f'), filename:f.name, mime:f.type||'', bytes:f.size,
+                kind:OK_TYPES[ext], thumb:null, note:'', on:ctx(), state:'adding' };
+    CAP.files.push(rec);
+    if(/^(png|jpg|jpeg|webp|svg)$/.test(ext) && f.size < 8*1024*1024){
+      var r = new FileReader();
+      r.onload = function(e){ rec.thumb = e.target.result; rec.state='added'; render(); };
+      r.onerror = function(){ rec.state='failed'; render(); };
+      r.readAsDataURL(f);
+    } else {
+      setTimeout(function(){ rec.state='added'; render(); }, 120);
+    }
+  });
+  render();
+  if(rejected.length) warn('wFiles', rejected.join(' '));
+  var kept = arr.length - rejected.length;
+  if(kept) live(kept===1 ? 'Captured — 1 file, on “'+ctx()+'”.' : 'Captured — '+kept+' files.');
+  if(kept) openPanel();
+}
+function removeFile(i){
+  var f = CAP.files[i]; if(!f) return;
+  CAP.files.splice(i,1);
+  offerUndo('Removed “'+f.filename+'”.', function(){ CAP.files.splice(i,0,f); });
+  render();
+}
+function setNote(i,v){ if(CAP.files[i]) CAP.files[i].note=v; }
+function retryFile(i){ if(CAP.files[i]){ CAP.files[i].state='added'; render(); live('Retried.'); } }
+
+function renderFiles(){
+  var host = el('listFiles'), n = CAP.files.length;
+  el('nFiles').textContent = n;
+  el('eFiles').style.display = n ? 'none' : 'block';
+  el('capLine').textContent = n
+    ? kb(totalBytes())+' of 60 MB used · 20 MB per file · '+Object.keys(OK_TYPES).join(' · ')
+    : 'png · jpg · webp · svg · pdf · docx · pptx · xlsx · txt — 20 MB each, 60 MB in total.';
+  host.innerHTML = CAP.files.map(function(f,i){
+    var th = f.thumb ? '<img src="'+f.thumb+'" alt="">' : '<span>'+esc(f.kind)+'</span>';
+    var state = f.state==='adding' ? '<span class="st-add"> · adding…</span>'
+              : f.state==='failed' ? '<span class="st-fail"> · didn\'t upload</span> <button class="act sm" onclick="retryFile('+i+')">Retry</button>'
+              : '';
+    return '<div class="item'+(f.state==='failed'?' fail':'')+'">'+
+      '<div class="th">'+th+'</div>'+
+      '<div class="bd">'+
+        '<div class="fn">'+esc(f.filename)+'</div>'+
+        '<div class="mt">'+kb(f.bytes)+' · on '+esc(f.on)+state+'</div>'+
+        '<input class="why" type="text" placeholder="Explain this file — what should we notice?" '+
+          'value="'+esc(f.note)+'" oninput="setNote('+i+',this.value)" aria-label="Explain this file">'+
+      '</div>'+
+      '<button class="rm" onclick="removeFile('+i+')" aria-label="Remove this file">✕</button>'+
+    '</div>';
+  }).join('');
+}
+
+/* =====================================================================
+   2 · COLOURS — the weighted palette
+   ===================================================================== */
+function clamp(n,a,b){ return Math.max(a,Math.min(b,n)); }
+function rgbToHex(r,g,b){ return '#'+[r,g,b].map(function(v){
+  return clamp(Math.round(v),0,255).toString(16).padStart(2,'0'); }).join('').toUpperCase(); }
+function hexToRgb(h){ h=String(h).trim().replace(/^#/,'');
+  if(/^[0-9a-fA-F]{3}$/.test(h)) h=h.split('').map(function(x){return x+x;}).join('');
+  if(!/^[0-9a-fA-F]{6}$/.test(h)) return null;
+  return {r:parseInt(h.slice(0,2),16),g:parseInt(h.slice(2,4),16),b:parseInt(h.slice(4,6),16)}; }
+function rgbToHsv(r,g,b){ r/=255;g/=255;b/=255;
+  var mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn,h=0;
+  if(d){ if(mx===r)h=((g-b)/d)%6; else if(mx===g)h=(b-r)/d+2; else h=(r-g)/d+4;
+    h*=60; if(h<0)h+=360; }
+  return {h:h,s:mx?d/mx:0,v:mx}; }
+function hsvToRgb(h,s,v){ h=(h%360+360)%360;
+  var c=v*s, x=c*(1-Math.abs((h/60)%2-1)), m=v-c, r=0,g=0,b=0;
+  if(h<60){r=c;g=x;} else if(h<120){r=x;g=c;} else if(h<180){g=c;b=x;}
+  else if(h<240){g=x;b=c;} else if(h<300){r=x;b=c;} else {r=c;b=x;}
+  return {r:(r+m)*255,g:(g+m)*255,b:(b+m)*255}; }
+function lum(hex){ var c=hexToRgb(hex); if(!c) return 0;
+  var a=[c.r,c.g,c.b].map(function(v){ v/=255; return v<=.03928 ? v/12.92 : Math.pow((v+.055)/1.055,2.4); });
+  return .2126*a[0]+.7152*a[1]+.0722*a[2]; }
+function inkOn(hex){ return lum(hex) > .42 ? '#111827' : '#FFFFFF'; }
+function roleName(i){ return ROLES[i] || ('Colour '+(i+1)); }
+
+function distribute(i,w){
+  var P=CAP.colours;
+  w = clamp(Math.round(w),0,100); P[i].weight = w;
+  var others = P.map(function(p,k){return k;}).filter(function(k){return k!==i;});
+  if(others.length){
+    var rem = 100-w, osum = others.reduce(function(a,k){ return a+P[k].weight; },0);
+    if(osum<=0) others.forEach(function(k){ P[k].weight = Math.round(rem/others.length); });
+    else others.forEach(function(k){ P[k].weight = Math.round(P[k].weight*rem/osum); });
+    var diff = 100 - P.reduce(function(a,p){ return a+p.weight; },0);
+    P[others[others.length-1]].weight += diff;
+  }
+  P.forEach(function(p){ p.weight = Math.max(0,p.weight); });
+}
+function renormalize(){
+  var P=CAP.colours; if(!P.length) return;
+  var s = P.reduce(function(a,p){ return a+p.weight; },0);
+  if(s<=0) P.forEach(function(p){ p.weight = Math.round(100/P.length); });
+  else P.forEach(function(p){ p.weight = Math.round(p.weight*100/s); });
+  P[P.length-1].weight += 100 - P.reduce(function(a,p){ return a+p.weight; },0);
+}
+function reindex(){ CAP.colours.forEach(function(c,i){ c.roleIndex=i; }); }
+
+function addColour(hex, source){
+  var c = hexToRgb(hex); if(!c){ warn('wCols','That isn\'t a colour we can read. Try a hex code like #2563EB.'); return false; }
+  hex = rgbToHex(c.r,c.g,c.b);
+  if(CAP.colours.some(function(p){ return p.hex===hex; })){ warn('wCols',hex+' is already in your palette.'); return false; }
+  if(CAP.colours.length >= MAX_COLOURS){ warn('wCols','Ten colours is the limit — remove one first. Past ten, a palette stops being a palette.'); return false; }
+  CAP.colours.push({ id:uid('c'), hex:hex, weight:0, roleIndex:CAP.colours.length,
+                     source:source||'picker', on:ctx() });
+  distribute(CAP.colours.length-1, Math.round(100/CAP.colours.length));
+  reindex(); render();
+  live('Captured — '+hex+' as '+roleName(CAP.colours.length-1)+'.');
+  return true;
+}
+function addFromInputs(){
+  var h = el('cHex').value.trim();
+  if(addColour(h || el('cPick').value, h ? 'hex' : 'picker')) el('cHex').value='';
+}
+function moveCol(i,d){
+  var j=i+d, P=CAP.colours; if(j<0||j>=P.length) return;
+  var t=P[i]; P[i]=P[j]; P[j]=t; reindex(); render();
+  live(P[j].hex+' is now '+roleName(j)+'.');
+}
+function delCol(i){
+  var c = CAP.colours[i]; if(!c) return;
+  CAP.colours.splice(i,1); renormalize(); reindex();
+  offerUndo('Removed '+c.hex+'.', function(){ CAP.colours.splice(i,0,c); renormalize(); reindex(); });
+  render();
+}
+function onWeight(i,val){ distribute(i, +val); syncWeights(); }
+function syncWeights(){
+  CAP.colours.forEach(function(p,i){
+    var sl=el('wsl'+i), tx=el('wtx'+i);
+    if(sl) sl.value = p.weight;
+    if(tx) tx.value = p.weight+'%';
+  });
+  el('tiWbar').innerHTML = CAP.colours.map(function(p){
+    return '<div style="width:'+p.weight+'%;background:'+p.hex+'" title="'+p.hex+' · '+p.weight+'%"></div>'; }).join('');
+  renderReflection();
+}
+function renderPalette(){
+  var P=CAP.colours, host=el('listCols');
+  el('nCols').textContent = P.length;
+  el('eCols').style.display = P.length ? 'none' : 'block';
+  el('tiWbar').style.display = P.length ? 'flex' : 'none';
+  host.innerHTML = P.map(function(p,i){
+    return '<div class="crow">'+
+      '<div class="top">'+
+        '<span class="csw" style="background:'+p.hex+'"></span>'+
+        '<span class="crole">'+esc(roleName(i))+'</span>'+
+        '<span class="chex">'+esc(p.hex)+'</span>'+
+        '<span class="ord">'+
+          '<button '+(i===0?'disabled':'')+' onclick="moveCol('+i+',-1)" aria-label="Move up">▲</button>'+
+          '<button '+(i===P.length-1?'disabled':'')+' onclick="moveCol('+i+',1)" aria-label="Move down">▼</button>'+
+        '</span>'+
+        '<button class="rm" onclick="delCol('+i+')" aria-label="Remove this colour">✕</button>'+
+      '</div>'+
+      '<div class="wctl">'+
+        '<input type="range" id="wsl'+i+'" min="0" max="100" value="'+p.weight+'" '+
+          'oninput="onWeight('+i+',this.value)" aria-label="Weight for '+esc(roleName(i))+'">'+
+        '<input class="cwt" type="text" id="wtx'+i+'" value="'+p.weight+'%" '+
+          'onchange="onWeight('+i+',parseInt(this.value,10)||0)" aria-label="Weight percentage">'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  syncWeights();
+}
+
+/* ---------- the reflection strip: give something back ---------- */
+function renderReflection(){
+  var host = el('reflHost'), P = CAP.colours;
+  if(P.length < 3){ host.innerHTML=''; return; }
+  var byLum = P.slice().sort(function(a,b){ return lum(b.hex)-lum(a.hex); });
+  var light = byLum[0].hex, dark = byLum[byLum.length-1].hex;
+  var heaviest = P.slice().sort(function(a,b){ return b.weight-a.weight; })[0].hex;
+  var pri = P[0].hex;
+  host.innerHTML =
+    '<div style="margin-top:20px"><span class="lab">Your palette, on a plain page</span>'+
+    '<div class="refl">'+
+      '<div class="rp" style="background:'+light+';color:'+dark+'">'+
+        '<div class="rh">A heading in your colours</div>'+
+        '<div class="rt">A paragraph of ordinary text, so you can see whether it is readable at the weights '+
+          'you have set. This is not a design — it is a demonstration that the weights mean something.</div>'+
+        '<span class="rb" style="background:'+pri+';color:'+inkOn(pri)+'">The main action</span>'+
+      '</div>'+
+      '<div class="rf" style="background:'+heaviest+';color:'+inkOn(heaviest)+'">HEAVIEST · '+esc(heaviest)+'</div>'+
+    '</div>'+
+    '<p class="ann" style="margin-top:7px">Lightest colour becomes the field, darkest becomes the text, '+
+      'Primary becomes the action. Change the order or the weights and this changes with it.</p></div>';
+}
+
+/* =====================================================================
+   3 · SITES
+   ===================================================================== */
+function addSite(){
+  var u = el('sUrl').value.trim(), w = el('sWhy').value.trim();
+  if(!u){ warn('wCols',''); live(''); el('sUrl').focus(); return; }
+  if(!/^https?:\/\//i.test(u)) u = 'https://'+u;
+  CAP.links.push({ id:uid('l'), url:u, note:w, on:ctx() });
+  el('sUrl').value=''; el('sWhy').value=''; render();
+  live(w ? 'Captured — and the reason with it.' : 'Captured. A sentence about why would help more than the link.');
+}
+function removeSite(i){
+  var l = CAP.links[i]; if(!l) return;
+  CAP.links.splice(i,1);
+  offerUndo('Removed that site.', function(){ CAP.links.splice(i,0,l); });
+  render();
+}
+function renderSites(){
+  var host = el('listSites'), n = CAP.links.length;
+  el('nSites').textContent = n;
+  el('eSites').style.display = n ? 'none' : 'block';
+  host.innerHTML = CAP.links.map(function(l,i){
+    var why = l.note ? '<div class="w">'+esc(l.note)+'</div>'
+                     : '<div class="w none">No reason given — tell us what you liked and this becomes useful.</div>';
+    return '<div class="lrow"><div class="bd"><div class="u">'+esc(l.url)+'</div>'+why+
+      '<div class="mt" style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--label);letter-spacing:.06em">on '+esc(l.on)+'</div></div>'+
+      '<button class="rm" onclick="removeSite('+i+')" aria-label="Remove this site">✕</button></div>';
+  }).join('');
+}
+
+/* =====================================================================
+   PANEL SHELL · MODES · CONTEXT
+   ===================================================================== */
+function openPanel(){ if(CAP.mode==='dock') document.body.classList.add('ti-open'); }
+function closePanel(){ document.body.classList.remove('ti-open'); }
+function togglePanel(){ document.body.classList.toggle('ti-open'); }
+function setStep(btn,name){
+  CAP.step = name;
+  el('tiCtx').textContent = name;
+  var g = btn.parentNode.querySelectorAll('button');
+  for(var i=0;i<g.length;i++) g[i].classList.remove('on');
+  btn.classList.add('on');
+}
+function setMode(m){
+  CAP.mode = m;
+  document.body.classList.remove('mode-dock','mode-solo');
+  document.body.classList.add(m==='dock' ? 'mode-dock' : 'mode-solo');
+  ['mDock','mSolo','mMail'].forEach(function(id){ el(id).classList.remove('on'); });
+  el(m==='dock' ? 'mDock' : m==='solo' ? 'mSolo' : 'mMail').classList.add('on');
+  if(m==='dock') document.body.classList.add('ti-open');
+  else document.body.classList.remove('ti-open');
+  var intro = el('soloIntro');
+  intro.style.display = m==='dock' ? 'none' : 'block';
+  intro.textContent = m==='solo'
+    ? 'Show us what you have. There are no questions on this page — add whatever you like, send it, and we will come back with the questions worth asking.'
+    : 'Picking up from the call you booked. Anything you add here lands in the same place, ready for when we speak.';
+  var b = el('tiFoot').querySelector('button');
+  b.textContent = m==='mail' ? 'Send this ahead of the call' : 'Send it to us';
+  if(m!=='dock') window.scrollTo(0,0);
+}
+function sendIt(){
+  live('Sent — '+countAll()+' things, all of them attached to this session.');
+}
+
+/* =====================================================================
+   INPUT WIRING · drop, browse, paste
+   ===================================================================== */
+(function(){
+  var dz = el('tiDrop'), fi = el('tiFile');
+  dz.addEventListener('click', function(){ fi.click(); });
+  dz.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); fi.click(); } });
+  fi.addEventListener('change', function(e){ addFiles(e.target.files); e.target.value=''; });
+  ['dragenter','dragover'].forEach(function(ev){ dz.addEventListener(ev, function(e){ e.preventDefault(); dz.classList.add('drag'); }); });
+  ['dragleave','drop'].forEach(function(ev){ dz.addEventListener(ev, function(e){ e.preventDefault(); dz.classList.remove('drag'); }); });
+  document.addEventListener('dragover', function(e){ e.preventDefault(); });
+  document.addEventListener('drop', function(e){
+    if(!e.dataTransfer || !e.dataTransfer.files || !e.dataTransfer.files.length) return;
+    e.preventDefault();
+    if(studioOpen()){ csAddFromFiles(e.dataTransfer.files); return; }
+    addFiles(e.dataTransfer.files);
+  });
+  document.addEventListener('paste', function(e){
+    var items = (e.clipboardData||window.clipboardData||{}).items || [];
+    var imgs = [];
+    for(var i=0;i<items.length;i++){
+      if(items[i].type && items[i].type.indexOf('image/')===0){ var b=items[i].getAsFile(); if(b) imgs.push(b); }
+    }
+    if(!imgs.length) return;
+    if(studioOpen()){ csAddFromFiles(imgs); return; }
+    var named = imgs.map(function(b,k){
+      return new File([b], (b.name && /\./.test(b.name)) ? b.name : 'pasted-screenshot-'+(k+1)+'.png', {type:b.type});
+    });
+    addFiles(named);
+  });
+  el('tiNotes').addEventListener('input', function(e){
+    var was = CAP.notes.trim()!=='';
+    CAP.notes = e.target.value;
+    if(!was && CAP.notes.trim()) live('Captured — your note is in.');
+    render();
+  });
+  el('cHex').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); addFromInputs(); } });
+  el('sWhy').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); addSite(); } });
+})();
+
+/* =====================================================================
+   THE COLOUR STUDIO
+   ===================================================================== */
+var hsv = {h:214,s:.72,v:.65};
+var csTray = [], csActive = -1;
+var csImg = null, csOff = null, csOctx = null;
+var view = {scale:1,panX:0,panY:0,fit:1};
+var lastFocus = null;
+
+function studioOpen(){ return el('csModal').classList.contains('on'); }
+function csNote(msg){
+  var n = el('csNote');
+  n.textContent = msg || ''; n.style.display = msg ? 'block' : 'none';
+  if(msg) setTimeout(function(){ if(n.textContent===msg){ n.style.display='none'; n.textContent=''; } },8000);
+}
+function openStudio(){
+  lastFocus = document.activeElement;
+  el('csVeil').classList.add('on'); el('csModal').classList.add('on');
+  el('csCtx').textContent = 'on · '+ctx();
+  renderTune(); csShowStage();
+  setTimeout(function(){ el('csClose').focus(); },30);
+}
+function closeStudio(){
+  el('csVeil').classList.remove('on'); el('csModal').classList.remove('on');
+  el('csLoupe').style.display='none';
+  if(lastFocus && lastFocus.focus) lastFocus.focus();
+}
+document.addEventListener('keydown', function(e){
+  if(!studioOpen()) return;
+  if(e.key==='Escape'){ e.preventDefault(); closeStudio(); return; }
+  if(e.key!=='Tab') return;
+  var f = el('csModal').querySelectorAll('button, input, [tabindex="0"]');
+  var list = []; for(var i=0;i<f.length;i++){ if(f[i].offsetParent!==null || f[i]===document.activeElement) list.push(f[i]); }
+  if(!list.length) return;
+  var first = list[0], last = list[list.length-1];
+  if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+  else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+});
+
+/* ---- fine-tune ---- */
+function curRgb(){ var c = hsvToRgb(hsv.h,hsv.s,hsv.v);
+  return {r:Math.round(c.r),g:Math.round(c.g),b:Math.round(c.b)}; }
+function curHex(){ var c=curRgb(); return rgbToHex(c.r,c.g,c.b); }
+function renderTune(){
+  var sv = el('csSv');
+  sv.style.background = 'linear-gradient(to top,#000,rgba(0,0,0,0)),linear-gradient(to right,#fff,hsl('+hsv.h+',100%,50%))';
+  var r = sv.getBoundingClientRect();
+  el('csSvKnob').style.left = (hsv.s*r.width)+'px';
+  el('csSvKnob').style.top  = ((1-hsv.v)*r.height)+'px';
+  var hb = el('csHue').getBoundingClientRect();
+  el('csHueKnob').style.left = (hsv.h/360*hb.width)+'px';
+  var c = curRgb();
+  el('csSw').style.background = curHex();
+  el('csR').value=c.r; el('csG').value=c.g; el('csB').value=c.b; el('csHex').value=curHex();
+  el('csSv').setAttribute('aria-valuetext', curHex());
+  el('csHue').setAttribute('aria-valuenow', Math.round(hsv.h));
+}
+function setFromRgb(r,g,b){ hsv = rgbToHsv(r,g,b); renderTune(); }
+function setFromHex(h){ var c = hexToRgb(h); if(c) setFromRgb(c.r,c.g,c.b); }
+function addCurrent(){ addColour(curHex(), csTray.length ? 'studio-image' : 'studio-tune'); renderCandidates(); }
+
+(function(){
+  var sv = el('csSv'), drag=false;
+  function set(e){ var r=sv.getBoundingClientRect();
+    hsv.s = clamp((e.clientX-r.left)/r.width,0,1);
+    hsv.v = 1 - clamp((e.clientY-r.top)/r.height,0,1); renderTune(); }
+  sv.addEventListener('pointerdown', function(e){ drag=true; sv.setPointerCapture(e.pointerId); set(e); });
+  sv.addEventListener('pointermove', function(e){ if(drag) set(e); });
+  sv.addEventListener('pointerup', function(){ drag=false; });
+  sv.addEventListener('keydown', function(e){
+    var st = e.shiftKey ? .1 : .02, used=true;
+    if(e.key==='ArrowLeft') hsv.s=clamp(hsv.s-st,0,1);
+    else if(e.key==='ArrowRight') hsv.s=clamp(hsv.s+st,0,1);
+    else if(e.key==='ArrowUp') hsv.v=clamp(hsv.v+st,0,1);
+    else if(e.key==='ArrowDown') hsv.v=clamp(hsv.v-st,0,1);
+    else used=false;
+    if(used){ e.preventDefault(); renderTune(); }
+  });
+})();
+(function(){
+  var hue = el('csHue'), drag=false;
+  function set(e){ var r=hue.getBoundingClientRect();
+    hsv.h = clamp((e.clientX-r.left)/r.width,0,1)*360; renderTune(); }
+  hue.addEventListener('pointerdown', function(e){ drag=true; hue.setPointerCapture(e.pointerId); set(e); });
+  hue.addEventListener('pointermove', function(e){ if(drag) set(e); });
+  hue.addEventListener('pointerup', function(){ drag=false; });
+  hue.addEventListener('keydown', function(e){
+    var st = e.shiftKey ? 12 : 3, used=true;
+    if(e.key==='ArrowLeft') hsv.h=(hsv.h-st+360)%360;
+    else if(e.key==='ArrowRight') hsv.h=(hsv.h+st)%360;
+    else used=false;
+    if(used){ e.preventDefault(); renderTune(); }
+  });
+})();
+['csR','csG','csB'].forEach(function(id){
+  el(id).addEventListener('input', function(){
+    setFromRgb(clamp(+el('csR').value||0,0,255), clamp(+el('csG').value||0,0,255), clamp(+el('csB').value||0,0,255));
+  });
+});
+el('csHex').addEventListener('change', function(e){ setFromHex(e.target.value); });
+
+/* ---- the image tray ---- */
+function csAddFromUrl(url,name){
+  var im = new Image();
+  im.onload = function(){ csTray.push({img:im,url:url,name:name||'Image'}); csActivate(csTray.length-1); };
+  im.onerror = function(){ csNote('That image would not load. Try a png or a jpg.'); };
+  im.src = url;
+}
+function csAddFromFile(f){ var r = new FileReader();
+  r.onload = function(e){ csAddFromUrl(e.target.result, f.name||'Image'); }; r.readAsDataURL(f); }
+function csAddFromFiles(list){
+  var any = false;
+  Array.prototype.slice.call(list).forEach(function(f){
+    if(f.type && f.type.indexOf('image/')===0){ csAddFromFile(f); any=true; }
+  });
+  if(!any) csNote('That was not an image. The Studio takes images only — other files go in the panel behind this.');
+}
+function csActivate(i){
+  csActive = i; var im = csTray[i].img;
+  csOff = document.createElement('canvas');
+  csOff.width = im.naturalWidth; csOff.height = im.naturalHeight;
+  csOctx = csOff.getContext('2d',{willReadFrequently:true});
+  csOctx.drawImage(im,0,0);
+  csImg = im; csShowStage(); resetView(); el('csCand').innerHTML='';
+}
+function csRemoveImage(i){
+  csTray.splice(i,1);
+  if(csActive===i){ csActive=-1;
+    if(csTray.length) csActivate(Math.min(i,csTray.length-1));
+    else { csImg=null; csOff=null; el('csCand').innerHTML=''; csShowStage(); }
+  } else { if(csActive>i) csActive--; csShowStage(); }
+}
+function csShowStage(){
+  var has = csTray.length>0;
+  el('csDrop').style.display = has ? 'none' : 'block';
+  el('csStage').style.display = (has && csActive>=0) ? 'block' : 'none';
+  var t = el('csTray'); t.style.display = has ? 'flex' : 'none';
+  t.innerHTML = csTray.map(function(it,i){
+    return '<button class="thumb '+(i===csActive?'on':'')+'" onclick="csActivate('+i+')" aria-label="'+esc(it.name)+'">'+
+      '<img src="'+it.url+'" alt="">'+
+      '<span class="tx" onclick="event.stopPropagation();csRemoveImage('+i+')" role="button" aria-label="Remove">✕</span></button>';
+  }).join('') + '<button class="thumb add" onclick="document.getElementById(\'csFile\').click()" aria-label="Add another image">＋</button>';
+  if(has && csActive>=0) drawImg();
+}
+function resetView(){
+  if(!csImg) return;
+  var cv = el('csCanvas');
+  view.fit = Math.min(cv.width/csImg.naturalWidth, cv.height/csImg.naturalHeight);
+  view.scale = view.fit; el('csZoom').value = 1;
+  view.panX = (cv.width - csImg.naturalWidth*view.scale)/2;
+  view.panY = (cv.height - csImg.naturalHeight*view.scale)/2;
+  drawImg();
+}
+function drawImg(){
+  if(!csImg) return;
+  var cv = el('csCanvas'), c = cv.getContext('2d');
+  c.clearRect(0,0,cv.width,cv.height);
+  c.imageSmoothingEnabled = false;
+  c.drawImage(csImg, view.panX, view.panY, csImg.naturalWidth*view.scale, csImg.naturalHeight*view.scale);
+}
+function dispToImg(x,y){ return {ix:(x-view.panX)/view.scale, iy:(y-view.panY)/view.scale}; }
+el('csZoom').addEventListener('input', function(e){
+  if(!csImg) return;
+  var cv = el('csCanvas');
+  var cxi = (cv.width/2 - view.panX)/view.scale, cyi = (cv.height/2 - view.panY)/view.scale;
+  view.scale = view.fit * (+e.target.value);
+  view.panX = cv.width/2 - cxi*view.scale; view.panY = cv.height/2 - cyi*view.scale;
+  drawImg();
+});
+
+/* ---- loupe, pick, pan ---- */
+(function(){
+  var cv = el('csCanvas'), loupe = el('csLoupe'), lcv = el('csLoupeCv');
+  var down=false, moved=false, sx=0, sy=0, spx=0, spy=0;
+  function localXY(e){ var r = cv.getBoundingClientRect();
+    return {x:(e.clientX-r.left)*(cv.width/r.width), y:(e.clientY-r.top)*(cv.height/r.height)}; }
+  function sampleAt(e){
+    if(!csOff) return null;
+    var p = localXY(e), q = dispToImg(p.x,p.y);
+    var px = clamp(Math.floor(q.ix),0,csOff.width-1), py = clamp(Math.floor(q.iy),0,csOff.height-1);
+    var d = csOctx.getImageData(px,py,1,1).data;
+    return {r:d[0],g:d[1],b:d[2],px:px,py:py};
+  }
+  function showLoupe(e){
+    if(!csOff) return;
+    var s = sampleAt(e); if(!s){ loupe.style.display='none'; return; }
+    var N=6, S=2*N+1, lc = lcv.getContext('2d');
+    lcv.width=S; lcv.height=S; lc.imageSmoothingEnabled=false; lc.clearRect(0,0,S,S);
+    lc.drawImage(csOff, s.px-N, s.py-N, S, S, 0, 0, S, S);
+    lc.strokeStyle='#fff'; lc.lineWidth=.15; lc.strokeRect(N+.075,N+.075,.85,.85);
+    lc.strokeStyle='#000'; lc.strokeRect(N+.15,N+.15,.7,.7);
+    loupe.style.left = e.clientX+'px'; loupe.style.top = e.clientY+'px'; loupe.style.display='block';
+    el('csLoupeHx').textContent = rgbToHex(s.r,s.g,s.b);
+  }
+  cv.addEventListener('pointerdown', function(e){
+    down=true; moved=false; sx=e.clientX; sy=e.clientY; spx=view.panX; spy=view.panY; cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener('pointermove', function(e){
+    if(down){
+      var dx=e.clientX-sx, dy=e.clientY-sy;
+      if(Math.abs(dx)+Math.abs(dy)>4){
+        moved=true; var rb=cv.getBoundingClientRect();
+        view.panX = spx + dx*(cv.width/rb.width); view.panY = spy + dy*(cv.height/rb.height);
+        drawImg(); loupe.style.display='none'; return;
+      }
+    }
+    showLoupe(e);
+  });
+  cv.addEventListener('pointerup', function(e){
+    if(down && !moved){ var s = sampleAt(e); if(s) setFromRgb(s.r,s.g,s.b); }
+    down=false;
+  });
+  cv.addEventListener('pointerleave', function(){ loupe.style.display='none'; });
+})();
+
+/* ---- drop / browse / into the studio ---- */
+(function(){
+  var dz = el('csDrop'), fi = el('csFile');
+  dz.addEventListener('click', function(){ fi.click(); });
+  dz.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); fi.click(); } });
+  fi.addEventListener('change', function(e){ csAddFromFiles(e.target.files); e.target.value=''; });
+  ['dragenter','dragover'].forEach(function(ev){ dz.addEventListener(ev, function(e){ e.preventDefault(); dz.classList.add('drag'); }); });
+  ['dragleave','drop'].forEach(function(ev){ dz.addEventListener(ev, function(e){ e.preventDefault(); dz.classList.remove('drag'); }); });
+})();
+
+/* ---- auto-extract, tick to keep ---- */
+var candidates = [];
+function extractFrom(im,n){
+  var cv = document.createElement('canvas'), S=48;
+  cv.width=S; cv.height=S;
+  var c = cv.getContext('2d'); c.drawImage(im,0,0,S,S);
+  var data; try{ data = c.getImageData(0,0,S,S).data; }catch(e){ return []; }
+  var b = {};
+  for(var i=0;i<data.length;i+=4){
+    if(data[i+3]<125) continue;
+    var r=data[i], g=data[i+1], bl=data[i+2];
+    var mx=Math.max(r,g,bl), mn=Math.min(r,g,bl);
+    if(mx>245 && mn>245) continue;
+    if(mx<12) continue;
+    var k=(r>>5)+','+(g>>5)+','+(bl>>5);
+    var o = b[k] || (b[k]={r:0,g:0,b:0,c:0});
+    o.r+=r; o.g+=g; o.b+=bl; o.c++;
+  }
+  return Object.keys(b).map(function(k){ return b[k]; })
+    .sort(function(x,y){ return y.c-x.c; }).slice(0,n)
+    .map(function(o){ return rgbToHex(Math.round(o.r/o.c),Math.round(o.g/o.c),Math.round(o.b/o.c)); });
+}
+function autoExtract(){
+  if(!csImg){ csNote('Add an image first — auto-extract reads the picture.'); return; }
+  candidates = extractFrom(csImg,6);
+  if(!candidates.length){ csNote('Nothing to pull out of that one — try picking with the loupe instead.'); return; }
+  renderCandidates();
+}
+function renderCandidates(){
+  el('csCand').innerHTML = candidates.length
+    ? '<span class="lab" style="width:100%">Candidates · tick to keep</span>' + candidates.map(function(h,i){
+        var kept = CAP.colours.some(function(p){ return p.hex===h; });
+        return '<button class="'+(kept?'kept':'')+'" onclick="toggleCandidate('+i+')" aria-pressed="'+kept+'">'+
+          '<span class="sw" style="background:'+h+'"></span><span class="hx">'+(kept?'kept':h)+'</span></button>';
+      }).join('')
+    : '';
+}
+function toggleCandidate(i){
+  var h = candidates[i];
+  var at = -1;
+  CAP.colours.forEach(function(p,k){ if(p.hex===h) at=k; });
+  if(at>=0){ CAP.colours.splice(at,1); renormalize(); reindex(); render(); live('Dropped '+h+'.'); }
+  else { addColour(h,'auto-extract'); }
+  setFromHex(h);
+  renderCandidates();
+}
+
+/* ---- screen snapshot and the system eyedropper ---- */
+function snapScreen(){
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia){
+    csNote('Taking a snapshot of a screen needs Chrome or Edge over https. You can still drop or paste a screenshot, which always works.');
+    return;
+  }
+  navigator.mediaDevices.getDisplayMedia({video:true,audio:false}).then(function(stream){
+    var v = document.createElement('video'); v.srcObject = stream;
+    return v.play().then(function(){
+      return new Promise(function(res){ setTimeout(res,200); }).then(function(){
+        var c = document.createElement('canvas');
+        c.width = v.videoWidth; c.height = v.videoHeight;
+        c.getContext('2d').drawImage(v,0,0);
+        stream.getTracks().forEach(function(t){ t.stop(); });
+        csAddFromUrl(c.toDataURL('image/png'),'Screenshot');
+      });
+    });
+  }).catch(function(){ csNote('The snapshot was cancelled, or the browser blocked it.'); });
+}
+function pickAnywhere(){
+  if(!window.EyeDropper){
+    csNote('Picking a colour from anywhere on your screen needs Chrome or Edge over https. Picking from an image works everywhere.');
+    return;
+  }
+  new EyeDropper().open().then(function(r){ setFromHex(r.sRGBHex); }).catch(function(){ /* cancelled */ });
+}
+
+/* =====================================================================
+   BOOT
+   ===================================================================== */
+(function(){
+  var intro = document.createElement('div');
+  intro.id = 'soloIntro';
+  el('tiCtx').parentNode.parentNode.appendChild(intro);
+  setMode('dock');
+  render();
+  renderTune();
+  window.addEventListener('resize', function(){ if(studioOpen()) renderTune(); });
+})();
+</script>
+</body>
+</html>

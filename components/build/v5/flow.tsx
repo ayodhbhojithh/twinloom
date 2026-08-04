@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { Panel } from "./panel";
 import { Kicker } from "./parts";
 import { RouteMap } from "./route-map";
+import { StageWho } from "./stage-step";
 import { Spine } from "./spine";
 import { StepArrive } from "./steps/arrive";
 import { StepLayout } from "./steps/layout";
@@ -30,7 +31,6 @@ import {
   StepSell,
   StepStyle,
   StepSubmit,
-  StepWho,
 } from "./steps/rest";
 import { QuickPane } from "./quick";
 
@@ -257,7 +257,7 @@ function Step({
     case "layout":
       return <StepLayout at={at} answers={answers} onGo={onGo} />;
     case "who":
-      return <StepWho {...props} />;
+      return <StageWho at={at} answers={answers} onGo={onGo} />;
     case "do":
       return <StepDo {...props} />;
     case "sell":
