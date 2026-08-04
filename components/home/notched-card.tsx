@@ -318,7 +318,15 @@ export function NotchedCard({ className }: { className?: string }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
-          className="artwork absolute inset-0 overflow-hidden"
+          /* The picture opens it too. The control in the notch says the card
+             can be opened; the card itself is what somebody actually presses,
+             and a picture that fills the screen and does nothing when pressed
+             reads as broken rather than as decoration. */
+          onClick={() => setOpen(shown)}
+          role="button"
+          tabIndex={-1}
+          aria-hidden
+          className="artwork absolute inset-0 cursor-pointer overflow-hidden"
           style={{
             backgroundColor: shown.tone,
             clipPath: path ? `path("${path}")` : undefined,
