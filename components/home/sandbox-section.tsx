@@ -124,7 +124,7 @@ const SCALE = [261.63, 293.66, 349.23, 392.0, 440.0, 523.25];
  *
  * The landing carousel keeps its own images: there, the picture is the point.
  */
-const WORK_PLATE = "/work-shop.png";
+const WORK_PLATE = "/partners/spheres-2.png";
 
 /**
  * How the picture leaves the card: thinned out into it, never cut.
