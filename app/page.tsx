@@ -52,7 +52,15 @@ export default function LandingPage() {
       <section className="flex h-[var(--stage)] flex-col overflow-clip py-8">
         <div className="page-frame flex w-full shrink-0 flex-wrap items-end justify-between gap-x-12 gap-y-6">
           <div className="min-w-0">
-            <h1 className="rise section-head max-w-[30ch] text-ink">
+            {/* One run of words, broken by the measure rather than by the
+                sentences, and not evened up.
+
+                `text-wrap: balance` is off here: it makes both lines the same
+                length, which turns a headline into a block. Filling the first
+                line and letting the second run short gives the shape a top edge
+                and a diagonal, which is the thing that reads as a headline
+                rather than as a paragraph. */}
+            <h1 className="rise section-head max-w-[25ch] text-ink [text-wrap:pretty]">
               {claim}
               {/* The second sentence a grade quieter, which is the same split
                   the footer makes: the ask in ink, the promise behind it. Tone
