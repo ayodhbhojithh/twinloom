@@ -184,7 +184,7 @@ export function Stage({
         aria-hidden
         className={cn(
           "absolute inset-0",
-          tone === "field" ? "bg-field" : "bg-canvas",
+          tone === "field" ? "glass-pane" : "glass",
         )}
         style={{ clipPath: path ? `path("${path}")` : undefined }}
       />
@@ -270,7 +270,7 @@ export function Plate({
   return (
     <div
       className={cn(
-        "flex h-10 max-w-full items-center gap-0.5 rounded-pill bg-field px-1.5",
+        "glass-pane flex h-10 max-w-full items-center gap-0.5 rounded-pill px-1.5",
         className,
       )}
     >

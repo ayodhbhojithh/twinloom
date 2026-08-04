@@ -34,7 +34,7 @@ export function Panel({ answers }: { answers: Answers }) {
   const takenAsRead = assumed(answers);
 
   return (
-    <aside className="min-w-0 rounded-[18px] border border-border bg-field p-5">
+    <aside className="glass-pane min-w-0 rounded-[18px] p-5">
       <Kicker className="block">Your site, so far</Kicker>
 
       {/* Where it stands: a dot and a name, never a percentage. */}

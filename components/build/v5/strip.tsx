@@ -201,7 +201,7 @@ export function StepStrip({
                   aria-hidden
                   className={cn(
                     "absolute inset-0 transition-[clip-path,background-color] duration-300 ease-out",
-                    on ? "bg-ink" : "bg-canvas group-hover/step:bg-canvas-firm",
+                    on ? "bg-ink" : "glass group-hover/step:glass-firm",
                   )}
                   style={{ clipPath: on ? clipOn : clip }}
                 />
