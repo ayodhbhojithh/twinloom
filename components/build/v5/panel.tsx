@@ -243,7 +243,7 @@ function Desk({
       </p>
 
       <form
-        className="mt-4 flex items-stretch gap-2.5"
+        className="mt-4 flex items-center gap-2"
         onSubmit={(event) => {
           event.preventDefault();
           const said = draft.trim();
@@ -256,12 +256,12 @@ function Desk({
           value={draft}
           placeholder="Anything at all, in your own words"
           onChange={(event) => setDraft(event.target.value)}
-          className="min-w-0 flex-1 rounded-field bg-well px-4 py-2.5 text-[14px] text-ink outline-none transition-colors placeholder:text-label focus:bg-hair"
+          className="min-w-0 flex-1 rounded-field bg-well px-3.5 py-1.5 text-[14px] text-ink outline-none transition-colors placeholder:text-label focus:bg-hair"
         />
         <button
           type="submit"
           disabled={!draft.trim()}
-          className="flex-none cursor-pointer rounded-field bg-ink px-4 font-mono text-[10px] font-bold tracking-[0.14em] text-white uppercase transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-planned disabled:text-label"
+          className="flex-none cursor-pointer rounded-field bg-ink px-3.5 py-1.5 font-mono text-[10px] font-bold tracking-[0.14em] text-white uppercase transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-planned disabled:text-label"
         >
           Add
         </button>
@@ -308,7 +308,7 @@ function Desk({
                 value={answers.like[ref.n] ?? ""}
                 placeholder="What you like about it"
                 onChange={(event) => setLike(ref.n, event.target.value)}
-                className="mt-2.5 w-full rounded-field bg-field px-3 py-2 text-[13px] text-ink outline-none placeholder:text-label"
+                className="mt-2.5 w-full rounded-field bg-field px-3 py-1.5 text-[13px] text-ink outline-none placeholder:text-label"
               />
             </li>
           ))}

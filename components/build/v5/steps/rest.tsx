@@ -633,7 +633,7 @@ export function StepAsking({ at, answers, onGo }: StepProps) {
               value={answers.ask[field.k] ?? ""}
               placeholder={field.label}
               onChange={(event) => setAsk(field.k, event.target.value)}
-              className="w-full rounded-field bg-well px-4 py-3 text-[15px] text-ink outline-none transition-colors placeholder:text-label focus:bg-hair"
+              className="w-full rounded-field border border-border bg-field px-3.5 py-1.5 text-[15px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
             />
             <p className="mt-1.5 text-[13px] leading-[1.5] text-quiet">
               {field.why}
@@ -703,7 +703,7 @@ export function StepKeep({ at, answers, onGo }: StepProps) {
           <button
             type="button"
             onClick={() => setKeep(true)}
-            className="cursor-pointer rounded-field bg-ink px-5 py-2.5 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-85"
+            className="cursor-pointer rounded-field bg-ink px-4 py-2 text-[14px] font-semibold text-white transition-opacity hover:opacity-85"
           >
             Register with the address I gave
           </button>

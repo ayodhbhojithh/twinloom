@@ -214,7 +214,7 @@ export function WriteIn({
   rows?: number;
 }) {
   return (
-    <div className="mt-5 max-w-measure">
+    <div className="mt-4 max-w-measure">
       {label ? (
         <label
           htmlFor={id}
@@ -232,7 +232,7 @@ export function WriteIn({
         value={value}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full resize-y rounded-card bg-well px-4 py-3.5 text-[15px] leading-[1.6] text-ink outline-none transition-colors placeholder:text-label focus:bg-hair"
+        className="w-full resize-y rounded-card border border-border bg-field px-3.5 py-2 text-[15px] leading-[1.6] text-ink outline-none transition-colors placeholder:text-label focus:bg-hair"
       />
     </div>
   );

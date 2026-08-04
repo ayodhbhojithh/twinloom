@@ -77,7 +77,7 @@ export function StepFrame({
           <button
             type="button"
             onClick={() => onGo(at - 1)}
-            className="cursor-pointer rounded-field bg-well px-5 py-3 text-[15px] font-semibold text-quiet transition-colors hover:bg-hair hover:text-ink"
+            className="cursor-pointer rounded-field bg-well px-4 py-2 text-[14.5px] font-semibold text-quiet transition-colors hover:bg-hair hover:text-ink"
           >
             Back
           </button>
@@ -87,7 +87,7 @@ export function StepFrame({
           <button
             type="button"
             onClick={() => onGo(at + 1)}
-            className="cursor-pointer rounded-field bg-ink px-6 py-3 text-[15px] font-semibold text-white transition-opacity hover:opacity-85"
+            className="cursor-pointer rounded-field bg-ink px-5 py-2 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-85"
           >
             Continue
           </button>

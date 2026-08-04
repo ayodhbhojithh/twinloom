@@ -63,7 +63,7 @@ export function QuickPane({
               type="button"
               onClick={() => setShort(true)}
               className={cn(
-                "cursor-pointer rounded-field px-5 py-2.5 text-[14.5px] font-semibold transition-opacity",
+                "cursor-pointer rounded-field px-4 py-2 text-[14px] font-semibold transition-opacity",
                 answers.short
                   ? "bg-ink text-white opacity-100"
                   : "bg-ink text-white hover:opacity-85",
@@ -76,7 +76,7 @@ export function QuickPane({
             <button
               type="button"
               onClick={onCarryOn}
-              className="cursor-pointer rounded-field bg-field px-5 py-2.5 text-[14.5px] font-semibold text-ink transition-colors hover:bg-hair"
+              className="cursor-pointer rounded-field bg-field px-4 py-2 text-[14px] font-semibold text-ink transition-colors hover:bg-hair"
             >
               Carry on through the questions
             </button>
@@ -134,7 +134,7 @@ export function QuickPane({
           value={answers.text["quick.words"] ?? ""}
           placeholder="What the business does, who it is for, what the website has to do, and anything you already know you want."
           onChange={(event) => setText("quick.words", event.target.value)}
-          className="mt-4 w-full resize-y rounded-card border border-border bg-field px-4 py-3.5 text-[15px] leading-[1.65] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
+          className="mt-4 w-full resize-y rounded-card border border-border bg-field px-3.5 py-2 text-[15px] leading-[1.6] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
         />
 
         <h4 className="mt-9 text-[19px] leading-[1.25] font-bold tracking-[-0.015em] text-ink sm:text-[21px]">
@@ -160,7 +160,7 @@ export function QuickPane({
         </div>
 
         <form
-          className="mt-3 flex items-stretch gap-2"
+          className="mt-3 flex items-center gap-2"
           onSubmit={(event) => {
             event.preventDefault();
             const said = draft.trim();
@@ -174,12 +174,12 @@ export function QuickPane({
             aria-label="Write it, paste it, or name the file"
             placeholder="A sentence, a link, or the name of a file"
             onChange={(event) => setDraft(event.target.value)}
-            className="min-w-0 flex-1 rounded-field border border-border bg-field px-4 py-2.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
+            className="min-w-0 flex-1 rounded-field border border-border bg-field px-3.5 py-1.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
           />
           <button
             type="submit"
             disabled={!draft.trim()}
-            className="flex-none cursor-pointer rounded-field bg-ink px-6 text-[14px] font-semibold text-white transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-planned disabled:text-white"
+            className="flex-none cursor-pointer rounded-field bg-ink px-3.5 py-1.5 text-[13px] font-semibold text-white transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-planned disabled:text-white"
           >
             Add
           </button>
@@ -224,7 +224,7 @@ export function QuickPane({
                         value={answers.like[ref.n] ?? ""}
                         placeholder="What you like about it"
                         onChange={(event) => setLike(ref.n, event.target.value)}
-                        className="w-full rounded-field border border-border bg-field px-3 py-2 text-[13.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
+                        className="w-full rounded-field border border-border bg-field px-3 py-1.5 text-[13.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
                       />
                     </td>
                     <td className="px-3 py-2.5 text-right align-middle">

@@ -114,7 +114,7 @@ export function DetailCard({
             <button
               type="button"
               onClick={onClose}
-              className="cursor-pointer rounded-field bg-ink px-5 py-2.5 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-85"
+              className="cursor-pointer rounded-field bg-ink px-4 py-2 text-[14px] font-semibold text-white transition-opacity hover:opacity-85"
             >
               {card.fork.use}
             </button>
@@ -130,7 +130,7 @@ export function DetailCard({
                   stepKey,
                 )
               }
-              className="cursor-pointer rounded-field bg-field px-5 py-2.5 text-[14.5px] font-semibold text-ink transition-colors hover:bg-hair"
+              className="cursor-pointer rounded-field bg-field px-4 py-2 text-[14px] font-semibold text-ink transition-colors hover:bg-hair"
             >
               {card.fork.more}
             </button>
@@ -311,7 +311,7 @@ export function OwnWords({
   const said = answers.own[listId] ?? [];
 
   return (
-    <div className="mt-6 max-w-measure">
+    <div className="mt-5 max-w-measure">
       <label
         htmlFor={`own-${listId}`}
         className="mb-2 block text-[14.5px] font-semibold text-ink"
@@ -320,7 +320,7 @@ export function OwnWords({
       </label>
 
       <form
-        className="flex items-stretch gap-2"
+        className="flex items-center gap-2"
         onSubmit={(event) => {
           event.preventDefault();
           addOwn(listId, draft, stepKey);
@@ -332,12 +332,12 @@ export function OwnWords({
           value={draft}
           placeholder={placeholder}
           onChange={(event) => setDraft(event.target.value)}
-          className="min-w-0 flex-1 rounded-field border border-border bg-field px-4 py-2.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
+          className="min-w-0 flex-1 rounded-field border border-border bg-field px-3.5 py-1.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
         />
         <button
           type="submit"
           disabled={!draft.trim()}
-          className="flex-none cursor-pointer rounded-field bg-ink px-5 text-[14px] font-semibold text-white transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-planned disabled:text-white"
+          className="flex-none cursor-pointer rounded-field bg-ink px-3.5 py-1.5 text-[13px] font-semibold text-white transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-planned disabled:text-white"
         >
           Add
         </button>
@@ -348,7 +348,7 @@ export function OwnWords({
           {said.map((words, at) => (
             <li
               key={`${listId}-${at}`}
-              className="flex items-center gap-3 rounded-field border border-border bg-field px-3.5 py-2.5"
+              className="flex items-center gap-3 rounded-field border border-border bg-field px-3.5 py-1.5"
             >
               <span className="min-w-0 flex-1 text-[14px] leading-[1.45] text-ink">
                 {words}

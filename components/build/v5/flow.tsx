@@ -123,31 +123,41 @@ export function BuildFlow() {
                 onClick={() => setTab(entry.key)}
                 className={cn(
                   "flex w-full cursor-pointer items-start gap-3.5 border-t border-border px-5 py-4 text-left transition-colors first:border-t-0 sm:border-t-0 sm:border-l sm:first:border-l-0",
-                  on ? "bg-done/[0.05]" : "hover:bg-well",
+                  on ? "bg-ink" : "hover:bg-well",
                 )}
               >
                 <span
                   aria-hidden
                   className={cn(
                     "mt-px flex size-[19px] flex-none items-center justify-center rounded-pill border-2 transition-colors",
-                    on ? "border-done" : "border-planned",
+                    on ? "border-white" : "border-planned",
                   )}
                 >
                   <span
                     className={cn(
                       "size-[9px] rounded-pill transition-colors",
-                      on ? "bg-done" : "bg-transparent",
+                      on ? "bg-white" : "bg-transparent",
                     )}
                   />
                 </span>
 
                 <span className="min-w-0 flex-1">
                   <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
-                    <b className="text-[15.5px] leading-[1.2] font-bold text-ink">
+                    <b
+                      className={cn(
+                        "text-[15.5px] leading-[1.2] font-bold",
+                        on ? "text-white" : "text-ink",
+                      )}
+                    >
                       {entry.title}
                     </b>
 
-                    <span className="font-mono text-[9.5px] font-bold tracking-[0.12em] text-idx uppercase tabular-nums">
+                    <span
+                      className={cn(
+                        "font-mono text-[9.5px] font-bold tracking-[0.12em] uppercase tabular-nums",
+                        on ? "text-white/55" : "text-idx",
+                      )}
+                    >
                       {entry.length}
                     </span>
 
@@ -163,14 +173,19 @@ export function BuildFlow() {
                           key={n}
                           className={cn(
                             "size-[6px] flex-none rounded-pill transition-colors",
-                            on ? "bg-done" : "bg-planned",
+                            on ? "bg-white/70" : "bg-planned",
                           )}
                         />
                       ))}
                     </span>
                   </span>
 
-                  <span className="mt-1.5 block text-[13.5px] leading-[1.5] text-quiet">
+                  <span
+                    className={cn(
+                      "mt-1.5 block text-[13.5px] leading-[1.5]",
+                      on ? "text-white/65" : "text-quiet",
+                    )}
+                  >
                     {entry.note}
                   </span>
                 </span>
