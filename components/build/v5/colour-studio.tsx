@@ -565,11 +565,14 @@ function Studio({ onClose }: { onClose: () => void }) {
               </Plate>
             }
             aside={
+              /* White, not ink. On the run-through this cut has the page
+                 behind it; here it has the scrim, so the number is standing on
+                 the dark and has to be lit rather than drawn. */
               <div className="flex size-full flex-col items-center justify-center">
-                <b className="font-mono text-[24px] leading-none font-bold text-ink tabular-nums">
+                <b className="font-mono text-[24px] leading-none font-bold text-white tabular-nums">
                   {palette.length}
                 </b>
-                <span className="mt-1.5 font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase">
+                <span className="mt-1.5 font-mono text-[8.5px] font-bold tracking-[0.12em] text-white/60 uppercase">
                   Kept
                 </span>
               </div>
