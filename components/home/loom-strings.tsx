@@ -472,12 +472,14 @@ export function LoomStrings({
           else paper.lineTo(x, y);
         }
         paper.lineWidth = warpWidth;
-        /* A struck thread is not a different colour, it is a firmer one. There
-           is one ink on this site and the loom is not the place to introduce a
-           second: darkening from a hairline to something close to the letters
-           says "this one is ringing" without any hue at all. */
+        /* Colour only while it rings.
+           The cloth at rest is ink and hairline grey, like the rest of the
+           site. A struck thread takes the green the build screen uses for a
+           thing that is done, and gives it straight back as the note decays,
+           so the colour is the sound rather than a decoration: nothing on
+           screen is coloured unless it is moving. */
         paper.strokeStyle = lit
-          ? `rgba(17, 24, 39, ${0.075 + lit * 0.5})`
+          ? `rgba(5, 150, 105, ${0.14 + lit * 0.5})`
           : "rgba(17, 24, 39, 0.075)";
         paper.stroke();
 
@@ -485,11 +487,11 @@ export function LoomStrings({
            word. Each run is walked with the same bow, so the letter bends with
            the thread instead of standing still behind it. */
         paper.lineWidth = inkWidth;
-        /* The letters are already full ink, so a struck one lifts instead of
-           darkening: it is the one place on the cloth where movement has to be
-           read against something that was never faint. */
+        /* The letters take the same colour, and keep more of their weight: they
+           are the word, and a word that goes pale as it is played would read as
+           being rubbed out rather than struck. */
         paper.strokeStyle = lit
-          ? `rgba(17, 24, 39, ${0.94 - lit * 0.34})`
+          ? `rgba(5, 150, 105, ${0.7 + lit * 0.3})`
           : "rgba(17, 24, 39, 0.94)";
 
         for (let run = 0; run < thread.runs.length; run += 2) {
