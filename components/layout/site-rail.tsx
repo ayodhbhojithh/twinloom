@@ -74,8 +74,9 @@ const openOnServer = () => true;
  * It folds. Not because a navigation should need operating before it can be
  * read, but because some of these pages are working screens rather than reading
  * ones: the run-through is three columns of its own, and on a laptop the rail is
- * three hundred pixels that screen would rather have. Folded it leaves a strip
- * with the control still on it, so the list is one press away and never gone.
+ * a quarter of a thousand pixels that screen would rather have. Folded it leaves
+ * a strip with the control still on it, so the list is one press away and never
+ * gone.
  *
  * Below `lg` it is not rendered at all. The header's menu carries the same list
  * from the same component, so a phone reaches every page rather than the five in
@@ -93,7 +94,11 @@ export function SiteRail() {
            the page rebuilding itself rather than as a panel getting out of the
            way. */
         "transition-[width] duration-300 ease-out motion-reduce:transition-none",
-        shown ? "w-[284px] xl:w-[308px] 2xl:w-[328px]" : "w-[52px]",
+        /* As narrow as the longest label needs and no narrower. The list is
+           short words - `Blogs and articles` is the longest of them - and the
+           width it was set to left a column of empty panel to the right of
+           every line, which the page beside it would rather have. */
+        shown ? "w-[228px] xl:w-[244px] 2xl:w-[260px]" : "w-[52px]",
       )}
       style={{
         top: "var(--nav-height)",
@@ -140,12 +145,17 @@ export function SiteRail() {
           <nav
             id="site-rail-nav"
             aria-label="All pages"
-            /* `overflow-x-hidden` is not decoration. `overflow-y-auto` alone
+            /* No left padding. The list's own left edge is the marker's column,
+               so this puts the 2px bar hard against the panel's edge and the
+               labels one gap in from it - the rail's whole width goes to the
+               words rather than to an indent in front of them.
+
+               `overflow-x-hidden` is not decoration. `overflow-y-auto` alone
                computes the other axis to `auto` as well, and with the bar hidden
                that turns any wide row into a sideways scroll nothing announces:
                the list ends up nudged off its own left edge and reads as cut
                off, with no scrollbar to explain why. */
-            className="quiet-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-(--rail-gutter) pt-1 pb-10"
+            className="quiet-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto pt-1 pr-(--rail-gutter) pb-10"
           >
             <RailNav pathname={pathname} />
           </nav>

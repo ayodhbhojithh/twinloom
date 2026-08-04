@@ -8,15 +8,12 @@ import { cn } from "@/lib/utils";
 /**
  * Where the marker sits, and how far a sub page steps in.
  *
- * The list does not set its own side gutter. Whatever holds it does - the rail
- * from `--rail-gutter`, the phone menu from the same padding its own header and
- * footer use - so the links line up with everything else in the panel instead of
- * carrying a second inset of their own on top of it.
- *
- * The 2px marker hangs back into that gutter rather than sitting inside the text
- * lane, the way a bullet or a quote mark hangs off a paragraph: the label keeps
- * the lane's left edge whether it is the current page or not, so nothing shifts
- * as you move down the list.
+ * The list holds one thing only: the gap between the 2px marker and the label
+ * it marks. Its own left edge is the marker's column, so whatever holds the list
+ * decides where that column falls - hard against the rail's edge, or inside the
+ * phone sheet's padding with the rest of the sheet. A list that set a side
+ * gutter of its own would carry a second inset on top of its container's and
+ * line up with nothing.
  *
  * A sub page indents by 12 and the marker stays put, so the bar is in one column
  * down the whole list and only the text steps in. A bar that moved with the
@@ -52,9 +49,7 @@ export function RailNav({
   size?: "rail" | "menu";
 }) {
   return (
-    /* Pulled left by the hang, so the labels land on the container's own left
-       edge and only the markers sit out in the gutter. */
-    <ul style={{ marginLeft: -HANG }}>
+    <ul>
       {RAIL_PAGES.map((page) => (
         <li key={page.href}>
           <Row page={page} pathname={pathname} onNavigate={onNavigate} size={size} />

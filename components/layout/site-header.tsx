@@ -143,13 +143,14 @@ export function SiteHeader() {
             </button>
           </div>
 
-          {/* The same gutter as the name above it and the button below it, so the
-              three parts of the sheet share one left edge. The list used to sit
-              on a tighter one and carry the difference as padding of its own,
-              which put the links a few pixels inside everything else. */}
+          {/* Inset by the sheet's own gutter less the marker's hang, so the
+              labels land on the same left edge as the name above them and the
+              button below them while the 2px bar sits out in the gutter. The
+              rail hangs its markers off the panel edge for the same reason; a
+              sheet has a gutter to hang them into, so they hang into that. */}
           <nav
             aria-label="All pages, mobile"
-            className="flex-1 overflow-x-hidden overflow-y-auto px-5 pb-8 sm:px-8"
+            className="flex-1 overflow-x-hidden overflow-y-auto pr-5 pb-8 pl-2 sm:pr-8 sm:pl-5"
           >
             <RailNav
               size="menu"
