@@ -119,9 +119,14 @@ const SCALE = [261.63, 293.66, 349.23, 392.0, 440.0, 523.25];
  * A mask rather than a wash over the top. Painting white over a photograph
  * dulls it; taking the photograph away lets the card's own white through, so
  * the picture stays as bright as it was where it is still there.
+ *
+ * Ten stops on a curve rather than five on a ramp, and it starts giving way at
+ * a quarter of the way down rather than half. A short linear fade reads as a
+ * band with an edge at each end - which is exactly the thing a blend must not
+ * have, and exactly what a photograph of a sky shows up.
  */
 const SCRIM =
-  "linear-gradient(to bottom, black 0%, black 48%, rgba(0,0,0,0.78) 66%, rgba(0,0,0,0.4) 82%, rgba(0,0,0,0.12) 93%, transparent 100%)";
+  "linear-gradient(to bottom, black 0%, black 26%, rgba(0,0,0,0.96) 38%, rgba(0,0,0,0.88) 48%, rgba(0,0,0,0.74) 58%, rgba(0,0,0,0.55) 68%, rgba(0,0,0,0.35) 78%, rgba(0,0,0,0.18) 87%, rgba(0,0,0,0.06) 95%, transparent 100%)";
 
 function useNotes() {
   const rig = useRef<{ ctx: AudioContext; master: GainNode } | null>(null);
@@ -529,7 +534,7 @@ function WorkCard({
             words. Run to the bottom it had to be darkened to be read over, and
             a dark card on a light page is the one object here wearing another
             scheme. */}
-        <span className="absolute inset-x-0 top-0 block h-[64%]">
+        <span className="absolute inset-x-0 top-0 block h-[78%]">
           <Image
             src={project.image}
             alt=""
