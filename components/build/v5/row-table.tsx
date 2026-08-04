@@ -13,7 +13,7 @@ import {
 } from "@/lib/build/v5-store";
 import { cn } from "@/lib/utils";
 
-import { DetailCard } from "./card";
+import { CardDialog } from "./card";
 import { Glyph } from "./glyph";
 import { Kicker } from "./parts";
 
@@ -84,16 +84,18 @@ export function RowTable({
           return (
             <tbody key={`${band.step}-${band.band}`}>
               <tr>
-                <td colSpan={3} className="pt-8 pb-3">
-                  <h4 className="flex items-baseline gap-2.5 font-mono text-[10.5px] font-bold tracking-[0.14em] text-label uppercase">
-                    {band.title}
-                    <span className="text-[10px] font-normal tracking-normal text-idx tabular-nums">
-                      {inBand.length}
+                <td colSpan={3} className="pt-7 pb-2">
+                  <div className="border-b border-border pb-2.5">
+                    <h4 className="flex items-baseline gap-2.5 text-[15px] font-bold tracking-[-0.01em] text-ink">
+                      {band.title}
+                      <span className="font-mono text-[10px] font-bold text-idx tabular-nums">
+                        {inBand.length}
+                      </span>
+                    </h4>
+                    <span className="mt-1 block text-[13px] leading-[1.45] text-quiet normal-case">
+                      {band.note}
                     </span>
-                  </h4>
-                  <span className="mt-1 block text-[13px] leading-[1.45] text-quiet normal-case">
-                    {band.note}
-                  </span>
+                  </div>
                 </td>
               </tr>
 
@@ -158,16 +160,17 @@ function Row({
       <tr
         className={cn(
           "border-b border-hair transition-colors",
+          on && !fixed && "bg-done/[0.045]",
           !fixed && "cursor-pointer hover:bg-well",
         )}
         onClick={fixed ? undefined : () => togglePick(scope, row.k, step)}
       >
-        <td className="py-3.5 pr-3 align-middle">
+        <td className="py-3.5 pr-3 pl-3 align-middle">
           <span className="flex items-start gap-3.5">
             <span
               className={cn(
                 "mt-px flex size-9 flex-none items-center justify-center rounded-pill transition-colors",
-                on ? "bg-ink text-white" : "bg-well text-quiet",
+                on ? "bg-done text-white" : "bg-well text-quiet",
               )}
             >
               {meta ? <Glyph parts={meta.icon} className="size-[19px]" /> : null}
@@ -204,7 +207,7 @@ function Row({
           {row.pages.length ? row.pages.join(", ") : "no page of its own"}
         </td>
 
-        <td className="py-3.5 text-right align-middle">
+        <td className="py-3.5 pr-3 text-right align-middle">
           <span className="inline-flex items-center justify-end gap-2">
             {card ? (
               <button
@@ -242,8 +245,8 @@ function Row({
 
       {card && showing ? (
         <tr>
-          <td colSpan={3} className="pb-2">
-            <DetailCard
+          <td colSpan={3} className="p-0">
+            <CardDialog
               card={card}
               answers={answers}
               stepKey={step}

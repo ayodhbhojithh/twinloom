@@ -88,7 +88,14 @@ export function Panel({
 
           {/* Three named states and no bar. A percentage would be a score, and
               nothing anybody says here is being marked. */}
-          <p className="inline-flex items-center gap-2 rounded-pill bg-well py-1.5 pr-4 pl-3">
+          <p
+            className={cn(
+              "inline-flex items-center gap-2 rounded-pill border py-1.5 pr-4 pl-3",
+              state === "ready"
+                ? "border-done/30 bg-done/[0.06]"
+                : "border-border bg-well",
+            )}
+          >
             <span
               aria-hidden
               className={cn(
@@ -113,7 +120,7 @@ export function Panel({
 
           <div className="flex flex-col gap-2.5">
             {zones.map((zone) => (
-              <div key={zone.key} className="rounded-card bg-well p-4">
+              <div key={zone.key} className="rounded-card border border-border bg-field p-4">
                 <div className="mb-1 flex items-baseline gap-2.5">
                   <h4 className="font-mono text-[10.5px] font-bold tracking-[0.12em] text-ink uppercase">
                     {zone.title}
@@ -273,7 +280,7 @@ function Desk({
       {answers.refs.length ? (
         <ul className="mt-6 flex flex-col gap-2.5">
           {answers.refs.map((ref) => (
-            <li key={ref.n} className="rounded-card bg-well p-4">
+            <li key={ref.n} className="rounded-card border border-border bg-field p-4">
               <div className="flex items-baseline justify-between gap-3">
                 <Kicker>{ref.kind}</Kicker>
                 <button

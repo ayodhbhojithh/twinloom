@@ -36,8 +36,7 @@ export function Kicker({
 /** Which layer of the question this is: the prototype's `.lay`. */
 export function LayerMark({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-4 inline-flex items-center gap-2 rounded-pill bg-well py-1.5 pr-3.5 pl-3">
-      <span aria-hidden className="size-1.5 rounded-pill bg-planned" />
+    <p className="mb-5">
       <Kicker>{children}</Kicker>
     </p>
   );
@@ -92,7 +91,10 @@ export function Aside({
   className?: string;
 }) {
   return (
-    <div className={cn("mt-6 max-w-measure rounded-card bg-well p-5", className)}>
+    <div className={cn(
+        "mt-6 max-w-measure rounded-card border border-border bg-well p-5",
+        className,
+      )}>
       <Kicker className="mb-2.5 block">{label}</Kicker>
       <div className="text-[15px] leading-[1.6] text-quiet [&>*:last-child]:mb-0 [&>p]:mb-3 [&_b]:font-semibold [&_b]:text-ink">
         {children}
@@ -110,7 +112,7 @@ export function Aside({
  */
 export function StopNote({ needs }: { needs: string }) {
   return (
-    <p className="mt-8 border-l-2 border-planned pl-4 text-[14.5px] leading-[1.6] text-quiet">
+    <p className="mt-8 text-[14.5px] leading-[1.6] text-quiet">
       You can stop at this step and send what you have. What this one needs
       before you can: <b className="font-semibold text-ink">{needs}</b>
     </p>
@@ -158,7 +160,9 @@ export function Chip({
       onClick={onClick}
       className={cn(
         "cursor-pointer rounded-pill px-3.5 py-2 text-[13.5px] font-semibold transition-colors",
-        on ? "bg-ink text-white" : "bg-well text-quiet hover:bg-hair hover:text-ink",
+        on
+          ? "bg-done text-white"
+          : "bg-well text-quiet hover:bg-hair hover:text-ink",
       )}
     >
       {children}

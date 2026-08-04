@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, X } from "lucide-react";
 
 import type { Card, CardQuestion } from "@/lib/build/v5-cards";
@@ -26,10 +26,10 @@ import { Chip, Kicker, WriteIn } from "./parts";
    card did not ask, and two ways on. Nineteen hand-written cards would have
    been nineteen chances for one of them to lose its fork.
 
-   It opens under the row it belongs to rather than over the page. A question
-   about bookings asked in a panel floating above the list is a question about
-   bookings in the abstract; asked underneath the row that raised it, it is
-   plainly about that row.
+   It opens as a dialog. Inline, a card pushed forty rows down the page and left
+   the reader scrolling to find what they had just opened; over the page, the
+   questions are the only thing on screen while they are being answered, and the
+   row underneath is exactly where you were when it shuts.
 --------------------------------------------------------------------------- */
 
 export function DetailCard({
@@ -38,6 +38,7 @@ export function DetailCard({
   stepKey,
   onGoto,
   onClose,
+  framed,
 }: {
   card: Card;
   answers: Answers;
@@ -45,10 +46,22 @@ export function DetailCard({
   /** Follow a pointer to the card where a shared question actually lives. */
   onGoto?: (id: string) => void;
   onClose: () => void;
+  /** Set when it is the whole of a dialog and needs no ground of its own. */
+  framed?: boolean;
 }) {
   return (
-    <div className="mt-2 rounded-card bg-well p-5 sm:p-6">
-      <div className="mb-5 flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
+    <div
+      className={cn(
+        "p-5 sm:p-6",
+        framed ? "" : "mt-2 rounded-card border border-border bg-well",
+      )}
+    >
+      <div
+        className={cn(
+          "mb-5 flex flex-wrap items-start justify-between gap-x-6 gap-y-3",
+          framed && "sticky -top-6 z-10 -mx-6 -mt-6 border-b border-border bg-field px-6 pt-6 pb-4",
+        )}
+      >
         <div className="min-w-0 max-w-measure">
           <b className="block text-[17px] leading-[1.25] font-bold text-ink">
             {card.title}
@@ -64,7 +77,7 @@ export function DetailCard({
             type="button"
             onClick={onClose}
             aria-label="Close detail"
-            className="flex size-8 cursor-pointer items-center justify-center rounded-pill bg-field text-quiet transition-colors hover:text-ink"
+            className="flex size-8 cursor-pointer items-center justify-center rounded-pill bg-well text-quiet transition-colors hover:bg-hair hover:text-ink"
           >
             <X className="size-4" />
           </button>
@@ -305,7 +318,7 @@ export function OwnWords({
       </label>
 
       <form
-        className="flex items-stretch gap-2.5"
+        className="flex items-stretch gap-2"
         onSubmit={(event) => {
           event.preventDefault();
           addOwn(listId, draft, stepKey);
@@ -317,12 +330,12 @@ export function OwnWords({
           value={draft}
           placeholder={placeholder}
           onChange={(event) => setDraft(event.target.value)}
-          className="min-w-0 flex-1 rounded-field bg-field px-4 py-2.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-label focus:bg-hair"
+          className="min-w-0 flex-1 rounded-field border border-border bg-field px-4 py-2.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
         />
         <button
           type="submit"
           disabled={!draft.trim()}
-          className="flex-none cursor-pointer rounded-field bg-ink px-5 font-mono text-[10px] font-bold tracking-[0.14em] text-white uppercase transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-planned disabled:text-label"
+          className="flex-none cursor-pointer rounded-field bg-ink px-5 text-[14px] font-semibold text-white transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-planned disabled:text-white"
         >
           Add
         </button>
@@ -333,7 +346,7 @@ export function OwnWords({
           {said.map((words, at) => (
             <li
               key={`${listId}-${at}`}
-              className="flex items-baseline gap-3 rounded-field bg-field px-3.5 py-2.5"
+              className="flex items-center gap-3 rounded-field border border-border bg-field px-3.5 py-2.5"
             >
               <span className="min-w-0 flex-1 text-[14px] leading-[1.45] text-ink">
                 {words}
@@ -349,6 +362,77 @@ export function OwnWords({
           ))}
         </ul>
       ) : null}
+    </div>
+  );
+}
+
+
+/**
+ * A card, opened over the page.
+ *
+ * Escape shuts it, the page behind it does not scroll, focus goes to the panel
+ * and comes back to whatever opened it. A dialog that traps somebody with no way
+ * out but the mouse is worse than no dialog.
+ */
+export function CardDialog({
+  card,
+  answers,
+  stepKey,
+  onGoto,
+  onClose,
+}: {
+  card: Card;
+  answers: Answers;
+  stepKey: string;
+  onGoto?: (id: string) => void;
+  onClose: () => void;
+}) {
+  const panel = useRef<HTMLDivElement>(null);
+  const came = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    came.current = document.activeElement as HTMLElement | null;
+    const held = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    panel.current?.focus();
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+
+    return () => {
+      document.body.style.overflow = held;
+      window.removeEventListener("keydown", onKey);
+      came.current?.focus?.();
+    };
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6">
+      <div
+        onClick={onClose}
+        aria-hidden
+        className="absolute inset-0 bg-ink/35"
+      />
+
+      <div
+        ref={panel}
+        role="dialog"
+        aria-modal="true"
+        aria-label={card.title}
+        tabIndex={-1}
+        className="quiet-scroll relative max-h-[86svh] w-full max-w-[760px] overflow-y-auto rounded-t-[18px] bg-field outline-none sm:rounded-[18px]"
+      >
+        <DetailCard
+          card={card}
+          answers={answers}
+          stepKey={stepKey}
+          onGoto={onGoto}
+          onClose={onClose}
+          framed
+        />
+      </div>
     </div>
   );
 }

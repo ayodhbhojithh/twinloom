@@ -31,7 +31,7 @@ export function OptionRows({
   step: string;
 }) {
   return (
-    <div className="mt-4 max-w-wide overflow-hidden rounded-card bg-well">
+    <div className="mt-4 max-w-wide overflow-hidden rounded-card border border-border bg-field">
       {list.rows.map((row) => {
         const on = isOn(answers, row.scope, row.k);
 
@@ -48,7 +48,10 @@ export function OptionRows({
               }
               togglePick(row.scope, row.k, step);
             }}
-            className="flex w-full cursor-pointer items-start gap-4 border-t border-border px-4 py-3.5 text-left transition-colors first:border-t-0 hover:bg-hair sm:px-5"
+            className={cn(
+              "flex w-full cursor-pointer items-start gap-4 border-t border-border px-4 py-3.5 text-left transition-colors first:border-t-0 sm:px-5",
+              on ? "bg-done/[0.05]" : "hover:bg-hair",
+            )}
           >
             <span className="min-w-0 flex-1">
               <span className="block text-[15px] leading-[1.3] font-bold text-ink">

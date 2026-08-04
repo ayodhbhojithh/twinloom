@@ -34,7 +34,7 @@ import {
 } from "@/lib/build/v5-store";
 import { cn } from "@/lib/utils";
 
-import { DetailCard, OwnWords } from "../card";
+import { CardDialog, DetailCard, OwnWords } from "../card";
 import { Chip, Kicker, LayerMark, SubHead, Under } from "../parts";
 import { OptionLists } from "../option-list";
 import { RowTable } from "../row-table";
@@ -110,7 +110,7 @@ export function StepWho({ at, answers, onGo }: StepProps) {
     <StepFrame at={at} onGo={onGo} needs={copy.stop} showBack={copy.stback}>
       <Prose step="who" />
 
-      <div className="mt-6 grid max-w-wide gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="mt-6 grid max-w-wide auto-rows-fr gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {GROUPS.map((group) => {
           const on = isOn(answers, "who", group.k);
 
@@ -120,38 +120,41 @@ export function StepWho({ at, answers, onGo }: StepProps) {
               type="button"
               aria-pressed={on}
               onClick={() => togglePick("who", group.k, "who")}
+              /* `auto-rows-fr` above and `h-full` here, so seven cards holding
+                 one, two and three lines of name still make three even rows.
+                 Cards of six different heights was most of what read as mess. */
               className={cn(
-                "flex cursor-pointer items-start gap-3.5 rounded-card p-4 text-left transition-colors",
-                on ? "bg-ink" : "bg-well hover:bg-hair",
+                "flex h-full cursor-pointer flex-col justify-between gap-3 rounded-card border p-4 text-left transition-colors",
+                on
+                  ? "border-done bg-done/[0.06]"
+                  : "border-border bg-field hover:bg-well",
               )}
             >
-              <span
-                aria-hidden
-                className={cn(
-                  "mt-px flex size-[22px] flex-none items-center justify-center rounded-pill",
-                  on ? "bg-white/20 text-white" : "bg-field text-planned",
-                )}
-              >
-                <Check className="size-[13px]" strokeWidth={3} />
-              </span>
-
-              <span className="min-w-0">
-                <b
+              <span className="flex items-start gap-3">
+                <span
+                  aria-hidden
                   className={cn(
-                    "block text-[15px] leading-[1.3] font-bold",
-                    on ? "text-white" : "text-ink",
+                    "mt-px flex size-[20px] flex-none items-center justify-center rounded-pill border transition-colors",
+                    on
+                      ? "border-done bg-done text-white"
+                      : "border-border text-transparent",
                   )}
                 >
+                  <Check className="size-[12px]" strokeWidth={3} />
+                </span>
+
+                <b className="min-w-0 text-[15px] leading-[1.3] font-bold text-ink">
                   {group.n}
                 </b>
-                <span
-                  className={cn(
-                    "mt-1 block font-mono text-[10px] font-semibold tracking-[0.1em] uppercase",
-                    on ? "text-white/55" : "text-idx",
-                  )}
-                >
-                  {group.pages.length ? `Adds ${group.pages.join(", ")}` : "No page of its own"}
-                </span>
+              </span>
+
+              {/* On its own line at the foot of the card, so the same fact sits
+                  on the same baseline across the whole row however long the
+                  name above it ran. */}
+              <span className="font-mono text-[10px] font-semibold tracking-[0.1em] text-idx uppercase">
+                {group.pages.length
+                  ? `Adds ${group.pages.join(", ")}`
+                  : "No page of its own"}
               </span>
             </button>
           );
@@ -367,7 +370,7 @@ export function StepStyle({ at, answers, onGo }: StepProps) {
       </div>
 
       {open ? (
-        <DetailCard
+        <CardDialog
           card={CARD_BY[open]}
           answers={answers}
           stepKey="style"
@@ -481,7 +484,7 @@ export function StepHave({ at, answers, onGo }: StepProps) {
       </div>
 
       {open ? (
-        <DetailCard
+        <CardDialog
           card={CARD_BY["dw-have"]}
           answers={answers}
           stepKey="have"

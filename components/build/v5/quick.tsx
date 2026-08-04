@@ -48,7 +48,7 @@ export function QuickPane({
   return (
     <div className="grid max-w-wide gap-x-12 gap-y-10 lg:grid-cols-2">
       <div className="min-w-0">
-        <div className="rounded-card bg-well p-5 sm:p-6">
+        <div className="rounded-card border border-border bg-well p-5 sm:p-6">
           <h4 className="text-[19px] leading-[1.25] font-bold tracking-[-0.015em] text-ink sm:text-[21px]">
             Four pages, and you are done
           </h4>
@@ -88,7 +88,7 @@ export function QuickPane({
           note="The eleven things every website includes, on these pages, with the enquiry form going to an inbox you own."
         />
 
-        <ul className="overflow-hidden rounded-card bg-well">
+        <ul className="overflow-hidden rounded-card border border-border bg-field">
           {ALWAYS_PAGES.map((page) => (
             <li
               key={page}

@@ -38,7 +38,10 @@ export function StepFrame({
   const last = at === STEPS.length - 1;
 
   return (
-    <section aria-labelledby={`st-${step.k}-heading`} className="min-w-0">
+    <section
+      aria-labelledby={`st-${step.k}-heading`}
+      className="min-w-0 rounded-[14px] border border-border bg-field p-6 sm:p-8"
+    >
       <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1.5">
         <Kicker>{phaseName}</Kicker>
         <span
@@ -69,7 +72,7 @@ export function StepFrame({
 
       <StopNote needs={needs} />
 
-      <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-hair pt-6">
+      <div className="-mx-6 mt-10 flex flex-wrap items-center gap-3 border-t border-border px-6 pt-6 sm:-mx-8 sm:px-8">
         {!first ? (
           <button
             type="button"
