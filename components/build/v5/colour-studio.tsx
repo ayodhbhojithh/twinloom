@@ -7,6 +7,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
+import { createPortal } from "react-dom";
 
 import {
   ArrowDown,
@@ -138,7 +139,18 @@ export function ColourStudioPanel() {
         </p>
       )}
 
-      {open ? <Studio onClose={() => setOpen(false)} /> : null}
+      {/* Out to the body, not rendered where it stands.
+
+          The studio opens from inside a step, and a step's content sits on a
+          layer of its own so the controls standing in the surface's cuts can be
+          reached. That layer is a stacking context, which means a panel
+          rendered inside it cannot rise above the step's own toolbar however
+          high its z-index goes - the step name floated over the studio. A
+          portal takes it out of that layer entirely, which is the only real fix
+          for it. */}
+      {open
+        ? createPortal(<Studio onClose={() => setOpen(false)} />, document.body)
+        : null}
     </section>
   );
 }
@@ -537,8 +549,8 @@ function Studio({ onClose }: { onClose: () => void }) {
           on a flex box inside the scroller is what makes both true at once:
           centring alone clips the top of anything taller than the screen, and
           scrolling alone leaves a short panel stranded against the top edge. */}
-      <div className="relative flex min-h-full items-center justify-center p-3 sm:p-6">
-        <div className="w-full max-w-[1160px]">
+      <div className="relative flex min-h-full items-center justify-center p-3 sm:p-5">
+        <div className="w-full max-w-[1500px]">
           <Stage
             tone="field"
             className="w-full"
@@ -578,7 +590,7 @@ function Studio({ onClose }: { onClose: () => void }) {
               {said}
             </p>
 
-            <div className="mt-3 grid gap-7 lg:grid-cols-[minmax(0,1fr)_300px]">
+            <div className="mt-3 grid gap-6 lg:gap-7 md:grid-cols-[minmax(0,1fr)_290px] lg:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1fr)_400px]">
               {/* ------------------------------------------- one: get a colour */}
               <div className="min-w-0">
                 <Kicker className="block text-ink">1 · Find the colour</Kicker>
@@ -624,9 +636,9 @@ function Studio({ onClose }: { onClose: () => void }) {
                   <>
                     <canvas
                       ref={stage}
-                      width={760}
-                      height={430}
-                      className="mt-3 block w-full cursor-crosshair rounded-[16px] bg-well touch-none"
+                      width={1040}
+                      height={560}
+                      className="mt-3 block max-h-[52svh] w-full cursor-crosshair rounded-[16px] bg-well object-contain touch-none"
                       onPointerDown={(event) => {
                         drag.current = {
                           down: true,
@@ -761,7 +773,7 @@ function Studio({ onClose }: { onClose: () => void }) {
                       event.preventDefault();
                       takeFiles(event.dataTransfer.files);
                     }}
-                    className="mt-3 flex h-[220px] w-full cursor-pointer flex-col items-center justify-center rounded-[16px] bg-well px-6 text-center transition-colors hover:bg-hair"
+                    className="mt-3 flex h-[180px] w-full cursor-pointer sm:h-[240px] lg:h-[300px] flex-col items-center justify-center rounded-[16px] bg-well px-6 text-center transition-colors hover:bg-hair"
                   >
                     <ImagePlus className="size-6 text-idx" />
                     <b className="mt-3 text-[14px] font-bold text-ink">
@@ -825,7 +837,7 @@ function Studio({ onClose }: { onClose: () => void }) {
                   aria-valuenow={Math.round(hsv.s * 100)}
                   aria-valuetext={`${hex}, ${Math.round(hsv.s * 100)}% colour, ${Math.round(hsv.v * 100)}% light`}
                   tabIndex={0}
-                  className="relative mt-2.5 h-[150px] w-full cursor-crosshair touch-none rounded-[12px]"
+                  className="relative mt-2.5 h-[150px] w-full cursor-crosshair sm:h-[190px] touch-none rounded-[12px]"
                   style={{
                     backgroundImage:
                       "linear-gradient(to top,#000,rgba(0,0,0,0)),linear-gradient(to right,#fff,hsl(" +
@@ -1062,7 +1074,7 @@ function Studio({ onClose }: { onClose: () => void }) {
                     ))}
                   </span>
 
-                  <div className="mt-3 grid gap-2.5 lg:grid-cols-2">
+                  <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3">
                     {palette.map((swatch, n) => (
                       <Row
                         key={swatch.id}
@@ -1076,12 +1088,12 @@ function Studio({ onClose }: { onClose: () => void }) {
 
                   {/* What the palette actually does on a page, and whether the
                     pair somebody has landed on can be read. */}
-                  <div className="mt-5 grid gap-3 lg:grid-cols-[minmax(0,1fr)_260px]">
+                  <div className="mt-5 grid gap-3 md:grid-cols-[minmax(0,1fr)_240px] lg:grid-cols-[minmax(0,1fr)_260px]">
                     <div
-                      className="min-w-0 rounded-[16px] p-5"
+                      className="min-w-0 rounded-[16px] p-4 sm:p-5"
                       style={{ background: preview.field, color: preview.text }}
                     >
-                      <b className="block text-[19px] leading-[1.15] font-extrabold tracking-[-0.02em]">
+                      <b className="block text-[17px] leading-[1.15] font-extrabold sm:text-[19px] tracking-[-0.02em]">
                         A heading in your colours
                       </b>
                       <p className="mt-1.5 max-w-[56ch] text-[13px] leading-[1.55]">
@@ -1175,7 +1187,7 @@ function Tool({
     <button
       type="button"
       onClick={onClick}
-      className="flex cursor-pointer items-center gap-2 rounded-pill bg-well px-3.5 py-2 text-[12.5px] font-semibold text-body transition-colors hover:bg-hair hover:text-ink"
+      className="flex flex-none cursor-pointer items-center gap-2 rounded-pill bg-well px-3 py-2 text-[12px] font-semibold text-body transition-colors hover:bg-hair hover:text-ink sm:px-3.5 sm:text-[12.5px]"
     >
       {icon}
       {label}
