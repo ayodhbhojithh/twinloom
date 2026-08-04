@@ -224,8 +224,13 @@ export function CutPanel({
              then the same distance from the top edge as it is from the left
              one, which is the only reading of "the corner" that holds at every
              width. Under the notch there is no choice - the bar owns that band
-             - so it clears the bar and keeps a hair of air below it. */
-          paddingTop: beside ? pad : (toolbar ? cut.barDepth : 0) + 12,
+             - so it clears the bar and keeps a hair of air below it.
+             With no notch at all there is nothing to clear and nothing to sit
+             beside, so it is the side inset again. It used to fall through to
+             the twelve meant for clearing a bar, which put the content of a
+             plain surface a third of the way in from the sides and almost
+             against the top. */
+          paddingTop: toolbar ? (beside ? pad : cut.barDepth + 12) : pad,
           /* What the heading may take before it would run under the bar. */
           ["--notch-free" as string]: headRoom,
           /* How far the content is held off the edge, and how the edge turns.

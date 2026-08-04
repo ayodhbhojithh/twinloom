@@ -4,16 +4,19 @@ import Link from "next/link";
 import { FOOTER_COLUMNS, FOOTER_LEGAL, LEGAL, ROUTES, SITE } from "@/lib/site";
 
 import { CutPanel, TopDisc } from "./cut-panel";
-import { Wordmark } from "./wordmark";
 
 /**
  * The site footer.
  *
  * One cut surface, the same shape the landing card and every working screen are
- * built from. The mark stands in the notch at the top, the year stands in the
- * bite at the bottom left, and the way back up is a disc in the corner cut - so
- * the last thing on the page is recognisably the same site as the first, rather
- * than a slab bolted underneath it.
+ * built from. The year stands in the bite at the bottom left and the way back up
+ * is a disc in the corner cut, so the last thing on the page is recognisably the
+ * same site as the first rather than a slab bolted underneath it.
+ *
+ * No mark in a notch at the top. The header carries the name three lines above
+ * the fold and it is still on screen at the foot of a short page; a second one
+ * here was the site introducing itself on the way out. With nothing standing in
+ * it the notch closes, and the surface keeps a clean top edge.
  *
  * Minimal by subtraction. There are no rules, no boxes and no fills inside the
  * surface: what separates one band from the next is space, and the shape does
@@ -30,14 +33,6 @@ export function SiteFooter() {
     <footer className="page-frame pt-6 pb-7">
       <CutPanel
         className="w-full"
-        toolbar={
-          /* Filling the notch, not floating in it. A plate narrower than the
-             cut leaves the cut showing either side of it, which reads as two
-             shapes that failed to line up rather than as one. */
-          <span className="flex h-10 w-full items-center justify-center">
-            <Wordmark />
-          </span>
-        }
         aside={
           /* The year, where the landing card keeps the next project. It is the
              one fact a footer is actually asked for, and the cut is what makes
@@ -53,17 +48,16 @@ export function SiteFooter() {
              about somebody else's rights - so it runs along the bottom band
              between the year and the way up, rather than above an empty
              strip. */
-          <div className="flex w-full flex-col gap-x-10 gap-y-4 lg:flex-row lg:items-end lg:justify-between">
-            <p className="order-2 min-w-0 max-w-[74ch] text-[11.5px] leading-[1.55] text-label lg:order-1">
-              {LEGAL.line}
-            </p>
+          <div className="flex w-full flex-col gap-6">
+            <div className="flex flex-col gap-x-10 gap-y-4 lg:flex-row lg:items-end lg:justify-between">
+              <p className="order-2 min-w-0 max-w-[74ch] text-[11.5px] leading-[1.55] text-label lg:order-1">
+                {LEGAL.line}
+              </p>
 
-            {/* The right-hand side of the band: the links, and the line that
-                names who this belongs to under them. It belongs with the legal
-                links rather than under the registration wording - one is
-                paperwork about the company, the other is the notice itself. */}
-            <div className="order-1 flex-none lg:order-2 lg:text-right">
-              <nav aria-label="Legal">
+              <nav
+                aria-label="Legal"
+                className="order-1 flex-none lg:order-2 lg:text-right"
+              >
                 <ul className="flex flex-wrap gap-x-5 gap-y-2 lg:justify-end">
                   {FOOTER_LEGAL.map((link) => (
                     <li key={link.href}>
@@ -77,12 +71,20 @@ export function SiteFooter() {
                   ))}
                 </ul>
               </nav>
-
-              <p className="mt-2.5 text-[11.5px] leading-[1.55] text-quiet">
-                &copy; {year} {LEGAL.entity}. {LEGAL.rights}
-                <span className="sr-only"> {SITE.name}.</span>
-              </p>
             </div>
+
+            {/* The notice, last and centred, on the site's own middle line.
+                It sat right aligned under the legal links, which read as a
+                caption belonging to them - it is not paperwork about the
+                company, it is the claim the whole page is made under, and a
+                line that belongs to everything above it stands under the
+                middle of it. The band is inset by a cut on each side and the
+                two cuts are the same size, so centred here is centred on the
+                surface. */}
+            <p className="text-center text-[11.5px] leading-[1.55] text-quiet">
+              &copy; {year} {LEGAL.entity}. {LEGAL.rights}
+              <span className="sr-only"> {SITE.name}.</span>
+            </p>
           </div>
         }
       >
