@@ -207,6 +207,37 @@ export function SandboxSection() {
   const [at, setAt] = useState<string>(PIECES[0].key);
   /* Which piece of work is open, if any. */
   const [open, setOpen] = useState<string | null>(null);
+  const bench = useRef<HTMLDivElement>(null);
+
+  /* Closing has the same problem opening did, in reverse: the reader is looking
+     at the foot of a tall panel, and the moment it goes the surface under them
+     is a short bench they are scrolled past the bottom of. So the bench comes
+     back to them rather than them having to go and find it. */
+  const close = useCallback(() => {
+    setOpen(null);
+
+    const node = bench.current;
+    if (!node) return;
+
+    requestAnimationFrame(() => {
+      const top = node.getBoundingClientRect().top + window.scrollY;
+      const header =
+        Number.parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue(
+            "--nav-height",
+          ),
+        ) || 53;
+
+      if (window.scrollY <= top - header - 24) return;
+
+      window.scrollTo({
+        top: Math.max(0, top - header - 20),
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+      });
+    });
+  }, []);
   const { playing, toggle } = useNotes();
 
   const piece = PIECES.find((entry) => entry.key === at) ?? PIECES[0];
@@ -239,6 +270,8 @@ export function SandboxSection() {
           No rules inside it either. A plain box divided by hairlines was the one
           surface on this page that did not belong to the site - here the shape
           separates the parts and space does the rest. */}
+      <div ref={bench} className="scroll-mt-[calc(var(--nav-height)+20px)]" />
+
       <CutPanel
         tone="field"
         className="mt-10 w-full lg:mt-12"
@@ -275,13 +308,16 @@ export function SandboxSection() {
           </Link>
         }
       >
-        {/* `popLayout` rather than `wait`. Waiting holds the whole surface
-            empty for the length of the exit before the next thing starts, which
-            is what makes a swap read as a blink; popping takes the leaving one
-            out of the flow so both moves happen at once and the surface never
-            goes blank. */}
+        {/* One at a time.
+
+            `popLayout` was meant to avoid the pause between them, but it takes
+            the leaving panel out of the flow while leaving it drawn - so the
+            bench laid itself out underneath a full height ghost, and closing
+            showed both at once with the shelf stranded below the fading panel.
+            Waiting is honest about the swap; keeping both moves short is what
+            makes it read as one. */}
         <LayoutGroup>
-          <AnimatePresence mode="popLayout" initial={false}>
+          <AnimatePresence mode="wait" initial={false}>
             {open ? (
               /* Opened, it takes the whole bench. Expanding underneath the
                  shelf and the stage made it a third thing on a crowded
@@ -290,15 +326,15 @@ export function SandboxSection() {
                 key="open"
                 project={PROJECTS[PROJECTS.findIndex((e) => e.id === open)]}
                 n={PROJECTS.findIndex((e) => e.id === open)}
-                onClose={() => setOpen(null)}
+                onClose={close}
               />
             ) : (
               <motion.div
                 key="bench"
-                initial={{ opacity: 0, y: 12, scale: 0.985 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 12, scale: 0.985 }}
-                transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
               >
                 <div className="grid gap-7 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] lg:grid-cols-[264px_minmax(0,1fr)]">
                   {/* The shelf. Ink for the one in hand, the ground for the rest. */}
@@ -674,11 +710,19 @@ function WorkOpen({
   return (
     <motion.article
       ref={box}
-      layout
-      initial={{ opacity: 0, y: 16, scale: 0.985 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 16, scale: 0.985 }}
-      transition={{ duration: 0.46, ease: [0.22, 1, 0.36, 1] }}
+      /* No `layout` on the panel itself. The picture inside it already carries
+         a `layoutId`, and a parent animating its own size at the same time
+         fights the child that is animating between two boxes - which is what
+         made closing snap rather than settle. One thing measures, the rest
+         fade. */
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{
+        duration: 0.32,
+        ease: [0.22, 1, 0.36, 1],
+        opacity: { duration: 0.18 },
+      }}
       className="relative overflow-hidden rounded-[22px] bg-canvas"
     >
       {/* The picture, and it fades into the ground it sits on rather than
