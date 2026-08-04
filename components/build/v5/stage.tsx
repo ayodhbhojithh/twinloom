@@ -259,7 +259,14 @@ export function Stage({
   );
 }
 
-/** The plate that stands in a cut: white, pill, and nothing drawn round it. */
+/**
+ * The plate that stands in a cut.
+ *
+ * Nothing behind it. The notch is already a shape cut out of the surface, so
+ * the controls standing in it need no ground of their own - a pill drawn there
+ * as well is a second shape inside the first one, and it was the only opaque
+ * thing left on a page made of glass.
+ */
 export function Plate({
   className,
   children,
@@ -270,7 +277,7 @@ export function Plate({
   return (
     <div
       className={cn(
-        "glass-pane flex h-10 max-w-full items-center gap-0.5 rounded-pill px-1.5",
+        "flex h-10 max-w-full items-center gap-0.5 rounded-pill px-1.5",
         className,
       )}
     >

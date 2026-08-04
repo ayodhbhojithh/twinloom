@@ -34,7 +34,7 @@ export function SiteFooter() {
           /* Filling the notch, not floating in it. A plate narrower than the
              cut leaves the cut showing either side of it, which reads as two
              shapes that failed to line up rather than as one. */
-          <span className="flex h-10 w-full items-center justify-center rounded-pill bg-field">
+          <span className="flex h-10 w-full items-center justify-center">
             <Wordmark />
           </span>
         }

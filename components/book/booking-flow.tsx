@@ -605,7 +605,7 @@ function Finished({
       toolbar={
         /* The tick stands in the notch, where the way between steps stood a
            moment ago. It is the same surface, finished. */
-        <span className="flex h-10 w-full items-center justify-center gap-2.5 rounded-pill bg-field">
+        <span className="flex h-10 w-full items-center justify-center gap-2.5">
           <span
             aria-hidden
             className="flex size-6 items-center justify-center rounded-pill bg-mark text-white"

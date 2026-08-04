@@ -397,10 +397,13 @@ export function AddRow({
         onChange={(event) => setDraft(event.target.value)}
         className="h-9 min-w-0 flex-1 rounded-field border border-border bg-field px-3.5 text-[14px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
       />
+      {/* No fill on it. An empty box has nothing to add, so a solid button
+          beside it was a grey slab sitting there being ignored - and once there
+          is something to add, the words are enough to say so. */}
       <button
         type="submit"
         disabled={!draft.trim()}
-        className="h-9 flex-none cursor-pointer rounded-field bg-ink px-4 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-planned"
+        className="h-9 flex-none cursor-pointer rounded-field px-3 text-[13.5px] font-semibold text-ink transition-colors hover:text-mark disabled:cursor-default disabled:text-planned"
       >
         Add
       </button>

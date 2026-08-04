@@ -372,18 +372,19 @@
   /* ---------------------------------------------------------------------------
      Glass: the working surfaces, made of the ground rather than painted with it.
 
-     Three things together, and it needs all three. The colour is the canvas at
-     three quarters, so what is behind shows through. The blur is what turns
-     "see through" into "frosted" - without it a translucent panel just looks
-     like a paler panel. And the hairline of white along the top is the edge
-     light: it is the one that says there is a pane here, and it is the reason
-     the shape reads at all against a white page.
+     Held close to the weight the flat surfaces had. There is nothing coloured
+     behind these panels on purpose - the page is white and stays white - so
+     what glass buys here is the edge rather than the tint: a hairline of light
+     along the top and around the inside, which is what says there is a pane
+     there at all.
 
-     Saturation is pushed a little because blurring washes colour out, so a
-     picture behind glass would otherwise arrive grey.
+     The blur and the small lift in saturation still earn their place wherever
+     something does pass behind, but the colour is only a few per cent off
+     solid, so a surface reads as the surface it was rather than as a paler
+     version of it.
   --------------------------------------------------------------------------- */
   .glass {
-    background-color: color-mix(in oklab, var(--color-canvas) 72%, transparent);
+    background-color: color-mix(in oklab, var(--color-canvas) 94%, transparent);
     backdrop-filter: blur(18px) saturate(150%);
     -webkit-backdrop-filter: blur(18px) saturate(150%);
     box-shadow:
@@ -392,7 +393,7 @@
   }
 
   .glass-firm {
-    background-color: color-mix(in oklab, var(--color-canvas) 88%, transparent);
+    background-color: color-mix(in oklab, var(--color-canvas-firm) 96%, transparent);
     backdrop-filter: blur(18px) saturate(150%);
     -webkit-backdrop-filter: blur(18px) saturate(150%);
     box-shadow:
@@ -403,7 +404,7 @@
   /* The white surfaces that stand on the glass: plates, cards and the panel.
      Lighter, because they are meant to read as solid things resting on it. */
   .glass-pane {
-    background-color: color-mix(in oklab, var(--color-field) 78%, transparent);
+    background-color: color-mix(in oklab, var(--color-field) 90%, transparent);
     backdrop-filter: blur(22px) saturate(140%);
     -webkit-backdrop-filter: blur(22px) saturate(140%);
     box-shadow:

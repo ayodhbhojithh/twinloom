@@ -201,7 +201,7 @@ export function BookStage({
          shape it is drawn from - but anything past this was empty. */
       className="min-h-[340px] w-full"
       toolbar={
-        <div className="flex h-10 w-full items-center gap-0.5 rounded-pill bg-field px-1.5">
+        <div className="flex h-10 w-full items-center gap-0.5 rounded-pill px-1.5">
           <Disc label="Previous step" onClick={onBack} disabled={at === 0}>
             <ArrowLeft className="size-4" />
           </Disc>
