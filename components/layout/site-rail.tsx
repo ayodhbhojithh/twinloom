@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useSyncExternalStore } from "react";
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { Menu } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -114,13 +114,18 @@ export function SiteRail() {
             aria-controls="site-rail-nav"
             aria-label={shown ? "Fold the page list away" : "Show every page"}
             title={shown ? "Fold the page list away" : "Show every page"}
-            className="flex size-8 cursor-pointer items-center justify-center rounded-field text-label transition-colors hover:bg-well hover:text-ink"
-          >
-            {shown ? (
-              <PanelLeftClose aria-hidden className="size-[18px]" />
-            ) : (
-              <PanelLeftOpen aria-hidden className="size-[18px]" />
+            /* One mark in both states rather than two. This opens and shuts
+               the same thing, and swapping the icon for a cross would say it
+               dismisses something, which it does not: the list is still there
+               behind a 52px strip. The state is carried by the fill. */
+            className={cn(
+              "flex size-9 cursor-pointer items-center justify-center rounded-field transition-colors",
+              shown
+                ? "bg-well text-ink hover:bg-hair"
+                : "text-quiet hover:bg-well hover:text-ink",
             )}
+          >
+            <Menu aria-hidden className="size-[18px]" strokeWidth={2} />
           </button>
         </div>
 
