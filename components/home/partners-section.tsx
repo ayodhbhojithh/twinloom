@@ -23,8 +23,9 @@ export function PartnersSection() {
           has no second reading direction on its own, and something drifting
           across beneath gives the eye somewhere to go. */}
       <div className="flex flex-col items-center text-center">
-        <h2 className="max-w-[22ch] text-[clamp(24px,2.8vw,40px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-balance text-ink">
-          Specialists are part of the build, never an extra line on it.
+        <h2 className="max-w-[36ch] text-[clamp(30px,4.2vw,64px)] leading-[1.04] font-extrabold tracking-[-0.045em] text-balance text-ink">
+          Specialists are part of the build.
+          <span className="text-quiet"> Never an extra line on it.</span>
         </h2>
 
         <Link
@@ -41,7 +42,7 @@ export function PartnersSection() {
 
       <PartnerWall className="mt-10 lg:mt-12" />
 
-      <p className="mx-auto mt-6 max-w-[64ch] text-center text-[13.5px] leading-[1.6] text-quiet">
+      <p className="mx-auto mt-6 max-w-[68ch] text-center text-[14px] leading-[1.6] text-quiet">
         One contract, one invoice, and named in the proposal before the work
         starts. Most projects need none of them - a specialist is added because
         the work justifies one.

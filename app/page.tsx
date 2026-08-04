@@ -6,6 +6,7 @@ import { BuildSection } from "@/components/home/build-section";
 import { NotchedCard } from "@/components/home/notched-card";
 import { PartnersSection } from "@/components/home/partners-section";
 import { ReadingSection } from "@/components/home/reading-section";
+import { SandboxSection } from "@/components/home/sandbox-section";
 import { ROUTES, SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -36,7 +37,7 @@ export const metadata: Metadata = {
  * takes the window and leaves only the page gutter at each side.
  *
  * The card holds exactly one screenful, the tool follows it, what we have
- * written follows that, and who does the work follows that. Describing what
+ * written follows that, then what we have built, then who does the work. Describing what
  * this company does takes a paragraph nobody reads, so the second screen asks
  * the first question instead, and whatever is answered there is already answered
  * on the build page.
@@ -100,8 +101,12 @@ export default function LandingPage() {
           is the answer to the second. */}
       <ReadingSection />
 
-      {/* Fourth: who actually does the work. The question that follows all
-          three of the sections above it. */}
+      {/* Fourth: the sandbox. Everything above it is a claim about what we can
+          build; this is the part where two of the claims run in front of you. */}
+      <SandboxSection />
+
+      {/* Fifth: who actually does the work. The question that follows all four
+          of the sections above it. */}
       <PartnersSection />
     </>
   );
