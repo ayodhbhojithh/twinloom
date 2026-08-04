@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowUpRight,
   CalendarClock,
-  Check,
   Map,
   Pause,
   Pipette,
@@ -302,7 +301,13 @@ export function SandboxSection() {
               size themselves to whatever box they are in, and without one they
               grow until they are over the words above them. */}
           <div className="min-w-0">
-            <p className="max-w-[62ch] text-[13.5px] leading-[1.6] text-quiet">
+            {/* Wide enough for the longest of the six notes to hold one line.
+                At 62 it broke every one of them in half against a stage three
+                times that wide, so the words above the bench sat in a narrow
+                column with a field of empty panel beside them. Still capped:
+                the stage runs past a thousand pixels on a wide window, and a
+                13.5px line that long is a measure nobody reads. */}
+            <p className="max-w-[96ch] text-[13.5px] leading-[1.6] text-quiet">
               {piece.note}
             </p>
 

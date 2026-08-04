@@ -43,7 +43,7 @@ const FADE =
 const DISCIPLINES = [
   {
     n: "01",
-    plate: "/work-investor.png",
+    plate: "/partners/arch.png",
     name: "Brand and identity",
     covers:
       "A mark, its type, its colours and the rules for using them. We apply a brand you already have; where one has to be made, this is who makes it.",
@@ -51,7 +51,7 @@ const DISCIPLINES = [
   },
   {
     n: "02",
-    plate: "/work-shop.png",
+    plate: "/partners/hero-marble.png",
     name: "Photography and film",
     covers:
       "A shot list built from the page designs, the day itself, the selection and the licensing record afterwards.",
@@ -59,7 +59,7 @@ const DISCIPLINES = [
   },
   {
     n: "03",
-    plate: "/work-trade.png",
+    plate: "/partners/spheres-1.png",
     name: "Copywriting",
     covers:
       "Interviews with the people who know the business, then drafts, revisions and copy prepared for approval.",
@@ -67,7 +67,7 @@ const DISCIPLINES = [
   },
   {
     n: "04",
-    plate: "/work-careers.png",
+    plate: "/partners/minimal.png",
     name: "Accessibility audit",
     covers:
       "Testing beyond our own: assistive technology, and where the scope calls for it, testing with disabled people.",
@@ -75,7 +75,7 @@ const DISCIPLINES = [
   },
   {
     n: "05",
-    plate: "/right-image.png",
+    plate: "/partners/spheres-2.png",
     name: "Search and paid media",
     covers:
       "Demand research, campaign structure, measurement, and the ongoing work of it after launch.",
@@ -83,7 +83,7 @@ const DISCIPLINES = [
   },
   {
     n: "06",
-    plate: "/work-investor.png",
+    plate: "/partners/banner-fold.png",
     name: "Regulated and legal review",
     covers:
       "Review of claims, terms and notices by somebody qualified to sign them off.",
