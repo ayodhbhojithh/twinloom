@@ -428,6 +428,22 @@
       inset 0 0 0 1px rgba(255, 255, 255, 0.5);
   }
 
+  /* ---------------------------------------------------------------------------
+     The size a section announces itself at.
+
+     One rule rather than the same three numbers written into four components.
+     They had drifted apart by a pixel or two at every breakpoint, which is the
+     kind of difference nobody can name and everybody can see: the page stops
+     reading as a set of sections and starts reading as a set of pages.
+  --------------------------------------------------------------------------- */
+  .section-head {
+    font-size: clamp(27px, 3.5vw, 52px);
+    line-height: 1.04;
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    text-wrap: balance;
+  }
+
   /* Scrolls with no bar at all, for the short indexes where one would be more
      noise than the content it measures. Content cutting off at the edge is the
      cue that there is more. */

@@ -27,7 +27,7 @@ export function ReadingSection() {
           column, and a heading pinned to the left of that reads as a caption on
           the first of the two rather than as the title of both. */}
       <div className="flex flex-col items-center text-center">
-        <h2 className="max-w-[36ch] text-[clamp(30px,4.2vw,64px)] leading-[1.04] font-extrabold tracking-[-0.045em] text-balance text-ink">
+        <h2 className="section-head max-w-[26ch] text-ink">
           How we think.
           <span className="text-quiet">
             {" "}

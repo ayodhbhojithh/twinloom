@@ -23,7 +23,7 @@ export function PartnersSection() {
           has no second reading direction on its own, and something drifting
           across beneath gives the eye somewhere to go. */}
       <div className="flex flex-col items-center text-center">
-        <h2 className="max-w-[36ch] text-[clamp(30px,4.2vw,64px)] leading-[1.04] font-extrabold tracking-[-0.045em] text-balance text-ink">
+        <h2 className="section-head max-w-[26ch] text-ink">
           Specialists are part of the build.
           <span className="text-quiet"> Never an extra line on it.</span>
         </h2>

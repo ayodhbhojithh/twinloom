@@ -113,11 +113,11 @@ export function BuildFlow() {
           note floating off at the far margin is three things placed
           separately; this is one row. */}
       <div className="mb-7 flex flex-wrap items-end justify-between gap-x-12 gap-y-5">
-        <h1 className="min-w-0 max-w-[24ch] text-[clamp(28px,2.9vw,46px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink">
+        <h1 className="section-head min-w-0 max-w-[26ch] text-ink">
           Build your website.
           <span className="text-quiet">
             {" "}
-            Answer what you like - we write it down.
+            Answer what you like, we write it down.
           </span>
         </h1>
 

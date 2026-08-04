@@ -1,8 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Pause, Play, Sparkles } from "lucide-react";
-import Image from "next/image";
+import {
+  ArrowUpRight,
+  CalendarClock,
+  Check,
+  Map,
+  Pause,
+  Pipette,
+  Play,
+  PoundSterling,
+  Sparkles,
+  Waves,
+} from "lucide-react";
 import Link from "next/link";
 
 import { ROUTES } from "@/lib/site";
@@ -14,51 +24,74 @@ import { ParticleWordmark } from "./particle-wordmark";
 /* ---------------------------------------------------------------------------
    The sandbox.
 
-   Everything else on this page is a claim about what we can build. This is the
-   part where the claim runs in front of you: two pieces we wrote ourselves,
-   working, on the page, rather than described in a case study.
+   Everything else on this page is a claim about what we can build. This is a
+   bench: a shelf of pieces on the left, one of them running on the right, and
+   a way to say you want it in yours.
 
-   Both are things that can go into a build. That is the point of putting them
-   here - a widget is not a showreel, it is a component somebody's site could
-   carry, and the honest way to show one is to let it be used.
+   A grid of tiles was the wrong shape for it. Tiles say "look at these"; a
+   bench says "pick one up", which is the difference between a showreel and a
+   thing you can actually try - and it gives each widget the whole stage rather
+   than a quarter of a screen it immediately overran.
+
+   Two of these run. The rest are named as ideas rather than drawn as though
+   they were finished, because a mock-up of something that does not exist is the
+   same lie as a logo of a client we do not have.
 --------------------------------------------------------------------------- */
 
-/**
- * A few notes, played on the way past.
- *
- * Web Audio rather than a file: five notes of a pentatonic scale weigh nothing,
- * cannot be out of tune, and need no network. It starts only when somebody
- * presses play, because sound that arrives uninvited is not a feature.
- */
-const SCALE = [261.63, 293.66, 349.23, 392.0, 440.0, 523.25];
-
-/** Widgets we would build, named rather than mocked up. */
-const IDEAS = [
+const PIECES = [
   {
+    key: "particles",
+    name: "Particle wordmark",
+    note: "A word read into points that turn, drift and follow the pointer. Written for TwinCoreTech.",
+    icon: Sparkles,
+    live: true,
+  },
+  {
+    key: "loom",
+    name: "The loom",
+    note: "Threads you can strike. Every note is synthesised rather than loaded, so it weighs nothing.",
+    icon: Waves,
+    live: true,
+  },
+  {
+    key: "diary",
     name: "Availability, live",
-    note: "A diary on the page, holding a slot as it is chosen.",
-    plate: "/work-careers.png",
+    note: "A diary on the page that holds a slot as it is chosen, rather than sending you somewhere else.",
+    icon: CalendarClock,
+    live: false,
   },
   {
+    key: "estimate",
     name: "What it will cost",
-    note: "An estimate that moves as the answers do.",
-    plate: "/work-trade.png",
+    note: "A figure that moves as the answers do, with the reason for it beside it.",
+    icon: PoundSterling,
+    live: false,
   },
   {
+    key: "sitemap",
     name: "Your sitemap, drawn",
-    note: "The pages you have described, as a plan you can move.",
-    plate: "/work-shop.png",
+    note: "The pages your answers describe, as a plan you can move things around on.",
+    icon: Map,
+    live: false,
   },
   {
+    key: "colour",
     name: "A colour studio",
-    note: "Pull a palette out of a photograph. Built - it is in the scoping run.",
-    plate: "/work-investor.png",
+    note: "Pull a palette out of a photograph. This one is built - it is inside the scoping run.",
+    icon: Pipette,
+    live: false,
+    at: ROUTES.build,
   },
 ] as const;
 
-/** How a picture leaves an idea tile: gone by the time the words start. */
-const IDEA_FADE =
-  "linear-gradient(to bottom, black 0%, rgba(0,0,0,0.7) 34%, rgba(0,0,0,0.3) 58%, transparent 82%)";
+/**
+ * A few notes, for the loom's bench.
+ *
+ * Web Audio rather than a file: six notes of a pentatonic scale weigh nothing,
+ * cannot be out of tune and need no network. Nothing sounds until somebody
+ * presses play, because audio that arrives uninvited is not a feature.
+ */
+const SCALE = [261.63, 293.66, 349.23, 392.0, 440.0, 523.25];
 
 function useNotes() {
   const rig = useRef<{ ctx: AudioContext; master: GainNode } | null>(null);
@@ -69,16 +102,15 @@ function useNotes() {
   const stop = useCallback(() => {
     if (timer.current) window.clearInterval(timer.current);
     timer.current = null;
-    rig.current?.master.gain.setTargetAtTime(
-      0,
-      rig.current.ctx.currentTime,
-      0.08,
-    );
+    if (rig.current) {
+      const { ctx, master } = rig.current;
+      master.gain.setTargetAtTime(0, ctx.currentTime, 0.08);
+    }
     setPlaying(false);
   }, []);
 
-  /* Nothing is left running when the section goes away. An interval holding a
-     live audio context is the one thing on a page that keeps making itself
+  /* Nothing is left running when this goes away. An interval holding a live
+     audio context is the one thing on a page that carries on making itself
      heard after nobody is looking at it. */
   useEffect(() => stop, [stop]);
 
@@ -97,12 +129,12 @@ function useNotes() {
 
     const { ctx, master } = rig.current;
     void ctx.resume();
-    master.gain.setTargetAtTime(0.16, ctx.currentTime, 0.15);
+    master.gain.setTargetAtTime(0.15, ctx.currentTime, 0.15);
 
     const pluck = () => {
       const at = ctx.currentTime;
-      /* A wandering walk rather than a loop, so it does not become a ringtone
-         within twenty seconds. */
+      /* A wandering step rather than a loop, so it does not become a ringtone
+         inside twenty seconds. */
       step.current = Math.max(
         0,
         Math.min(
@@ -134,137 +166,197 @@ function useNotes() {
 }
 
 export function SandboxSection() {
+  const [at, setAt] = useState<string>("particles");
   const { playing, toggle } = useNotes();
+
+  const piece = PIECES.find((entry) => entry.key === at) ?? PIECES[0];
 
   return (
     <section className="page-frame pt-20 pb-20 lg:pt-32 lg:pb-28">
       <div className="flex flex-col items-center text-center">
-        <h2 className="max-w-[36ch] text-[clamp(30px,4.2vw,64px)] leading-[1.04] font-extrabold tracking-[-0.045em] text-balance text-ink">
+        <h2 className="section-head max-w-[26ch] text-ink">
           Things we built.
           <span className="text-quiet"> Running, rather than described.</span>
         </h2>
 
-        <p className="mt-5 max-w-[76ch] text-[16px] leading-[1.6] text-quiet sm:text-[17.5px]">
-          Both of these can go into a build. A widget is not a showreel - it is
-          a component somebody&rsquo;s site could carry, so the honest way to
-          show one is to let you use it.
+        <p className="mt-5 max-w-[62ch] text-[15px] leading-[1.6] text-quiet sm:text-[16.5px]">
+          A bench rather than a showreel. Pick a piece up, let it run, and ask
+          for it in yours - every one of these is a component a site could carry.
         </p>
       </div>
 
-      {/* A bento rather than two halves.
+      <div className="mt-10 overflow-hidden rounded-[24px] bg-field lg:mt-12">
+        <div className="grid lg:grid-cols-[300px_minmax(0,1fr)]">
+          {/* The shelf. Two you can pick up, four we would build. */}
+          <div className="border-b border-hair p-3 lg:border-r lg:border-b-0">
+            <p className="px-3 pt-2 pb-3 font-mono text-[8.5px] font-bold tracking-[0.16em] text-label uppercase">
+              On the bench
+            </p>
 
-          Two widgets at half a page each made every tile the same weight and
-          left each one mostly empty. Sized against one another instead, the
-          grid says which is the piece worth stopping at, and it has room for
-          the ones that are not built yet - named honestly as such rather than
-          drawn as though they were finished. */}
-      <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:mt-12 lg:auto-rows-[164px] lg:grid-cols-4">
-        {/* The wordmark as particles, written for TwinCoreTech. The largest
-            tile, because it is the one that rewards being looked at. */}
-        <article className="flex min-w-0 flex-col overflow-hidden rounded-[20px] bg-field sm:col-span-2 lg:row-span-2">
-          <div className="flex items-start justify-between gap-4 px-5 pt-5">
-            <div className="min-w-0">
-              <span className="font-mono text-[8.5px] font-bold tracking-[0.16em] text-mark uppercase">
-                Widget · particles
-              </span>
-              <h3 className="mt-1.5 max-w-[24ch] text-[15px] leading-[1.2] font-extrabold tracking-[-0.025em] text-ink">
-                A wordmark made of points, that follows the pointer
-              </h3>
-            </div>
-
-            <span className="flex flex-none items-center gap-1.5 rounded-pill bg-canvas px-2.5 py-1 font-mono text-[8.5px] font-bold tracking-[0.12em] text-quiet uppercase">
-              <Sparkles className="size-3" />
-              Live
-            </span>
-          </div>
-
-          <div className="min-h-[180px] flex-1 px-1 pb-1">
-            <ParticleWordmark word="TwinLoom" className="h-full w-full" />
-          </div>
-        </article>
-
-        {/* The loom, which is the one that makes a sound. */}
-        <article className="flex min-w-0 flex-col overflow-hidden rounded-[20px] bg-field sm:col-span-2">
-          <div className="flex items-start justify-between gap-4 px-5 pt-5">
-            <div className="min-w-0">
-              <span className="font-mono text-[8.5px] font-bold tracking-[0.16em] text-mark uppercase">
-                Widget · sound
-              </span>
-              <h3 className="mt-1.5 text-[15px] leading-[1.2] font-extrabold tracking-[-0.025em] text-ink">
-                A loom you can play
-              </h3>
-            </div>
-
-            <button
-              type="button"
-              onClick={toggle}
-              aria-pressed={playing}
-              className={cn(
-                "flex flex-none cursor-pointer items-center gap-2 rounded-pill px-3 py-1 font-mono text-[8.5px] font-bold tracking-[0.12em] uppercase transition-colors",
-                playing
-                  ? "bg-ink text-white"
-                  : "bg-canvas text-quiet hover:text-ink",
-              )}
+            <ul
+              role="listbox"
+              aria-label="Pieces"
+              className="flex flex-col gap-0.5"
             >
-              {playing ? (
-                <Pause className="size-3" />
-              ) : (
-                <Play className="size-3" />
-              )}
-              {playing ? "Stop" : "Play"}
-            </button>
+              {PIECES.map((entry) => {
+                const on = entry.key === at;
+
+                return (
+                  <li key={entry.key}>
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={on}
+                      onClick={() => setAt(entry.key)}
+                      className={cn(
+                        "flex w-full cursor-pointer items-center gap-3 rounded-[12px] px-3 py-2.5 text-left transition-colors",
+                        on ? "bg-canvas" : "hover:bg-canvas",
+                      )}
+                    >
+                      <span
+                        aria-hidden
+                        className={cn(
+                          "flex size-8 flex-none items-center justify-center rounded-pill transition-colors",
+                          on
+                            ? "bg-ink text-white"
+                            : entry.live
+                              ? "bg-canvas text-quiet"
+                              : "bg-canvas text-planned",
+                        )}
+                      >
+                        <entry.icon className="size-4" />
+                      </span>
+
+                      <span className="min-w-0 flex-1">
+                        <span
+                          className={cn(
+                            "block truncate text-[13.5px] font-semibold",
+                            on ? "text-ink" : "text-body",
+                          )}
+                        >
+                          {entry.name}
+                        </span>
+                      </span>
+
+                      <span
+                        className={cn(
+                          "flex-none font-mono text-[8px] font-bold tracking-[0.12em] uppercase",
+                          entry.live ? "text-mark" : "text-idx",
+                        )}
+                      >
+                        {entry.live ? "Live" : "Idea"}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
 
-          <div className="flex min-h-[92px] flex-1 items-center px-1 pb-1">
-            <LoomStrings word="Play it" className="w-full" />
+          {/* The bench itself. One piece at a time, with the whole stage. */}
+          <div className="flex min-w-0 flex-col">
+            <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3 px-6 pt-6">
+              <div className="min-w-0">
+                <h3 className="text-[17px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink">
+                  {piece.name}
+                </h3>
+                <p className="mt-1.5 max-w-[56ch] text-[13.5px] leading-[1.6] text-quiet">
+                  {piece.note}
+                </p>
+              </div>
+
+              {piece.key === "loom" ? (
+                <button
+                  type="button"
+                  onClick={toggle}
+                  aria-pressed={playing}
+                  className={cn(
+                    "flex flex-none cursor-pointer items-center gap-2 rounded-pill px-3.5 py-1.5 font-mono text-[8.5px] font-bold tracking-[0.12em] uppercase transition-colors",
+                    playing
+                      ? "bg-ink text-white"
+                      : "bg-canvas text-quiet hover:text-ink",
+                  )}
+                >
+                  {playing ? (
+                    <Pause className="size-3" />
+                  ) : (
+                    <Play className="size-3" />
+                  )}
+                  {playing ? "Stop the notes" : "Play the notes"}
+                </button>
+              ) : null}
+            </div>
+
+            {/* Clipped, and given a height of its own. Both of these size
+                themselves to whatever box they are in; without one they grow
+                until they are over the words above them, which is exactly what
+                a grid of small tiles did to them. */}
+            <div className="relative mt-4 h-[300px] min-w-0 overflow-hidden px-2 pb-2 sm:h-[340px]">
+              {piece.key === "particles" ? (
+                <ParticleWordmark word="TwinLoom" className="h-full w-full" />
+              ) : null}
+
+              {piece.key === "loom" ? (
+                <div className="flex h-full items-center">
+                  <LoomStrings word="Play it" className="w-full" />
+                </div>
+              ) : null}
+
+              {!piece.live ? (
+                /* Not built, and said so. The bench shows what it would carry
+                   rather than a picture of a thing that does not exist. */
+                <div className="flex h-full flex-col items-center justify-center px-6 text-center">
+                  <span
+                    aria-hidden
+                    className="flex size-12 items-center justify-center rounded-pill bg-canvas text-idx"
+                  >
+                    <piece.icon className="size-5" />
+                  </span>
+
+                  <p className="mt-4 max-w-[42ch] text-[14px] leading-[1.6] text-quiet">
+                    Not built yet. It is a piece we would write into a build
+                    rather than a thing we are pretending to have finished.
+                  </p>
+
+                  <Link
+                    href={"at" in piece && piece.at ? piece.at : ROUTES.build}
+                    className="group/ask mt-5 inline-flex items-center gap-2 rounded-pill bg-ink px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-85"
+                  >
+                    {"at" in piece && piece.at ? "See it working" : "Ask for it"}
+                    <ArrowUpRight
+                      aria-hidden
+                      className="size-3.5 transition-transform group-hover/ask:translate-x-0.5 group-hover/ask:-translate-y-0.5"
+                    />
+                  </Link>
+                </div>
+              ) : null}
+            </div>
+
+            {/* The foot: what picking one up actually leads to. */}
+            <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t border-hair px-6 py-4">
+              <p className="flex items-center gap-2.5 text-[12.5px] leading-[1.5] text-label">
+                <Check
+                  aria-hidden
+                  className="size-3.5 flex-none text-mark"
+                  strokeWidth={3}
+                />
+                Anything here can be written into a scope as a named piece of
+                work.
+              </p>
+
+              <Link
+                href={ROUTES.build}
+                className="group/add inline-flex items-center gap-2 rounded-pill bg-canvas px-4 py-2 text-[13px] font-semibold text-ink transition-colors hover:bg-hair"
+              >
+                Add one to your journey
+                <ArrowUpRight
+                  aria-hidden
+                  className="size-3.5 transition-transform group-hover/add:translate-x-0.5 group-hover/add:-translate-y-0.5"
+                />
+              </Link>
+            </div>
           </div>
-        </article>
-
-        {/* The ones that are not built. Named as ideas rather than drawn as
-            though they were finished: a mock-up of a thing that does not exist
-            is the same lie as a logo of a client we do not have. */}
-        {IDEAS.map((idea) => (
-          <article
-            key={idea.name}
-            className="group/idea relative flex min-h-[164px] min-w-0 flex-col justify-end overflow-hidden rounded-[20px] bg-field p-5"
-          >
-            <span aria-hidden className="absolute inset-0">
-              <Image
-                src={idea.plate}
-                alt=""
-                fill
-                sizes="(max-width: 640px) 100vw, 25vw"
-                className="object-cover opacity-70 transition-transform duration-500 group-hover/idea:scale-[1.05]"
-                style={{ maskImage: IDEA_FADE, WebkitMaskImage: IDEA_FADE }}
-              />
-            </span>
-
-            <span className="relative">
-              <span className="font-mono text-[8.5px] font-bold tracking-[0.16em] text-label uppercase">
-                Idea
-              </span>
-              <b className="mt-1 block max-w-[18ch] text-[14.5px] leading-[1.2] font-extrabold tracking-[-0.025em] text-ink">
-                {idea.name}
-              </b>
-              <span className="mt-1 block max-w-[26ch] text-[12px] leading-[1.45] text-quiet">
-                {idea.note}
-              </span>
-            </span>
-          </article>
-        ))}
-      </div>
-
-      <div className="mt-8 flex justify-center">
-        <Link
-          href={ROUTES.build}
-          className="group/ask inline-flex items-center gap-2 rounded-pill bg-field px-4.5 py-2 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair"
-        >
-          Ask for something like this
-          <ArrowUpRight
-            aria-hidden
-            className="size-4 transition-transform group-hover/ask:translate-x-0.5 group-hover/ask:-translate-y-0.5"
-          />
-        </Link>
+        </div>
       </div>
     </section>
   );

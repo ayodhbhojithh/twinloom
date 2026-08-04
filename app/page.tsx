@@ -52,7 +52,7 @@ export default function LandingPage() {
       <section className="flex h-[var(--stage)] flex-col overflow-clip py-8">
         <div className="page-frame flex w-full shrink-0 flex-wrap items-end justify-between gap-x-12 gap-y-6">
           <div className="min-w-0">
-            <h1 className="rise max-w-[30ch] text-[clamp(28px,3.4vw,52px)] leading-[1.06] font-extrabold tracking-[-0.04em] text-ink">
+            <h1 className="rise section-head max-w-[30ch] text-ink">
               {claim}
               {/* The second sentence a grade quieter, which is the same split
                   the footer makes: the ask in ink, the promise behind it. Tone
