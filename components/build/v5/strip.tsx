@@ -87,7 +87,7 @@ export function StepStrip({
                 "group/step flex w-[236px] flex-none snap-start cursor-pointer flex-col rounded-[20px] p-4 text-left transition-all",
                 on
                   ? "-translate-y-0.5 bg-ink text-white"
-                  : "bg-canvas hover:-translate-y-0.5 hover:bg-hair",
+                  : "bg-canvas hover:-translate-y-0.5 hover:bg-canvas-firm",
               )}
             >
               <span className="flex items-center justify-between gap-3">

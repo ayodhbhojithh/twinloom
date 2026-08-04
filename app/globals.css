@@ -34,10 +34,13 @@
 
      `canvas` is the warm ground the shaped surfaces sit on: off-white with a
      little of the accent in it, so a cut card reads as paper rather than as a
-     grey box. Every other surface stays neutral, which is what lets the warm
-     one register at all. */
+     grey box, and set firmly enough that the shape of the cut is legible
+     against a white page. `canvas-firm` is the same paper one press darker,
+     for a card being hovered. Every other surface stays neutral, which is what
+     lets the warm one register at all. */
   --color-field: #ffffff;
-  --color-canvas: #faf8f5;
+  --color-canvas: #f7f2ec;
+  --color-canvas-firm: #f0e9e1;
   --color-well: #fafafa;
   --color-hair: #f4f5f7;
   --color-border: #e5e7eb;
