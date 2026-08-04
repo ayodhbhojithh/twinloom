@@ -18,20 +18,18 @@ import { ROUTES } from "@/lib/site";
 export function PartnersSection() {
   return (
     <section className="page-frame pb-16 lg:pb-24">
-      <div className="flex flex-wrap items-end justify-between gap-x-12 gap-y-4">
-        <div className="min-w-0">
-          <p className="font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase">
-            Our partners
-          </p>
-
-          <h2 className="mt-3 max-w-[20ch] text-[clamp(24px,2.8vw,40px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink">
-            Specialists are part of the build, never an extra line on it.
-          </h2>
-        </div>
+      {/* Down the middle, and the wall crosses underneath it. That is the
+          whole reason a centred heading works here: a column of centred text
+          has no second reading direction on its own, and something drifting
+          across beneath gives the eye somewhere to go. */}
+      <div className="flex flex-col items-center text-center">
+        <h2 className="max-w-[22ch] text-[clamp(24px,2.8vw,40px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-balance text-ink">
+          Specialists are part of the build, never an extra line on it.
+        </h2>
 
         <Link
           href={ROUTES.partners}
-          className="group/all inline-flex items-center gap-2 rounded-pill bg-field px-4.5 py-2 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair"
+          className="group/all mt-6 inline-flex items-center gap-2 rounded-pill bg-field px-4.5 py-2 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair"
         >
           How partners work
           <ArrowUpRight
@@ -43,7 +41,7 @@ export function PartnersSection() {
 
       <PartnerWall className="mt-6" />
 
-      <p className="mt-4 max-w-[64ch] text-[13.5px] leading-[1.6] text-quiet">
+      <p className="mx-auto mt-4 max-w-[64ch] text-center text-[13.5px] leading-[1.6] text-quiet">
         One contract, one invoice, and named in the proposal before the work
         starts. Most projects need none of them - a specialist is added because
         the work justifies one.

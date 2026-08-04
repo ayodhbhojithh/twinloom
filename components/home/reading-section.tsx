@@ -23,20 +23,17 @@ export function ReadingSection() {
 
   return (
     <section className="page-frame py-16 lg:py-24">
-      <div className="flex flex-wrap items-end justify-between gap-x-12 gap-y-4">
-        <div className="min-w-0">
-          <p className="font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase">
-            Blogs and articles
-          </p>
-
-          <h2 className="mt-3 max-w-[22ch] text-[clamp(24px,2.8vw,40px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink">
-            How we think about the decisions behind a website.
-          </h2>
-        </div>
+      {/* Down the middle. The section under it is one wide surface beside a
+          column, and a heading pinned to the left of that reads as a caption on
+          the first of the two rather than as the title of both. */}
+      <div className="flex flex-col items-center text-center">
+        <h2 className="max-w-[22ch] text-[clamp(24px,2.8vw,40px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-balance text-ink">
+          How we think about the decisions behind a website.
+        </h2>
 
         <Link
           href={ROUTES.blog}
-          className="group/all inline-flex items-center gap-2 rounded-pill bg-well px-4.5 py-2 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair"
+          className="group/all mt-6 inline-flex items-center gap-2 rounded-pill bg-field px-4.5 py-2 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair"
         >
           All {ARTICLES.length} pieces
           <ArrowUpRight
