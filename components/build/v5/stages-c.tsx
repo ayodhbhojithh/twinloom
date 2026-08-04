@@ -1,0 +1,437 @@
+"use client";
+
+import { ArrowUpRight, Check, Send } from "lucide-react";
+
+import { MIN_MAP, REPORT, STATES } from "@/lib/build/v5";
+import { assumed, readiness, told } from "@/lib/build/v5-derive";
+import { OPTION_LISTS } from "@/lib/build/v5-options";
+import { HOW_WE_WORK } from "@/lib/build/v5-work";
+import {
+  chipOn,
+  isOn,
+  setAsk,
+  setKeep,
+  setPick,
+  setSent,
+  toggleChip,
+  touchStep,
+  type Answers,
+} from "@/lib/build/v5-store";
+import { cn } from "@/lib/utils";
+
+import { StageStep } from "./frame";
+import { Field, H, Kicker, Pill, Sub, SubTitle, TickRow, TickSet } from "./kit";
+import { Disc } from "./stage";
+
+/* ---------------------------------------------------------------------------
+   The last four steps: the read-back, the four fields, the way back in, and
+   the send. The only compulsory part of the whole run lives here, and it is
+   four fields and a button.
+--------------------------------------------------------------------------- */
+
+type StepProps = {
+  at: number;
+  answers: Answers;
+  onGo: (at: number) => void;
+  onGoKey: (key: string) => void;
+};
+
+/* ----------------------------------------------------------------- 09 read */
+
+export function StageRead({ at, answers, onGo, onGoKey }: StepProps) {
+  const lines = told(answers);
+  const takenAsRead = assumed(answers);
+
+  return (
+    <StageStep at={at} answers={answers} onGo={onGo}>
+      <H>Read it back.</H>
+      <Sub>
+        Everything you have said, and everything we will take as read. A change
+        button on every section.
+      </Sub>
+
+      <div className="mt-6 grid max-w-[720px] gap-x-6 sm:grid-cols-2">
+        {REPORT.map(([key, heading]) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => onGoKey(key)}
+            className="group/sec flex cursor-pointer items-center justify-between gap-3 rounded-[10px] px-3 py-2.5 text-left transition-colors hover:bg-field"
+          >
+            <span className="text-[14px] font-semibold text-ink">{heading}</span>
+            <span className="flex-none font-mono text-[9px] font-bold tracking-[0.12em] text-idx uppercase transition-colors group-hover/sec:text-ink">
+              Change
+            </span>
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-8 grid max-w-[1100px] gap-x-10 gap-y-7 lg:grid-cols-2">
+        <section className="min-w-0">
+          <SubTitle count={lines.length} className="mt-0">
+            What you told us
+          </SubTitle>
+          {lines.length ? (
+            <ul className="mt-2.5 flex flex-col gap-2">
+              {lines.map((line, n) => (
+                <li key={n} className="flex items-start gap-2.5">
+                  <Check
+                    aria-hidden
+                    className="mt-0.5 size-3.5 flex-none text-mark"
+                    strokeWidth={3}
+                  />
+                  <span className="text-[13.5px] leading-[1.5] text-body">
+                    {line.line}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-2.5 text-[13px] text-quiet">
+              Nothing yet. Everything you tick turns up here.
+            </p>
+          )}
+        </section>
+
+        <section className="min-w-0">
+          <SubTitle count={takenAsRead.length} className="mt-0">
+            What we will take as read
+          </SubTitle>
+          <ul className="mt-2.5 flex flex-col gap-2">
+            {takenAsRead.map((sentence) => (
+              <li
+                key={sentence}
+                className="text-[13.5px] leading-[1.5] text-quiet"
+              >
+                {sentence}
+              </li>
+            ))}
+          </ul>
+          {takenAsRead.length ? (
+            <p className="mt-3 text-[12px] leading-[1.5] text-label">
+              A sentence in your document, not a gap. Answer the step and it
+              stops being an assumption.
+            </p>
+          ) : (
+            <p className="mt-2.5 text-[13px] text-quiet">
+              Nothing assumed - every step so far has been answered.
+            </p>
+          )}
+        </section>
+      </div>
+    </StageStep>
+  );
+}
+
+/* --------------------------------------------------------------- 10 asking */
+
+const FIELDS = [
+  { k: "name", label: "Your name", req: true, why: "So the reply has somebody to go to." },
+  { k: "company", label: "Company", req: true, why: "So we can look at what exists before we call." },
+  { k: "email", label: "Email", req: true, why: "Where your scoping request is sent." },
+  { k: "phone", label: "Phone", req: false, why: "Only if a reply bounces or a meeting moves." },
+  { k: "when", label: "When do you need it live", req: false, why: "It changes the order of the work, not the price." },
+] as const;
+
+const PARTS = [
+  { v: "decide", label: "I decide" },
+  { v: "others", label: "I decide, with others" },
+  { v: "gather", label: "I am gathering this for somebody who decides" },
+  { v: "advise", label: "I am advising them" },
+] as const;
+
+export function StageAsking({ at, answers, onGo }: StepProps) {
+  return (
+    <StageStep at={at} answers={answers} onGo={onGo}>
+      <H>Who is asking?</H>
+      <Sub>
+        The only part about you, and the only part you cannot skip. Four fields,
+        and two that are not required at all.
+      </Sub>
+
+      <div className="mt-6 grid max-w-[720px] gap-x-6 gap-y-5 sm:grid-cols-2">
+        {FIELDS.map((field) => (
+          <Field
+            key={field.k}
+            id={`ask-${field.k}`}
+            label={field.label}
+            required={field.req}
+            why={field.why}
+            type={field.k === "email" ? "email" : "text"}
+            value={answers.ask[field.k] ?? ""}
+            onChange={(value) => setAsk(field.k, value)}
+          />
+        ))}
+      </div>
+
+      <div className="mt-6 max-w-[720px]">
+        <div className="mb-2 flex items-baseline justify-between gap-3">
+          <b className="text-[13.5px] font-semibold text-ink">
+            What part do you play in this decision
+          </b>
+          <Kicker className="text-mark">Required</Kicker>
+        </div>
+
+        <TickSet
+          single
+          options={PARTS.map((part) => ({ k: part.v, label: part.label }))}
+          isOn={(k: string) => chipOn(answers, "ask.part", k)}
+          onPick={(k: string) => toggleChip("ask.part", k, true, "asking")}
+        />
+
+        <p className="mt-2 text-[12px] leading-[1.5] text-label">
+          So the first call is the right length. Never shown back to you as a
+          grade.
+        </p>
+      </div>
+    </StageStep>
+  );
+}
+
+/* ----------------------------------------------------------------- 11 keep */
+
+export function StageKeep({ at, answers, onGo }: StepProps) {
+  return (
+    <StageStep at={at} answers={answers} onGo={onGo}>
+      <H>Keep a way back in?</H>
+      <Sub>
+        One press, no password. The way back in is a link to the address you
+        have already given, and either answer sends exactly the same request.
+      </Sub>
+
+      <div className="mt-6 flex max-w-[560px] flex-col gap-1">
+        <TickRow
+          single
+          on={answers.keep === true}
+          name="Register with the address I gave"
+          note="We keep what you have written and send a link, so you can come back and change it."
+          onToggle={() => setKeep(true)}
+        />
+        <TickRow
+          single
+          on={answers.keep === false}
+          name="No, just send it"
+          note="The document goes to your address and that is the end of it. Nothing is saved."
+          onToggle={() => setKeep(false)}
+        />
+      </div>
+    </StageStep>
+  );
+}
+
+/* --------------------------------------------------------------- 12 submit */
+
+const MINIMUMS = [
+  { k: "who", title: "Who the site is for", why: "At least one group named, or the quick way round taken." },
+  { k: "do", title: "What people do there", why: "One thing beyond the standard inclusions, told to us on purpose." },
+  { k: "sell", title: "The shop's front door, if there is one", why: "If you picked buying: what you sell, roughly how much of it." },
+  { k: "you", title: "A way to reach you", why: "Name, company, your part in it, and an email address." },
+] as const;
+
+export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
+  const { met, state } = readiness(answers);
+  const [stateName, stateNote] = STATES[state];
+  const talk = OPTION_LISTS.submit[0];
+
+  if (answers.sent) {
+    return (
+      <StageStep at={at} answers={answers} onGo={onGo} corner={null}>
+        <span className="inline-flex items-center gap-2 rounded-pill bg-mark/[0.08] py-1.5 pr-4 pl-3">
+          <span aria-hidden className="size-2 rounded-pill bg-mark" />
+          <Kicker className="text-mark">Sent</Kicker>
+        </span>
+
+        <H>We read it. All of it.</H>
+        <Sub>
+          Including the parts in your own words, which are usually the useful
+          part. Two or three questions come back in writing, within two working
+          days.
+        </Sub>
+
+        <p className="mt-6 max-w-[52ch] text-[13.5px] leading-[1.6] text-quiet">
+          Your answers are still here and still yours - keep changing them and
+          send it again, and the newer one is the one we read.
+        </p>
+
+        <div className="mt-5">
+          <Pill onClick={() => setSent(false)}>Keep answering</Pill>
+        </div>
+      </StageStep>
+    );
+  }
+
+  return (
+    <StageStep
+      at={at}
+      answers={answers}
+      onGo={onGo}
+      corner={
+        <Disc label="Send my scoping request" tone="ink" onClick={() => setSent(true)}>
+          <Send className="size-4" strokeWidth={2.2} />
+        </Disc>
+      }
+    >
+      <H>Send it.</H>
+      <Sub>
+        You can send at any point - what changes is what we can do with what
+        arrives. No bar, no percentage, no grade.
+      </Sub>
+
+      {/* Where it stands, and the named things still missing, each a link
+          straight to its question. */}
+      <section className="mt-6 max-w-[720px] rounded-[16px] bg-field p-5">
+        <div className="flex items-center gap-2.5">
+          <span
+            aria-hidden
+            className={cn(
+              "size-2.5 rounded-pill",
+              state === "ready"
+                ? "bg-mark"
+                : state === "near"
+                  ? "bg-quiet"
+                  : "bg-planned",
+            )}
+          />
+          <b className="text-[15.5px] font-bold text-ink">{stateName}</b>
+        </div>
+        <p className="mt-1.5 text-[13px] leading-[1.5] text-quiet">
+          {stateNote}
+        </p>
+
+        <ul className="mt-4 flex flex-col border-t border-hair">
+          {MINIMUMS.map((minimum) => {
+            const value = met[minimum.k as keyof typeof met];
+            const done = Boolean(value);
+
+            return (
+              <li key={minimum.k} className="border-b border-hair last:border-b-0">
+                <button
+                  type="button"
+                  onClick={() => onGoKey(MIN_MAP[minimum.k])}
+                  className="group/min flex w-full cursor-pointer items-center gap-3 py-2.5 text-left"
+                >
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "flex size-[19px] flex-none items-center justify-center rounded-pill border-2",
+                      done
+                        ? "border-mark bg-mark text-white"
+                        : "border-planned text-transparent",
+                    )}
+                  >
+                    <Check className="size-[11px]" strokeWidth={3.2} />
+                  </span>
+
+                  <span className="min-w-0 flex-1">
+                    <b className="block text-[13.5px] leading-[1.25] font-semibold text-ink">
+                      {minimum.title}
+                      {value === "na" ? (
+                        <span className="ml-2 font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase">
+                          Not yours to answer
+                        </span>
+                      ) : null}
+                    </b>
+                    <span className="mt-0.5 block text-[12px] leading-[1.4] text-label">
+                      {minimum.why}
+                    </span>
+                  </span>
+
+                  <span className="flex flex-none items-center gap-1 font-mono text-[9px] font-bold tracking-[0.1em] text-idx uppercase transition-colors group-hover/min:text-ink">
+                    Take me to it
+                    <ArrowUpRight aria-hidden className="size-3" />
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <section className="mt-7 max-w-[720px]">
+        <SubTitle className="mt-0">{talk.title}</SubTitle>
+        <p className="mt-0.5 text-[12.5px] leading-[1.45] text-label">
+          {talk.note}
+        </p>
+        <div className="mt-2 flex flex-col gap-1">
+          {talk.rows.map((row) => (
+            <TickRow
+              key={row.k}
+              single
+              on={isOn(answers, row.scope, row.k)}
+              name={row.n}
+              note={row.sub}
+              onToggle={() => {
+                setPick(row.scope, row.k, true, true);
+                touchStep("submit");
+              }}
+            />
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-8 max-w-[1100px]">
+        <SubTitle className="mt-0">Where you are in how we work</SubTitle>
+        <p className="mt-0.5 text-[12.5px] leading-[1.45] text-label">
+          Thirteen steps, from this run-through to the end of early life
+          support. Sending it puts you on the second one.
+        </p>
+
+        <ol className="mt-3 grid gap-x-10 sm:grid-cols-2">
+          {HOW_WE_WORK.map((entry) => (
+            <li
+              key={entry.ix}
+              className="flex items-start gap-3 border-b border-hair py-2 last:border-b-0 sm:[&:nth-last-child(2)]:border-b-0"
+            >
+              <span
+                className={cn(
+                  "w-6 flex-none font-mono text-[10px] font-bold tabular-nums",
+                  entry.state === "done"
+                    ? "text-mark"
+                    : entry.state === "here"
+                      ? "text-ink"
+                      : "text-idx",
+                )}
+              >
+                {entry.ix}
+              </span>
+              <span className="min-w-0 flex-1">
+                <b
+                  className={cn(
+                    "block text-[13px] leading-[1.3] font-semibold",
+                    entry.state === "ahead" ? "text-quiet" : "text-ink",
+                  )}
+                >
+                  {entry.n}
+                </b>
+                <span className="mt-0.5 block text-[11.5px] leading-[1.4] text-label">
+                  {entry.sub}
+                </span>
+              </span>
+              {entry.mark ? (
+                <span
+                  className={cn(
+                    "flex-none font-mono text-[8.5px] font-bold tracking-[0.1em] uppercase",
+                    entry.state === "done" ? "text-mark" : "text-ink",
+                  )}
+                >
+                  {entry.mark}
+                </span>
+              ) : null}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
+        <Pill tone="ink" arrow onClick={() => setSent(true)}>
+          Send my scoping request
+        </Pill>
+        <p className="max-w-[46ch] text-[12px] leading-[1.5] text-label">
+          What you have made is a scope, not a quote - the price comes at step
+          seven, against this document, in writing. And the document stays
+          yours.
+        </p>
+      </div>
+    </StageStep>
+  );
+}

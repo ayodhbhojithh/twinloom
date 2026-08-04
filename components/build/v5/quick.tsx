@@ -14,17 +14,17 @@ import {
 } from "@/lib/build/v5-store";
 import { cn } from "@/lib/utils";
 
-import { Chip, SubHead, Under } from "./parts";
+import { AddRow, Chip, H, Kicker, Pill, Sub, SubTitle } from "./kit";
+import { Stage } from "./stage";
 
 /* ---------------------------------------------------------------------------
-   The short way round.
+   The quick way round, on its own surface.
 
    Not a smaller version of the run-through. Four pages is a real website and a
-   complete answer, and somebody who knows that is the answer should be able to
-   say so and leave rather than walk through twelve steps to arrive at it.
-
-   Nothing here is thrown away either way: it goes to the same place, is read by
-   the same people, and comes back as the same written scope.
+   complete answer, and somebody who knows that should be able to say so and
+   leave. It goes to the same place, is read by the same people, and comes back
+   as the same written scope - and the run-through's answers ride along with it
+   whenever they exist.
 --------------------------------------------------------------------------- */
 
 const KIND_WHY: Record<string, string> = {
@@ -43,217 +43,136 @@ export function QuickPane({
   onCarryOn: () => void;
 }) {
   const [kind, setKind] = useState("note");
-  const [draft, setDraft] = useState("");
 
   return (
-    <div className="grid max-w-wide items-start gap-x-12 gap-y-10 lg:grid-cols-2">
-      <div className="min-w-0">
-        <div className="rounded-card border border-border bg-well p-5 sm:p-6">
-          <h4 className="text-[19px] leading-[1.25] font-bold tracking-[-0.015em] text-ink sm:text-[21px]">
-            Four pages, and you are done
-          </h4>
-          <p className="mt-2 text-[15px] leading-[1.6] text-quiet">
-            Some people want people to know they exist, what they offer, and how
-            to get hold of them. That is a real website and a complete answer,
-            and it is the fastest route through this.
-          </p>
+    <Stage className="min-h-[540px] w-full">
+      <div className="grid gap-x-12 gap-y-9 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+        <div className="min-w-0">
+          <H>Four pages, and you are done.</H>
+          <Sub>
+            Who you are, what you offer, and how to get hold of you. A real
+            website and a complete answer - and the fastest route through this.
+          </Sub>
 
-          <div className="mt-5 flex flex-wrap gap-2.5">
-            <button
-              type="button"
-              onClick={() => setShort(true)}
-              className={cn(
-                "cursor-pointer rounded-field px-4 py-2 text-[14px] font-semibold transition-opacity",
-                answers.short
-                  ? "bg-ink text-white opacity-100"
-                  : "bg-ink text-white hover:opacity-85",
-              )}
-            >
+          <ul className="mt-6 max-w-[420px] overflow-hidden rounded-[16px] bg-field">
+            {ALWAYS_PAGES.map((page, n) => (
+              <li
+                key={page}
+                className="flex items-center gap-3 border-t border-hair px-4 py-2.5 first:border-t-0"
+              >
+                <Check
+                  aria-hidden
+                  className="size-4 flex-none text-mark"
+                  strokeWidth={2.6}
+                />
+                <b className="flex-1 text-[14px] leading-none font-semibold text-ink">
+                  {page}
+                </b>
+                <span className="font-mono text-[9px] font-bold text-idx tabular-nums">
+                  {String(n + 1).padStart(2, "0")}
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-6 flex flex-wrap items-center gap-2.5">
+            <Pill tone="ink" arrow onClick={() => setShort(true)}>
               {answers.short
                 ? "Sent as a quick submission"
                 : "Send it as a quick submission"}
-            </button>
-            <button
-              type="button"
-              onClick={onCarryOn}
-              className="cursor-pointer rounded-field bg-field px-4 py-2 text-[14px] font-semibold text-ink transition-colors hover:bg-hair"
-            >
-              Carry on through the questions
-            </button>
+            </Pill>
+            <Pill onClick={onCarryOn}>Carry on through the questions</Pill>
           </div>
-        </div>
 
-        <SubHead
-          title="What a quick submission gives you"
-          note="The eleven things every website includes, on these pages, with the enquiry form going to an inbox you own."
-        />
-
-        <ul className="overflow-hidden rounded-card border border-border bg-field">
-          {ALWAYS_PAGES.map((page) => (
-            <li
-              key={page}
-              className="flex items-center gap-3 border-t border-border px-4 py-3 first:border-t-0"
-            >
-              <Check
-                aria-hidden
-                className="size-4 flex-none text-done"
-                strokeWidth={2.6}
-              />
-              <b className="text-[14.5px] leading-none font-semibold text-ink">
-                {page}
-              </b>
-            </li>
-          ))}
-        </ul>
-
-        <Under>
-          Sending it this way throws away nothing you have already answered, and
-          nothing about it is final. It goes to the same place, is read by the
-          same people, and comes back as the same written scope.
-        </Under>
-
-        <Under>
-          <b>You can come back and answer the rest at any point.</b> A quick
-          submission is a starting position, not a smaller version of the thing.
-        </Under>
-      </div>
-
-      <div className="min-w-0">
-        <h4 className="text-[19px] leading-[1.25] font-bold tracking-[-0.015em] text-ink sm:text-[21px]">
-          Say it however you would say it
-        </h4>
-        <p className="mt-2 text-[14.5px] leading-[1.6] text-quiet">
-          No questions, no order, no structure. As much or as little as you like.
-          It goes with the request exactly as you typed it, and nobody tidies it
-          up on the way.
-        </p>
-
-        <textarea
-          rows={9}
-          aria-label="Say it however you would say it"
-          value={answers.text["quick.words"] ?? ""}
-          placeholder="What the business does, who it is for, what the website has to do, and anything you already know you want."
-          onChange={(event) => setText("quick.words", event.target.value)}
-          className="mt-4 w-full resize-y rounded-card border border-border bg-field px-3.5 py-2 text-[15px] leading-[1.6] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
-        />
-
-        <h4 className="mt-9 text-[19px] leading-[1.25] font-bold tracking-[-0.015em] text-ink sm:text-[21px]">
-          And anything you would rather show us
-        </h4>
-        <p className="mt-2 text-[14.5px] leading-[1.6] text-quiet">
-          A document, an image, a screenshot, or a link to a website. Say which
-          kind it is, add it, then write against it what you like about it. That
-          sentence is worth more to us than the link on its own.
-        </p>
-
-        <div className="mt-3 flex flex-wrap gap-2">
-          {Object.entries(REF_KINDS).map(([key, label]) => (
-            <Chip
-              key={key}
-              on={kind === key}
-              title={KIND_WHY[key]}
-              onClick={() => setKind(key)}
-            >
-              {label}
-            </Chip>
-          ))}
-        </div>
-
-        <form
-          className="mt-3 flex items-center gap-2"
-          onSubmit={(event) => {
-            event.preventDefault();
-            const said = draft.trim();
-            if (!said) return;
-            addRef({ kind: REF_KINDS[kind], text: said, where: null });
-            setDraft("");
-          }}
-        >
-          <input
-            value={draft}
-            aria-label="Write it, paste it, or name the file"
-            placeholder="A sentence, a link, or the name of a file"
-            onChange={(event) => setDraft(event.target.value)}
-            className="min-w-0 flex-1 h-9 rounded-field border border-border bg-field px-3.5 text-[14px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
-          />
-          <button
-            type="submit"
-            disabled={!draft.trim()}
-            className="flex-none cursor-pointer h-9 rounded-field bg-ink px-4 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-planned disabled:text-white"
-          >
-            Add
-          </button>
-        </form>
-
-        {answers.refs.length ? (
-          <div className="mt-5 overflow-hidden rounded-card border border-border">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-well">
-                  {[
-                    { head: "Kind", className: "w-[104px]" },
-                    { head: "What it is", className: "" },
-                    { head: "What you like about it", className: "w-[38%]" },
-                    { head: "", className: "w-[86px] text-right" },
-                  ].map((column) => (
-                    <th
-                      key={column.head || "remove"}
-                      scope="col"
-                      className={cn(
-                        "border-b border-border px-3 py-2.5 text-left font-mono text-[9.5px] font-bold tracking-[0.14em] text-label uppercase",
-                        column.className,
-                      )}
-                    >
-                      {column.head}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-
-              <tbody>
-                {answers.refs.map((ref) => (
-                  <tr key={ref.n} className="border-b border-border last:border-b-0">
-                    <td className="px-3 py-2.5 align-middle font-mono text-[9.5px] font-bold tracking-[0.1em] text-quiet uppercase">
-                      {ref.kind}
-                    </td>
-                    <td className="px-3 py-2.5 align-middle text-[14px] leading-[1.4] text-ink">
-                      {ref.text}
-                    </td>
-                    <td className="px-3 py-2.5 align-middle">
-                      <input
-                        value={answers.like[ref.n] ?? ""}
-                        placeholder="What you like about it"
-                        onChange={(event) => setLike(ref.n, event.target.value)}
-                        className="w-full rounded-field border border-border bg-field px-3 py-1.5 text-[13.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
-                      />
-                    </td>
-                    <td className="px-3 py-2.5 text-right align-middle">
-                      <button
-                        type="button"
-                        onClick={() => dropRef(ref.n)}
-                        className="cursor-pointer font-mono text-[9.5px] font-bold tracking-[0.12em] text-label uppercase transition-colors hover:text-ink"
-                      >
-                        Remove
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <p className="mt-5 text-[14px] leading-[1.55] text-quiet">
-            Nothing added yet. This is a real answer on its own - the box above is
-            enough to send.
+          <p className="mt-4 max-w-[46ch] text-[12.5px] leading-[1.55] text-quiet">
+            Nothing is thrown away and nothing is final. It comes back as the
+            same written scope, and you can come back and answer the rest at any
+            point.
           </p>
-        )}
+        </div>
 
-        <Under>
-          This is the same list the side panel keeps, seen with room to write
-          against each one. Add something here and it is there; add something
-          there and it is here.
-        </Under>
+        <div className="min-w-0">
+          <SubTitle className="mt-0">Say it however you would say it</SubTitle>
+          <p className="mt-1 max-w-[56ch] text-[12.5px] leading-[1.5] text-label">
+            No questions, no order, no structure. It goes exactly as you typed
+            it - nobody tidies it up on the way.
+          </p>
+
+          <textarea
+            rows={7}
+            aria-label="Say it however you would say it"
+            value={answers.text["quick.words"] ?? ""}
+            placeholder="What the business does, who it is for, what the website has to do, and anything you already know you want."
+            onChange={(event) => setText("quick.words", event.target.value)}
+            className="mt-3 w-full resize-y rounded-[14px] border border-border bg-field px-4 py-3 text-[14px] leading-[1.6] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
+          />
+
+          <SubTitle>Anything you would rather show us</SubTitle>
+          <p className="mt-1 max-w-[56ch] text-[12.5px] leading-[1.5] text-label">
+            Say which kind it is, add it, then write what you like about it -
+            that sentence is worth more than the link on its own.
+          </p>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            {Object.entries(REF_KINDS).map(([key, label]) => (
+              <Chip
+                key={key}
+                on={kind === key}
+                title={KIND_WHY[key]}
+                onClick={() => setKind(key)}
+              >
+                {label}
+              </Chip>
+            ))}
+          </div>
+
+          <div className="mt-3">
+            <AddRow
+              placeholder="A sentence, a link, or the name of a file"
+              onAdd={(value) =>
+                addRef({ kind: REF_KINDS[kind], text: value, where: null })
+              }
+            />
+          </div>
+
+          {answers.refs.length ? (
+            <ul className="mt-4 flex flex-col gap-2">
+              {answers.refs.map((ref) => (
+                <li
+                  key={ref.n}
+                  className="flex flex-wrap items-center gap-x-3.5 gap-y-2 rounded-[12px] bg-field px-3.5 py-2.5"
+                >
+                  <Kicker className="w-[72px] flex-none">{ref.kind}</Kicker>
+                  <span className="min-w-[14ch] flex-1 text-[13.5px] leading-[1.4] text-ink">
+                    {ref.text}
+                  </span>
+                  <input
+                    value={answers.like[ref.n] ?? ""}
+                    placeholder="What you like about it"
+                    onChange={(event) => setLike(ref.n, event.target.value)}
+                    className={cn(
+                      "h-8 w-full rounded-field border border-border bg-field px-3 text-[12.5px] text-ink outline-none transition-colors",
+                      "placeholder:text-label focus:border-ink sm:w-[200px]",
+                    )}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => dropRef(ref.n)}
+                    className="flex-none cursor-pointer font-mono text-[9px] font-bold tracking-[0.12em] text-label uppercase transition-colors hover:text-ink"
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-4 text-[12.5px] leading-[1.5] text-quiet">
+              Nothing added yet - the box above is enough to send. This is the
+              same list the notes panel keeps.
+            </p>
+          )}
+        </div>
       </div>
-    </div>
+    </Stage>
   );
 }

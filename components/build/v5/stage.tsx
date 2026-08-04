@@ -8,19 +8,21 @@ import { cn } from "@/lib/utils";
 /* ---------------------------------------------------------------------------
    The working surface, cut the way the landing card is cut.
 
-   The home page states the rule this whole site is built on: one large surface,
-   and anything you can press stands in a piece cut out of it rather than
-   floating on top. This is that surface with a question inside it instead of a
-   photograph.
+   The home page states the rule this site is built on: one large surface, and
+   anything you can press stands in a piece cut out of it rather than floating
+   on top. This is that surface with a question inside it instead of a
+   photograph - the notch at the top holds the way between steps, the bite at
+   the bottom left holds what the answers add up to, and the corner cut holds
+   the way on.
 
-   The cut is on a layer of its own behind the content. Clipping the card itself
-   would clip the words in it, and a step's answers cannot be allowed to
+   The cut is on a layer of its own behind the content. Clipping the card
+   itself would clip the words in it, and a step's answers cannot be allowed to
    disappear into a notch. So the ground is clipped and the content sits above
-   it, kept clear of the cuts by padding worked out from the same numbers.
+   it, held clear of the cuts by padding worked out from the same numbers.
 
-   The geometry is the landing card's, imported rather than copied. Two cards
-   with their own copies of these arcs would curve by different amounts within a
-   week, and the whole point is that the site is drawn by one hand.
+   The geometry is the landing card's, imported rather than copied. Two copies
+   of these arcs would curve by different amounts within a week, and the point
+   is that the site is drawn by one hand.
 --------------------------------------------------------------------------- */
 
 export function Stage({
@@ -56,20 +58,29 @@ export function Stage({
     return () => watcher.disconnect();
   }, []);
 
-  /* One flare and one radius, and every cut on the surface is built from them,
-     exactly as on the landing card. The notch is as deep as the flare plus the
-     corner because that is where the two arcs meet; any other number leaves a
-     straight wall between them. */
+  /* One flare and one radius, and every cut is built from them, exactly as on
+     the landing card. The notch is as deep as the flare plus the corner
+     because that is where the two arcs meet; any other number leaves a
+     straight wall between them.
+
+     Everything is then held inside what the surface can actually give: on a
+     narrow screen a bar plus two flares can want more room than the top edge
+     has, and a path that overruns its own box folds inside out. */
   const cut: Cuts = ((): Cuts => {
     const w = Math.max(size.w, 1);
     const h = Math.max(size.h, 1);
 
-    const radius = Math.max(20, Math.min(w * 0.02 + 16, 34));
-    const flare = Math.max(18, Math.min(h * 0.03, 26));
+    const radius = Math.max(20, Math.min(w * 0.02 + 14, 32));
+    const flare = Math.max(22, Math.min(h * 0.03, 28));
+
     const barDepth = flare * 2;
-    const barWidth = Math.max(flare * 2 + 200, Math.min(w * 0.42, 460));
-    const bite = Math.max(96, Math.min(Math.min(w * 0.16, h * 0.2), 150));
-    const drop = Math.max(flare * 2 + 16, Math.min(w * 0.07, 84));
+    const barWidth = Math.min(
+      Math.max(flare * 2 + 190, Math.min(w * 0.4, 430)),
+      Math.max(flare * 2 + 60, w - 2 * (radius + flare) - 8),
+    );
+
+    const bite = Math.max(92, Math.min(Math.min(w * 0.15, h * 0.18), 140));
+    const drop = Math.max(flare * 2 + 14, Math.min(w * 0.07, 82));
 
     return {
       radius,
@@ -89,11 +100,12 @@ export function Stage({
   })();
 
   const path = size.w > 40 ? outline(size.w, size.h, cut) : "";
+  const pad = Math.max(20, Math.min(size.w * 0.032, 34));
 
   return (
     <div ref={box} className={cn("relative", className)}>
-      {/* The ground. Nothing but a shape: it carries no content, so clipping it
-          costs nothing and the words above it stay whole. */}
+      {/* The ground. Nothing but a shape: it carries no content, so clipping
+          it costs nothing and the words above it stay whole. */}
       <div
         aria-hidden
         className="absolute inset-0 bg-well"
@@ -127,15 +139,14 @@ export function Stage({
         </div>
       ) : null}
 
-      {/* The content, held clear of every cut by the same numbers that made
-          them. */}
+      {/* The content, held clear of every cut by the numbers that made them. */}
       <div
-        className="quiet-scroll relative h-full overflow-y-auto"
+        className="relative"
         style={{
-          paddingTop: cut.barDepth + 20,
-          paddingBottom: (aside ? cut.biteHeight : 40) + 12,
-          paddingLeft: 28,
-          paddingRight: 28,
+          paddingTop: (toolbar ? cut.barDepth : 0) + 22,
+          paddingBottom: (aside ? cut.biteHeight : 26) + 14,
+          paddingLeft: pad,
+          paddingRight: pad,
         }}
       >
         {children}
@@ -155,7 +166,7 @@ export function Plate({
   return (
     <div
       className={cn(
-        "flex h-11 items-center gap-1 rounded-pill bg-field px-1.5",
+        "flex h-10 max-w-full items-center gap-0.5 rounded-pill bg-field px-1.5",
         className,
       )}
     >
@@ -164,16 +175,18 @@ export function Plate({
   );
 }
 
-/** A round control, as the landing card's arrow is drawn. */
+/** A round control, as the landing card's arrows are drawn. */
 export function Disc({
   label,
   onClick,
   tone = "quiet",
+  disabled,
   children,
 }: {
   label: string;
   onClick: () => void;
   tone?: "quiet" | "ink";
+  disabled?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -182,11 +195,13 @@ export function Disc({
       aria-label={label}
       title={label}
       onClick={onClick}
+      disabled={disabled}
       className={cn(
-        "flex size-11 cursor-pointer items-center justify-center rounded-pill transition-colors",
+        "flex size-9 flex-none cursor-pointer items-center justify-center rounded-pill transition-colors",
         tone === "ink"
           ? "bg-ink text-white hover:opacity-85"
           : "text-quiet hover:bg-well hover:text-ink",
+        disabled && "cursor-default text-planned hover:bg-transparent hover:text-planned",
       )}
     >
       {children}

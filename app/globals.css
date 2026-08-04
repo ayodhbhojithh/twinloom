@@ -52,6 +52,10 @@
   --color-done: #059669;
   --color-amber: #d97706;
   --color-blocked: #dc2626;
+  /* The build screens' accent: the one colour that marks an answer as set.
+     The same red as `blocked`, under a name that says what it is doing there,
+     so a class list reads as intent rather than as an error state. */
+  --color-mark: #dc2626;
   --color-planned: #dbdfe6;
   --color-unrated: #e9ebef;
   /* The mono index grey, for numbers that are labels rather than data. */

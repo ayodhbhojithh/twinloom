@@ -1,30 +1,23 @@
 import { PageMeta } from "@/components/blocks/page-meta";
-import { PageHeading, PageShell } from "@/components/layout";
+import { PageShell } from "@/components/layout";
 
 import { BuildFlow } from "./v5/flow";
 
 /**
  * Build your website.
  *
- * The v5.2 run-through, whole: two ways through, twelve steps, the layer two
- * cards behind the rows, the layer three questions under the shop, and the
- * panel that writes the answer while the questions are being answered.
- *
- * The older two question picker is gone rather than kept beside it. It was an
- * earlier draft of this same screen, and shipping both would ask a visitor to
- * choose between our drafts.
- *
- * This file is only the page around the tool: a heading, and the metadata block
- * every screen carries.
+ * The header speaks the landing page's language: one extrabold line with the
+ * ask in ink and the promise behind it in quiet, and nothing else. Everything
+ * that used to be explained here is now said by the tool itself, one step at a
+ * time, which is where somebody answering can actually use it.
  */
 export function BuildView() {
   return (
     <PageShell>
-      <PageHeading
-        tag="Build your website"
-        title="Build your website"
-        lead="Two ways through, and you can move between them without losing anything. Two minutes gets you a shape. Everything after that is yours to give or to leave."
-      />
+      <h1 className="mb-7 max-w-[30ch] text-[clamp(28px,2.8vw,44px)] leading-[1.06] font-extrabold tracking-[-0.04em] text-ink">
+        Build your website.
+        <span className="text-quiet"> Answer what you like - we write it down.</span>
+      </h1>
 
       <BuildFlow />
 
