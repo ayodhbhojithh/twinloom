@@ -170,13 +170,16 @@ export function CutPanel({
               sizes="(min-width: 1024px) 55vw, 0px"
               className="object-cover object-center"
               style={{
-                /* Faded in from its own left edge. The other three are the
-                   surface's edges, and an edge that is already the end of the
-                   card wants nothing on top of it. */
-                maskImage:
-                  "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 12%, black 34%)",
-                WebkitMaskImage:
-                  "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 12%, black 34%)",
+                /* Faded in from its own left edge, across most of its width.
+
+                   Nine stops rather than three, and they follow a curve rather
+                   than a straight line: a linear fade over a short distance
+                   reads as a band with an edge on either side of it, which is
+                   the one thing a blend must not have. The other three edges
+                   are the surface's own, and an edge that is already the end of
+                   the card wants nothing on top of it. */
+                maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.04) 10%, rgba(0,0,0,0.12) 20%, rgba(0,0,0,0.26) 30%, rgba(0,0,0,0.44) 40%, rgba(0,0,0,0.63) 50%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0.93) 72%, black 86%)",
+                WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.04) 10%, rgba(0,0,0,0.12) 20%, rgba(0,0,0,0.26) 30%, rgba(0,0,0,0.44) 40%, rgba(0,0,0,0.63) 50%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0.93) 72%, black 86%)",
               }}
             />
           </div>
