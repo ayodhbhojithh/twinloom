@@ -29,6 +29,7 @@ export function CutPanel({
   aside,
   corner,
   foot,
+  footIn = "band",
   image,
   tone = "canvas",
   className,
@@ -45,6 +46,15 @@ export function CutPanel({
    * belongs on the same line as them rather than above an empty strip.
    */
   foot?: React.ReactNode;
+  /**
+   * Where the foot goes: along the bottom as a band, or standing in a notch cut
+   * into the bottom edge.
+   *
+   * A band takes as many lines as it is given, which is what small print needs.
+   * A notch is one line and no more - right for a label naming what the surface
+   * is, wrong for a paragraph.
+   */
+  footIn?: "band" | "notch";
   /**
    * A picture for the whole surface, cut to the same outline.
    *
@@ -73,6 +83,13 @@ export function CutPanel({
 
     return () => watcher.disconnect();
   }, []);
+
+  /* Below this there is not enough width left between two cuts to put anything
+     readable between them, so the foot gives up and goes back into the content
+     above it. */
+  const roomBelow = size.w >= 760;
+  const notch = Boolean(foot) && footIn === "notch" && roomBelow;
+  const band = Boolean(foot) && footIn === "band" && roomBelow;
 
   /* One flare and one radius, and every cut is built from them. A cut is
      exactly two flares deep, because that is where its two arcs meet - any less
@@ -127,6 +144,10 @@ export function CutPanel({
       dropHeight: corner ? nook : 0.01,
       dropRadius: corner ? flare : 0.01,
       dropFlare: corner ? flare : 0.01,
+      footWidth: notch ? Math.min(Math.max(w * 0.24, 200), 320) : 0,
+      footDepth: notch ? flare * 2 : 0,
+      footRadius: notch ? flare : 0,
+      footFlare: notch ? flare : 0,
     };
   })();
 
@@ -148,8 +169,6 @@ export function CutPanel({
   /* Below this there is not enough width left between two cuts to put anything
      readable between them, so the band gives up and the foot goes back into
      the content above it. */
-  const roomForBand = size.w >= 760;
-  const band = foot && roomForBand;
 
   return (
     <div ref={box} className={cn("relative", className)}>
@@ -217,6 +236,19 @@ export function CutPanel({
         </div>
       ) : null}
 
+      {notch ? (
+        <div
+          className="absolute bottom-0 left-1/2 z-20 flex -translate-x-1/2 items-end justify-center"
+          style={{
+            width: cut.footWidth,
+            height: cut.footDepth,
+            paddingBottom: 2,
+          }}
+        >
+          {foot}
+        </div>
+      ) : null}
+
       {corner ? (
         <div
           className="absolute right-0 bottom-0 z-20 flex items-center justify-center"
@@ -254,6 +286,7 @@ export function CutPanel({
           paddingBottom: band
             ? 28
             : Math.max(
+                notch ? (cut.footDepth ?? 0) + 6 : 0,
                 aside ? cut.biteHeight : 0,
                 corner ? cut.dropHeight : 0,
                 28,

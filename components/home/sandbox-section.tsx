@@ -54,15 +54,15 @@ import { ParticleWordmark } from "./particle-wordmark";
  */
 const PIECES = [
   {
-    key: "particles",
-    name: "Particle wordmark",
-    icon: Sparkles,
-    live: true,
-  },
-  {
     key: "liquid",
     name: "Liquid wordmark",
     icon: Droplets,
+    live: true,
+  },
+  {
+    key: "particles",
+    name: "Particle wordmark",
+    icon: Sparkles,
     live: true,
   },
   {
@@ -184,7 +184,10 @@ function useNotes() {
 }
 
 export function SandboxSection() {
-  const [at, setAt] = useState<string>("particles");
+  /* Whatever is at the top of the shelf, rather than a key written out again
+     here. Named, the two drifted apart the moment the order changed and the
+     bench opened on the second row with the first one lit. */
+  const [at, setAt] = useState<string>(PIECES[0].key);
   const { playing, toggle } = useNotes();
 
   const piece = PIECES.find((entry) => entry.key === at) ?? PIECES[0];

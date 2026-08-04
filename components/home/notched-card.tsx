@@ -44,6 +44,14 @@ export interface Cuts {
   dropHeight: number;
   dropRadius: number;
   dropFlare: number;
+  /**
+   * A second bar, in the bottom edge. Optional: a surface that wants nothing
+   * standing there leaves these out and the bottom edge runs straight.
+   */
+  footWidth?: number;
+  footDepth?: number;
+  footRadius?: number;
+  footFlare?: number;
 }
 
 /**
@@ -79,6 +87,10 @@ export function outline(w: number, h: number, cut: Cuts): string {
     dropHeight: dh,
     dropRadius: dr,
     dropFlare: df,
+    footWidth: fw = 0,
+    footDepth: fd = 0,
+    footRadius: fr = 0,
+    footFlare: ff = 0,
   } = cut;
 
   /* The bar is centred, so the top edge is cut from here to here. */
@@ -114,6 +126,26 @@ export function outline(w: number, h: number, cut: Cuts): string {
         `A ${df} ${df} 0 0 1 ${w - dw - df} ${h}`,
       ];
 
+  /* The bottom bar, travelling right to left along the bottom edge - which is
+     why every sweep in it is the mirror of the one at the top. The flares still
+     curve outward from the card and take sweep 1; the notch's own corners curve
+     the other way and take sweep 0. */
+  const footLeft = (w - fw) / 2;
+  const footRight = footLeft + fw;
+
+  const footBar = off(fw, fd)
+    ? []
+    : [
+        `L ${footRight + ff} ${h}`,
+        `A ${ff} ${ff} 0 0 1 ${footRight} ${h - ff}`,
+        `L ${footRight} ${h - fd + fr}`,
+        `A ${fr} ${fr} 0 0 0 ${footRight - fr} ${h - fd}`,
+        `L ${footLeft + fr} ${h - fd}`,
+        `A ${fr} ${fr} 0 0 0 ${footLeft} ${h - fd + fr}`,
+        `L ${footLeft} ${h - ff}`,
+        `A ${ff} ${ff} 0 0 1 ${footLeft - ff} ${h}`,
+      ];
+
   const bar = off(bw, bd)
     ? []
     : [
@@ -136,7 +168,9 @@ export function outline(w: number, h: number, cut: Cuts): string {
     `A ${r} ${r} 0 0 1 ${w} ${r}`,
     /* The bottom right corner, given up to the cut where there is one. */
     ...drop,
-    /* Bottom edge, leftward, then the bite at the other end of it. */
+    /* Bottom edge, leftward: the notch in it where there is one, then the bite
+       at the other end. */
+    ...footBar,
     ...bite,
     /* Up the left side to where we started. */
     `L 0 ${r}`,
