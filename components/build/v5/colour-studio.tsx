@@ -535,6 +535,10 @@ function Studio({ onClose }: { onClose: () => void }) {
   return (
     <div
       className="fixed inset-0 z-50 overflow-y-auto overscroll-contain"
+      /* Out through a portal, so it is outside the tool it belongs to and
+         inherits nothing from it. The accent is set again here for that
+         reason. */
+      style={{ ["--color-mark" as string]: "var(--color-done)" }}
       role="dialog"
       aria-modal="true"
       aria-label="Colour studio"

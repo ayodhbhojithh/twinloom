@@ -182,6 +182,10 @@ export function StageWho({ at, answers, onGo }: StepProps) {
   return (
     <StageStep at={at} answers={answers} onGo={onGo}>
       <H>Who comes to your website?</H>
+      {/* No note at the end of each row saying which page it adds. The panel
+          beside the step already lists every page and who asked for it, so the
+          row was answering a question that is answered better a few inches to
+          the right - and it was answering it eleven times. */}
       <Sub>
         Tick everyone who might arrive. The next step is written by what you
         tick here, so nothing is ever on offer that nobody asked for.
@@ -193,7 +197,6 @@ export function StageWho({ at, answers, onGo }: StepProps) {
             key={group.k}
             on={isOn(answers, "who", group.k)}
             name={group.n}
-            mark={group.pages.length ? `Adds ${group.pages[0]}` : "No page"}
             onToggle={() => togglePick("who", group.k, "who")}
           />
         ))}

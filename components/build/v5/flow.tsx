@@ -95,8 +95,18 @@ export function BuildFlow() {
 
   return (
     /* Positioned, so the notes tab can hang off the right edge of the tool
-       rather than off the edge of the window. */
-    <div className="relative">
+       rather than off the edge of the window.
+
+       And green, here only. The accent everywhere else on the site is the blue
+       that means "this is set"; on these screens the same mark is doing a
+       different job - it is saying an answer has been given - and green is the
+       colour that says so without anyone being taught it. Scoped by overriding
+       the variable rather than by swapping classes, so every tick, bar, count
+       and rule inside changes together and nothing can be missed. */
+    <div
+      className="relative"
+      style={{ ["--color-mark" as string]: "var(--color-done)" }}
+    >
       {/* The head, arranged the way the landing page arranges its own: the
           line on the left, the way in on the right, both on one baseline and
           both reaching the edges. A control dropped under a headline with a
