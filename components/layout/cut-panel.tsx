@@ -181,9 +181,10 @@ export function CutPanel({
              Only the side that actually holds a control is inset. */
           style={{
             minHeight: corner ? cut.dropHeight : 0,
-            paddingLeft: aside ? cut.biteWidth + 12 : pad,
-            paddingRight: corner ? cut.dropWidth + 12 : pad,
-            paddingBottom: 10,
+            paddingLeft: aside ? cut.biteWidth + 20 : pad,
+            paddingRight: corner ? cut.dropWidth + 20 : pad,
+            paddingTop: 6,
+            paddingBottom: 24,
           }}
         >
           {foot}

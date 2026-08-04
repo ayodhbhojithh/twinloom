@@ -38,6 +38,14 @@ export function SiteFooter() {
             <Wordmark />
           </span>
         }
+        aside={
+          /* The year, where the landing card keeps the next project. It is the
+             one fact a footer is actually asked for, and the cut is what makes
+             the bottom of this surface the same shape as the top of it. */
+          <span className="font-mono text-[11px] font-bold tracking-[0.12em] text-label tabular-nums">
+            {year}
+          </span>
+        }
         corner={<TopDisc />}
         foot={
           /* Last, smallest, and still legible. It is the one thing here nobody
@@ -45,8 +53,8 @@ export function SiteFooter() {
              about somebody else's rights - so it runs along the bottom band
              between the year and the way up, rather than above an empty
              strip. */
-          <div className="flex w-full flex-col gap-x-10 gap-y-4 lg:flex-row lg:items-center lg:justify-between">
-            <p className="order-2 max-w-[68ch] text-[11.5px] leading-[1.55] text-label lg:order-1">
+          <div className="flex w-full flex-col gap-x-10 gap-y-4 lg:flex-row lg:items-end lg:justify-between">
+            <p className="order-2 min-w-0 max-w-[74ch] text-[11.5px] leading-[1.55] text-label lg:order-1">
               {LEGAL.line}
               <span className="mt-1 block text-quiet">
                 &copy; {year} {LEGAL.entity}. {LEGAL.rights}
@@ -55,7 +63,7 @@ export function SiteFooter() {
             </p>
 
             <nav aria-label="Legal" className="order-1 flex-none lg:order-2">
-              <ul className="flex flex-wrap gap-x-5 gap-y-2">
+              <ul className="flex flex-wrap gap-x-5 gap-y-2 lg:justify-end">
                 {FOOTER_LEGAL.map((link) => (
                   <li key={link.href}>
                     <Link
@@ -71,11 +79,15 @@ export function SiteFooter() {
           </div>
         }
       >
-        {/* The ask, and everywhere else, on one line of the grid. The line is
-            given the weight of a heading because it is the only sentence down
-            here that anybody reads on purpose. */}
-        <div className="grid gap-x-10 gap-y-10 sm:grid-cols-3 lg:grid-cols-[minmax(0,1.25fr)_repeat(3,minmax(0,1fr))]">
-          <div className="min-w-0 sm:col-span-3 lg:col-span-1">
+        {/* Two blocks, not four columns.
+
+            Given a column each across the whole width, three short lists of
+            links spread until the gaps between them were wider than the links
+            themselves. They are one thing - everywhere else on the site - so
+            they hold together as a block against the right edge, and the ask
+            holds the left. */}
+        <div className="grid gap-x-12 gap-y-11 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+          <div className="min-w-0">
             <p className="max-w-[24ch] text-[clamp(21px,2.1vw,30px)] leading-[1.12] font-extrabold tracking-[-0.035em] text-ink">
               {SITE.tagline}
             </p>
@@ -92,30 +104,32 @@ export function SiteFooter() {
             </Link>
           </div>
 
-          {FOOTER_COLUMNS.map((column) => (
-            <nav
-              key={column.title}
-              aria-label={column.title}
-              className="min-w-0"
-            >
-              <h3 className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
-                {column.title}
-              </h3>
+          <div className="ml-auto grid w-fit grid-cols-2 gap-x-10 gap-y-8 text-right sm:grid-cols-3 lg:gap-x-14 xl:gap-x-20">
+            {FOOTER_COLUMNS.map((column) => (
+              <nav
+                key={column.title}
+                aria-label={column.title}
+                className="min-w-0"
+              >
+                <h3 className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
+                  {column.title}
+                </h3>
 
-              <ul className="mt-3.5 flex flex-col gap-2.5">
-                {column.links.map((link) => (
-                  <li key={`${column.title}-${link.href}`}>
-                    <Link
-                      href={link.href}
-                      className="text-[13.5px] leading-[1.3] font-medium text-quiet transition-colors hover:text-ink"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
+                <ul className="mt-3.5 flex flex-col gap-2.5">
+                  {column.links.map((link) => (
+                    <li key={`${column.title}-${link.href}`}>
+                      <Link
+                        href={link.href}
+                        className="text-[13.5px] leading-[1.3] font-medium text-quiet transition-colors hover:text-ink"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
+          </div>
         </div>
       </CutPanel>
     </footer>
