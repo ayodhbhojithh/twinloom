@@ -6,14 +6,22 @@
    shape means the index and the article itself cannot disagree about what an
    article is.
 
+   The structure the authors wrote in is kept. Tables are tables, lists are
+   lists and named things keep their names, because all three are set
+   differently on the page and flattening them into paragraphs would throw away
+   the reason they were written that way.
+
    The drafting notes have been left behind. Every source carried a back of
    house section addressed to us - what to check before publishing, what the SEO
    pack should contain - and none of that is written for a reader.
 --------------------------------------------------------------------------- */
 
-/** A run of words, a list, or a heading inside a section. */
+/** A run of words, a list, a named thing, or a table, inside a section. */
 export type Block =
-  { k: "p"; t: string } | { k: "h"; t: string } | { k: "ul"; i: string[] };
+  | { k: "p"; t: string }
+  | { k: "h"; t: string }
+  | { k: "ul"; i: string[] }
+  | { k: "table"; h: string[]; r: string[][] };
 
 export interface Section {
   /** Empty on the opening run, which sits under the lead with no heading. */
@@ -41,6 +49,7 @@ export const ARTICLES: readonly Article[] = [
     topic: "How websites are built",
     title: "The real difference is when your pages get made",
     lead: "Every website a visitor sees is plain HTML - that has been true since the web began. What separates one website technology from another is a single question: when does that HTML get made, and by what?",
+    note: "WordPress, Astro, React, Node. Which part of your website each one actually touches, and when.",
     minutes: 7,
     sections: [
       {
@@ -77,8 +86,57 @@ export const ARTICLES: readonly Article[] = [
         h: "The names, at their moments",
         b: [
           {
-            k: "p",
-            t: "| The name | What it actually is | When it runs | What it means for you | |---|---|---|---| | HTML | The finished page, as every browser reads it | At the visit - it is what arrives | This is the only thing your visitors ever receive | | A static site generator (ours is Astro) | A program that reads page templates and writes the finished HTML | At build time - before anything is published | Your pages exist as files; nothing generates them per visit | | An `.astro` file | A template: a recipe for one page, in the site's shared design | Read at build time, never sent to a browser | Editing a page means editing its template and rebuilding | | Node.js | The program that lets build tools run on an ordinary computer | At build time only, on the building machine | It never runs on your live site; there is nothing of it to maintain there | | JavaScript in the page | Code that runs in the visitor's browser after the page arrives | After load, on the visitor's device | This is how a static page can still be interactive | | React | A library for building complex interactive interfaces in the browser | After load, where used - and only where used | Worth it when interactivity gets complex; not a requirement for it | | A backend, or server | A separate service that receives and stores data | At the visit, but only for the pages that need it | Accounts, orders and saved answers live here - added when needed, not before |",
+            k: "table",
+            h: [
+              "The name",
+              "What it actually is",
+              "When it runs",
+              "What it means for you",
+            ],
+            r: [
+              [
+                "HTML",
+                "The finished page, as every browser reads it",
+                "At the visit - it is what arrives",
+                "This is the only thing your visitors ever receive",
+              ],
+              [
+                "A static site generator (ours is Astro)",
+                "A program that reads page templates and writes the finished HTML",
+                "At build time - before anything is published",
+                "Your pages exist as files; nothing generates them per visit",
+              ],
+              [
+                "An `.astro` file",
+                "A template: a recipe for one page, in the site's shared design",
+                "Read at build time, never sent to a browser",
+                "Editing a page means editing its template and rebuilding",
+              ],
+              [
+                "Node.js",
+                "The program that lets build tools run on an ordinary computer",
+                "At build time only, on the building machine",
+                "It never runs on your live site; there is nothing of it to maintain there",
+              ],
+              [
+                "JavaScript in the page",
+                "Code that runs in the visitor's browser after the page arrives",
+                "After load, on the visitor's device",
+                "This is how a static page can still be interactive",
+              ],
+              [
+                "React",
+                "A library for building complex interactive interfaces in the browser",
+                "After load, where used - and only where used",
+                "Worth it when interactivity gets complex; not a requirement for it",
+              ],
+              [
+                "A backend, or server",
+                "A separate service that receives and stores data",
+                "At the visit, but only for the pages that need it",
+                "Accounts, orders and saved answers live here - added when needed, not before",
+              ],
+            ],
           },
         ],
       },
@@ -155,13 +213,13 @@ export const ARTICLES: readonly Article[] = [
         ],
       },
     ],
-    note: "WordPress, Astro, React, Node. Which part of your website each one actually touches, and when.",
   },
   {
     slug: "why-shopify",
     topic: "Selling online",
     title: "Why we build shops on Shopify, and what else we work with",
     lead: "",
+    note: "Our starting position for a shop, the alternatives in plain words, and when we would say something else.",
     minutes: 6,
     sections: [
       {
@@ -258,7 +316,6 @@ export const ARTICLES: readonly Article[] = [
         ],
       },
     ],
-    note: "Our starting position for a shop, the alternatives in plain words, and when we would say something else.",
   },
   {
     slug: "selling-online-options",
@@ -266,6 +323,7 @@ export const ARTICLES: readonly Article[] = [
     title:
       "The real question is what you are selling, not which software to pick",
     lead: "Selling online is not one thing. A shop, a paid download, a booking with a deposit, a subscription, a donation - each needs different machinery, and most need far less than a full shop. Name what you are selling, and the right machinery follows.",
+    note: "Products, bookings, subscriptions, services. What you sell decides the software, not the other way round.",
     minutes: 15,
     sections: [
       {
@@ -285,8 +343,35 @@ export const ARTICLES: readonly Article[] = [
             t: "Five terms cover almost everything you will hear. None of them needs to be mysterious.",
           },
           {
-            k: "p",
-            t: "| The term | In plain words | When it matters to you | |---|---|---| | Hosted shop platform | The supplier runs the software, the security and the checkout; you rent it monthly. Shopify is the best-known example. | You want a shop that is somebody's job to keep running - and that somebody is not you. | | Self-hosted, or open source | The shop software is free; the hosting, updates and security are yours to own or pay someone to own. WooCommerce, which runs on WordPress, is the big one. | Your business already lives in WordPress and somebody already looks after it. | | Payment page, or hosted checkout | A page in your own website's design that takes a card payment for one thing - no catalogue, no basket, no stock. | You are selling a handful of things, a service, or taking donations. Far smaller to build than a shop, and a shop can still be added later. | | Merchant of record | A service that sells on your behalf - it is legally the seller, and it handles card fees, global VAT and invoicing for you, for a cut. Common for software. | You sell software or digital products internationally and would rather not become a VAT expert in nine countries. | | Composable, or headless commerce | The shop assembled from separate parts - checkout, product system, front end - each chosen and connected. | Large retailers with development teams. If you are asking whether you need it, you almost certainly do not. |",
+            k: "table",
+            h: ["The term", "In plain words", "When it matters to you"],
+            r: [
+              [
+                "Hosted shop platform",
+                "The supplier runs the software, the security and the checkout; you rent it monthly. Shopify is the best-known example.",
+                "You want a shop that is somebody's job to keep running - and that somebody is not you.",
+              ],
+              [
+                "Self-hosted, or open source",
+                "The shop software is free; the hosting, updates and security are yours to own or pay someone to own. WooCommerce, which runs on WordPress, is the big one.",
+                "Your business already lives in WordPress and somebody already looks after it.",
+              ],
+              [
+                "Payment page, or hosted checkout",
+                "A page in your own website's design that takes a card payment for one thing - no catalogue, no basket, no stock.",
+                "You are selling a handful of things, a service, or taking donations. Far smaller to build than a shop, and a shop can still be added later.",
+              ],
+              [
+                "Merchant of record",
+                "A service that sells on your behalf - it is legally the seller, and it handles card fees, global VAT and invoicing for you, for a cut. Common for software.",
+                "You sell software or digital products internationally and would rather not become a VAT expert in nine countries.",
+              ],
+              [
+                "Composable, or headless commerce",
+                "The shop assembled from separate parts - checkout, product system, front end - each chosen and connected.",
+                "Large retailers with development teams. If you are asking whether you need it, you almost certainly do not.",
+              ],
+            ],
           },
         ],
       },
@@ -298,8 +383,50 @@ export const ARTICLES: readonly Article[] = [
             t: "Eight kinds of sale cover nearly every business we meet. Each row says what the sale actually needs, and where we would start.",
           },
           {
-            k: "p",
-            t: "| What you sell | What the sale needs | Where we would start | |---|---|---| | Physical goods, posted or delivered | A catalogue, a basket, stock counts, delivery rules, VAT at the checkout | A hosted shop platform - Shopify, unless your answers point elsewhere | | Digital downloads - files, courses, patterns | Payment, then a secure download link. Nothing runs out, so no stock | A payment page for a handful of them; a shop with digital delivery once there is a catalogue | | Software, or a product people subscribe to | A pricing page and a sign-up. The product bills itself - the website is the shop window | The website hands over to the product's own billing, or to a merchant of record. Never a shop | | Services at a fixed price | Payment, and a clear what-happens-next | A payment page in the site's own design | | Time - appointments, classes, tables | A diary people book against, with payment or a deposit at booking | A booking system, with the rules for cancelling settled before launch | | Projects, quoted first | A quote form that asks only what prices the work, then a proposal, then an invoice | No online sale at all - a well-built enquiry journey, with a payment link for deposits | | Memberships, and paid content | Recurring payment, and a signed-in area holding what members get | A payment page with recurring billing, plus a members' sign-in | | Donations, and support | One-off and monthly giving, a receipt, and Gift Aid where it applies | A payment page. Never a shop |",
+            k: "table",
+            h: ["What you sell", "What the sale needs", "Where we would start"],
+            r: [
+              [
+                "Physical goods, posted or delivered",
+                "A catalogue, a basket, stock counts, delivery rules, VAT at the checkout",
+                "A hosted shop platform - Shopify, unless your answers point elsewhere",
+              ],
+              [
+                "Digital downloads - files, courses, patterns",
+                "Payment, then a secure download link. Nothing runs out, so no stock",
+                "A payment page for a handful of them; a shop with digital delivery once there is a catalogue",
+              ],
+              [
+                "Software, or a product people subscribe to",
+                "A pricing page and a sign-up. The product bills itself - the website is the shop window",
+                "The website hands over to the product's own billing, or to a merchant of record. Never a shop",
+              ],
+              [
+                "Services at a fixed price",
+                "Payment, and a clear what-happens-next",
+                "A payment page in the site's own design",
+              ],
+              [
+                "Time - appointments, classes, tables",
+                "A diary people book against, with payment or a deposit at booking",
+                "A booking system, with the rules for cancelling settled before launch",
+              ],
+              [
+                "Projects, quoted first",
+                "A quote form that asks only what prices the work, then a proposal, then an invoice",
+                "No online sale at all - a well-built enquiry journey, with a payment link for deposits",
+              ],
+              [
+                "Memberships, and paid content",
+                "Recurring payment, and a signed-in area holding what members get",
+                "A payment page with recurring billing, plus a members' sign-in",
+              ],
+              [
+                "Donations, and support",
+                "One-off and monthly giving, a receipt, and Gift Aid where it applies",
+                "A payment page. Never a shop",
+              ],
+            ],
           },
           {
             k: "p",
@@ -315,8 +442,38 @@ export const ARTICLES: readonly Article[] = [
             t: "These are not things you sell - they are ways of selling that attach to the rows above and change what the build needs. Worth knowing by name, because each one is a real piece of work.",
           },
           {
-            k: "p",
-            t: "| The situation | What it changes | |---|---| | Trade customers, buying on account | Trade prices behind a sign-in, minimum quantities, invoicing terms. The largest single addition to a shop | | Subscriptions and repeat orders | Stored cards, retries when a payment fails, and a portal to pause or cancel. Bigger than it looks | | Selling on marketplaces and social as well | Either links out - cheap - or stock that agrees everywhere, which is not | | Selling in person as well | A till and a website sharing one stock list, so neither sells what the other just sold | | Made to order, or personalised | Options and custom text at the product; customers uploading artwork is the expensive version | | Age-restricted or regulated goods | Which payment services will take you at all - settled before building, not after | | Selling abroad | Currency and regions for goods; for digital things, foreign VAT arrives at the first sale, not at scale |",
+            k: "table",
+            h: ["The situation", "What it changes"],
+            r: [
+              [
+                "Trade customers, buying on account",
+                "Trade prices behind a sign-in, minimum quantities, invoicing terms. The largest single addition to a shop",
+              ],
+              [
+                "Subscriptions and repeat orders",
+                "Stored cards, retries when a payment fails, and a portal to pause or cancel. Bigger than it looks",
+              ],
+              [
+                "Selling on marketplaces and social as well",
+                "Either links out - cheap - or stock that agrees everywhere, which is not",
+              ],
+              [
+                "Selling in person as well",
+                "A till and a website sharing one stock list, so neither sells what the other just sold",
+              ],
+              [
+                "Made to order, or personalised",
+                "Options and custom text at the product; customers uploading artwork is the expensive version",
+              ],
+              [
+                "Age-restricted or regulated goods",
+                "Which payment services will take you at all - settled before building, not after",
+              ],
+              [
+                "Selling abroad",
+                "Currency and regions for goods; for digital things, foreign VAT arrives at the first sale, not at scale",
+              ],
+            ],
           },
         ],
       },
@@ -328,8 +485,76 @@ export const ARTICLES: readonly Article[] = [
             t: "You do not need to study this table. It exists so that when a name comes up - from us or anyone else - you can place it in thirty seconds.",
           },
           {
-            k: "p",
-            t: "| Role | Names you will hear | Best when | Worth knowing | |---|---|---|---| | The mainstream hosted platform | Shopify | Most shops of most sizes - the most things working on day one, the fewest to look after | Monthly fee plus a card percentage; app costs can quietly accumulate | | Like-for-like rivals | BigCommerce | Heavily business-to-business shops | Built-in trade features; plans step up with sales volume | | The British platforms | EKM, ShopWired, Bluepark | You value UK phone support above a large app ecosystem | Priced in pounds plus VAT; strong service reputations; smaller ecosystems | | The WordPress route | WooCommerce | The business already lives in WordPress and somebody maintains it | The software is free; the ownership is not | | Site builders with shops | Wix, Squarespace | A dozen products where the website matters more than the shop | The ceiling arrives quickly: delivery rules, integrations, moving your data out | | The smallest tier | Square Online, Ecwid | A till that also sells online, or a small shop bolted onto an existing site | Genuinely useful at that size; outgrown once channels multiply | | The enterprise end | Adobe Commerce, composable builds | Large catalogues, development teams, unusual requirements | Priced accordingly in money and attention - we will say so if your requirements point here | | Payment pages | Stripe-class checkouts | Downloads, services, deposits, donations | The whole payments-without-a-shop tier | | Recurring by direct debit | GoCardless-class services | Memberships and invoicing on repeat | Direct debit costs less than cards for recurring | | Merchant of record | Paddle, Lemon Squeezy | Selling software internationally | They become the seller and carry the global VAT burden | | Donations | Donorbox-class tools | Charities and supporter giving | Gift Aid capture and charity card rates are the details that matter |",
+            k: "table",
+            h: ["Role", "Names you will hear", "Best when", "Worth knowing"],
+            r: [
+              [
+                "The mainstream hosted platform",
+                "Shopify",
+                "Most shops of most sizes - the most things working on day one, the fewest to look after",
+                "Monthly fee plus a card percentage; app costs can quietly accumulate",
+              ],
+              [
+                "Like-for-like rivals",
+                "BigCommerce",
+                "Heavily business-to-business shops",
+                "Built-in trade features; plans step up with sales volume",
+              ],
+              [
+                "The British platforms",
+                "EKM, ShopWired, Bluepark",
+                "You value UK phone support above a large app ecosystem",
+                "Priced in pounds plus VAT; strong service reputations; smaller ecosystems",
+              ],
+              [
+                "The WordPress route",
+                "WooCommerce",
+                "The business already lives in WordPress and somebody maintains it",
+                "The software is free; the ownership is not",
+              ],
+              [
+                "Site builders with shops",
+                "Wix, Squarespace",
+                "A dozen products where the website matters more than the shop",
+                "The ceiling arrives quickly: delivery rules, integrations, moving your data out",
+              ],
+              [
+                "The smallest tier",
+                "Square Online, Ecwid",
+                "A till that also sells online, or a small shop bolted onto an existing site",
+                "Genuinely useful at that size; outgrown once channels multiply",
+              ],
+              [
+                "The enterprise end",
+                "Adobe Commerce, composable builds",
+                "Large catalogues, development teams, unusual requirements",
+                "Priced accordingly in money and attention - we will say so if your requirements point here",
+              ],
+              [
+                "Payment pages",
+                "Stripe-class checkouts",
+                "Downloads, services, deposits, donations",
+                "The whole payments-without-a-shop tier",
+              ],
+              [
+                "Recurring by direct debit",
+                "GoCardless-class services",
+                "Memberships and invoicing on repeat",
+                "Direct debit costs less than cards for recurring",
+              ],
+              [
+                "Merchant of record",
+                "Paddle, Lemon Squeezy",
+                "Selling software internationally",
+                "They become the seller and carry the global VAT burden",
+              ],
+              [
+                "Donations",
+                "Donorbox-class tools",
+                "Charities and supporter giving",
+                "Gift Aid capture and charity card rates are the details that matter",
+              ],
+            ],
           },
         ],
       },
@@ -384,7 +609,6 @@ export const ARTICLES: readonly Article[] = [
         ],
       },
     ],
-    note: "Products, bookings, subscriptions, services. What you sell decides the software, not the other way round.",
   },
   {
     slug: "systems-behind-selling",
@@ -392,6 +616,7 @@ export const ARTICLES: readonly Article[] = [
     title:
       "Behind every sale online there are three systems - and one of them should be yours",
     lead: "Take any sale on any website - a parcel, a download, a gym membership, a donation - and behind it you will find the same three systems: one that moves the money, one that keeps the records, and the website itself. Most selling advice talks only about the website. The records are where businesses get quietly locked in.",
+    note: "The shop window, the money and the record. Which of the three has to be yours, and why.",
     minutes: 6,
     sections: [
       {
@@ -415,8 +640,63 @@ export const ARTICLES: readonly Article[] = [
         h: "What each kind of sale needs behind it",
         b: [
           {
-            k: "p",
-            t: "| What you sell | The records behind it | The common answer today | Where we would start | |---|---|---|---| | Physical goods - a full shop | Catalogue, stock, orders, deliveries, returns | Shopify, which handles all of it well | Shopify - [our baseline, explained honestly](/advice/why-our-baseline-is-shopify/) | | Digital downloads, tracked | Who owns which file, download limits, secure re-download | Scattered apps and plugins; the records rarely belong to you | Speak to us about Omadeas | | Memberships - gyms, clubs, paid content | The member register: plan, status, what each tier gets, joins and lapses | A patchwork of membership tools, each holding your register their way | Speak to us about Omadeas | | Donations, and friends-of schemes | The supporter register, recurring gifts, Gift Aid declarations and claims | Generic donation widgets; Gift Aid often handled on spreadsheets | Speak to us about Omadeas | | Services paid online | A record of what was paid for, in your books or CRM | A payment page plus your accounting package | A payment page - and the record lands where you already work | | Bookings that take payment | The diary itself - availability is the record | Established booking systems, a crowded and capable market | A booking system connected to your site | | Quoted projects | Enquiry to proposal to invoice | Your CRM and accounting package | A well-built enquiry journey that writes into them | | Software you make | Your product's own billing holds everything | Exactly as it should be | Your website does the shop window; we leave your billing alone |",
+            k: "table",
+            h: [
+              "What you sell",
+              "The records behind it",
+              "The common answer today",
+              "Where we would start",
+            ],
+            r: [
+              [
+                "Physical goods - a full shop",
+                "Catalogue, stock, orders, deliveries, returns",
+                "Shopify, which handles all of it well",
+                "Shopify - [our baseline, explained honestly](/advice/why-our-baseline-is-shopify/)",
+              ],
+              [
+                "Digital downloads, tracked",
+                "Who owns which file, download limits, secure re-download",
+                "Scattered apps and plugins; the records rarely belong to you",
+                "Speak to us about Omadeas",
+              ],
+              [
+                "Memberships - gyms, clubs, paid content",
+                "The member register: plan, status, what each tier gets, joins and lapses",
+                "A patchwork of membership tools, each holding your register their way",
+                "Speak to us about Omadeas",
+              ],
+              [
+                "Donations, and friends-of schemes",
+                "The supporter register, recurring gifts, Gift Aid declarations and claims",
+                "Generic donation widgets; Gift Aid often handled on spreadsheets",
+                "Speak to us about Omadeas",
+              ],
+              [
+                "Services paid online",
+                "A record of what was paid for, in your books or CRM",
+                "A payment page plus your accounting package",
+                "A payment page - and the record lands where you already work",
+              ],
+              [
+                "Bookings that take payment",
+                "The diary itself - availability is the record",
+                "Established booking systems, a crowded and capable market",
+                "A booking system connected to your site",
+              ],
+              [
+                "Quoted projects",
+                "Enquiry to proposal to invoice",
+                "Your CRM and accounting package",
+                "A well-built enquiry journey that writes into them",
+              ],
+              [
+                "Software you make",
+                "Your product's own billing holds everything",
+                "Exactly as it should be",
+                "Your website does the shop window; we leave your billing alone",
+              ],
+            ],
           },
           {
             k: "p",
@@ -475,16 +755,15 @@ export const ARTICLES: readonly Article[] = [
         ],
       },
     ],
-    note: "The shop window, the money and the record. Which of the three has to be yours, and why.",
   },
 ];
 
 /**
  * A picture each, so four heads are not one head four times.
  *
- * Held here rather than in the view, because the index shows the same picture
- * for the same article and two lists of these would drift apart the first time
- * one of them was edited.
+ * Held here rather than in a view, because the index shows the same picture for
+ * the same article and two lists of these would drift apart the first time one
+ * of them was edited.
  */
 const PLATES: Record<string, string> = {
   "how-your-website-is-made": "/work-investor.png",

@@ -79,7 +79,7 @@ export function ArticleView({ article }: { article: Article }) {
         </div>
       </CutPanel>
 
-      <div className="mt-10 grid gap-x-14 gap-y-10 xl:grid-cols-[minmax(0,1fr)_210px] xl:items-start">
+      <div className="mt-10 grid gap-x-16 gap-y-10 xl:grid-cols-[minmax(0,78ch)_minmax(0,200px)] xl:items-start xl:justify-between">
         <article className="min-w-0">
           {article.sections.map((section, n) => (
             <Part key={section.h || `open-${n}`} section={section} at={n} />
@@ -181,18 +181,18 @@ function Part({ section, at }: { section: Section; at: number }) {
       className="scroll-mt-[calc(var(--nav-height)+24px)]"
     >
       {section.h ? (
-        <h2 className="mt-14 mb-5 flex max-w-[30ch] items-start gap-4 first:mt-0">
+        <h2 className="mt-14 mb-5 flex items-start gap-4 first:mt-0">
           <span className="mt-[9px] font-mono text-[10px] font-bold text-mark tabular-nums">
             {String(at).padStart(2, "0")}
           </span>
-          <span className="text-[clamp(20px,1.8vw,27px)] leading-[1.14] font-extrabold tracking-[-0.03em] text-ink">
+          <span className="max-w-[26ch] text-[clamp(20px,1.8vw,27px)] leading-[1.14] font-extrabold tracking-[-0.03em] text-ink">
             {section.h}
           </span>
         </h2>
       ) : null}
 
       {asked ? (
-        <div className="flex max-w-[72ch] flex-col gap-2.5">
+        <div className="flex max-w-[76ch] flex-col gap-2.5">
           {groups.map((group, n) => (
             <div key={n} className="rounded-[18px] bg-canvas p-5 sm:p-6">
               <b className="block max-w-[52ch] text-[15.5px] leading-[1.35] font-extrabold tracking-[-0.02em] text-ink">
@@ -253,9 +253,53 @@ function Piece({ block, first }: { block: Block; first?: boolean }) {
     );
   }
 
+  if (block.k === "table") {
+    return (
+      /* A table, set as one. These carry the comparisons the articles are
+         actually written around - what each platform is, who it suits, what it
+         costs - and running them together as prose, which is what a flat
+         renderer does to a pipe table, makes the one thing worth scanning the
+         one thing nobody can. */
+      <div className="quiet-scroll mt-6 mb-2 max-w-[76ch] overflow-x-auto rounded-[16px] bg-canvas">
+        <table className="w-full min-w-[540px] border-collapse text-left">
+          <thead>
+            <tr>
+              {block.h.map((cell, n) => (
+                <th
+                  key={n}
+                  className="px-5 py-3.5 font-mono text-[9px] font-bold tracking-[0.14em] text-label uppercase"
+                >
+                  {cell}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody>
+            {block.r.map((row, n) => (
+              <tr key={n} className="align-top">
+                {row.map((cell, k) => (
+                  <td
+                    key={k}
+                    className={cn(
+                      "px-5 py-3.5 text-[13.5px] leading-[1.55]",
+                      k === 0 ? "font-semibold text-ink" : "text-body",
+                    )}
+                  >
+                    <Bold text={cell} />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
   if (block.k === "ul") {
     return (
-      <ul className="mt-4 mb-4 flex max-w-[68ch] flex-col gap-2">
+      <ul className="mt-4 mb-4 flex max-w-[72ch] flex-col gap-2">
         {block.i.map((item, n) => (
           <li key={n} className="flex gap-3">
             <span
@@ -274,7 +318,7 @@ function Piece({ block, first }: { block: Block; first?: boolean }) {
   return (
     <p
       className={cn(
-        "max-w-[68ch] text-[15px] leading-[1.7] text-body",
+        "max-w-[72ch] text-[15px] leading-[1.72] text-body",
         first ? "mt-0" : "mt-4",
       )}
     >
