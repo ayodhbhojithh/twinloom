@@ -255,10 +255,18 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
   if (answers.sent) {
     return (
       <StageStep at={at} answers={answers} onGo={onGo} corner={null}>
-        <span className="inline-flex items-center gap-2 rounded-pill bg-mark/[0.08] py-1.5 pr-4 pl-3">
-          <span aria-hidden className="size-2 rounded-pill bg-mark" />
-          <Kicker className="text-mark">Sent</Kicker>
-        </span>
+        {/* The badge sits in a block of its own so it can be given a margin.
+            Left inline, the only thing between it and the heading was the
+            leading of its own line box - about six pixels under a 27px
+            extrabold line, which read as the two being one stuck together lump
+            rather than a mark and the sentence it introduces. `flex` keeps the
+            pill shrunk to its label instead of stretching the row. */}
+        <div className="mb-4 flex">
+          <span className="inline-flex items-center gap-2 rounded-pill bg-mark/[0.08] py-1.5 pr-4 pl-3">
+            <span aria-hidden className="size-2 rounded-pill bg-mark" />
+            <Kicker className="text-mark">Sent</Kicker>
+          </span>
+        </div>
 
         <H>We read it. All of it.</H>
         <Sub>
@@ -267,12 +275,17 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
           days.
         </Sub>
 
-        <p className="mt-6 max-w-[52ch] text-[13.5px] leading-[1.6] text-quiet">
+        {/* The measure, the size and the leading of the line above it, because
+            it is the same quiet voice saying the next thing. On a shorter
+            measure the two paragraphs wrapped at different widths and gave the
+            screen two ragged right edges where it should have one column. The
+            gap is a line of that column: a paragraph break, not a new block. */}
+        <p className="mt-5 max-w-[58ch] text-[13.5px] leading-[1.5] text-quiet sm:text-[14px]">
           Your answers are still here and still yours - keep changing them and
           send it again, and the newer one is the one we read.
         </p>
 
-        <div className="mt-5">
+        <div className="mt-7 flex">
           <Pill onClick={() => setSent(false)}>Keep answering</Pill>
         </div>
       </StageStep>
