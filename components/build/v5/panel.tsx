@@ -256,12 +256,12 @@ function Desk({
           value={draft}
           placeholder="Anything at all, in your own words"
           onChange={(event) => setDraft(event.target.value)}
-          className="min-w-0 flex-1 rounded-field bg-well px-3.5 py-1.5 text-[14px] text-ink outline-none transition-colors placeholder:text-label focus:bg-hair"
+          className="min-w-0 flex-1 h-9 rounded-field bg-well px-3.5 text-[14px] text-ink outline-none transition-colors placeholder:text-label focus:bg-hair"
         />
         <button
           type="submit"
           disabled={!draft.trim()}
-          className="flex-none cursor-pointer rounded-field bg-ink px-3.5 py-1.5 font-mono text-[10px] font-bold tracking-[0.14em] text-white uppercase transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-planned disabled:text-label"
+          className="flex-none cursor-pointer h-9 rounded-field bg-ink px-4 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-planned disabled:text-label"
         >
           Add
         </button>

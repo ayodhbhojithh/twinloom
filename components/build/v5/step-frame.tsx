@@ -1,6 +1,8 @@
 "use client";
 
-import { STEPS } from "@/lib/build/v5";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+
+import { ASSUMPTIONS, STEPS } from "@/lib/build/v5";
 import { cn } from "@/lib/utils";
 
 import { Kicker, StopNote } from "./parts";
@@ -72,40 +74,76 @@ export function StepFrame({
 
       <StopNote needs={needs} />
 
-      <div className="-mx-6 mt-10 flex flex-wrap items-center gap-3 border-t border-border px-6 pt-6 sm:-mx-8 sm:px-8">
-        {!first ? (
-          <button
-            type="button"
-            onClick={() => onGo(at - 1)}
-            className="cursor-pointer rounded-field bg-well px-4 py-2 text-[14.5px] font-semibold text-quiet transition-colors hover:bg-hair hover:text-ink"
-          >
-            Back
-          </button>
-        ) : null}
+      {/* The way on, and what each way costs.
 
-        {!last ? (
-          <button
-            type="button"
-            onClick={() => onGo(at + 1)}
-            className="cursor-pointer rounded-field bg-ink px-5 py-2 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-85"
-          >
-            Continue
-          </button>
-        ) : null}
+          "Continue" and "Back" are the two least useful words a wizard can put
+          on its own controls: they say a direction and nothing about where it
+          goes. Naming the step on each one turns the footer into the answer to
+          the question somebody actually has, which is "what is next".
 
-        {/* Skipping is the same move as continuing, and it is drawn as a
-            different one on purpose. Nothing is recorded either way: what
-            separates them is that a step you touched is answered and a step you
-            walked past becomes an assumption, and that is decided by the
-            questions, not by which button was pressed. */}
+          And the skip says what skipping writes down. The site's whole promise
+          is that a step walked past becomes a sentence in your own document
+          rather than a hole, so the sentence is printed on the control that
+          does it. Nobody should have to take that on trust when the words are
+          sitting in the data. */}
+      <div className="-mx-6 mt-9 border-t border-border px-6 pt-5 sm:-mx-8 sm:px-8">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          {!first ? (
+            <button
+              type="button"
+              onClick={() => onGo(at - 1)}
+              className="group/back flex h-11 cursor-pointer items-center gap-3 rounded-field border border-border px-3.5 text-left transition-colors hover:bg-well"
+            >
+              <ArrowLeft
+                aria-hidden
+                className="size-[18px] flex-none text-label transition-transform group-hover/back:-translate-x-0.5"
+              />
+              <span className="min-w-0">
+                <Kicker className="block">Back</Kicker>
+                <span className="mt-1 block text-[14px] leading-[1.2] font-semibold text-ink">
+                  {STEPS[at - 1].n}
+                </span>
+              </span>
+            </button>
+          ) : (
+            <span />
+          )}
+
+          {!last ? (
+            <button
+              type="button"
+              onClick={() => onGo(at + 1)}
+              className="group/next flex h-11 cursor-pointer items-center gap-3 rounded-field border border-ink bg-ink px-3.5 text-left transition-opacity hover:opacity-85"
+            >
+              <span className="min-w-0">
+                <span className="block font-mono text-[10.5px] font-bold tracking-[0.16em] text-white/50 uppercase">
+                  Next
+                </span>
+                <span className="mt-1 block text-[14px] leading-[1.2] font-semibold text-white">
+                  {STEPS[at + 1].n}
+                </span>
+              </span>
+              <ArrowRight
+                aria-hidden
+                className="size-[18px] flex-none text-white transition-transform group-hover/next:translate-x-0.5"
+              />
+            </button>
+          ) : null}
+        </div>
+
         {step.can && !last ? (
-          <button
-            type="button"
-            onClick={() => onGo(at + 1)}
-            className="cursor-pointer text-[14.5px] font-semibold text-quiet underline decoration-planned decoration-1 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink"
-          >
-            Skip this step
-          </button>
+          <p className="mt-4 max-w-measure text-[13.5px] leading-[1.55] text-quiet">
+            <button
+              type="button"
+              onClick={() => onGo(at + 1)}
+              className="cursor-pointer font-semibold text-ink underline decoration-planned decoration-1 underline-offset-4 transition-colors hover:decoration-ink"
+            >
+              Skip this step
+            </button>
+            {ASSUMPTIONS[step.k]
+              ? ` and we write down: ${ASSUMPTIONS[step.k]}`
+              : " and nothing is written down, because there is nothing here to answer."}
+          </p>
         ) : null}
       </div>
     </section>

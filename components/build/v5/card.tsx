@@ -332,12 +332,12 @@ export function OwnWords({
           value={draft}
           placeholder={placeholder}
           onChange={(event) => setDraft(event.target.value)}
-          className="min-w-0 flex-1 rounded-field border border-border bg-field px-3.5 py-1.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
+          className="min-w-0 flex-1 h-9 rounded-field border border-border bg-field px-3.5 text-[14px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
         />
         <button
           type="submit"
           disabled={!draft.trim()}
-          className="flex-none cursor-pointer rounded-field bg-ink px-3.5 py-1.5 text-[13px] font-semibold text-white transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-planned disabled:text-white"
+          className="flex-none cursor-pointer h-9 rounded-field bg-ink px-4 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85 disabled:cursor-default disabled:bg-planned disabled:text-white"
         >
           Add
         </button>
