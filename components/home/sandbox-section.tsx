@@ -275,62 +275,87 @@ export function SandboxSection() {
           </Link>
         }
       >
-        <div className="grid gap-7 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] lg:grid-cols-[264px_minmax(0,1fr)]">
-          {/* The shelf. Ink for the one in hand, the ground for the rest. */}
-          <ul
-            role="listbox"
-            aria-label="Pieces"
-            className="flex flex-col gap-1.5"
-          >
-            {PIECES.map((entry) => {
-              const on = entry.key === at;
-
-              return (
-                <li key={entry.key}>
-                  <button
-                    type="button"
-                    role="option"
-                    aria-selected={on}
-                    onClick={() => setAt(entry.key)}
-                    className={cn(
-                      "flex w-full cursor-pointer items-center gap-3 rounded-[14px] px-3 py-2.5 text-left transition-colors",
-                      on ? "bg-ink" : "bg-canvas hover:bg-canvas-firm",
-                    )}
+        {/* `popLayout` rather than `wait`. Waiting holds the whole surface
+            empty for the length of the exit before the next thing starts, which
+            is what makes a swap read as a blink; popping takes the leaving one
+            out of the flow so both moves happen at once and the surface never
+            goes blank. */}
+        <LayoutGroup>
+          <AnimatePresence mode="popLayout" initial={false}>
+            {open ? (
+              /* Opened, it takes the whole bench. Expanding underneath the
+                 shelf and the stage made it a third thing on a crowded
+                 surface; taking the surface makes it the thing you opened. */
+              <WorkOpen
+                key="open"
+                project={PROJECTS[PROJECTS.findIndex((e) => e.id === open)]}
+                n={PROJECTS.findIndex((e) => e.id === open)}
+                onClose={() => setOpen(null)}
+              />
+            ) : (
+              <motion.div
+                key="bench"
+                initial={{ opacity: 0, y: 12, scale: 0.985 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 12, scale: 0.985 }}
+                transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="grid gap-7 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] lg:grid-cols-[264px_minmax(0,1fr)]">
+                  {/* The shelf. Ink for the one in hand, the ground for the rest. */}
+                  <ul
+                    role="listbox"
+                    aria-label="Pieces"
+                    className="flex flex-col gap-1.5"
                   >
-                    <span
-                      aria-hidden
-                      className={cn(
-                        "flex size-8 flex-none items-center justify-center rounded-pill transition-colors",
-                        on
-                          ? "bg-white/15 text-white"
-                          : entry.live
-                            ? "bg-field text-quiet"
-                            : "bg-field text-planned",
-                      )}
-                    >
-                      <entry.icon className="size-4" />
-                    </span>
+                    {PIECES.map((entry) => {
+                      const on = entry.key === at;
 
-                    {/* The name, and nothing after it. Six rows each ending in
+                      return (
+                        <li key={entry.key}>
+                          <button
+                            type="button"
+                            role="option"
+                            aria-selected={on}
+                            onClick={() => setAt(entry.key)}
+                            className={cn(
+                              "flex w-full cursor-pointer items-center gap-3 rounded-[14px] px-3 py-2.5 text-left transition-colors",
+                              on ? "bg-ink" : "bg-canvas hover:bg-canvas-firm",
+                            )}
+                          >
+                            <span
+                              aria-hidden
+                              className={cn(
+                                "flex size-8 flex-none items-center justify-center rounded-pill transition-colors",
+                                on
+                                  ? "bg-white/15 text-white"
+                                  : entry.live
+                                    ? "bg-field text-quiet"
+                                    : "bg-field text-planned",
+                              )}
+                            >
+                              <entry.icon className="size-4" />
+                            </span>
+
+                            {/* The name, and nothing after it. Six rows each ending in
                         LIVE or IDEA made a second column of shouting mono down
                         the shelf, and it was saying twice over what the notch
                         already says about the piece in hand and what the greyed
                         mark already says about the rest. */}
-                    <span
-                      className={cn(
-                        "min-w-0 flex-1 truncate text-[13.5px] font-semibold",
-                        on ? "text-white" : "text-body",
-                      )}
-                    >
-                      {entry.name}
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+                            <span
+                              className={cn(
+                                "min-w-0 flex-1 truncate text-[13.5px] font-semibold",
+                                on ? "text-white" : "text-body",
+                              )}
+                            >
+                              {entry.name}
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
 
-          {/* The stage. Clipped and given a height, because both widgets size
+                  {/* The stage. Clipped and given a height, because both widgets size
               themselves to whatever box they are in and without one they grow
               until they have taken the section.
 
@@ -345,113 +370,97 @@ export function SandboxSection() {
 
               Below `md` there is no shelf beside it to match, so it goes back
               into the flow with a height of its own. */}
-          <div className="relative min-w-0">
-            <div className="relative h-[220px] overflow-hidden rounded-[18px] sm:h-[280px] md:absolute md:inset-0 md:h-auto">
-              {piece.key === "particles" ? (
-                <ParticleWordmark word="TwinLoom" className="h-full w-full" />
-              ) : null}
+                  <div className="relative min-w-0">
+                    <div className="relative h-[220px] overflow-hidden rounded-[18px] sm:h-[280px] md:absolute md:inset-0 md:h-auto">
+                      {piece.key === "particles" ? (
+                        <ParticleWordmark
+                          word="TwinLoom"
+                          className="h-full w-full"
+                        />
+                      ) : null}
 
-              {piece.key === "liquid" ? (
-                /* The home page's own liquid, at the bench's height rather than
+                      {piece.key === "liquid" ? (
+                        /* The home page's own liquid, at the bench's height rather than
                    its own clamp. Crosshair because it is a surface you disturb
                    rather than a picture you look at. */
-                <LiquidWord
-                  word="TwinLoom"
-                  className="h-full w-full cursor-crosshair"
-                />
-              ) : null}
+                        <LiquidWord
+                          word="TwinLoom"
+                          className="h-full w-full cursor-crosshair"
+                        />
+                      ) : null}
 
-              {piece.key === "loom" ? (
-                <>
-                  <div className="flex h-full items-center px-2">
-                    <LoomStrings word="Play it" className="w-full" />
-                  </div>
+                      {piece.key === "loom" ? (
+                        <>
+                          <div className="flex h-full items-center px-2">
+                            <LoomStrings word="Play it" className="w-full" />
+                          </div>
 
-                  {/* The one control that belongs to a piece rather than to the
+                          {/* The one control that belongs to a piece rather than to the
                       bench, so it stands on the piece. */}
-                  <button
-                    type="button"
-                    onClick={toggle}
-                    aria-pressed={playing}
-                    className={cn(
-                      "absolute top-3 right-3 flex cursor-pointer items-center gap-2 rounded-pill px-3.5 py-1.5 font-mono text-[8.5px] font-bold tracking-[0.12em] uppercase transition-colors",
-                      playing
-                        ? "bg-ink text-white"
-                        : "bg-field text-quiet hover:text-ink",
-                    )}
-                  >
-                    {playing ? (
-                      <Pause className="size-3" />
-                    ) : (
-                      <Play className="size-3" />
-                    )}
-                    {playing ? "Stop" : "Play"}
-                  </button>
-                </>
-              ) : null}
+                          <button
+                            type="button"
+                            onClick={toggle}
+                            aria-pressed={playing}
+                            className={cn(
+                              "absolute top-3 right-3 flex cursor-pointer items-center gap-2 rounded-pill px-3.5 py-1.5 font-mono text-[8.5px] font-bold tracking-[0.12em] uppercase transition-colors",
+                              playing
+                                ? "bg-ink text-white"
+                                : "bg-field text-quiet hover:text-ink",
+                            )}
+                          >
+                            {playing ? (
+                              <Pause className="size-3" />
+                            ) : (
+                              <Play className="size-3" />
+                            )}
+                            {playing ? "Stop" : "Play"}
+                          </button>
+                        </>
+                      ) : null}
 
-              {!piece.live ? (
-                /* Not built, and said so. The bench names what it would carry
+                      {!piece.live ? (
+                        /* Not built, and said so. The bench names what it would carry
                    rather than drawing a picture of a thing that does not
                    exist. */
-                <div className="flex h-full flex-col items-center justify-center px-6 text-center">
-                  <span
-                    aria-hidden
-                    className="flex size-12 items-center justify-center rounded-pill bg-field text-idx"
-                  >
-                    <piece.icon className="size-5" />
-                  </span>
+                        <div className="flex h-full flex-col items-center justify-center px-6 text-center">
+                          <span
+                            aria-hidden
+                            className="flex size-12 items-center justify-center rounded-pill bg-field text-idx"
+                          >
+                            <piece.icon className="size-5" />
+                          </span>
 
-                  <p className="mt-4 max-w-[44ch] text-[13.5px] leading-[1.6] text-quiet">
-                    Not built yet. A piece we would write into a build rather
-                    than a thing we are pretending to have finished.
-                  </p>
+                          <p className="mt-4 max-w-[44ch] text-[13.5px] leading-[1.6] text-quiet">
+                            Not built yet. A piece we would write into a build
+                            rather than a thing we are pretending to have
+                            finished.
+                          </p>
 
-                  <Link
-                    href={"at" in piece && piece.at ? piece.at : ROUTES.build}
-                    className="group/ask mt-5 inline-flex items-center gap-2 rounded-pill bg-ink px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-85"
-                  >
-                    {"at" in piece && piece.at
-                      ? "See it working"
-                      : "Ask for it"}
-                    <ArrowUpRight
-                      aria-hidden
-                      className="size-3.5 transition-transform group-hover/ask:translate-x-0.5 group-hover/ask:-translate-y-0.5"
-                    />
-                  </Link>
+                          <Link
+                            href={
+                              "at" in piece && piece.at
+                                ? piece.at
+                                : ROUTES.build
+                            }
+                            className="group/ask mt-5 inline-flex items-center gap-2 rounded-pill bg-ink px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-85"
+                          >
+                            {"at" in piece && piece.at
+                              ? "See it working"
+                              : "Ask for it"}
+                            <ArrowUpRight
+                              aria-hidden
+                              className="size-3.5 transition-transform group-hover/ask:translate-x-0.5 group-hover/ask:-translate-y-0.5"
+                            />
+                          </Link>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
-              ) : null}
-            </div>
-          </div>
-        </div>
 
-        {/* Where the pieces end up: the work, as numbered cards cut the way
-            everything else here is cut. A grid inside the bench rather than a
-            section of its own, because this is the answer to "what is any of
-            this for" and that is the question the bench raises. */}
-        <div className="mt-9">
-          {/* One of these opens in place. The card does not go anywhere: its
-              picture is the same element, carried into the open panel by
-              `layoutId`, so the two states are one object moving rather than a
-              card fading out while a dialog fades in. */}
-          <LayoutGroup>
-            <AnimatePresence mode="wait" initial={false}>
-              {open ? (
-                <WorkOpen
-                  key="open"
-                  project={PROJECTS[PROJECTS.findIndex((e) => e.id === open)]}
-                  n={PROJECTS.findIndex((e) => e.id === open)}
-                  onClose={() => setOpen(null)}
-                />
-              ) : (
-                <motion.div
-                  key="grid"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
-                >
+                {/* Where the pieces end up: the work, as numbered cards cut the
+                    way everything else here is cut. */}
+                <div className="mt-9 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                   {PROJECTS.map((project, n) => (
                     <WorkCard
                       key={project.id}
@@ -460,11 +469,11 @@ export function SandboxSection() {
                       onOpen={() => setOpen(project.id)}
                     />
                   ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </LayoutGroup>
-        </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </LayoutGroup>
       </CutPanel>
     </section>
   );
@@ -519,7 +528,7 @@ function WorkCard({
       type="button"
       onClick={onOpen}
       aria-label={`Open ${project.name}`}
-      className="group/work relative h-[200px] min-w-0 cursor-pointer text-left transition-transform duration-300 hover:-translate-y-1 sm:h-[214px]"
+      className="group/work relative h-[clamp(180px,17vw,230px)] min-w-0 cursor-pointer text-left transition-transform duration-300 hover:-translate-y-1"
     >
       {/* The picture is the card, cut to the outline and faded into ink at the
           foot so the name is read off the picture rather than off a bar laid
@@ -527,6 +536,7 @@ function WorkCard({
       <motion.span
         aria-hidden
         layoutId={`work-${project.id}`}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className="absolute inset-0 block overflow-hidden bg-field"
         style={{ clipPath: path ? `path("${path}")` : undefined }}
       >
@@ -603,6 +613,37 @@ function WorkOpen({
 }) {
   const box = useRef<HTMLElement>(null);
 
+  /* Opened from a card near the foot of the bench, this arrives with its own
+     top somewhere above the window. Nobody should have to scroll up to find
+     the thing they just pressed, so it brings itself to the top of the screen -
+     but only if it is actually above it, since scrolling a panel that is
+     already in view is a jolt for no reason. */
+  useEffect(() => {
+    const node = box.current;
+    if (!node) return;
+
+    const settle = requestAnimationFrame(() => {
+      const top = node.getBoundingClientRect().top + window.scrollY;
+      const header =
+        Number.parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue(
+            "--nav-height",
+          ),
+        ) || 53;
+
+      if (window.scrollY <= top - header - 24) return;
+
+      window.scrollTo({
+        top: Math.max(0, top - header - 20),
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+      });
+    });
+
+    return () => cancelAnimationFrame(settle);
+  }, []);
+
   /* Escape, and a press anywhere outside it. Something opened in place has no
      scrim to press, so the page itself is the way out - and a reader who has
      finished with it will press away from it long before they look for a
@@ -634,10 +675,10 @@ function WorkOpen({
     <motion.article
       ref={box}
       layout
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, y: 16, scale: 0.985 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 16, scale: 0.985 }}
+      transition={{ duration: 0.46, ease: [0.22, 1, 0.36, 1] }}
       className="relative overflow-hidden rounded-[22px] bg-canvas"
     >
       {/* The picture, and it fades into the ground it sits on rather than
@@ -646,7 +687,8 @@ function WorkOpen({
       <motion.span
         layoutId={`work-${project.id}`}
         onClick={onClose}
-        className="relative block h-[240px] w-full cursor-pointer overflow-hidden sm:h-[300px]"
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="relative block h-[clamp(220px,32vw,440px)] w-full cursor-pointer overflow-hidden"
       >
         <Image
           src={project.image}
@@ -665,7 +707,7 @@ function WorkOpen({
         />
       </motion.span>
 
-      <div className="relative -mt-12 px-6 pb-6 sm:px-8 sm:pb-8">
+      <div className="relative -mt-16 px-6 pb-6 sm:px-8 sm:pb-8">
         <span className="font-mono text-[9px] font-bold tracking-[0.16em] text-mark uppercase">
           {String(n + 1).padStart(2, "0")} · {project.kind} / {project.year}
         </span>
