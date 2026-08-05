@@ -821,6 +821,48 @@
   }
 
   /* ---------------------------------------------------------------------------
+     A note, with its corner turned.
+
+     The desk holds things somebody wrote down, and a stack of identical rounded
+     rectangles is a list of records rather than a pile of notes. This is the
+     site's own idiom at small scale: the surface has a piece taken out of it,
+     and what shows underneath is the leaf turning over.
+
+     Two shapes, not an image. The card is clipped so its top corner is gone,
+     and a triangle in the shade of the page sits in the gap - so the corner
+     reads as folded rather than as missing. Both are drawn from one number, so
+     the fold cannot come apart from the cut it fills.
+
+     On the leading side, so it reverses with the writing direction along with
+     everything else here.
+  --------------------------------------------------------------------------- */
+  .note-leaf {
+    --fold: 20px;
+    position: relative;
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--fold)) 0,
+      100% var(--fold),
+      100% 100%,
+      0 100%
+    );
+  }
+
+  .note-leaf::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: var(--fold);
+    height: var(--fold);
+    /* The underside of the leaf: the page's own grey, one step firmer, so it
+       reads as paper rather than as a coloured tag stuck on. */
+    background-color: var(--color-hair);
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
+    pointer-events: none;
+  }
+
+  /* ---------------------------------------------------------------------------
      Reveal: how a block arrives as the page reaches it.
 
      The entrance above plays once on load, which is right for the card at the
