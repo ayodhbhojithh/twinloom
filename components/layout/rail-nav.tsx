@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import {
   CircleHelp,
@@ -249,11 +250,18 @@ interface Tip {
 /**
  * The name of a mark, beside the mark.
  *
- * `fixed`, and that is the whole reason this is not a span inside the row. The
- * strip scrolls, and `overflow-y: auto` makes the other axis `auto` too - so
- * anything drawn beyond the strip's edge from inside it is clipped by the strip.
- * Taken out of the flow and placed against the window, it has nothing to be
- * clipped by.
+ * On the body, through a portal, and both halves of that matter.
+ *
+ * `fixed` is why it is not a span inside the row: the strip scrolls, and
+ * `overflow-y: auto` makes the other axis `auto` too, so anything drawn past the
+ * strip's edge from inside it is clipped by the strip.
+ *
+ * The portal is why `fixed` is not enough on its own. The rail is `sticky`, and
+ * a stickily positioned element always establishes a stacking context - so a
+ * `z-index` set inside the rail is only ever a rank among the rail's own
+ * children, however large the number. The page column comes after the rail in
+ * the document and paints over the whole context, tooltip included. Moved to the
+ * body it is ranked against the page rather than against the rail.
  *
  * Placed from the row's own rectangle rather than from its position in the list,
  * so it stays level with the mark under the pointer even when the strip has been
@@ -266,10 +274,9 @@ interface Tip {
  */
 function StripTip({ tip }: { tip: Tip }) {
   const rtl =
-    typeof document !== "undefined" &&
     getComputedStyle(document.documentElement).direction === "rtl";
 
-  return (
+  return createPortal(
     <span
       role="tooltip"
       aria-hidden
@@ -281,6 +288,7 @@ function StripTip({ tip }: { tip: Tip }) {
       }}
     >
       {tip.label}
-    </span>
+    </span>,
+    document.body,
   );
 }
