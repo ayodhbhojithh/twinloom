@@ -293,8 +293,14 @@ export function NotchedCard({ className }: { className?: string }) {
     );
 
     /* The bite is square-ish and sized to the thumbnail standing in it, with the
-       same flare and the same corner as the notch above. */
-    const bite = Math.max(124, Math.min(Math.min(w * 0.13, h * 0.26), 196));
+       same flare and the same corner as the notch above.
+
+       The floor was 124, which is a fixed number on a card that is not: it
+       dominated every width below about nine hundred, so a 280px phone card gave
+       up nearly half its bottom edge to a thumbnail and left nothing beside it
+       for the name. Ninety-six still holds a thumbnail worth looking at and
+       leaves the rest of the edge to the words. */
+    const bite = Math.max(96, Math.min(Math.min(w * 0.13, h * 0.26), 196));
 
     /* The corner for the way on. Square, like the bite, and only as large as
        the control standing in it needs: `flare * 2` is the smallest a cut can
@@ -320,6 +326,12 @@ export function NotchedCard({ className }: { className?: string }) {
   })();
 
   const path = size.w > 40 ? outline(size.w, size.h, cut) : "";
+
+  /* Whether the bottom edge has room for the name beside the thumbnail.
+     Measured off the card rather than off the window, because this card is not
+     always the width of the window: with the rail docked it is a good deal
+     narrower, and a media query would have called a squeezed card roomy. */
+  const tight = size.w > 40 && size.w - cut.biteWidth - cut.dropWidth < 210;
 
   return (
     <div
@@ -434,13 +446,33 @@ export function NotchedCard({ className }: { className?: string }) {
       </button>
 
       {/* Which project this is, said in words rather than left to the picture.
-          On a plate, because the moment a real photograph went in behind it the
-          text was being read against whatever happened to be there. */}
+
+          Bounded on both sides, which it was not: set from the right edge alone
+          with nothing holding its left, a long name simply ran on until it was
+          underneath the thumbnail - two things reading as one and neither
+          legible. Now it is penned between the two cuts and wraps instead.
+
+          On a narrow card there is no room between them worth having, so it
+          moves above the bite and takes the width. Squeezed into the strip
+          beside a thumbnail on a phone, four words become six lines. */}
       <p
-        className="absolute bottom-6 text-right sm:bottom-7"
-        style={{ right: cut.dropWidth + 14 }}
+        className="absolute"
+        style={
+          tight
+            ? {
+                left: 14,
+                right: cut.dropWidth + 12,
+                bottom: cut.biteHeight + 10,
+              }
+            : {
+                left: cut.biteWidth + 14,
+                right: cut.dropWidth + 14,
+                bottom: 26,
+                textAlign: "right",
+              }
+        }
       >
-        <span className="block text-[16px] font-bold text-white sm:text-[18px]">
+        <span className="block text-[15px] font-bold text-white sm:text-[18px]">
           {shown.name}
         </span>
         <span className="mt-1 block font-mono text-[9.5px] font-bold tracking-[0.16em] text-white/65 uppercase">
