@@ -54,7 +54,11 @@ export function BlogView() {
       </header>
 
       {/* The lead piece, on the surface. */}
+      {/* White, like the rows under it. The panel's own default is the canvas
+          grey, which on a canvas page made the lead article the one card that
+          did not read as a card while the three below it did. */}
       <CutPanel
+        tone="field"
         className="w-full"
         image={plateFor(lead.slug)}
         toolbar={

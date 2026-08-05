@@ -44,7 +44,11 @@ const WAYS = [
 export function ContactView() {
   return (
     <PageShell>
+      {/* White, like every other card on the site. The panel's own default is
+          the canvas grey, and on a canvas page that makes the one card with a
+          picture in it the one card that does not read as a card. */}
       <CutPanel
+        tone="field"
         className="w-full"
         /* The picture is the right half of the head, cut to the surface's own
            outline. Without one the panel is a paragraph with a field of empty

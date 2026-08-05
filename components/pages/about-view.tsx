@@ -47,7 +47,11 @@ export function AboutView() {
   return (
     <PageShell>
       {/* The head, on the surface every working screen here is drawn on. */}
+      {/* White, like every other card on the site. The panel's own default is
+          the canvas grey, and on a canvas page that makes the one card with a
+          picture in it the one card that does not read as a card. */}
       <CutPanel
+        tone="field"
         className="w-full"
         image="/partners/arch.png"
         aside={

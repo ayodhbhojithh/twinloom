@@ -235,18 +235,6 @@ export function CutPanel({
             />
           </div>
 
-          {/* A wash of the surface's own white over the picture.
-
-              The mask already thins the photograph out towards the words, but
-              what is left is a full strength picture sitting on a page made of
-              hairlines and grey type - it arrives before anything written does.
-              A quiet white over the whole of it puts the picture behind the
-              page rather than on top of it, and costs nothing where the mask
-              has already taken the picture away. */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 bg-field/35"
-          />
 
           <div className="absolute inset-y-0 right-0 hidden w-[55%] lg:block">
             <Image
@@ -262,6 +250,21 @@ export function CutPanel({
               }}
             />
           </div>
+
+          {/* A wash of the surface's own white, over both picture layers.
+
+              It has to come after them in the markup. Sat between the two it
+              covered the one meant for a phone and was painted over by the one
+              meant for a laptop, so the desktop card kept a full strength
+              picture and only the phone got the wash.
+
+              The mask already thins the photograph out towards the words; this
+              puts what is left behind the page rather than on top of it, and
+              costs nothing where the mask has taken the picture away. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-field/35"
+          />
         </div>
       ) : null}
 
