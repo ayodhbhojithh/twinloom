@@ -886,6 +886,69 @@
   }
 
   /* ---------------------------------------------------------------------------
+     The wait.
+
+     Two ways out, and the second is why this is written in CSS rather than left
+     to the component. The component removes it when the page is ready; the
+     stylesheet removes it regardless, on a delay past every deadline the
+     component has. If the JavaScript never arrives - a chunk that 404s, a
+     browser that refuses it, a network that dies between the HTML and the
+     bundle - the site is still shown, because a loading screen that can outlive
+     the code that dismisses it is a blank page with extra steps.
+
+     Same keyframe both ways, so there is one description of how it leaves.
+     Setting the attribute restarts it with no delay, which is the whole trick:
+     the fallback is not a second animation to keep in step.
+  --------------------------------------------------------------------------- */
+  .boot {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-canvas);
+    animation: boot-out 460ms cubic-bezier(0.4, 0, 0.2, 1) 5200ms forwards;
+  }
+
+  .boot[data-done] {
+    pointer-events: none;
+    animation: boot-out 460ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes boot-out {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  /* The piece of the outline that travels. Linear, and it does not ease at
+     either end: a mark that speeds up and slows down reads as something being
+     drawn, and this is meant to read as something still going. */
+  .boot-trace {
+    animation: boot-trace 1.5s linear infinite;
+  }
+
+  @keyframes boot-trace {
+    to {
+      stroke-dashoffset: -100;
+    }
+  }
+
+  /* Asked for stillness, the shape simply stands there. The screen still does
+     its job - it covers the page until it is ready - it just stops being a
+     thing in motion, which is the whole of what was asked for. */
+  @media (prefers-reduced-motion: reduce) {
+    .boot-trace {
+      animation: none;
+      stroke-dasharray: none;
+      stroke: var(--color-hair);
+    }
+  }
+
+  /* ---------------------------------------------------------------------------
      Reveal: how a block arrives as the page reaches it.
 
      The entrance above plays once on load, which is right for the card at the

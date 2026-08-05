@@ -4,6 +4,7 @@ import { Archivo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 import { SiteShell } from "@/components/layout";
+import { Boot } from "@/components/layout/boot";
 import { RevealWatcher } from "@/components/layout/reveal-watcher";
 import { JsonLd } from "@/components/seo/json-ld";
 import { LOCALE, SITE_URL, organisationLd, websiteLd } from "@/lib/seo";
@@ -99,6 +100,13 @@ export default function RootLayout({
       className={`${archivo.variable} ${jetbrains.variable} h-full`}
     >
       <body className="flex min-h-full flex-col">
+        {/* First in the body so it is painted before anything under it, and
+            last to leave. It covers the page rather than replacing it: what is
+            underneath is the finished markup, already parsed and already
+            crawlable, so nothing here is standing between the site and anything
+            that reads it. */}
+        <Boot />
+
         {/* Who this is and what this site is, said once for the whole site.
             Both carry an `@id`, so every other block on every other page points
             at these two rather than restating them - one organisation described

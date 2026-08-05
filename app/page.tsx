@@ -58,6 +58,25 @@ export default function LandingPage() {
 
   return (
     <>
+      {/* The film on the card, asked for before the card exists.
+
+          `preload="auto"` on the element only starts once the browser has
+          parsed its way down to it, and by then it is queued behind the fonts,
+          the stylesheet and the bundle. This is in the head - React hoists it -
+          so the fetch is opened while the rest of the document is still being
+          read, which is most of the delay before it plays.
+
+          Here rather than in the layout: it is 2.7MB and it is on this page
+          only. Preloading it from the layout would spend that on every route on
+          the site to save it on one. */}
+      <link
+        rel="preload"
+        as="video"
+        type="video/mp4"
+        href="/videos/1.mp4"
+        fetchPriority="high"
+      />
+
       <section className="flex h-[var(--stage)] flex-col overflow-clip py-8">
         <div className="page-frame flex w-full shrink-0 flex-wrap items-end justify-between gap-x-12 gap-y-6">
           <div className="min-w-0">
