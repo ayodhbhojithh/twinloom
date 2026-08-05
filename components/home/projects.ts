@@ -90,8 +90,8 @@ export const PROJECTS: readonly Project[] = [
       { term: "Built in", value: "6 weeks" },
       { term: "Visitors", value: "Staff and candidates" },
     ],
-    image: "/work-careers.png",
-    alt: "A careers page with a person reading it.",
+    image: "/partners/2.png",
+    alt: "A figure reclining among blue and white spheres.",
     tone: "#e7e9ed",
   },
   {
@@ -106,8 +106,8 @@ export const PROJECTS: readonly Project[] = [
       { term: "Built in", value: "5 weeks" },
       { term: "Visitors", value: "Patients and referrers" },
     ],
-    image: "/work-trade.png",
-    alt: "A booking page showing the times available this week.",
+    image: "/partners/1.png",
+    alt: "A figure with arms out among blue and white spheres.",
     tone: "#e9ecef",
   },
 ];
