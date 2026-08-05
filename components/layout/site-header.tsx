@@ -150,7 +150,7 @@ export function SiteHeader() {
               sheet has a gutter to hang them into, so they hang into that. */}
           <nav
             aria-label="All pages, mobile"
-            className="flex-1 overflow-x-hidden overflow-y-auto pr-5 pb-8 pl-2 sm:pr-8 sm:pl-5"
+            className="flex-1 overflow-x-hidden overflow-y-auto pb-8 pe-5 ps-2 sm:pe-8 sm:ps-5"
           >
             <RailNav
               size="menu"

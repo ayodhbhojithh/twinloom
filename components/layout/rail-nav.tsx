@@ -1,42 +1,77 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import {
+  CircleHelp,
+  Hammer,
+  Handshake,
+  House,
+  Info,
+  Mail,
+  Newspaper,
+  type LucideIcon,
+} from "lucide-react";
 
-import { RAIL_PAGES, type NavLink as NavLinkData } from "@/lib/site";
+import { ROUTES, RAIL_PAGES, type NavLink as NavLinkData } from "@/lib/site";
 import { cn } from "@/lib/utils";
+
+/**
+ * A mark for every page in the rail.
+ *
+ * The rail folds to a strip, and a strip cannot carry words - so each page needs
+ * something that survives at 20px and still says which page it is. Without one,
+ * folding the rail leaves a column of identical blank rows, which is a list that
+ * has been hidden rather than one that has been made narrow.
+ *
+ * Keyed off `ROUTES` rather than written out as strings, so a route that gets
+ * renamed takes its mark with it instead of quietly falling back to the default.
+ *
+ * Sub pages are deliberately absent. They are versions of the page above them
+ * rather than places of their own, a mark each would be six near identical
+ * scribbles down the rail, and the strip does not show them at all.
+ */
+const MARKS: Record<string, LucideIcon> = {
+  [ROUTES.home]: House,
+  [ROUTES.build]: Hammer,
+  [ROUTES.about]: Info,
+  [ROUTES.partners]: Handshake,
+  [ROUTES.contact]: Mail,
+  [ROUTES.faq]: CircleHelp,
+  [ROUTES.blog]: Newspaper,
+};
 
 /**
  * Where the marker sits, and how far a sub page steps in.
  *
- * The list holds one thing only: the gap between the 2px marker and the label
- * it marks. Its own left edge is the marker's column, so whatever holds the list
+ * The list holds one thing only: the gap between the 2px marker and what it
+ * marks. Its own leading edge is the marker's column, so whatever holds the list
  * decides where that column falls - hard against the rail's edge, or inside the
- * phone sheet's padding with the rest of the sheet. A list that set a side
- * gutter of its own would carry a second inset on top of its container's and
- * line up with nothing.
+ * phone sheet's padding with the rest of the sheet.
  *
- * A sub page indents by 12 and the marker stays put, so the bar is in one column
- * down the whole list and only the text steps in. A bar that moved with the
- * indent would give the eye two vertical lines to follow and make the second
- * level look like a different navigation rather than part of this one.
+ * `NEST` is the width of a mark plus its gap, so a sub page starts exactly where
+ * its parent's words start rather than at an indent picked to look about right.
+ * Everything on the leading side is logical - `border-s`, `ps` - so the whole
+ * rail reverses with the writing direction instead of stranding its markers on
+ * the wrong edge in Arabic or Hebrew.
  */
 const HANG = 12;
-const NEST = 12;
+const MARK = 18;
+const GAP = 10;
+const NEST = MARK + GAP;
 
 /**
  * Every page on the site, shared by the docked rail and the phone menu.
  *
- * One component for both, because they are the same navigation seen at two
- * widths. Written twice, the menu quietly lost its indents and a phone got a
- * flat list where a laptop got a structured one.
- *
- * No headings and nothing to open or shut. A handful of links do not need
- * chapters; they need to be short, in a sensible order, and always on screen.
+ * One component for all three states, because they are one navigation seen at
+ * three widths: the strip, the docked rail and the phone sheet. Written
+ * separately, the menu quietly lost its indents and a phone got a flat list
+ * where a laptop got a structured one.
  *
  * Ink marks the page you are on, not the accent. Blue is the site's one action
  * colour, and a rail that paints the current page in it competes with every
- * button on the screen for the same meaning. The prototype uses ink here and it
- * is right: this is where you are, not something to do.
+ * button on the screen for the same meaning. This is where you are, not
+ * something to do.
  */
 export function RailNav({
   pathname,
@@ -46,27 +81,49 @@ export function RailNav({
   pathname: string;
   /** The menu closes itself on the way out; the docked rail has nothing to do. */
   onNavigate?: () => void;
-  size?: "rail" | "menu";
+  /** `strip` is the folded rail: marks only, and no sub pages. */
+  size?: "rail" | "menu" | "strip";
 }) {
-  return (
-    <ul>
-      {RAIL_PAGES.map((page) => (
-        <li key={page.href}>
-          <Row page={page} pathname={pathname} onNavigate={onNavigate} size={size} />
+  const strip = size === "strip";
+  const [tip, setTip] = useState<Tip | null>(null);
 
-          {page.children?.map((child) => (
+  return (
+    <>
+      <ul className={cn(strip && "flex flex-col items-center gap-0.5")}>
+        {RAIL_PAGES.map((page) => (
+          <li key={page.href} className={cn(strip && "w-full")}>
             <Row
-              key={child.href}
-              page={child}
+              page={page}
               pathname={pathname}
               onNavigate={onNavigate}
               size={size}
-              nested
+              onTip={strip ? setTip : undefined}
             />
-          ))}
-        </li>
-      ))}
-    </ul>
+
+            {/* Not in the strip. A sub page has no mark, so it would be a blank
+                row - and a strip is a list of places, not a list of
+                everything. */}
+            {strip
+              ? null
+              : page.children?.map((child) => (
+                  <Row
+                    key={child.href}
+                    page={child}
+                    pathname={pathname}
+                    onNavigate={onNavigate}
+                    size={size}
+                    nested
+                  />
+                ))}
+          </li>
+        ))}
+      </ul>
+
+      {/* Outside the list, because a `ul` takes `li` and nothing else. It is
+          `fixed`, so where it sits in the tree decides nothing about where it
+          is drawn. */}
+      {tip ? <StripTip tip={tip} /> : null}
+    </>
   );
 }
 
@@ -76,41 +133,154 @@ function Row({
   onNavigate,
   size,
   nested,
+  onTip,
 }: {
   page: NavLinkData;
   pathname: string;
   onNavigate?: () => void;
-  size: "rail" | "menu";
+  size: "rail" | "menu" | "strip";
   nested?: boolean;
+  /** Given only in the strip, where a mark on its own needs naming. */
+  onTip?: (tip: Tip | null) => void;
 }) {
   const here = pathname === page.href;
+  const strip = size === "strip";
+  const Mark = MARKS[page.href];
+
+  /* In the strip the words are gone, so the link is labelled for a screen
+     reader and its name is put beside it for everyone else. No `title`: the
+     browser's own tooltip waits most of a second, arrives under the pointer
+     rather than beside the thing it names, and lands on top of the next mark
+     down. It would also mean two tooltips for one row. */
+  const named = strip ? { "aria-label": page.label } : {};
+
+  /* Measured from the row rather than guessed from its index, so a scrolled
+     strip names the mark actually under the pointer. */
+  const raise = (node: HTMLElement) => {
+    const box = node.getBoundingClientRect();
+    onTip?.({
+      label: page.label,
+      top: box.top + box.height / 2,
+      near: box.right,
+      far: box.left,
+    });
+  };
+
+  const tipping = onTip
+    ? {
+        onPointerEnter: (event: React.PointerEvent<HTMLAnchorElement>) =>
+          raise(event.currentTarget),
+        onFocus: (event: React.FocusEvent<HTMLAnchorElement>) =>
+          raise(event.currentTarget),
+        onPointerLeave: () => onTip(null),
+        onBlur: () => onTip(null),
+      }
+    : {};
 
   return (
     <Link
       href={page.href}
-      onClick={onNavigate}
-      aria-current={here ? "page" : undefined}
-      style={{
-        /* The 2px bar is drawn inside the link's own left edge, so the padding
-           carries it and the text still lands on the lane. */
-        paddingLeft: HANG - 2 + (nested ? NEST : 0),
+      /* Both here rather than one of them in the spread above, which would
+         have overwritten the other. A name that stays up over the page
+         somebody has just gone to is a label with nothing left to label. */
+      onClick={() => {
+        onTip?.(null);
+        onNavigate?.();
       }}
+      aria-current={here ? "page" : undefined}
+      {...named}
+      {...tipping}
+      style={
+        strip ? undefined : { paddingInlineStart: HANG - 2 + (nested ? NEST : 0) }
+      }
       className={cn(
-        "block border-l-2 leading-[1.4] transition-colors",
-        size === "menu" ? "py-2.5" : "py-[7px]",
-        nested
-          ? size === "menu"
-            ? "text-[14.5px]"
-            : "text-[14px]"
-          : size === "menu"
-            ? "text-[15.5px]"
-            : "text-[15px]",
+        "flex items-center transition-colors",
+        strip
+          ? /* Centred in the strip, and the whole width of it, so the target is
+               the strip rather than the 20px drawing in the middle of it. */
+            "justify-center rounded-field py-2.5"
+          : "border-s-2 leading-[1.4]",
+        !strip && (size === "menu" ? "gap-2.5 py-2.5" : "gap-2.5 py-[7px]"),
+        !strip &&
+          (nested
+            ? size === "menu"
+              ? "text-[14.5px]"
+              : "text-[14px]"
+            : size === "menu"
+              ? "text-[15.5px]"
+              : "text-[15px]"),
         here
-          ? "border-ink font-semibold text-ink"
-          : "border-transparent text-body hover:text-ink",
+          ? strip
+            ? "bg-well text-ink"
+            : "border-ink font-semibold text-ink"
+          : strip
+            ? "text-quiet hover:bg-well hover:text-ink"
+            : "border-transparent text-body hover:text-ink",
       )}
     >
-      {page.label}
+      {/* The mark holds its column whether it has a drawing in it or not, so a
+          page without one still starts its words where every other page does.
+          A sub page has neither: it is indented past the column entirely. */}
+      {nested ? null : (
+        <span
+          aria-hidden
+          className="flex flex-none items-center justify-center"
+          style={{ width: MARK, height: MARK }}
+        >
+          {Mark ? <Mark className="size-[17px]" strokeWidth={1.9} /> : null}
+        </span>
+      )}
+
+      {strip ? null : <span className="min-w-0 truncate">{page.label}</span>}
     </Link>
+  );
+}
+
+/** A row's name, and where on the screen the row is. */
+interface Tip {
+  label: string;
+  /** The row's middle, so the name sits level with the mark rather than above it. */
+  top: number;
+  /** The row's edges: the one the name goes beside, and the one it goes beside in the other direction. */
+  near: number;
+  far: number;
+}
+
+/**
+ * The name of a mark, beside the mark.
+ *
+ * `fixed`, and that is the whole reason this is not a span inside the row. The
+ * strip scrolls, and `overflow-y: auto` makes the other axis `auto` too - so
+ * anything drawn beyond the strip's edge from inside it is clipped by the strip.
+ * Taken out of the flow and placed against the window, it has nothing to be
+ * clipped by.
+ *
+ * Placed from the row's own rectangle rather than from its position in the list,
+ * so it stays level with the mark under the pointer even when the strip has been
+ * scrolled. It sits after the mark in the reading direction and swaps to the
+ * other side when the direction does, because a name that runs off the window is
+ * not a name.
+ *
+ * `aria-hidden`, because the link it belongs to already carries the same words
+ * as its label. Read out here as well it would be the same name twice.
+ */
+function StripTip({ tip }: { tip: Tip }) {
+  const rtl =
+    typeof document !== "undefined" &&
+    getComputedStyle(document.documentElement).direction === "rtl";
+
+  return (
+    <span
+      role="tooltip"
+      aria-hidden
+      className="pointer-events-none fixed z-50 animate-in rounded-field bg-ink px-2.5 py-1.5 text-[12.5px] leading-none font-semibold whitespace-nowrap text-white shadow-lg duration-150 fade-in-0 zoom-in-95"
+      style={{
+        top: tip.top,
+        left: rtl ? tip.far - 10 : tip.near + 10,
+        transform: rtl ? "translate(-100%, -50%)" : "translateY(-50%)",
+      }}
+    >
+      {tip.label}
+    </span>
   );
 }
