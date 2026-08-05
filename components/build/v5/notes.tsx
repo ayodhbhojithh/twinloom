@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { X } from "lucide-react";
+import { Paperclip, Search, StickyNote, X } from "lucide-react";
 
 import {
   addRef,
@@ -12,6 +12,9 @@ import {
 } from "@/lib/build/v5-store";
 import { cn } from "@/lib/utils";
 
+import { isPicture, type Attached } from "@/lib/build/upload";
+
+import { DropZone } from "./drop";
 import { AddRow, Kicker } from "./kit";
 
 /* ---------------------------------------------------------------------------
@@ -48,11 +51,31 @@ export function NotesDock({
 }) {
   const [open, setOpen] = useState(false);
   const [general, setGeneral] = useState(false);
+  const [find, setFind] = useState("");
+  const [files, setFiles] = useState<Attached[]>([]);
   const panel = useRef<HTMLDivElement>(null);
   const came = useRef<HTMLElement | null>(null);
 
   const filed = general ? null : where;
   const count = answers.refs.length;
+
+  /* Grouped by what each thing is filed under, and searched before grouping so
+     a search returns groups rather than a flat list that has lost its places. */
+  const hunted = find.trim().toLowerCase();
+  const groups = (() => {
+    const shown = hunted
+      ? answers.refs.filter((ref) =>
+          (ref.text + " " + whereName(ref.where)).toLowerCase().includes(hunted),
+        )
+      : answers.refs;
+
+    const byPlace = new Map<string, typeof answers.refs>();
+    for (const ref of shown) {
+      const place = whereName(ref.where);
+      byPlace.set(place, [...(byPlace.get(place) ?? []), ref]);
+    }
+    return [...byPlace.entries()];
+  })();
 
   useEffect(() => {
     if (!open) return;
@@ -136,7 +159,11 @@ export function NotesDock({
             aria-modal="true"
             aria-label="Your notes"
             tabIndex={-1}
-            className="quiet-scroll relative flex h-full w-full max-w-[440px] flex-col overflow-y-auto bg-field p-6 outline-none sm:rounded-l-[26px]"
+            /* Cut on its leading edge the way every other surface here is cut,
+               and only there: the other three edges are the window's. A panel
+               with four rounded corners floating over a page is a dialog; one
+               that meets the screen on three sides is a drawer. */
+            className="quiet-scroll relative flex h-full w-full max-w-[460px] flex-col overflow-y-auto bg-field p-6 outline-none sm:rounded-l-[28px]"
           >
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
@@ -186,52 +213,146 @@ export function NotesDock({
               Keep this one on its own, under General
             </label>
 
-            {answers.refs.length ? (
-              <ul className="mt-5 flex flex-col gap-2">
-                {answers.refs.map((ref) => (
-                  <li key={ref.n} className="rounded-[14px] bg-well p-3.5">
+            {/* Files, on the desk as well as words.
+
+                Somebody who has just thought of the thing they wanted to show
+                us has it on their machine, not in a sentence. Sending them back
+                to a step to attach it is asking them to remember where the
+                attaching happens. */}
+            <DropZone
+              className="mt-5"
+              label="Or drop a file here"
+              note="Pictures, brochures, price lists, screenshots."
+              files={files}
+              onAdd={(taken) => {
+                setFiles((was) => [...was, ...taken]);
+                for (const file of taken) {
+                  addRef({
+                    kind: isPicture(file.type) ? "Image" : "Document",
+                    text: file.name,
+                    where: filed,
+                  });
+                }
+              }}
+              onDrop={(at) =>
+                setFiles((was) => was.filter((_, index) => index !== at))
+              }
+            />
+
+            {/* Search, once there is enough on the desk to lose something in.
+                Below that it is a control asking to be used on four items. */}
+            {count > 5 ? (
+              <label className="mt-5 flex items-center gap-2.5 rounded-field bg-canvas px-3.5 py-2.5">
+                <Search aria-hidden className="size-4 flex-none text-idx" />
+                <input
+                  value={find}
+                  onChange={(event) => setFind(event.target.value)}
+                  placeholder={`Search ${count} notes`}
+                  className="min-w-0 flex-1 bg-transparent text-[13px] text-ink outline-none placeholder:text-label"
+                />
+              </label>
+            ) : null}
+
+            {groups.length ? (
+              <div className="mt-5 flex flex-col gap-5">
+                {groups.map(([place, items]) => (
+                  <section key={place} className="min-w-0">
+                    {/* Grouped by what each is filed under, which is the thing
+                        the panel promises at the top. A flat list said "filed
+                        under X" once and then showed twelve rows in the order
+                        they happened to be written. */}
                     <div className="flex items-baseline justify-between gap-3">
-                      <Kicker>{ref.kind}</Kicker>
-                      <button
-                        type="button"
-                        onClick={() => dropRef(ref.n)}
-                        className="cursor-pointer font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase transition-colors hover:text-ink"
-                      >
-                        Remove
-                      </button>
+                      <Kicker className="text-ink">{place}</Kicker>
+                      <span className="font-mono text-[9px] font-bold text-idx tabular-nums">
+                        {String(items.length).padStart(2, "0")}
+                      </span>
                     </div>
 
-                    <p className="mt-1 text-[13px] leading-[1.45] text-ink">
-                      {ref.text}
-                    </p>
+                    <ul className="mt-2 flex flex-col gap-2">
+                      {items.map((ref) => (
+                        <li
+                          key={ref.n}
+                          className="group/note rounded-[14px] bg-canvas p-3.5 transition-colors hover:bg-canvas-firm"
+                        >
+                          <div className="flex items-baseline justify-between gap-3">
+                            <span className="inline-flex items-center gap-1.5">
+                              {ref.kind === "Note" ? (
+                                <StickyNote
+                                  aria-hidden
+                                  className="size-3 text-idx"
+                                />
+                              ) : (
+                                <Paperclip
+                                  aria-hidden
+                                  className="size-3 text-idx"
+                                />
+                              )}
+                              <Kicker>{ref.kind}</Kicker>
+                            </span>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!ref.where?.stepKey) return;
-                        onGoStep(ref.where.stepKey);
-                        setOpen(false);
-                      }}
-                      className="mt-1.5 cursor-pointer text-left font-mono text-[8.5px] font-bold tracking-[0.1em] text-quiet uppercase transition-colors hover:text-ink"
-                    >
-                      {whereName(ref.where)}
-                    </button>
+                            <button
+                              type="button"
+                              onClick={() => dropRef(ref.n)}
+                              className="cursor-pointer font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase opacity-0 transition-opacity group-hover/note:opacity-100 focus-visible:opacity-100"
+                            >
+                              Remove
+                            </button>
+                          </div>
 
-                    <input
-                      value={answers.like[ref.n] ?? ""}
-                      placeholder="What you like about it"
-                      onChange={(event) => setLike(ref.n, event.target.value)}
-                      className="mt-2 h-8 w-full rounded-field border border-border bg-field px-3 text-[12px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
-                    />
-                  </li>
+                          <p className="mt-1 text-[13px] leading-[1.45] text-ink">
+                            {ref.text}
+                          </p>
+
+                          {ref.where?.stepKey ? (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const key = ref.where?.stepKey;
+                                if (!key) return;
+                                onGoStep(key);
+                                setOpen(false);
+                              }}
+                              className="mt-1.5 cursor-pointer text-left font-mono text-[8.5px] font-bold tracking-[0.1em] text-quiet uppercase transition-colors hover:text-ink"
+                            >
+                              Take me back to it
+                            </button>
+                          ) : null}
+
+                          <input
+                            value={answers.like[ref.n] ?? ""}
+                            placeholder="What you like about it"
+                            onChange={(event) =>
+                              setLike(ref.n, event.target.value)
+                            }
+                            className="mt-2 h-8 w-full rounded-field border border-border bg-field px-3 text-[12px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
                 ))}
-              </ul>
+              </div>
+            ) : count ? (
+              <p className="mt-5 rounded-[14px] bg-canvas p-4 text-[12.5px] leading-[1.55] text-quiet">
+                Nothing on the desk matches that.
+              </p>
             ) : (
-              <p className="mt-5 rounded-[14px] bg-well p-4 text-[12.5px] leading-[1.55] text-quiet">
+              <p className="mt-5 rounded-[14px] bg-canvas p-4 text-[12.5px] leading-[1.55] text-quiet">
                 Nothing on the desk yet, and that is a finished answer - nothing
                 here is required or checked against anything.
               </p>
             )}
+
+            {/* The foot, once there is something to say about the whole desk.
+                It answers the question a note-taking panel raises and does not
+                usually answer: will any of this be read. */}
+            {count ? (
+              <p className="mt-6 border-t border-hair pt-4 text-[12px] leading-[1.55] text-label">
+                All {count} go with the scoping request, each one beside the
+                answer it was written against. Nothing here is required, and
+                nothing is scored.
+              </p>
+            ) : null}
           </div>
         </div>
       ) : null}
