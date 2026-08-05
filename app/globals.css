@@ -839,6 +839,10 @@
      introduces 2, and each step waits a beat longer, so a section arrives in
      the order it is read rather than all at once.
 
+     It runs both ways. The watcher takes the mark off a block once it is fully
+     off screen, so scrolling back up plays the arrival again rather than
+     walking through a page that has already been spent.
+
      An animation rather than a transition, and that is not a preference. Two of
      these blocks are links carrying `transition-colors`, which is a
      `transition-property` from a later cascade layer - it would win, and the
@@ -847,7 +851,7 @@
   @keyframes reveal {
     from {
       opacity: 0;
-      transform: translateY(24px);
+      transform: translateY(20px);
     }
     to {
       opacity: 1;
@@ -860,11 +864,20 @@
      than hiding the lot behind a fade that will never be asked for. */
   [data-reveal="armed"] .reveal {
     opacity: 0;
+    /* Promoted before it is asked to move. Without this, the first frame of
+       every reveal is the one the browser spends working out that it needs a
+       layer for this subtree - and the first frame is the one the eye is on.
+       It is worth the memory on ten blocks; it would not be on a hundred. */
+    will-change: opacity, transform;
   }
 
   [data-reveal="armed"] .reveal[data-in] {
-    animation: reveal 0.75s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-    animation-delay: calc(var(--step, 0) * 110ms);
+    /* Nearly all of the ease at the end. A symmetrical curve spends half its
+       time slow at the top, which reads as a block that hesitated; this one
+       covers most of the distance immediately and settles, which is the part
+       that feels smooth rather than merely long. */
+    animation: reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--step, 0) * 90ms);
   }
 
   /* The watcher disarms itself when motion is not wanted, so this only has to

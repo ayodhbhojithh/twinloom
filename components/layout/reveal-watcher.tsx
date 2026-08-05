@@ -18,9 +18,12 @@ import { usePathname } from "next/navigation";
  * failure mode of getting this wrong is a blank page, so it is worth the
  * attribute.
  *
- * Once shown, a block is let go. A reveal that reverses on the way back up
- * means content disappearing from under somebody scrolling to re-read it, which
- * is a page arguing with its reader.
+ * It reveals in both directions, which is what the two observers are for. One
+ * boundary cannot do it: a block has to arrive before it is fully on screen,
+ * and it has to be put back only once it is fully off one. Read from a single
+ * line, those are the same line - so a block scrolled back down towards the
+ * bottom edge would blink out while a good part of it was still being looked
+ * at. Two lines is hysteresis, and hysteresis is the whole trick.
  */
 export function RevealWatcher() {
   const pathname = usePathname();
@@ -39,30 +42,55 @@ export function RevealWatcher() {
       return;
     }
 
+    const blocks = Array.from(document.querySelectorAll(".reveal"));
+
+    /* Whatever is already on screen is marked in this same tick, before the
+       page is armed. Arming first and waiting on the observer's first callback
+       leaves a frame in which a block that was visible a moment ago is not,
+       and that frame is a blink on load rather than an entrance. */
+    for (const block of blocks) {
+      const box = block.getBoundingClientRect();
+      if (box.top < window.innerHeight && box.bottom > 0) {
+        block.setAttribute("data-in", "");
+      }
+    }
+
     root.dataset.reveal = "armed";
 
-    const watcher = new IntersectionObserver(
+    /* Arriving. Held back from the bottom edge, because a block that starts the
+       moment its first pixel appears has finished arriving while it is still
+       off the bottom of the screen - which is the same as not animating at all.
+       An eighth of the window up is where it reads as having been reached. */
+    const arrive = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          entry.target.setAttribute("data-in", "");
-          watcher.unobserve(entry.target);
+          if (entry.isIntersecting) entry.target.setAttribute("data-in", "");
         }
       },
-      {
-        /* Held back from the bottom edge. A block that starts the moment its
-           first pixel appears has finished arriving while it is still off the
-           bottom of the screen, which is the same as not animating at all. An
-           eighth of the window up is where it reads as having been reached. */
-        rootMargin: "0px 0px -12% 0px",
-        threshold: 0,
-      },
+      { rootMargin: "0px 0px -12% 0px", threshold: 0 },
     );
 
-    const blocks = document.querySelectorAll(".reveal:not([data-in])");
-    for (const block of blocks) watcher.observe(block);
+    /* Going back. On the window's own edges, with no inset, so a block is only
+       put back once there is none of it left to see. Scroll the other way and
+       it crosses the line above and arrives again. */
+    const reset = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) entry.target.removeAttribute("data-in");
+        }
+      },
+      { threshold: 0 },
+    );
 
-    return () => watcher.disconnect();
+    for (const block of blocks) {
+      arrive.observe(block);
+      reset.observe(block);
+    }
+
+    return () => {
+      arrive.disconnect();
+      reset.disconnect();
+    };
     /* Re-run per route: a client navigation swaps the whole page under this
        and the new one's blocks have never been looked at. */
   }, [pathname]);
