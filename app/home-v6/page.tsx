@@ -4,12 +4,14 @@ import { ArrowUpRight } from "lucide-react";
 
 import { ProjectStrip } from "@/components/home/project-strip";
 import { PROJECTS } from "@/components/home/projects";
+import { pageMeta } from "@/lib/seo";
 import { ROUTES, SITE } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Home v6",
   description: SITE.description,
-};
+  path: ROUTES.homeV6,
+});
 
 /**
  * Home v6.

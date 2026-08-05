@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
 import { NotFoundView } from "@/components/pages/not-found-view";
+import { pageMeta } from "@/lib/seo";
+import { ROUTES } from "@/lib/site";
 
 /**
  * The 404 at a readable address.
@@ -13,10 +15,11 @@ import { NotFoundView } from "@/components/pages/not-found-view";
  * error page with a 200 status is exactly the soft 404 crawlers penalise, which is
  * why this one is kept out of the index rather than left to be discovered.
  */
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Page not found",
-  robots: { index: false, follow: true },
-};
+  description: "The page is not here. What the site does have is on every other screen.",
+  path: ROUTES.notFound,
+});
 
 export default function NotFoundPage() {
   return <NotFoundView />;

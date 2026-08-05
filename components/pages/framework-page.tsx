@@ -4,6 +4,7 @@ import { BuildNote, EmptyMark } from "@/components/blocks/build-note";
 import { Item, List } from "@/components/blocks/prose";
 import { PageHeading, PageShell } from "@/components/layout";
 import { frameworkPage } from "@/lib/pages";
+import { pageMeta } from "@/lib/seo";
 
 /**
  * One of the framework's reserved screens.
@@ -40,8 +41,20 @@ export function FrameworkPageView({ href }: { href: string }) {
   );
 }
 
-/** The route's metadata, from the same entry the page renders from. */
+/**
+ * The route's metadata, from the same entry the page renders from.
+ *
+ * Twelve routes come through here, which is why the canonical and the social
+ * card are built here too. Written per page they would be right on the two
+ * somebody remembered and missing on the other ten - and a missing canonical is
+ * not a missing nicety, it is every query string and campaign tag becoming a
+ * separate page in the index competing with the one that was meant to rank.
+ */
 export function frameworkMetadata(href: string): Metadata {
   const page = frameworkPage(href);
-  return { title: page.title, description: page.description };
+  return pageMeta({
+    title: page.title,
+    description: page.description,
+    path: href,
+  });
 }

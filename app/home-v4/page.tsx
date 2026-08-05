@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { LiquidWord } from "@/components/home/liquid-word";
+import { pageMeta } from "@/lib/seo";
 import { ROUTES, SITE } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Home v4",
   description: SITE.description,
-};
+  path: ROUTES.homeV4,
+});
 
 /**
  * Home v4.

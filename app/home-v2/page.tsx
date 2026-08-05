@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ParticleWordmark } from "@/components/home/particle-wordmark";
+import { pageMeta } from "@/lib/seo";
 import { ROUTES, SITE } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Home v2",
   description: SITE.description,
-};
+  path: ROUTES.homeV2,
+});
 
 /**
  * Home v2.

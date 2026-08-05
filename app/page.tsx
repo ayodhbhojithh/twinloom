@@ -7,13 +7,22 @@ import { NotchedCard } from "@/components/home/notched-card";
 import { PartnersSection } from "@/components/home/partners-section";
 import { ReadingSection } from "@/components/home/reading-section";
 import { SandboxSection } from "@/components/home/sandbox-section";
+import { pageMeta } from "@/lib/seo";
 import { ROUTES, SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
+  ...pageMeta({
+    /* The landing page is the one that has to say what the company does in the
+       title itself. `TwinLoom` alone is a result nobody clicks who does not
+       already know the name, and the people who know the name are not the ones
+       this page is for. */
+    title: `${SITE.name} - ${SITE.tagline}`,
+    description: SITE.description,
+    path: ROUTES.home,
+  }),
   /* `absolute` because the layout appends the company name to every title, and
-     this one is the company name. */
-  title: { absolute: SITE.name },
-  description: SITE.description,
+     this one already carries it. */
+  title: { absolute: `${SITE.name} - ${SITE.tagline}` },
 };
 
 /**

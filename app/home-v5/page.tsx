@@ -3,12 +3,14 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
 import { ProjectCarousel } from "@/components/home/project-carousel";
+import { pageMeta } from "@/lib/seo";
 import { ROUTES, SITE } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Home v5",
   description: SITE.description,
-};
+  path: ROUTES.homeV5,
+});
 
 /**
  * Home v5.

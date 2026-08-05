@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { LoomStrings } from "@/components/home/loom-strings";
+import { pageMeta } from "@/lib/seo";
 import { ROUTES, SITE } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Home v3",
   description: SITE.description,
-};
+  path: ROUTES.homeV3,
+});
 
 /**
  * Home v3.
