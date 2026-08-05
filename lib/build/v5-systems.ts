@@ -90,3 +90,73 @@ export const SYSTEM_ROWS: readonly SystemRow[] = [
 export const SYSTEM_BY: Record<string, SystemRow> = Object.fromEntries(
   SYSTEM_ROWS.map((row) => [row.k, row]),
 );
+
+/* ---------------------------------------------------------------------------
+   The systems already running that a website has to agree with.
+
+   Grouped the way somebody would go looking for them - by what the thing is
+   for, not by what it is called. Eighteen names in one column is a list to be
+   read; five short groups is a list to be scanned, and scanning is what
+   somebody does with a page of things they mostly do not have.
+
+   Every row carries a line saying what it means in plain terms, because
+   "EPOS" and "CRM" are trade words and the person answering this is not
+   necessarily in the trade.
+--------------------------------------------------------------------------- */
+
+/** One thing a website might have to join to. */
+export interface SystemLink {
+  k: string;
+  n: string;
+  /** What it is, for somebody who does not use the word. */
+  note: string;
+}
+
+export const SYSTEM_LINKS: readonly {
+  title: string;
+  rows: readonly SystemLink[];
+}[] = [
+ {
+  title: "Selling and money",
+  rows: [
+   { k: "epos", n: "Till, or point of sale", note: "What the counter rings up." },
+   { k: "paycard", n: "Card payments", note: "Who takes the money, and where it lands." },
+   { k: "accts", n: "Accounting or bookkeeping", note: "Invoices, receipts, the year end." },
+   { k: "stock", n: "Stock or inventory", note: "What is on the shelf, and where." },
+  ],
+ },
+ {
+  title: "People",
+  rows: [
+   { k: "crm", n: "Customer list, or CRM", note: "Who they are and what was said." },
+   { k: "mailer", n: "Email marketing", note: "Lists, sign-ups, campaigns." },
+   { k: "memsys", n: "Memberships or subscriptions", note: "Who is in, and until when." },
+   { k: "giving", n: "Donations and Gift Aid", note: "Supporters, gifts, declarations." },
+  ],
+ },
+ {
+  title: "Time and place",
+  rows: [
+   { k: "diary", n: "Booking diary or calendar", note: "Slots, staff, cancellations." },
+   { k: "rota", n: "Rotas, staff or payroll", note: "Who is working, and when." },
+   { k: "deliv", n: "Delivery, couriers or collection", note: "Getting it to them." },
+   { k: "venue", n: "Tables, rooms or venue", note: "The thing being held for someone." },
+  ],
+ },
+ {
+  title: "The work itself",
+  rows: [
+   { k: "jobs", n: "Jobs, tickets or cases", note: "The queue the work sits in." },
+   { k: "quotes", n: "Quotes and proposals", note: "What was offered, and for how much." },
+   { k: "files", n: "Document or file store", note: "Where the paperwork lives." },
+   { k: "learn", n: "Courses or learning platform", note: "Lessons, progress, certificates." },
+  ],
+ },
+ {
+  title: "Anything else",
+  rows: [
+   { k: "feeds", n: "Listing or portal feeds", note: "Property, travel, jobs, marketplaces." },
+   { k: "bespoke", n: "Something built for you already", note: "In-house, and still running." },
+  ],
+ },
+] as const;

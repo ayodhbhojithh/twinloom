@@ -21,6 +21,9 @@ import {
 } from "@/lib/build/v5-store";
 import { cn } from "@/lib/utils";
 
+import { isPicture, type Attached } from "@/lib/build/upload";
+
+import { DropZone } from "./drop";
 import { StageStep } from "./frame";
 import {
   AddRow,
@@ -412,7 +415,8 @@ export function StageHave({ at, answers, onGo }: StepProps) {
 /* ----------------------------------------------------------------- 08 refs */
 
 export function StageRefs({ at, answers, onGo }: StepProps) {
-  const [kind, setKind] = useState("note");
+  const [kind, setKind] = useState<string>("note");
+  const [files, setFiles] = useState<Attached[]>([]);
 
   return (
     <StageStep at={at} answers={answers} onGo={onGo}>
@@ -423,17 +427,46 @@ export function StageRefs({ at, answers, onGo }: StepProps) {
       </Sub>
 
       <div className="mt-6 max-w-[720px]">
-        <div className="flex flex-wrap gap-2">
-          {Object.entries(REF_KINDS).map(([key, label]) => (
+        {/* The file goes in rather than getting named.
+
+            "Or the name of a file" was the whole of the old answer: somebody
+            typed "brochure.pdf" and nothing was attached to anything. A
+            document, an image and a screenshot are files, so they go where they
+            can be handed over; a note and a link were only ever a line of text,
+            and they stay one. */}
+        <DropZone
+          label="Drop files here, or choose them"
+          note="Pictures, brochures, price lists, screenshots. Up to 10 MB each."
+          files={files}
+          onAdd={(taken) => {
+            setFiles((was) => [...was, ...taken]);
+            for (const file of taken) {
+              addRef(
+                {
+                  kind: isPicture(file.type) ? REF_KINDS.image : REF_KINDS.file,
+                  text: file.name,
+                  where: null,
+                },
+                "refs",
+              );
+            }
+          }}
+          onDrop={(at2) =>
+            setFiles((was) => was.filter((_, index) => index !== at2))
+          }
+        />
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {(["note", "site"] as const).map((key) => (
             <Chip key={key} on={kind === key} onClick={() => setKind(key)}>
-              {label}
+              {REF_KINDS[key]}
             </Chip>
           ))}
         </div>
 
-        <div className="mt-3">
+        <div className="mt-2.5">
           <AddRow
-            placeholder="A sentence, a link, or the name of a file"
+            placeholder="A sentence, or a link"
             onAdd={(value) =>
               addRef({ kind: REF_KINDS[kind], text: value, where: null }, "refs")
             }

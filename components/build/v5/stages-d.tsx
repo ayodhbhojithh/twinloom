@@ -7,11 +7,9 @@ import {
   ORG_KINDS,
   SECTORS,
   SECTOR_TAGS,
-  SYS_LINKS,
-  SYS_WHO,
   TYPE_NAMES,
 } from "@/lib/build/v5";
-import { SYSTEM_ROWS } from "@/lib/build/v5-systems";
+import { SYSTEM_LINKS } from "@/lib/build/v5-systems";
 import {
   addOwn,
   chipOn,
@@ -21,10 +19,8 @@ import {
   togglePick,
   type Answers,
 } from "@/lib/build/v5-store";
-import { cn } from "@/lib/utils";
-
 import { StageStep } from "./frame";
-import { AddRow, H, Kicker, Sub, SubTitle, TickRow, TickSet } from "./kit";
+import { AddRow, H, Kicker, Sub, SubTitle, TickRow } from "./kit";
 
 /* ---------------------------------------------------------------------------
    The three steps v5.4 added: the organisation, the working parts inside a
@@ -195,11 +191,16 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
         </section>
       ) : null}
 
-      <AddRow
-        label="Something else"
-        placeholder="Tell us in your own words."
-        onAdd={(value) => addOwn("org-own", value, "org")}
-      />
+      {/* Held to the reading measure and off whatever is above it. Run
+          full width against the panel it follows, it read as part of that
+          panel rather than as the next thing to do. */}
+      <div className="mt-6 max-w-[720px]">
+        <AddRow
+          label="Something else"
+          placeholder="Tell us in your own words."
+          onAdd={(value) => addOwn("org-own", value, "org")}
+        />
+      </div>
     </StageStep>
   );
 }
@@ -233,11 +234,16 @@ export function StageWidgets({ at, answers, onGo }: StepProps) {
         </p>
       </section>
 
-      <AddRow
-        label="Tell us what it has to do"
-        placeholder="A calculator that works out what a job costs, a map of where you deliver, a search that reads your stock."
-        onAdd={(value) => addOwn("widgets-own", value, "widgets")}
-      />
+      {/* Held to the reading measure and off whatever is above it. Run
+          full width against the panel it follows, it read as part of that
+          panel rather than as the next thing to do. */}
+      <div className="mt-6 max-w-[720px]">
+        <AddRow
+          label="Tell us what it has to do"
+          placeholder="A calculator that works out what a job costs, a map of where you deliver, a search that reads your stock."
+          onAdd={(value) => addOwn("widgets-own", value, "widgets")}
+        />
+      </div>
     </StageStep>
   );
 }
@@ -261,94 +267,42 @@ export function StageSystems({ at, answers, onGo }: StepProps) {
     <StageStep at={at} answers={answers} onGo={onGo}>
       <H>What does it have to talk to?</H>
       <Sub>
-        One row for each kind of thing you sell. Tick the ones that are true. A
-        ticked row asks one more question underneath it, and nothing here is
-        priced.
-      </Sub>
-
-      <div className="mt-6 flex max-w-[1100px] flex-col gap-3">
-        {SYSTEM_ROWS.map((row) => {
-          const on = isOn(answers, "systype", row.k);
-
-          return (
-            <section
-              key={row.k}
-              className={cn(
-                "rounded-[16px] p-5 transition-colors",
-                on ? "bg-canvas" : "bg-field",
-              )}
-            >
-              <TickRow
-                on={on}
-                name={TYPE_NAMES[row.ty] ?? row.ty}
-                note={row.rec}
-                onToggle={() => togglePick("systype", row.k, "systems")}
-              />
-
-              {/* What the market sells for it, and what we would do. Side by
-                  side, because the second only means anything against the
-                  first. */}
-              <div className="mt-3 grid gap-x-8 gap-y-3 pl-8 sm:grid-cols-2">
-                <div className="min-w-0">
-                  <Kicker className="block">What people generally use</Kicker>
-                  <p className="mt-1 text-[12.5px] leading-[1.5] text-quiet">
-                    {row.market}
-                  </p>
-                </div>
-                <div className="min-w-0">
-                  <Kicker className="block text-ink">What we would do</Kicker>
-                  <p className="mt-1 text-[12.5px] leading-[1.5] text-body">
-                    {row.ours}
-                  </p>
-                </div>
-              </div>
-
-              {on ? (
-                <div className="mt-4 border-t border-hair pt-4 pl-8">
-                  <b className="block text-[13.5px] font-bold text-ink">
-                    Who holds that record today?
-                  </b>
-                  <p className="mt-0.5 text-[12.5px] leading-[1.45] text-label">
-                    One answer. It decides whether we connect to something,
-                    replace something, or start from nothing.
-                  </p>
-                  <TickSet
-                    single
-                    className="mt-2.5"
-                    options={Object.entries(SYS_WHO).map(([k, n]) => ({ k, label: n }))}
-                    isOn={(k: string) => chipOn(answers, `syswho.${row.k}`, k)}
-                    onPick={(k: string) => toggleChip(`syswho.${row.k}`, k, true, "systems")}
-                  />
-                </div>
-              ) : null}
-            </section>
-          );
-        })}
-      </div>
-
-      <SubTitle>What it has to join to</SubTitle>
-      <p className="mt-0.5 max-w-[62ch] text-[12.5px] leading-[1.45] text-label">
         The things already running that the website has to agree with. Ticking
         one is not a promise that it connects - it is what tells us to go and
         find out before anything is quoted.
-      </p>
+      </Sub>
 
-      <div className="mt-3 grid max-w-[1100px] gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
-        {Object.entries(SYS_LINKS).map(([k, n]) => (
-          <TickRow
-            key={k}
-            on={chipOn(answers, "syslink", k)}
-            name={n}
-            onToggle={() => toggleChip("syslink", k, false, "systems")}
-          />
+      {/* Just the list. The prototype puts a table above this one - eight rows
+          arguing what a record has to hold and whether we would build it - and
+          that is a conversation to have with somebody, not a question to put to
+          them before they have said what they run. */}
+      <div className="mt-6 flex max-w-[860px] flex-col gap-6">
+        {SYSTEM_LINKS.map((group) => (
+          <section key={group.title} className="min-w-0">
+            <Kicker className="block text-ink">{group.title}</Kicker>
+
+            <div className="mt-2 grid gap-x-8 sm:grid-cols-2">
+              {group.rows.map((row) => (
+                <TickRow
+                  key={row.k}
+                  on={chipOn(answers, "syslink", row.k)}
+                  name={row.n}
+                  note={row.note}
+                  onToggle={() => toggleChip("syslink", row.k, false, "systems")}
+                />
+              ))}
+            </div>
+          </section>
         ))}
       </div>
 
-      <AddRow
-        label="Something else it has to talk to"
-        placeholder="Name it, and what it is called."
-        onAdd={(value) => addOwn("systems-own", value, "systems")}
-      />
+      <div className="mt-6 max-w-[720px]">
+        <AddRow
+          label="Something else it has to talk to"
+          placeholder="Name it, and what it is called."
+          onAdd={(value) => addOwn("systems-own", value, "systems")}
+        />
+      </div>
     </StageStep>
   );
 }
