@@ -36,7 +36,17 @@ export function BlogView() {
           </h1>
         </div>
 
-        <p className="max-w-[46ch] text-[14px] leading-[1.55] text-quiet">
+        {/* Wider, and allowed to take what the row has left.
+
+            It was capped at 46 characters and sat in a flex row that gives it
+            whatever the headline does not want - so it wrapped to four short
+            lines against a headline of three long ones, and the pair read as
+            two columns that had failed to line up.
+
+            `w-full` first and `flex-1` only from `sm`. Given `flex-1` at every
+            width it shrank to nothing once the row wrapped on a phone - sixty
+            pixels wide and twenty-two lines deep.  */}
+        <p className="w-full min-w-0 max-w-[68ch] text-[14.5px] leading-[1.6] text-quiet sm:flex-1">
           The decisions behind a website, written out in full: what each piece
           of technology actually touches, what it costs to run, and where we
           would tell you to do something other than what we sell.
@@ -99,7 +109,7 @@ export function BlogView() {
           <li key={article.slug}>
             <Link
               href={`${ROUTES.blog}/${article.slug}`}
-              className="group/piece relative block overflow-hidden rounded-[22px] bg-canvas transition-colors hover:bg-canvas-firm"
+              className="group/piece relative block overflow-hidden rounded-[22px] bg-field transition-colors hover:bg-well"
             >
               {/* The picture, on the right and faded into the ground it sits
                   on. The same arrangement as the card above, at the size a row
@@ -121,6 +131,12 @@ export function BlogView() {
                       "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.06) 14%, rgba(0,0,0,0.2) 26%, rgba(0,0,0,0.42) 38%, rgba(0,0,0,0.66) 52%, rgba(0,0,0,0.86) 68%, black 84%)",
                   }}
                 />
+
+                {/* A wash of the row's own white over the picture. The mask
+                    thins it out towards the words; this puts what is left
+                    behind the row rather than on top of it, so the left of
+                    every card is the same white as the card. */}
+                <span className="absolute inset-0 bg-field/35" />
               </span>
 
               <span className="relative grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-5 gap-y-3 p-6 sm:p-7 lg:max-w-[56%]">

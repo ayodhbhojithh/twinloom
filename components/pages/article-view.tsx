@@ -3,8 +3,7 @@ import Link from "next/link";
 
 import { CutPanel } from "@/components/layout/cut-panel";
 import { PageShell } from "@/components/layout";
-import { ArticleBody, CONTENTS } from "@/components/articles/bodies";
-import { sectId } from "@/components/articles/kit";
+import { ArticleBody } from "@/components/articles/bodies";
 import { ARTICLES, plateFor, type Article } from "@/lib/articles";
 import { ROUTES } from "@/lib/site";
 
@@ -34,7 +33,6 @@ import { ROUTES } from "@/lib/site";
  * put two edges in the middle of the page with nothing on either one.
  */
 export function ArticleView({ article }: { article: Article }) {
-  const heads = CONTENTS[article.slug] ?? [];
   const next = ARTICLES.filter((entry) => entry.slug !== article.slug).slice(
     0,
     2,
@@ -87,55 +85,17 @@ export function ArticleView({ article }: { article: Article }) {
         </div>
       </CutPanel>
 
-      {/* The article, and its contents beside it.
+      {/* The article, across the whole page.
 
-          The index is a second column only from `xl`, where there is width to
-          spare. Below that it runs across the top as a short wrapped row: a
-          fixed lane held open for four links is width the words could have had,
-          and on this page the words are the whole of it. */}
-      <div className="mt-12 grid gap-x-16 gap-y-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,190px)] xl:items-start">
-        {/* One measure, set here, and set in pixels rather than characters.
-
-            `72ch` came out at 681 and left a quarter of the page empty beside
-            the index - a measure that ignores how much room it was actually
-            given. A thousand is a ceiling instead: below it the column takes
-            whatever the grid has, which on a laptop is the whole of it, and
-            above it the line stops growing. Without a ceiling an ultrawide
-            gives a single line of prose nineteen hundred pixels, and nobody
-            finds the start of the next one. */}
-        <article className="min-w-0 max-w-[1000px] text-[16.5px] leading-[1.75]">
-          <ArticleBody slug={article.slug} />
-        </article>
-
-        {heads.length ? (
-          <nav
-            aria-label="In this article"
-            className="quiet-scroll order-first min-w-0 xl:sticky xl:top-[calc(var(--nav-height)+24px)] xl:order-none xl:max-h-[calc(100svh-var(--nav-height)-48px)] xl:overflow-y-auto"
-          >
-            <p className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
-              In this article
-            </p>
-
-            {/* The gap lives in the rows rather than between them, so each
-                entry is a target big enough to press on a phone. */}
-            <ol className="-my-1 mt-2 flex flex-wrap gap-x-5 xl:-my-1 xl:flex-col xl:gap-x-0">
-              {heads.map((head, n) => (
-                <li key={head} className="flex gap-2.5">
-                  <span className="mt-[7px] font-mono text-[9px] font-bold text-idx tabular-nums">
-                    {String(n + 1).padStart(2, "0")}
-                  </span>
-                  <a
-                    href={`#${sectId(head)}`}
-                    className="py-1 text-[12.5px] leading-[1.4] font-medium text-quiet transition-colors hover:text-ink"
-                  >
-                    {head}
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </nav>
-        ) : null}
-      </div>
+          No measure on the column and none on the prose inside it: the line is
+          as long as the frame is wide. That is asked for and it is a real
+          trade - somewhere past about eighty characters the eye starts losing
+          which line it came from on the way back - so the page gutter and the
+          rail are the only things setting the width now, and on a wide monitor
+          the lines will be long. */}
+      <article className="mt-12 text-[16.5px] leading-[1.75]">
+        <ArticleBody slug={article.slug} />
+      </article>
 
       {/* What to read next. Two, named, rather than a wall of everything. */}
       <div className="mt-16">

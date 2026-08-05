@@ -235,6 +235,19 @@ export function CutPanel({
             />
           </div>
 
+          {/* A wash of the surface's own white over the picture.
+
+              The mask already thins the photograph out towards the words, but
+              what is left is a full strength picture sitting on a page made of
+              hairlines and grey type - it arrives before anything written does.
+              A quiet white over the whole of it puts the picture behind the
+              page rather than on top of it, and costs nothing where the mask
+              has already taken the picture away. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-field/35"
+          />
+
           <div className="absolute inset-y-0 right-0 hidden w-[55%] lg:block">
             <Image
               src={image}
