@@ -268,76 +268,115 @@ export function NotesDock({
                       </span>
                     </div>
 
-                    <ul className="mt-2 flex flex-col gap-2">
-                      {items.map((ref) => (
-                        <li
-                          key={ref.n}
-                          className="group/note rounded-[14px] bg-canvas p-3.5 transition-colors hover:bg-canvas-firm"
-                        >
-                          <div className="flex items-baseline justify-between gap-3">
-                            <span className="inline-flex items-center gap-1.5">
-                              {ref.kind === "Note" ? (
+                    <ul className="mt-2 flex flex-col gap-2.5">
+                      {items.map((ref) => {
+                        const written = ref.kind === "Note";
+                        /* Kept reachable if it was ever filled in, so nothing
+                           somebody typed can be stranded by the rule below. */
+                        const liked = answers.like[ref.n] ?? "";
+
+                        return (
+                          <li
+                            key={ref.n}
+                            /* Paper, not a card.
+
+                               Square corners and a turned one, which is the
+                               single thing that separates a leaf of paper from
+                               every other surface on this site. A written note
+                               also gets the margin rule down its leading edge -
+                               the line you write to the right of - so words
+                               somebody wrote and a file somebody attached are
+                               told apart before either is read. */
+                            className={cn(
+                              "note-leaf group/note bg-canvas py-3 pe-3.5 transition-colors hover:bg-canvas-firm",
+                              written ? "note-rule ps-[26px]" : "ps-3.5",
+                            )}
+                          >
+                            {/* A strip the height of the fold, so the first
+                                line of the note is never cut by it. */}
+                            <div className="flex h-5 items-center gap-1.5">
+                              {written ? (
                                 <StickyNote
                                   aria-hidden
-                                  className="size-3 text-idx"
+                                  className="size-3 flex-none text-idx"
                                 />
                               ) : (
                                 <Paperclip
                                   aria-hidden
-                                  className="size-3 text-idx"
+                                  className="size-3 flex-none text-idx"
                                 />
                               )}
                               <Kicker>{ref.kind}</Kicker>
-                            </span>
+                            </div>
 
-                            <button
-                              type="button"
-                              onClick={() => dropRef(ref.n)}
-                              className="cursor-pointer font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase opacity-0 transition-opacity group-hover/note:opacity-100 focus-visible:opacity-100"
+                            <p
+                              className={cn(
+                                "text-[13px] leading-[1.5] text-ink",
+                                written
+                                  ? "font-medium"
+                                  : "font-mono text-[12px] break-all",
+                              )}
                             >
-                              Remove
-                            </button>
-                          </div>
+                              {ref.text}
+                            </p>
 
-                          <p className="mt-1 text-[13px] leading-[1.45] text-ink">
-                            {ref.text}
-                          </p>
+                            {/* Only where the question means anything. A note
+                                is already your own words about the thing; being
+                                asked what you like about your own sentence is a
+                                field looking for something to do. */}
+                            {!written || liked ? (
+                              <input
+                                value={liked}
+                                placeholder="What you like about it"
+                                onChange={(event) =>
+                                  setLike(ref.n, event.target.value)
+                                }
+                                className="mt-2.5 h-8 w-full rounded-field border border-hair bg-field px-3 text-[12px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
+                              />
+                            ) : null}
 
-                          {ref.where?.stepKey ? (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const key = ref.where?.stepKey;
-                                if (!key) return;
-                                onGoStep(key);
-                                setOpen(false);
-                              }}
-                              className="mt-1.5 cursor-pointer text-left font-mono text-[8.5px] font-bold tracking-[0.1em] text-quiet uppercase transition-colors hover:text-ink"
-                            >
-                              Take me back to it
-                            </button>
-                          ) : null}
+                            <div className="mt-2 flex items-center justify-between gap-3">
+                              {ref.where?.stepKey ? (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const key = ref.where?.stepKey;
+                                    if (!key) return;
+                                    onGoStep(key);
+                                    setOpen(false);
+                                  }}
+                                  className="cursor-pointer text-left font-mono text-[8.5px] font-bold tracking-[0.1em] text-quiet uppercase transition-colors hover:text-ink"
+                                >
+                                  Take me back to it
+                                </button>
+                              ) : (
+                                <span />
+                              )}
 
-                          <input
-                            value={answers.like[ref.n] ?? ""}
-                            placeholder="What you like about it"
-                            onChange={(event) =>
-                              setLike(ref.n, event.target.value)
-                            }
-                            className="mt-2 h-8 w-full rounded-field border border-border bg-field px-3 text-[12px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
-                          />
-                        </li>
-                      ))}
+                              <button
+                                type="button"
+                                onClick={() => dropRef(ref.n)}
+                                className="flex-none cursor-pointer font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase opacity-0 transition-opacity group-hover/note:opacity-100 focus-visible:opacity-100"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </section>
                 ))}
               </div>
             ) : count ? (
-              <p className="mt-5 rounded-[14px] bg-canvas p-4 text-[12.5px] leading-[1.55] text-quiet">
+              <p className="note-leaf mt-5 bg-canvas px-4 py-3.5 text-[12.5px] leading-[1.55] text-quiet">
                 Nothing on the desk matches that.
               </p>
             ) : (
-              <p className="mt-5 rounded-[14px] bg-canvas p-4 text-[12.5px] leading-[1.55] text-quiet">
+              /* The empty state is a blank leaf, which is the honest picture of
+                 an empty desk and says what the panel is before anything has
+                 been put on it. */
+              <p className="note-leaf note-rule mt-5 bg-canvas py-4 pe-4 ps-[26px] text-[12.5px] leading-[1.55] text-quiet">
                 Nothing on the desk yet, and that is a finished answer - nothing
                 here is required or checked against anything.
               </p>

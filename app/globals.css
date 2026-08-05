@@ -862,6 +862,25 @@
     pointer-events: none;
   }
 
+  /* The margin rule, on a note somebody wrote.
+
+     The line down the side of a page of notepaper: the thing you write to the
+     right of. It is the site's one accent, well under strength, because it is a
+     signal about what kind of thing this is rather than something to look at.
+
+     Only on written notes. An attached file is not paper somebody wrote on, and
+     giving both the same rule would tell them apart by icon alone.
+  --------------------------------------------------------------------------- */
+  .note-rule::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 14px;
+    width: 1px;
+    background-color: color-mix(in oklab, var(--color-mark) 34%, transparent);
+    pointer-events: none;
+  }
+
   /* ---------------------------------------------------------------------------
      Reveal: how a block arrives as the page reaches it.
 
