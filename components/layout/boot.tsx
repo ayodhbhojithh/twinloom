@@ -21,26 +21,39 @@ import { outline, type Cuts } from "@/components/home/notched-card";
    which is a poor reason to draw it.
 --------------------------------------------------------------------------- */
 
-/** The mark's own size, and the cuts at that size. */
-const MARK = 76;
+/**
+ * The mark's own size, and the cuts at that size.
+ *
+ * Landscape, near the card's own three-to-two, because the proportion is half
+ * of what makes it recognisable: the same cuts in a square read as a different
+ * object entirely.
+ *
+ * The cuts are held to roughly the fractions the card uses - a bite at an
+ * eighth of the width, a bar at a quarter, a drop at a sixth - rather than
+ * being drawn as large as they will go. Sized by eye they ate most of the
+ * bottom edge and left a neck between them, and the shape stopped reading as a
+ * surface with pieces taken out and started reading as a shape in its own
+ * right, which is the one thing the card is careful never to do.
+ */
+const MARK = { w: 88, h: 60 };
 
 const SMALL: Cuts = {
-  radius: 14,
-  barWidth: 26,
-  barDepth: 9,
-  barRadius: 6,
-  barFlare: 7,
-  biteWidth: 24,
-  biteHeight: 24,
-  biteRadius: 6,
-  biteFlare: 7,
-  dropWidth: 22,
-  dropHeight: 22,
-  dropRadius: 6,
-  dropFlare: 7,
+  radius: 12,
+  barWidth: 22,
+  barDepth: 8,
+  barRadius: 5,
+  barFlare: 6,
+  biteWidth: 20,
+  biteHeight: 17,
+  biteRadius: 5,
+  biteFlare: 6,
+  dropWidth: 16,
+  dropHeight: 15,
+  dropRadius: 5,
+  dropFlare: 6,
 };
 
-const SHAPE = outline(MARK, MARK, SMALL);
+const SHAPE = outline(MARK.w, MARK.h, SMALL);
 
 /**
  * How long it may hold the screen, whatever happens.
@@ -136,9 +149,9 @@ export function Boot() {
       aria-hidden
     >
       <svg
-        width={MARK}
-        height={MARK}
-        viewBox={`0 0 ${MARK} ${MARK}`}
+        width={MARK.w}
+        height={MARK.h}
+        viewBox={`0 0 ${MARK.w} ${MARK.h}`}
         fill="none"
       >
         {/* The shape, standing still. */}
