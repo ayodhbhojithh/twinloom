@@ -232,8 +232,14 @@ export function Stage({
              then the same distance from the top edge as it is from the left
              one, which is the only reading of "the corner" that holds at every
              width. Under the notch there is no choice - the bar owns that band
-             - so it clears the bar and keeps a hair of air below it. */
-          paddingTop: beside ? pad : (toolbar ? cut.barDepth : 0) + 12,
+             - so it clears the bar and keeps a hair of air below it.
+
+             With no notch at all it is the side inset again. It used to fall
+             through to the twelve meant for clearing a bar, so a surface with
+             nothing in its top edge - the quick submission is the one - put its
+             heading twelve pixels down while holding it thirty from the side.
+             The same fault was in `CutPanel` and is fixed there the same way. */
+          paddingTop: toolbar ? (beside ? pad : cut.barDepth + 12) : pad,
           /* What the heading may take before it would run under the bar. */
           ["--notch-free" as string]: headRoom,
           /* Clear of the bite and then some. The content only has to miss the

@@ -16,9 +16,10 @@ import { cn } from "@/lib/utils";
 import { NotesDock } from "./notes";
 import { Panel } from "./panel";
 import { QuickPane } from "./quick";
-import { StageArrive, StageDo, StageLayout, StageWho } from "./stages-a";
+import { StageDo, StageWho } from "./stages-a";
 import { StageHave, StageRefs, StageSell, StageStyle } from "./stages-b";
-import { StageAsking, StageKeep, StageRead, StageSubmit } from "./stages-c";
+import { StageRead, StageSubmit } from "./stages-c";
+import { StageOrg, StageSystems, StageWidgets } from "./stages-d";
 import { StepStrip } from "./strip";
 
 /* ---------------------------------------------------------------------------
@@ -66,10 +67,8 @@ export function BuildFlow() {
 
   const stage = (() => {
     switch (STEPS[step].k) {
-      case "arrive":
-        return <StageArrive at={step} {...props} />;
-      case "layout":
-        return <StageLayout at={step} {...props} />;
+      case "org":
+        return <StageOrg at={step} {...props} />;
       case "who":
         return <StageWho at={step} {...props} />;
       case "do":
@@ -82,12 +81,12 @@ export function BuildFlow() {
         return <StageHave at={step} {...props} />;
       case "refs":
         return <StageRefs at={step} {...props} />;
+      case "widgets":
+        return <StageWidgets at={step} {...props} />;
+      case "systems":
+        return <StageSystems at={step} {...props} />;
       case "read":
         return <StageRead at={step} {...props} />;
-      case "asking":
-        return <StageAsking at={step} {...props} />;
-      case "keep":
-        return <StageKeep at={step} {...props} />;
       default:
         return <StageSubmit at={step} {...props} />;
     }

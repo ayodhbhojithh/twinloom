@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Check } from "lucide-react";
 
-import { ALWAYS_PAGES, REF_KINDS } from "@/lib/build/v5";
+import { REF_KINDS } from "@/lib/build/v5";
 import {
   addRef,
   dropRef,
@@ -14,7 +13,10 @@ import {
 } from "@/lib/build/v5-store";
 import { cn } from "@/lib/utils";
 
-import { AddRow, Chip, H, Kicker, Pill, Sub, SubTitle } from "./kit";
+import { isPicture, type Attached } from "@/lib/build/upload";
+
+import { DropZone } from "./drop";
+import { AddRow, Chip, H, Kicker, Pill, Sub } from "./kit";
 import { Stage } from "./stage";
 
 /* ---------------------------------------------------------------------------
@@ -26,6 +28,15 @@ import { Stage } from "./stage";
    as the same written scope - and the run-through's answers ride along with it
    whenever they exist.
 --------------------------------------------------------------------------- */
+
+/**
+ * The kinds you say rather than attach.
+ *
+ * A document, an image and a screenshot are files, and they now go in the drop
+ * zone where they can actually be handed over. What is left is the note and the
+ * link - the two that were only ever a line of text, and always were.
+ */
+const SAYABLE = ["note", "site"] as const;
 
 const KIND_WHY: Record<string, string> = {
   note: "A sentence you want kept in your words.",
@@ -42,135 +53,154 @@ export function QuickPane({
   answers: Answers;
   onCarryOn: () => void;
 }) {
-  const [kind, setKind] = useState("note");
+  const [kind, setKind] = useState<string>("note");
+  const [files, setFiles] = useState<Attached[]>([]);
 
   return (
-    <Stage className="min-h-[540px] w-full">
-      <div className="grid gap-x-12 gap-y-9 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+    /* One column, capped at the reading measure.
+
+       It was two, and the two were saying the same thing: a heading on the left
+       telling somebody to say it in their own words, and a heading on the right
+       telling them to say it however they would say it, with the box under the
+       second one. Split like that the left ran out a third of the way down and
+       left a column of empty surface beside a form.
+
+       One column is one instruction, one box, and the things you can attach to
+       it - in the order somebody does them. The floor is what the cuts need to
+       be cuts, and nothing more. */
+    <Stage className="min-h-[380px] w-full">
+      {/* Two columns again, but split where the work actually divides rather
+          than down the middle of one instruction. The writing is on the left
+          and everything you attach to it is on the right, so neither column
+          runs out while the other is still going - which is what made the
+          first two-column version leave a field of empty surface. */}
+      <div className="grid gap-x-10 gap-y-8 lg:grid-cols-2">
         <div className="min-w-0">
-          <H>Four pages, and you are done.</H>
+          <H>Say it in your own words.</H>
           <Sub>
-            Who you are, what you offer, and how to get hold of you. A real
-            website and a complete answer - and the fastest route through this.
+            No questions, no order, no structure. Who you are, what you offer,
+            and how to get hold of you - it goes exactly as you typed it.
           </Sub>
 
-          <ul className="mt-6 max-w-[420px] overflow-hidden rounded-[16px] bg-canvas">
-            {ALWAYS_PAGES.map((page, n) => (
+          <textarea
+            rows={12}
+            aria-label="Say it in your own words"
+            value={answers.text["quick.words"] ?? ""}
+            placeholder="What the business does, who it is for, what the website has to do, and anything you already know you want."
+            onChange={(event) => setText("quick.words", event.target.value)}
+            className="mt-5 w-full resize-y rounded-[14px] border border-border bg-field px-4 py-3 text-[14px] leading-[1.6] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
+          />
+        </div>
+
+        <div className="min-w-0">
+        {/* Files, then the line for the two things that are not files. No
+            heading over either: the drop zone says what it is on its face, and
+            a title above a control that already carries a label is the same
+            words twice. */}
+        <DropZone
+          className="mt-4"
+          label="Drop files here, or choose them"
+          note="Pictures, brochures, price lists, screenshots. Up to 10 MB each."
+          files={files}
+          onAdd={(taken) => {
+            setFiles((was) => [...was, ...taken]);
+            for (const file of taken) {
+              addRef({
+                kind: isPicture(file.type) ? REF_KINDS.image : REF_KINDS.file,
+                text: file.name,
+                where: null,
+              });
+            }
+          }}
+          onDrop={(at) =>
+            setFiles((was) => was.filter((_, index) => index !== at))
+          }
+        />
+
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {SAYABLE.map((key) => (
+            <Chip
+              key={key}
+              on={kind === key}
+              title={KIND_WHY[key]}
+              onClick={() => setKind(key)}
+            >
+              {REF_KINDS[key]}
+            </Chip>
+          ))}
+        </div>
+
+        <div className="mt-2.5">
+          <AddRow
+            placeholder="A sentence, or a link"
+            onAdd={(value) =>
+              addRef({ kind: REF_KINDS[kind], text: value, where: null })
+            }
+          />
+        </div>
+
+        {answers.refs.length ? (
+          <ul className="mt-3 flex flex-col gap-2">
+            {answers.refs.map((ref) => (
               <li
-                key={page}
-                className="flex items-center gap-3 border-t border-hair px-4 py-2.5 first:border-t-0"
+                key={ref.n}
+                className="flex flex-wrap items-center gap-x-3.5 gap-y-2 rounded-[12px] bg-canvas px-3.5 py-2.5"
               >
-                <Check
-                  aria-hidden
-                  className="size-4 flex-none text-mark"
-                  strokeWidth={2.6}
-                />
-                <b className="flex-1 text-[14px] leading-none font-semibold text-ink">
-                  {page}
-                </b>
-                <span className="font-mono text-[9px] font-bold text-idx tabular-nums">
-                  {String(n + 1).padStart(2, "0")}
+                <Kicker className="w-[72px] flex-none">{ref.kind}</Kicker>
+                <span className="min-w-[14ch] flex-1 text-[13.5px] leading-[1.4] text-ink">
+                  {ref.text}
                 </span>
+                <input
+                  value={answers.like[ref.n] ?? ""}
+                  placeholder="What you like about it"
+                  onChange={(event) => setLike(ref.n, event.target.value)}
+                  className={cn(
+                    "h-8 w-full rounded-field border border-border bg-field px-3 text-[12.5px] text-ink outline-none transition-colors",
+                    "placeholder:text-label focus:border-ink sm:w-[200px]",
+                  )}
+                />
+                <button
+                  type="button"
+                  onClick={() => dropRef(ref.n)}
+                  className="flex-none cursor-pointer font-mono text-[9px] font-bold tracking-[0.12em] text-label uppercase transition-colors hover:text-ink"
+                >
+                  Remove
+                </button>
               </li>
             ))}
           </ul>
+        ) : null}
 
-          <div className="mt-6 flex flex-wrap items-center gap-2.5">
-            <Pill tone="ink" arrow onClick={() => setShort(true)}>
+        </div>
+
+        {/* The way out, across both columns and at the end - where somebody has
+            finished rather than at the top where they have not started. It
+            belongs to the whole pane, not to the attachments it happens to sit
+            under, so it spans rather than hanging off one side. */}
+        <div className="min-w-0 border-t border-hair pt-6 lg:col-span-2">
+          <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">
+            <Pill
+              tone="ink"
+              arrow
+              className="justify-center sm:justify-start"
+              onClick={() => setShort(true)}
+            >
               {answers.short
                 ? "Sent as a quick submission"
                 : "Send it as a quick submission"}
             </Pill>
-            <Pill onClick={onCarryOn}>Carry on through the questions</Pill>
+            <Pill
+              className="justify-center sm:justify-start"
+              onClick={onCarryOn}
+            >
+              Carry on through the questions
+            </Pill>
           </div>
 
-          <p className="mt-4 max-w-[46ch] text-[12.5px] leading-[1.55] text-quiet">
+          <p className="mt-3 max-w-[62ch] text-[12.5px] leading-[1.55] text-quiet">
             Nothing is thrown away and nothing is final. It comes back as the
-            same written scope, and you can come back and answer the rest at any
-            point.
+            same written scope, and you can answer the rest at any point.
           </p>
-        </div>
-
-        <div className="min-w-0">
-          <SubTitle className="mt-0">Say it however you would say it</SubTitle>
-          <p className="mt-1 max-w-[56ch] text-[12.5px] leading-[1.5] text-label">
-            No questions, no order, no structure. It goes exactly as you typed
-            it - nobody tidies it up on the way.
-          </p>
-
-          <textarea
-            rows={7}
-            aria-label="Say it however you would say it"
-            value={answers.text["quick.words"] ?? ""}
-            placeholder="What the business does, who it is for, what the website has to do, and anything you already know you want."
-            onChange={(event) => setText("quick.words", event.target.value)}
-            className="mt-3 w-full resize-y rounded-[14px] border border-border bg-field px-4 py-3 text-[14px] leading-[1.6] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
-          />
-
-          <SubTitle>Anything you would rather show us</SubTitle>
-          <p className="mt-1 max-w-[56ch] text-[12.5px] leading-[1.5] text-label">
-            Say which kind it is, add it, then write what you like about it -
-            that sentence is worth more than the link on its own.
-          </p>
-
-          <div className="mt-3 flex flex-wrap gap-2">
-            {Object.entries(REF_KINDS).map(([key, label]) => (
-              <Chip
-                key={key}
-                on={kind === key}
-                title={KIND_WHY[key]}
-                onClick={() => setKind(key)}
-              >
-                {label}
-              </Chip>
-            ))}
-          </div>
-
-          <div className="mt-3">
-            <AddRow
-              placeholder="A sentence, a link, or the name of a file"
-              onAdd={(value) =>
-                addRef({ kind: REF_KINDS[kind], text: value, where: null })
-              }
-            />
-          </div>
-
-          {answers.refs.length ? (
-            <ul className="mt-4 flex flex-col gap-2">
-              {answers.refs.map((ref) => (
-                <li
-                  key={ref.n}
-                  className="flex flex-wrap items-center gap-x-3.5 gap-y-2 rounded-[12px] bg-canvas px-3.5 py-2.5"
-                >
-                  <Kicker className="w-[72px] flex-none">{ref.kind}</Kicker>
-                  <span className="min-w-[14ch] flex-1 text-[13.5px] leading-[1.4] text-ink">
-                    {ref.text}
-                  </span>
-                  <input
-                    value={answers.like[ref.n] ?? ""}
-                    placeholder="What you like about it"
-                    onChange={(event) => setLike(ref.n, event.target.value)}
-                    className={cn(
-                      "h-8 w-full rounded-field border border-border bg-field px-3 text-[12.5px] text-ink outline-none transition-colors",
-                      "placeholder:text-label focus:border-ink sm:w-[200px]",
-                    )}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => dropRef(ref.n)}
-                    className="flex-none cursor-pointer font-mono text-[9px] font-bold tracking-[0.12em] text-label uppercase transition-colors hover:text-ink"
-                  >
-                    Remove
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="mt-4 text-[12.5px] leading-[1.5] text-quiet">
-              Nothing added yet - the box above is enough to send. This is the
-              same list the notes panel keeps.
-            </p>
-          )}
         </div>
       </div>
     </Stage>

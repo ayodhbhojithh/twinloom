@@ -51,14 +51,14 @@ export interface SellKind {
 
 export const STEPS: readonly Step[] = [
  {
-  "k": "arrive",
+  "k": "org",
   "ph": "shape",
-  "n": "Arrive",
+  "n": "Your organisation and industry",
   "can": true
  },
  {
   "k": "who",
-  "ph": "detail",
+  "ph": "shape",
   "n": "Your visitors",
   "can": true
  },
@@ -71,7 +71,7 @@ export const STEPS: readonly Step[] = [
  {
   "k": "sell",
   "ph": "detail",
-  "n": "What you are selling",
+  "n": "Are you selling?",
   "can": true
  },
  {
@@ -83,7 +83,7 @@ export const STEPS: readonly Step[] = [
  {
   "k": "have",
   "ph": "detail",
-  "n": "What you already have",
+  "n": "Your branding and identity",
   "can": true
  },
  {
@@ -93,21 +93,21 @@ export const STEPS: readonly Step[] = [
   "can": true
  },
  {
-  "k": "read",
+  "k": "widgets",
   "ph": "detail",
-  "n": "Read it back",
+  "n": "Widgets and applications",
   "can": true
  },
  {
-  "k": "asking",
-  "ph": "send",
-  "n": "Who is asking",
-  "can": false
+  "k": "systems",
+  "ph": "detail",
+  "n": "Connecting to back end systems",
+  "can": true
  },
  {
-  "k": "keep",
+  "k": "read",
   "ph": "send",
-  "n": "Keep it",
+  "n": "The site your answers describe",
   "can": true
  },
  {
@@ -133,7 +133,7 @@ export const PHASES: readonly (readonly [PhaseKey, string, string])[] = [
  [
   "send",
   "Sending it",
-  "The only compulsory part, and it is four fields."
+  "Read it back, then send it."
  ]
 ] as const;
 
@@ -568,6 +568,10 @@ export const PAY_WAYS: readonly SellKind[] = [
 /** The read-back, in order: `[step key, heading]`. */
 export const REPORT: readonly (readonly [string, string])[] = [
  [
+  "org",
+  "Your organisation"
+ ],
+ [
   "who",
   "Who the site is for"
  ],
@@ -585,7 +589,15 @@ export const REPORT: readonly (readonly [string, string])[] = [
  ],
  [
   "have",
-  "What you already have"
+  "Your branding and identity"
+ ],
+ [
+  "widgets",
+  "Widgets and applications"
+ ],
+ [
+  "systems",
+  "Back end systems"
  ]
 ] as const;
 
@@ -642,7 +654,7 @@ export const MIN_MAP: Record<string, string> = {
  "who": "who",
  "do": "do",
  "sell": "sell",
- "you": "asking"
+ "you": "submit"
 } as const;
 
 /** The only fields anybody has to fill in. */
@@ -720,10 +732,803 @@ export const REF_KINDS: Record<string, string> = {
  * website rather than listing what is missing.
  */
 export const ASSUMPTIONS: Record<string, string> = {
+ "org": "We take it from the rest of your answers, and ask on the call.",
  "who": "We assume the site is for customers buying for themselves.",
  "do": "We assume the standard inclusions and nothing beyond them, and we choose what the home page leads with.",
  "sell": "We assume nothing is bought on the website.",
  "style": "We choose a direction and show it to you before we build it.",
  "have": "We assume you have a logo and nothing else ready.",
- "refs": "No reference points, so we work from the answers alone."
+ "refs": "No reference points, so we work from the answers alone.",
+ "widgets": "We assume nothing beyond the standard inclusions sits inside a page.",
+ "systems": "We assume the website stands on its own and joins to nothing."
+} as const;
+
+/* ---------------------------------------------------------------------------
+   v5.4: the organisation, what sits inside a page, and what the site joins to.
+
+   Three steps the earlier draft did not have. They are transcribed from the
+   prototype exactly as the rest of this file is, for the same reason: the
+   wording a visitor reads and the wording we scope from have to be one string.
+--------------------------------------------------------------------------- */
+
+/** What kind of organisation this is. The first fork; the rest follows it. */
+export const ORG_KINDS: Record<string, string> = {
+ "sole": "Sole trader or freelancer",
+ "small": "Small business",
+ "group": "Larger company, or a group",
+ "charity": "Charity or not for profit",
+ "public": "Public sector or education",
+ "member": "Membership body or club",
+ "pre": "Not trading yet"
+} as const;
+
+/**
+ * The industries, by key.
+ *
+ * Fifty-five of them, and the list is deliberately specific: "Bakery and cakes"
+ * rather than "Food", because the second tells us nothing we did not already
+ * know and the first tells us the stock is perishable before anybody asks.
+ */
+export const SECTORS: Record<string, string> = {
+ "womenswearm": "Womenswear / menswear / childrenswear",
+ "footwear": "Footwear",
+ "jewelleryan": "Jewellery and accessories",
+ "bagsandleat": "Bags and leather goods",
+ "vintageandp": "Vintage and preloved",
+ "sportswear": "Sportswear",
+ "bridalandoc": "Bridal and occasion",
+ "bakeryandca": "Bakery and cakes",
+ "coffeeandte": "Coffee and tea",
+ "alcohol": "Alcohol",
+ "preservesco": "Preserves, condiments and confectionery",
+ "mealkitsand": "Meal kits and prepared food",
+ "supplements": "Supplements and health foods",
+ "farmproduce": "Farm produce and boxes",
+ "furniture": "Furniture",
+ "homewareand": "Homeware and decor",
+ "kitchenware": "Kitchenware / bedding and textiles",
+ "gardenandou": "Garden and outdoor",
+ "candlesandh": "Candles and home fragrance",
+ "skincareand": "Skincare and cosmetics",
+ "salonsbarbe": "Salons, barbers and spas",
+ "wellnessand": "Wellness and therapies",
+ "originalart": "Original art",
+ "printsanded": "Prints and editions",
+ "ceramicsand": "Ceramics and glass",
+ "handmadeand": "Handmade and artisan",
+ "personalise": "Personalised gifts",
+ "craftsuppli": "Craft supplies and stationery",
+ "gymsandstud": "Gyms and studios",
+ "yogapilates": "Yoga, pilates and classes",
+ "personaltra": "Personal training and coaching",
+ "sportsequip": "Sports equipment",
+ "onlinecours": "Online courses",
+ "tutoringand": "Tutoring and lessons",
+ "workshopsan": "Workshops and in-person classes",
+ "professiona": "Professional training",
+ "accountingl": "Accounting, legal and consulting",
+ "agenciesmar": "Agencies — marketing, design, digital",
+ "buildingele": "Building, electrical, plumbing",
+ "cleaninggar": "Cleaning, gardening and regular services",
+ "restaurants": "Restaurants, cafes and bars",
+ "venueandequ": "Venue and equipment hire",
+ "cateringand": "Catering and events",
+ "holidaylets": "Holiday lets and stays",
+ "appsandsoft": "Apps and software",
+ "photography": "Photography and video services",
+ "musicaudioa": "Music, audio and publishing",
+ "registeredc": "Registered charities",
+ "clubsandsoc": "Clubs and societies",
+ "faithandcom": "Faith and community groups",
+ "schoolsptas": "Schools, PTAs and friends-of",
+ "petfoodands": "Pet food and supplies",
+ "groomingtra": "Grooming, training and care",
+ "partsandacc": "Parts and accessories",
+ "servicingan": "Servicing and repairs"
+} as const;
+
+/** What an industry implies: the family it sits in, what it sells, and what that brings with it. */
+export interface SectorTag {
+  /** The industry's own name, so a tag can be read without the key. */
+  n: string;
+  /** The family it belongs to, for grouping the picker. */
+  g: string;
+  /** What it sells, in the vocabulary of `TYPE_NAMES`. */
+  t: readonly string[];
+  /** What comes with it. Written as facts about the trade, not as features. */
+  p: readonly string[];
+}
+
+export const SECTOR_TAGS: Record<string, SectorTag> = {
+ "womenswearm": {
+  "n": "Womenswear / menswear / childrenswear",
+  "g": "Fashion and apparel",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Sizes and options",
+   "Returns",
+   "Seasonal, probably"
+  ]
+ },
+ "footwear": {
+  "n": "Footwear",
+  "g": "Fashion and apparel",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Sizes",
+   "Returns"
+  ]
+ },
+ "jewelleryan": {
+  "n": "Jewellery and accessories",
+  "g": "Fashion and apparel",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Gifting, probably",
+   "Fragile post"
+  ]
+ },
+ "bagsandleat": {
+  "n": "Bags and leather goods",
+  "g": "Fashion and apparel",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Gifting, probably"
+  ]
+ },
+ "vintageandp": {
+  "n": "Vintage and preloved",
+  "g": "Fashion and apparel",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Condition: one-of-a-kind — singleton stock"
+  ]
+ },
+ "sportswear": {
+  "n": "Sportswear",
+  "g": "Fashion and apparel",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Sizes"
+  ]
+ },
+ "bridalandoc": {
+  "n": "Bridal and occasion",
+  "g": "Fashion and apparel",
+  "t": [
+   "GOODS",
+   "TIME"
+  ],
+  "p": [
+   "Made to order, probably",
+   "Appointments, probably"
+  ]
+ },
+ "bakeryandca": {
+  "n": "Bakery and cakes",
+  "g": "Food and drink",
+  "t": [
+   "GOODS",
+   "TIME"
+  ],
+  "p": [
+   "Perishable",
+   "Local delivery/collection, probably",
+   "Made to order, probably"
+  ]
+ },
+ "coffeeandte": {
+  "n": "Coffee and tea",
+  "g": "Food and drink",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Subscriptions, probably"
+  ]
+ },
+ "alcohol": {
+  "n": "Alcohol",
+  "g": "Food and drink",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Regulated — provider check first",
+   "Age verification"
+  ]
+ },
+ "preservesco": {
+  "n": "Preserves, condiments and confectionery",
+  "g": "Food and drink",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Allergen labelling",
+   "Gifting, probably"
+  ]
+ },
+ "mealkitsand": {
+  "n": "Meal kits and prepared food",
+  "g": "Food and drink",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Perishable — cold chain",
+   "Subscriptions, probably"
+  ]
+ },
+ "supplements": {
+  "n": "Supplements and health foods",
+  "g": "Food and drink",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Regulated",
+   "Labelling"
+  ]
+ },
+ "farmproduce": {
+  "n": "Farm produce and boxes",
+  "g": "Food and drink",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Perishable",
+   "Local rounds, probably",
+   "Subscriptions, probably"
+  ]
+ },
+ "furniture": {
+  "n": "Furniture",
+  "g": "Home and living",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Oversized — freight, two-person delivery"
+  ]
+ },
+ "homewareand": {
+  "n": "Homeware and decor",
+  "g": "Home and living",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Fragile, probably",
+   "Gifting, probably"
+  ]
+ },
+ "kitchenware": {
+  "n": "Kitchenware / bedding and textiles",
+  "g": "Home and living",
+  "t": [
+   "GOODS"
+  ],
+  "p": []
+ },
+ "gardenandou": {
+  "n": "Garden and outdoor",
+  "g": "Home and living",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Oversized, probably",
+   "Seasonal"
+  ]
+ },
+ "candlesandh": {
+  "n": "Candles and home fragrance",
+  "g": "Home and living",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Gifting",
+   "Postal restrictions, probably"
+  ]
+ },
+ "skincareand": {
+  "n": "Skincare and cosmetics",
+  "g": "Health and beauty",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Labelling compliance",
+   "Returns hygiene rules"
+  ]
+ },
+ "salonsbarbe": {
+  "n": "Salons, barbers and spas",
+  "g": "Health and beauty",
+  "t": [
+   "TIME"
+  ],
+  "p": [
+   "Appointments",
+   "Deposits, probably"
+  ]
+ },
+ "wellnessand": {
+  "n": "Wellness and therapies",
+  "g": "Health and beauty",
+  "t": [
+   "TIME",
+   "SERVICE"
+  ],
+  "p": [
+   "Insurance — we will check",
+   "Appointments"
+  ]
+ },
+ "originalart": {
+  "n": "Original art",
+  "g": "Arts, crafts and gifts",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "One-of-a-kind",
+   "Fragile"
+  ]
+ },
+ "printsanded": {
+  "n": "Prints and editions",
+  "g": "Arts, crafts and gifts",
+  "t": [
+   "GOODS",
+   "DIGITAL"
+  ],
+  "p": [
+   "Editions/limits, probably"
+  ]
+ },
+ "ceramicsand": {
+  "n": "Ceramics and glass",
+  "g": "Arts, crafts and gifts",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Fragile",
+   "One-of-a-kind, probably"
+  ]
+ },
+ "handmadeand": {
+  "n": "Handmade and artisan",
+  "g": "Arts, crafts and gifts",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Made to order, probably",
+   "Consignment: ask"
+  ]
+ },
+ "personalise": {
+  "n": "Personalised gifts",
+  "g": "Arts, crafts and gifts",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Made to order — personalisation question opens"
+  ]
+ },
+ "craftsuppli": {
+  "n": "Craft supplies and stationery",
+  "g": "Arts, crafts and gifts",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "By weight/length, probably"
+  ]
+ },
+ "gymsandstud": {
+  "n": "Gyms and studios",
+  "g": "Sport and fitness",
+  "t": [
+   "MEMBERSHIP",
+   "TIME"
+  ],
+  "p": [
+   "Memberships",
+   "Timetable",
+   "Children: safeguarding check"
+  ]
+ },
+ "yogapilates": {
+  "n": "Yoga, pilates and classes",
+  "g": "Sport and fitness",
+  "t": [
+   "TIME",
+   "MEMBERSHIP"
+  ],
+  "p": [
+   "Class passes, probably",
+   "Insurance — we will check"
+  ]
+ },
+ "personaltra": {
+  "n": "Personal training and coaching",
+  "g": "Sport and fitness",
+  "t": [
+   "TIME",
+   "SERVICE"
+  ],
+  "p": [
+   "Blocks of sessions, probably"
+  ]
+ },
+ "sportsequip": {
+  "n": "Sports equipment",
+  "g": "Sport and fitness",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Oversized, probably"
+  ]
+ },
+ "onlinecours": {
+  "n": "Online courses",
+  "g": "Education",
+  "t": [
+   "DIGITAL",
+   "MEMBERSHIP"
+  ],
+  "p": [
+   "Entitlements",
+   "Foreign VAT: early"
+  ]
+ },
+ "tutoringand": {
+  "n": "Tutoring and lessons",
+  "g": "Education",
+  "t": [
+   "TIME"
+  ],
+  "p": [
+   "Children: safeguarding check",
+   "Recurring slots, probably"
+  ]
+ },
+ "workshopsan": {
+  "n": "Workshops and in-person classes",
+  "g": "Education",
+  "t": [
+   "TIME"
+  ],
+  "p": [
+   "Venue capacity",
+   "Children — we will check"
+  ]
+ },
+ "professiona": {
+  "n": "Professional training",
+  "g": "Education",
+  "t": [
+   "TIME",
+   "DIGITAL",
+   "SERVICE"
+  ],
+  "p": [
+   "Invoicing employers — on account, probably"
+  ]
+ },
+ "accountingl": {
+  "n": "Accounting, legal and consulting",
+  "g": "Professional services",
+  "t": [
+   "PROJECT",
+   "SERVICE"
+  ],
+  "p": [
+   "Quotes then invoices"
+  ]
+ },
+ "agenciesmar": {
+  "n": "Agencies — marketing, design, digital",
+  "g": "Professional services",
+  "t": [
+   "PROJECT"
+  ],
+  "p": [
+   "Portfolio",
+   "Quotes"
+  ]
+ },
+ "buildingele": {
+  "n": "Building, electrical, plumbing",
+  "g": "Trades and home services",
+  "t": [
+   "PROJECT"
+  ],
+  "p": [
+   "Quote form",
+   "Local area",
+   "Reviews: valuable"
+  ]
+ },
+ "cleaninggar": {
+  "n": "Cleaning, gardening and regular services",
+  "g": "Trades and home services",
+  "t": [
+   "SERVICE",
+   "TIME"
+  ],
+  "p": [
+   "Recurring visits — direct debit, probably"
+  ]
+ },
+ "restaurants": {
+  "n": "Restaurants, cafes and bars",
+  "g": "Hospitality and venues",
+  "t": [
+   "TIME"
+  ],
+  "p": [
+   "Table bookings",
+   "Deposits for groups, probably"
+  ]
+ },
+ "venueandequ": {
+  "n": "Venue and equipment hire",
+  "g": "Hospitality and venues",
+  "t": [
+   "TIME",
+   "PROJECT"
+  ],
+  "p": [
+   "Availability calendar",
+   "Damage deposits"
+  ]
+ },
+ "cateringand": {
+  "n": "Catering and events",
+  "g": "Hospitality and venues",
+  "t": [
+   "PROJECT"
+  ],
+  "p": [
+   "Quotes",
+   "Deposits"
+  ]
+ },
+ "holidaylets": {
+  "n": "Holiday lets and stays",
+  "g": "Hospitality and venues",
+  "t": [
+   "TIME"
+  ],
+  "p": [
+   "Booking calendar",
+   "Usually a platform conversation"
+  ]
+ },
+ "appsandsoft": {
+  "n": "Apps and software",
+  "g": "Digital and media",
+  "t": [
+   "SOFTWARE"
+  ],
+  "p": [
+   "Own billing or merchant of record"
+  ]
+ },
+ "photography": {
+  "n": "Photography and video services",
+  "g": "Digital and media",
+  "t": [
+   "SERVICE",
+   "PROJECT",
+   "DIGITAL"
+  ],
+  "p": [
+   "Galleries and digital delivery, probably"
+  ]
+ },
+ "musicaudioa": {
+  "n": "Music, audio and publishing",
+  "g": "Digital and media",
+  "t": [
+   "DIGITAL",
+   "GOODS"
+  ],
+  "p": [
+   "Licensing"
+  ]
+ },
+ "registeredc": {
+  "n": "Registered charities",
+  "g": "Charity and community",
+  "t": [
+   "SUPPORT"
+  ],
+  "p": [
+   "Gift Aid — declaration capture"
+  ]
+ },
+ "clubsandsoc": {
+  "n": "Clubs and societies",
+  "g": "Charity and community",
+  "t": [
+   "MEMBERSHIP",
+   "SUPPORT"
+  ],
+  "p": [
+   "Member register",
+   "Renewals"
+  ]
+ },
+ "faithandcom": {
+  "n": "Faith and community groups",
+  "g": "Charity and community",
+  "t": [
+   "SUPPORT",
+   "TIME"
+  ],
+  "p": [
+   "Giving + events, probably"
+  ]
+ },
+ "schoolsptas": {
+  "n": "Schools, PTAs and friends-of",
+  "g": "Charity and community",
+  "t": [
+   "SUPPORT",
+   "MEMBERSHIP"
+  ],
+  "p": [
+   "Gift Aid — we will check",
+   "Events tickets, probably"
+  ]
+ },
+ "petfoodands": {
+  "n": "Pet food and supplies",
+  "g": "Pets and animals",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Subscriptions, probably",
+   "Weight-based, probably"
+  ]
+ },
+ "groomingtra": {
+  "n": "Grooming, training and care",
+  "g": "Pets and animals",
+  "t": [
+   "TIME"
+  ],
+  "p": [
+   "Appointments"
+  ]
+ },
+ "partsandacc": {
+  "n": "Parts and accessories",
+  "g": "Automotive",
+  "t": [
+   "GOODS"
+  ],
+  "p": [
+   "Fitment data — which vehicle does it fit"
+  ]
+ },
+ "servicingan": {
+  "n": "Servicing and repairs",
+  "g": "Automotive",
+  "t": [
+   "TIME",
+   "PROJECT"
+  ],
+  "p": [
+   "Bookings + quotes"
+  ]
+ }
+} as const;
+
+/** How many industries there are, for the picker to say so without counting. */
+export const SECTOR_COUNT = 55;
+
+/** The kinds of thing a sector sells, named for a reader rather than in code. */
+export const TYPE_NAMES: Record<string, string> = {
+ "GOODS": "Physical goods",
+ "DIGITAL": "Downloads and digital goods",
+ "MEMBERSHIP": "Memberships",
+ "SUPPORT": "Donations and giving",
+ "SERVICE": "Fixed-price services",
+ "PROJECT": "Quoted projects",
+ "TIME": "Bookings and appointments",
+ "SOFTWARE": "Software products"
+} as const;
+
+/** What a back end system would be running, if there is one. */
+export const SYS_TYPES: Record<string, string> = {
+ "goods": "Physical goods, a full shop",
+ "digital": "Tracked downloads",
+ "member": "Memberships, gyms, clubs",
+ "support": "Donations and friends-of schemes",
+ "service": "Fixed-price services",
+ "project": "Quoted projects",
+ "time": "Bookings and appointments",
+ "software": "Software products"
+} as const;
+
+/** Whether there is one already, and in what state. */
+export const SYS_WHO: Record<string, string> = {
+ "have": "We already run something",
+ "ready": "Something ready-made, off the shelf",
+ "none": "Nothing yet",
+ "unsure": "Not sure"
+} as const;
+
+/** The things a website is asked to join to. */
+export const SYS_LINKS: Record<string, string> = {
+ "epos": "Till, or point of sale",
+ "paycard": "Card payments",
+ "accts": "Accounting or bookkeeping",
+ "stock": "Stock or inventory",
+ "crm": "Customer list, or CRM",
+ "mailer": "Email marketing",
+ "memsys": "Memberships or subscriptions",
+ "giving": "Donations and Gift Aid",
+ "diary": "Booking diary or calendar",
+ "rota": "Rotas, staff or payroll",
+ "deliv": "Delivery, couriers or collection",
+ "venue": "Tables, rooms or venue",
+ "jobs": "Jobs, tickets or cases",
+ "quotes": "Quotes and proposals",
+ "files": "Document or file store",
+ "learn": "Courses or learning platform",
+ "feeds": "Listing or portal feeds",
+ "bespoke": "Something built for you already"
+} as const;
+
+/* ---------------------------------------------------------------------------
+   Who is asking, and when they are asked.
+
+   Three lists rather than one form. The two on `ASK_SEND` are what it takes to
+   reply at all; `ASK_DOOR` is what the scoping document is addressed to; and
+   `ASK_LATER` is worth knowing and worth nobody's time before they have decided
+   to send anything.
+--------------------------------------------------------------------------- */
+
+/** The least it takes to answer somebody. */
+export const ASK_SEND: readonly string[] = ["name","email"];
+
+/** What the document is made out to. */
+export const ASK_DOOR: readonly string[] = ["name","company","email","phone"];
+
+/** Asked once the rest is done, and never before. */
+export const ASK_LATER: readonly string[] = ["part","when"];
+
+/** What each field is called on the screen. */
+export const ASK_LABELS: Record<string, string> = {
+ "name": "Your name",
+ "company": "Company",
+ "email": "Email",
+ "phone": "Phone",
+ "part": "What part do you play in this decision",
+ "when": "When do you need it live"
 } as const;

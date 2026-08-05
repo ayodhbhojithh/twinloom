@@ -1,29 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpRight, Check } from "lucide-react";
-import Link from "next/link";
+import { Check } from "lucide-react";
 
 import { ACTIONS, GROUPS, STEPS } from "@/lib/build/v5";
 import { CARD_BY } from "@/lib/build/v5-cards";
 import { orderedActions } from "@/lib/build/v5-derive";
 import { BANDS, ROWS } from "@/lib/build/v5-rows";
-import { WIRES } from "@/lib/build/v5-wires";
 import {
   isOn,
   picked,
   setOrder,
-  setPick,
   togglePick,
-  touchStep,
   type Answers,
 } from "@/lib/build/v5-store";
-import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 import { StageStep } from "./frame";
 import { Glyph } from "./glyph";
-import { H, Kicker, Misses, Sub, SubTitle, TickRow } from "./kit";
+import { H, Misses, Sub, SubTitle, TickRow } from "./kit";
 import { CardSurface } from "./stage-card";
 
 /* ---------------------------------------------------------------------------
@@ -43,138 +38,7 @@ type StepProps = {
 
 /* --------------------------------------------------------------- 01 arrive */
 
-export function StageArrive({ at, answers, onGo }: StepProps) {
-  const facts = [
-    { n: "12", label: "Steps", note: "Only two of them compulsory" },
-    { n: "0", label: "Prices", note: "Nothing here is scored or quoted" },
-    { n: "2", label: "Working days", note: "To a written scope, in your words" },
-  ];
-
-  return (
-    <StageStep at={at} answers={answers} onGo={onGo}>
-      <H>A written scope, in your words.</H>
-      <Sub>
-        Answer what you like and leave the rest - an unanswered question becomes
-        an assumption you can correct, never a hole.
-      </Sub>
-
-      {/* The three facts of the arrangement, at the weight of facts rather
-          than of paragraphs. */}
-      <div className="mt-7 grid max-w-[820px] gap-3 sm:grid-cols-3">
-        {facts.map((fact) => (
-          <div key={fact.label} className="rounded-[16px] bg-canvas p-5">
-            <b className="block font-mono text-[30px] leading-none font-bold text-ink tabular-nums">
-              {fact.n}
-            </b>
-            <Kicker className="mt-2.5 block text-ink">{fact.label}</Kicker>
-            <span className="mt-1 block text-[12.5px] leading-[1.45] text-quiet">
-              {fact.note}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
-        <Link
-          href={ROUTES.site}
-          className="group/floor inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2 text-[14px] font-semibold text-white transition-opacity hover:opacity-85"
-        >
-          What every website includes
-          <ArrowUpRight
-            aria-hidden
-            className="size-4 transition-transform group-hover/floor:translate-x-0.5 group-hover/floor:-translate-y-0.5"
-          />
-        </Link>
-
-        <p className="text-[13px] leading-[1.5] text-quiet">
-          Eleven things, on every site we build. Your answers add to that floor
-          and never take from it.
-        </p>
-      </div>
-    </StageStep>
-  );
-}
-
 /* --------------------------------------------------------------- 02 layout */
-
-export function StageLayout({ at, answers, onGo }: StepProps) {
-  return (
-    <StageStep at={at} answers={answers} onGo={onGo}>
-      <H>Pick a shape.</H>
-      <Sub>
-        The one closest to the site in your head. A starting point for the
-        first drawing, not a decision - change it later and nothing else moves.
-      </Sub>
-
-      <div className="mt-7 grid max-w-[1160px] gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {WIRES.map((wire) => {
-          const on = isOn(answers, "layout", wire.k);
-
-          return (
-            <button
-              key={wire.k}
-              type="button"
-              aria-pressed={on}
-              onClick={() => {
-                setPick("layout", wire.k, true, true);
-                touchStep("layout");
-              }}
-              className={cn(
-                "group/wire relative flex cursor-pointer flex-col rounded-[16px] p-4 text-left transition-colors",
-                on ? "bg-field ring-2 ring-ink" : "bg-field hover:bg-hair",
-              )}
-            >
-              {on ? (
-                <span
-                  aria-hidden
-                  className="absolute top-3 right-3 flex size-[22px] items-center justify-center rounded-pill bg-mark text-white"
-                >
-                  <Check className="size-[12px]" strokeWidth={3.2} />
-                </span>
-              ) : null}
-
-              <span className="mb-3.5 block overflow-hidden rounded-[10px] bg-well p-2">
-                <svg viewBox="0 0 160 108" aria-hidden className="block w-full">
-                  {wire.bars.map((bar, n) => (
-                    <rect
-                      key={n}
-                      x={bar.x}
-                      y={bar.y}
-                      width={bar.w}
-                      height={bar.h}
-                      rx={2}
-                      fill="currentColor"
-                      className={cn(
-                        "text-ink",
-                        bar.kind === "h"
-                          ? "opacity-70"
-                          : bar.kind === "b"
-                            ? "opacity-40"
-                            : "opacity-[0.14]",
-                      )}
-                    />
-                  ))}
-                </svg>
-              </span>
-
-              <b className="text-[14.5px] leading-[1.25] font-bold text-ink">
-                {wire.n}
-              </b>
-              <span className="mt-1 block text-[12.5px] leading-[1.45] text-quiet">
-                {wire.d}
-              </span>
-              <span className="mt-2.5 block font-mono text-[9px] font-semibold tracking-[0.1em] text-idx uppercase">
-                {wire.w}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      <Misses step="layout" answers={answers} />
-    </StageStep>
-  );
-}
 
 /* ------------------------------------------------------------------ 03 who */
 

@@ -380,4 +380,99 @@ export const STEP_COPY: Record<string, StepCopy> = {
   "miss": [],
   "build": []
  }
+,
+ "org": {
+   "lead": "What the organisation is, and the field it works in.",
+   "lay": [],
+   "says": [
+     "Everything else on the build follows this. One site with one identity, one site with a section each, and separate sites are three different builds, and the argument about who updates what arrives either way.",
+     "The industry is not a category for a form. It is what tells us the stock is perishable, or that the goods are oversized, or that somebody is checking - before anybody has to explain it."
+   ],
+   "sh4": [
+     [
+       "What kind of organisation",
+       "Seven of them, and the one you pick opens a second layer of its own."
+     ],
+     [
+       "The field you work in",
+       "Fifty-five to choose from, grouped. What it implies is shown back to you rather than kept."
+     ]
+   ],
+   "heads": [
+     "What kind of organisation",
+     "The field you work in"
+   ],
+   "und": [],
+   "stback": "The organisation named at the top of the document, and the field it works in with what that field brings with it.",
+   "stop": "Nothing. Leave it and we take it from the rest of your answers, and ask on the call.",
+   "miss": [
+     {
+       "id": "org-own",
+       "label": "Something else",
+       "ph": "Tell us in your own words."
+     }
+   ],
+   "build": []
+ },
+ "widgets": {
+   "lead": "The working parts that sit inside a page.",
+   "lay": [],
+   "says": [
+     "A calculator, a map, a chat window, a feed, a search, a form that does something more than send an email. If you already know what you want here, name it. If you do not, leave it: none of it changes the shape of the site.",
+     "The list you pick from is being put together with the people who build these. Until it is here, anything you write below is read exactly as though you had ticked it."
+   ],
+   "sh4": [
+     [
+       "The working parts inside a page",
+       "Named here, or described in your own words. Both arrive the same way."
+     ]
+   ],
+   "heads": [
+     "The working parts inside a page"
+   ],
+   "und": [],
+   "stback": "Each one named in the panel and listed in the document.",
+   "stop": "Nothing. Leave it and we assume nothing beyond the standard inclusions sits inside a page.",
+   "miss": [
+     {
+       "id": "widgets-own",
+       "label": "Tell us what it has to do",
+       "ph": "A calculator that works out what a job costs, a map of where you deliver, a search that reads your stock."
+     }
+   ],
+   "build": []
+ },
+ "systems": {
+   "lead": "The systems the website has to talk to, and who holds the record.",
+   "lay": [],
+   "says": [
+     "One row for each kind of thing you sell. Tick the ones that are true. A ticked row asks one more question underneath it, and nothing here is priced.",
+     "Two of these we would not build. You can buy a booking diary and a shop platform, and buying one is better than paying us to write another. The rest we would, because nothing ready-made keeps the record properly."
+   ],
+   "sh4": [
+     [
+       "What the website has to keep a record of",
+       "What a record has to hold, what the market sells for it, and what we would therefore do."
+     ],
+     [
+       "What it has to join to",
+       "The things already running that the website has to agree with."
+     ]
+   ],
+   "heads": [
+     "What the website has to keep a record of",
+     "What it has to join to"
+   ],
+   "und": [],
+   "stback": "Each record named, with who holds it today, and everything the site has to join to.",
+   "stop": "Nothing. Leave it and we assume the website stands on its own and joins to nothing.",
+   "miss": [
+     {
+       "id": "systems-own",
+       "label": "Something else it has to talk to",
+       "ph": "Name it, and what it is called."
+     }
+   ],
+   "build": []
+ },
 };

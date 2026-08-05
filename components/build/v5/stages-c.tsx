@@ -19,7 +19,6 @@ import {
   isOn,
   picked,
   setAsk,
-  setKeep,
   setPick,
   setSent,
   toggleChip,
@@ -342,84 +341,7 @@ const PARTS = [
   { v: "advise", label: "I am advising them" },
 ] as const;
 
-export function StageAsking({ at, answers, onGo }: StepProps) {
-  return (
-    <StageStep at={at} answers={answers} onGo={onGo}>
-      <H>Who is asking?</H>
-      <Sub>
-        The only part about you, and the only part you cannot skip. Four fields,
-        and two that are not required at all.
-      </Sub>
-
-      <div className="mt-6 grid max-w-[720px] gap-x-6 gap-y-5 sm:grid-cols-2">
-        {FIELDS.map((field) => (
-          <Field
-            key={field.k}
-            id={`ask-${field.k}`}
-            label={field.label}
-            required={field.req}
-            why={field.why}
-            type={field.k === "email" ? "email" : "text"}
-            value={answers.ask[field.k] ?? ""}
-            onChange={(value) => setAsk(field.k, value)}
-          />
-        ))}
-      </div>
-
-      <div className="mt-6 max-w-[720px]">
-        <div className="mb-2 flex items-baseline justify-between gap-3">
-          <b className="text-[13.5px] font-semibold text-ink">
-            What part do you play in this decision
-          </b>
-          <Kicker className="text-mark">Required</Kicker>
-        </div>
-
-        <TickSet
-          single
-          options={PARTS.map((part) => ({ k: part.v, label: part.label }))}
-          isOn={(k: string) => chipOn(answers, "ask.part", k)}
-          onPick={(k: string) => toggleChip("ask.part", k, true, "asking")}
-        />
-
-        <p className="mt-2 text-[12px] leading-[1.5] text-label">
-          So the first call is the right length. Never shown back to you as a
-          grade.
-        </p>
-      </div>
-    </StageStep>
-  );
-}
-
 /* ----------------------------------------------------------------- 11 keep */
-
-export function StageKeep({ at, answers, onGo }: StepProps) {
-  return (
-    <StageStep at={at} answers={answers} onGo={onGo}>
-      <H>Keep a way back in?</H>
-      <Sub>
-        One press, no password. The way back in is a link to the address you
-        have already given, and either answer sends exactly the same request.
-      </Sub>
-
-      <div className="mt-6 flex max-w-[560px] flex-col gap-1">
-        <TickRow
-          single
-          on={answers.keep === true}
-          name="Register with the address I gave"
-          note="We keep what you have written and send a link, so you can come back and change it."
-          onToggle={() => setKeep(true)}
-        />
-        <TickRow
-          single
-          on={answers.keep === false}
-          name="No, just send it"
-          note="The document goes to your address and that is the end of it. Nothing is saved."
-          onToggle={() => setKeep(false)}
-        />
-      </div>
-    </StageStep>
-  );
-}
 
 /* --------------------------------------------------------------- 12 submit */
 
@@ -517,6 +439,56 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
         You can send at any point - what changes is what we can do with what
         arrives. No bar, no percentage, no grade.
       </Sub>
+
+      {/* Who is asking, on the step that sends rather than on one of its own.
+
+          It was a step, and a step made of four fields is a page somebody has
+          to walk through before they are allowed to finish. Asked here, they
+          are filled in by the person who has already decided to send it, which
+          is the only moment any of it is worth knowing. */}
+      <section className="mt-6 max-w-[720px]">
+        <SubTitle className="mt-0">Who is asking</SubTitle>
+        <p className="mt-0.5 text-[12.5px] leading-[1.45] text-label">
+          The only part about you, and the only part we cannot do without. Four
+          fields, and two of them are not required at all.
+        </p>
+
+        <div className="mt-4 grid gap-x-6 gap-y-5 sm:grid-cols-2">
+          {FIELDS.map((field) => (
+            <Field
+              key={field.k}
+              id={`ask-${field.k}`}
+              label={field.label}
+              required={field.req}
+              why={field.why}
+              type={field.k === "email" ? "email" : "text"}
+              value={answers.ask[field.k] ?? ""}
+              onChange={(value) => setAsk(field.k, value)}
+            />
+          ))}
+        </div>
+
+        <div className="mt-6">
+          <div className="mb-2 flex items-baseline justify-between gap-3">
+            <b className="text-[13.5px] font-semibold text-ink">
+              What part do you play in this decision
+            </b>
+            <Kicker className="text-mark">Required</Kicker>
+          </div>
+
+          <TickSet
+            single
+            options={PARTS.map((part) => ({ k: part.v, label: part.label }))}
+            isOn={(k: string) => chipOn(answers, "ask.part", k)}
+            onPick={(k: string) => toggleChip("ask.part", k, true, "submit")}
+          />
+
+          <p className="mt-2 text-[12px] leading-[1.5] text-label">
+            So the first call is the right length. Never shown back to you as a
+            grade.
+          </p>
+        </div>
+      </section>
 
       {/* Where it stands, and the named things still missing, each a link
           straight to its question. */}
