@@ -31,16 +31,16 @@ export function SiteFooter() {
 
   return (
     <footer className="page-frame pt-6 pb-7">
+      {/* No bite at the bottom left any more, and the year has gone with it.
+
+          It said the same thing the copyright line says a few pixels away, and
+          it cost more than a duplicate: the bottom band has to clear whatever
+          stands in that cut, so the registration wording underneath was indented
+          past the width of it and lined up with nothing on the page. Without the
+          cut the band starts where the content starts, and the small print reads
+          down the same edge as everything above it. */}
       <CutPanel
         className="w-full"
-        aside={
-          /* The year, where the landing card keeps the next project. It is the
-             one fact a footer is actually asked for, and the cut is what makes
-             the bottom of this surface the same shape as the top of it. */
-          <span className="font-mono text-[11px] font-bold tracking-[0.12em] text-label tabular-nums">
-            {year}
-          </span>
-        }
         corner={<TopDisc />}
         foot={
           /* Last, smallest, and still legible. It is the one thing here nobody
@@ -99,7 +99,12 @@ export function SiteFooter() {
             themselves. They are one thing - everywhere else on the site - so
             they hold together as a block against the right edge, and the ask
             holds the left. */}
-        <div className="grid gap-x-12 gap-y-11 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+        {/* Set proportions rather than `auto`. The links used to be shrunk to
+            their own content and pushed right, so `auto` was small; left
+            aligned they take what they are given, and `auto` gave them enough
+            to wrap the tagline onto five lines. Two fractions say what each
+            side is worth. */}
+        <div className="grid gap-x-12 gap-y-11 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
           <div className="min-w-0">
             <p className="max-w-[24ch] text-[clamp(21px,2.1vw,30px)] leading-[1.12] font-extrabold tracking-[-0.035em] text-ink">
               {SITE.tagline}
@@ -117,7 +122,16 @@ export function SiteFooter() {
             </Link>
           </div>
 
-          <div className="ml-auto grid w-fit grid-cols-2 gap-x-10 gap-y-8 text-right sm:grid-cols-3 lg:gap-x-14 xl:gap-x-20">
+          {/* Left aligned, and not right.
+
+              Right aligned they read down a ragged edge, which is the harder
+              way round for a list of names - and it only ever worked by
+              accident: the moment the rows became flex items to give the links
+              a thumb-sized target, `text-align` stopped reaching them and the
+              headings sat right while their own links sat left. One edge is
+              simpler than two, and it is the edge everything else on the page
+              already starts from. */}
+          <div className="grid grid-cols-2 gap-x-10 gap-y-8 sm:grid-cols-3 lg:gap-x-14 xl:gap-x-20">
             {FOOTER_COLUMNS.map((column) => (
               <nav
                 key={column.title}
