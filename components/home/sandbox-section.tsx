@@ -258,12 +258,12 @@ export function SandboxSection() {
   return (
     <section className="page-frame pt-20 pb-20 lg:pt-32 lg:pb-28">
       <div className="flex flex-col items-center text-center">
-        <h2 className="section-head max-w-[26ch] text-ink">
+        <h2 className="reveal section-head max-w-[26ch] text-ink">
           Things we built.
           <span className="text-quiet"> Running, not described.</span>
         </h2>
 
-        <p className="mt-5 max-w-[74ch] text-[15px] leading-[1.6] text-quiet sm:text-[16.5px]">
+        <p className="reveal mt-5 max-w-[74ch] text-[15px] leading-[1.6] text-quiet [--step:1] sm:text-[16.5px]">
           A bench rather than a showreel. Pick a piece up, let it run, and ask
           for it in yours - every one of these is a component a site could
           carry.
@@ -287,7 +287,7 @@ export function SandboxSection() {
 
       <CutPanel
         tone="field"
-        className="mt-10 w-full lg:mt-12"
+        className="reveal mt-10 w-full [--step:2] lg:mt-12"
         aside={
           <div className="flex size-full flex-col items-center justify-center">
             <b className="font-mono text-[20px] leading-none font-bold text-ink tabular-nums">

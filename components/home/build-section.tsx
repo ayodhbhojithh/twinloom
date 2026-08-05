@@ -42,13 +42,19 @@ export function BuildSection() {
             heading however large the letters in it are. */}
         <h2 className="sr-only">Build your website</h2>
 
-        <LoomStrings word="Build your website" className="w-full" />
-
+        <LoomStrings word="Build your website" className="reveal w-full" />
 
         {/* The run-through itself, not a shorter version of it. It reads the
             same answers as the build page, so somebody who starts here and
             follows a link through arrives at the step they were on with
-            everything they have already said still in it. */}
+            everything they have already said still in it.
+
+            No reveal on it, and not by omission. It is the one thing on this
+            page that is a tool rather than a picture of one: it has a docked
+            panel and surfaces that measure themselves, and a `transform` on
+            anything above them is a new containing block under all of it. The
+            words that introduce it arrive on the scroll; the tool is simply
+            there, which is what a tool should be. */}
         <div className="mt-12">
           <BuildFlow />
         </div>

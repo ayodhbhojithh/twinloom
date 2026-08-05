@@ -23,14 +23,14 @@ export function PartnersSection() {
           has no second reading direction on its own, and something drifting
           across beneath gives the eye somewhere to go. */}
       <div className="flex flex-col items-center text-center">
-        <h2 className="section-head max-w-[26ch] text-ink">
+        <h2 className="reveal section-head max-w-[26ch] text-ink">
           Specialists are part of the build.
           <span className="text-quiet"> Never an extra.</span>
         </h2>
 
         <Link
           href={ROUTES.partners}
-          className="group/all mt-6 inline-flex items-center gap-2 rounded-pill bg-field px-4.5 py-2 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair"
+          className="group/all reveal mt-6 inline-flex items-center gap-2 rounded-pill bg-field px-4.5 py-2 text-[13.5px] font-semibold text-ink transition-colors [--step:1] hover:bg-hair"
         >
           How partners work
           <ArrowUpRight
@@ -40,9 +40,16 @@ export function PartnersSection() {
         </Link>
       </div>
 
-      <PartnerWall bleed className="mt-10 lg:mt-12" />
+      {/* The wall is the one thing here that already moves. It arrives on the
+          scroll like everything else and then keeps drifting on its own, which
+          is why the reveal is on a wrapper rather than on the wall: two
+          animations on one element would be one `transform` written twice, and
+          the second would win. */}
+      <div className="reveal mt-10 [--step:2] lg:mt-12">
+        <PartnerWall bleed />
+      </div>
 
-      <p className="mx-auto mt-6 max-w-[68ch] text-center text-[14px] leading-[1.6] text-quiet">
+      <p className="reveal mx-auto mt-6 max-w-[68ch] text-center text-[14px] leading-[1.6] text-quiet [--step:3]">
         One contract, one invoice, and named in the proposal before the work
         starts. Most projects need none of them - a specialist is added because
         the work justifies one.

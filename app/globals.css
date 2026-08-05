@@ -821,6 +821,63 @@
   }
 
   /* ---------------------------------------------------------------------------
+     Reveal: how a block arrives as the page reaches it.
+
+     The entrance above plays once on load, which is right for the card at the
+     top of the landing page and wrong for everything under it. A section four
+     screens down animates itself while nobody is looking and is already over by
+     the time it is scrolled to.
+
+     This was written first on `animation-timeline: view()`, which is the better
+     idea and needs no JavaScript at all. It is not here any more, because it
+     cannot be relied on: a browser without it silently plays the whole thing on
+     load and the page looks exactly as it did before, with nothing to say why.
+     A reveal nobody can see is worse than no reveal. `IntersectionObserver` has
+     been everywhere for a decade and does what it says.
+
+     `--step` is the layering. A heading is 0, the line under it 1, the thing it
+     introduces 2, and each step waits a beat longer, so a section arrives in
+     the order it is read rather than all at once.
+
+     An animation rather than a transition, and that is not a preference. Two of
+     these blocks are links carrying `transition-colors`, which is a
+     `transition-property` from a later cascade layer - it would win, and the
+     reveal on those two would simply not run. Nothing sets `animation`.
+  --------------------------------------------------------------------------- */
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Armed by the watcher, on the document element. Nothing here matches until
+     it is, so a page whose JavaScript never arrives shows every block rather
+     than hiding the lot behind a fade that will never be asked for. */
+  [data-reveal="armed"] .reveal {
+    opacity: 0;
+  }
+
+  [data-reveal="armed"] .reveal[data-in] {
+    animation: reveal 0.75s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    animation-delay: calc(var(--step, 0) * 110ms);
+  }
+
+  /* The watcher disarms itself when motion is not wanted, so this only has to
+     cover the moment before it runs. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal="armed"] .reveal,
+    [data-reveal="armed"] .reveal[data-in] {
+      opacity: 1;
+      animation: none;
+    }
+  }
+
+  /* ---------------------------------------------------------------------------
      Devices for the home page.
 
      Everything here is drawn with type, rules and one accent. No images: the

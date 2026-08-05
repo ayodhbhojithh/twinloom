@@ -4,6 +4,7 @@ import { Archivo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 import { SiteShell } from "@/components/layout";
+import { RevealWatcher } from "@/components/layout/reveal-watcher";
 import { SITE } from "@/lib/site";
 
 /* Archivo carries the whole site. Variable, so no weight list is needed: the
@@ -57,6 +58,12 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col">
         <SiteShell>{children}</SiteShell>
+
+        {/* Arms the scroll reveals, and is the only thing on the page that has
+            to run for them to exist. Nothing is hidden until it says so, so a
+            page it never reaches is a page with no reveals rather than a page
+            with no content. */}
+        <RevealWatcher />
       </body>
     </html>
   );

@@ -27,7 +27,7 @@ export function ReadingSection() {
           axis, so four stacked sections read as one page rather than as four
           layouts that happen to follow each other. */}
       <div className="flex flex-col items-center text-center">
-        <h2 className="section-head max-w-[26ch] text-ink">
+        <h2 className="reveal section-head max-w-[26ch] text-ink">
           How we think.
           <span className="text-quiet">
             {" "}
@@ -37,7 +37,7 @@ export function ReadingSection() {
 
         <Link
           href={ROUTES.blog}
-          className="group/all mt-6 inline-flex items-center gap-2 rounded-pill bg-field px-4.5 py-2 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair"
+          className="group/all reveal mt-6 inline-flex items-center gap-2 rounded-pill bg-field px-4.5 py-2 text-[13.5px] font-semibold text-ink transition-colors [--step:1] hover:bg-hair"
         >
           All {ARTICLES.length} pieces
           <ArrowUpRight
@@ -47,7 +47,7 @@ export function ReadingSection() {
         </Link>
       </div>
 
-      <div className="mt-10 grid gap-4 lg:mt-12 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:items-stretch">
+      <div className="reveal mt-10 grid gap-4 [--step:2] lg:mt-12 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:items-stretch">
         {/* The lead piece, on the surface, with the picture cut to its own
             outline the way the landing card carries its photograph. */}
         <CutPanel
