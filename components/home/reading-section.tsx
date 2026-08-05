@@ -102,15 +102,21 @@ export function ReadingSection() {
                   </b>
                 </span>
 
+                {/* Shown on a phone too, one size down.
+
+                    It was `hidden sm:block`, so the row a phone got was three
+                    lines of type in a white box and nothing to tell one piece
+                    from another at a glance. Fifty-six pixels is small enough
+                    to keep the row compact and large enough to be a picture. */}
                 <span
                   aria-hidden
-                  className="relative hidden size-[74px] flex-none overflow-hidden rounded-[14px] sm:block"
+                  className="relative size-14 flex-none overflow-hidden rounded-[12px] sm:size-[74px] sm:rounded-[14px]"
                 >
                   <Image
                     src={plateFor(article.slug)}
                     alt=""
                     fill
-                    sizes="74px"
+                    sizes="(max-width: 639px) 56px, 74px"
                     className="object-cover transition-transform duration-500 group-hover/piece:scale-[1.06]"
                   />
                 </span>

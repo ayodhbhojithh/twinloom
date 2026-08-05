@@ -24,6 +24,20 @@ import { cn } from "@/lib/utils";
    controls standing in them.
 --------------------------------------------------------------------------- */
 
+/**
+ * How a picture stops being a picture and becomes part of the surface.
+ *
+ * Nine stops rather than three, and they follow a curve rather than a straight
+ * line: a linear fade over a short distance reads as a band with an edge on
+ * either side of it, which is the one thing a blend must not have. Whichever
+ * edge the picture enters from, the other three are the card's own, and an edge
+ * that is already the end of the card wants nothing on top of it.
+ */
+const fade = (to: string) =>
+  `linear-gradient(to ${to}, transparent 0%, rgba(0,0,0,0.04) 10%, rgba(0,0,0,0.12) 20%, rgba(0,0,0,0.26) 30%, rgba(0,0,0,0.44) 40%, rgba(0,0,0,0.63) 50%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0.93) 72%, black 86%)`;
+
+const MASK = { across: fade("right"), up: fade("bottom") } as const;
+
 export function CutPanel({
   toolbar,
   aside,
@@ -189,10 +203,38 @@ export function CutPanel({
           className="absolute inset-0 overflow-hidden"
           style={{ clipPath: path ? `path("${path}")` : undefined }}
         >
-          {/* The picture holds the right fifty five and no more. Stretched
-              across the whole width and hidden under a wash it was still a full
-              width picture - the left of it was being paid for and then painted
-              over. */}
+          {/* The same picture, entering from whichever edge the card has room
+              on. Two elements rather than one, because the difference is the
+              direction the mask runs and a mask cannot be swapped by
+              breakpoint.
+
+              Below `lg` it comes up from the bottom. A card that narrow has no
+              second column to give a picture - held to the right it would be a
+              strip behind the words - so it fills the foot instead, where the
+              text has already finished and the surface was empty. This is why
+              the card had no picture at all on a phone: it was `lg:block` and a
+              phone simply got the white.
+
+              At `lg` the card is wide enough to hold words and a picture side
+              by side, so it takes the right fifty five and fades in from its
+              own left edge. Stretched across the whole width and hidden under a
+              wash it was still a full width picture - the left of it was being
+              paid for and then painted over. */}
+          <div className="absolute inset-x-0 bottom-0 h-[54%] lg:hidden">
+            <Image
+              src={image}
+              alt=""
+              fill
+              priority
+              sizes="(max-width: 1023px) 100vw, 0px"
+              className="object-cover object-center"
+              style={{
+                maskImage: MASK.up,
+                WebkitMaskImage: MASK.up,
+              }}
+            />
+          </div>
+
           <div className="absolute inset-y-0 right-0 hidden w-[55%] lg:block">
             <Image
               src={image}
@@ -202,16 +244,8 @@ export function CutPanel({
               sizes="(min-width: 1024px) 55vw, 0px"
               className="object-cover object-center"
               style={{
-                /* Faded in from its own left edge, across most of its width.
-
-                   Nine stops rather than three, and they follow a curve rather
-                   than a straight line: a linear fade over a short distance
-                   reads as a band with an edge on either side of it, which is
-                   the one thing a blend must not have. The other three edges
-                   are the surface's own, and an edge that is already the end of
-                   the card wants nothing on top of it. */
-                maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.04) 10%, rgba(0,0,0,0.12) 20%, rgba(0,0,0,0.26) 30%, rgba(0,0,0,0.44) 40%, rgba(0,0,0,0.63) 50%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0.93) 72%, black 86%)",
-                WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.04) 10%, rgba(0,0,0,0.12) 20%, rgba(0,0,0,0.26) 30%, rgba(0,0,0,0.44) 40%, rgba(0,0,0,0.63) 50%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0.93) 72%, black 86%)",
+                maskImage: MASK.across,
+                WebkitMaskImage: MASK.across,
               }}
             />
           </div>
