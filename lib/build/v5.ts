@@ -1532,3 +1532,17 @@ export const ASK_LABELS: Record<string, string> = {
  "part": "What part do you play in this decision",
  "when": "When do you need it live"
 } as const;
+
+/**
+ * What part somebody plays in the decision.
+ *
+ * Here rather than inside the screen that asks it, because the document that
+ * gets sent has to name the same four things. Read from the screen alone, the
+ * request arrived saying "decide" - the key, not the answer.
+ */
+export const ASK_PARTS: readonly { v: string; label: string }[] = [
+  { v: "decide", label: "I decide" },
+  { v: "others", label: "I decide, with others" },
+  { v: "gather", label: "I am gathering this for somebody who decides" },
+  { v: "advise", label: "I am advising them" },
+];

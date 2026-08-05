@@ -3,7 +3,7 @@
 import { ArrowUpRight, Check, Send } from "lucide-react";
 import Link from "next/link";
 
-import { MIN_MAP, STATES } from "@/lib/build/v5";
+import { ASK_PARTS, MIN_MAP, STATES } from "@/lib/build/v5";
 import {
   assumed,
   pagesFrom,
@@ -13,6 +13,7 @@ import {
 } from "@/lib/build/v5-derive";
 import { OPTION_LISTS } from "@/lib/build/v5-options";
 import { HOW_WE_WORK } from "@/lib/build/v5-work";
+import { sendScope, whatIsMissing } from "@/lib/build/submit";
 import {
   addRef,
   chipOn,
@@ -20,6 +21,9 @@ import {
   picked,
   setAsk,
   setPick,
+  setDelivered,
+  setProblem,
+  setSending,
   setSent,
   toggleChip,
   touchStep,
@@ -334,12 +338,6 @@ const FIELDS = [
   },
 ] as const;
 
-const PARTS = [
-  { v: "decide", label: "I decide" },
-  { v: "others", label: "I decide, with others" },
-  { v: "gather", label: "I am gathering this for somebody who decides" },
-  { v: "advise", label: "I am advising them" },
-] as const;
 
 /* ----------------------------------------------------------------- 11 keep */
 
@@ -376,6 +374,18 @@ const MINIMUMS = [
 
 export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
   const { met, state } = readiness(answers);
+  const missing = whatIsMissing(answers);
+
+  /* One send, shared by the disc in the corner cut and the pill at the foot.
+     They are the same action in two places, and two copies of it would be two
+     chances to guard it differently. */
+  const send = async () => {
+    if (answers.sending) return;
+    setSending(true);
+    const result = await sendScope(answers);
+    if (result.ok) setDelivered(result.ref);
+    else setProblem(result.problem);
+  };
   const [stateName, stateNote] = STATES[state];
   const talk = OPTION_LISTS.submit[0];
 
@@ -407,6 +417,18 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
             measure the two paragraphs wrapped at different widths and gave the
             screen two ragged right edges where it should have one column. The
             gap is a line of that column: a paragraph break, not a new block. */}
+        {/* The reference, quoted back. It is the one thing somebody wants
+            from a confirmation screen that they cannot work out for
+            themselves, and the one thing worth writing down. */}
+        {answers.ref ? (
+          <p className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <Kicker>Your reference</Kicker>
+            <b className="font-mono text-[15px] font-bold tracking-[0.08em] text-ink tabular-nums">
+              {answers.ref}
+            </b>
+          </p>
+        ) : null}
+
         <p className="mt-5 max-w-[58ch] text-[13.5px] leading-[1.5] text-quiet sm:text-[14px]">
           Your answers are still here and still yours - keep changing them and
           send it again, and the newer one is the one we read.
@@ -426,9 +448,12 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
       onGo={onGo}
       corner={
         <Disc
-          label="Send my scoping request"
+          label={
+            answers.sending ? "Sending" : "Send my scoping request"
+          }
           tone="ink"
-          onClick={() => setSent(true)}
+          disabled={answers.sending || missing.length > 0}
+          onClick={send}
         >
           <Send className="size-4" strokeWidth={2.2} />
         </Disc>
@@ -478,7 +503,7 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
 
           <TickSet
             single
-            options={PARTS.map((part) => ({ k: part.v, label: part.label }))}
+            options={ASK_PARTS.map((part) => ({ k: part.v, label: part.label }))}
             isOn={(k: string) => chipOn(answers, "ask.part", k)}
             onPick={(k: string) => toggleChip("ask.part", k, true, "submit")}
           />
@@ -715,9 +740,33 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
         </ol>
       </section>
 
-      <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
-        <Pill tone="ink" arrow onClick={() => setSent(true)}>
-          Send my scoping request
+      {/* What is stopping it, or what went wrong, said above the button rather
+          than after it is pressed. A control that refuses without saying why is
+          a control somebody presses four times. */}
+      {missing.length ? (
+        <p className="mt-8 max-w-[62ch] text-[13px] leading-[1.6] text-quiet">
+          Before this can go we need {missing.join(", ").toLowerCase()}. They
+          are the four fields above.
+        </p>
+      ) : null}
+
+      {answers.problem ? (
+        <p
+          role="alert"
+          className="mt-8 max-w-[62ch] rounded-[12px] bg-blocked/[0.08] px-4 py-3 text-[13px] leading-[1.6] text-blocked"
+        >
+          {answers.problem}
+        </p>
+      ) : null}
+
+      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+        <Pill
+          tone="ink"
+          arrow
+          disabled={answers.sending || missing.length > 0}
+          onClick={send}
+        >
+          {answers.sending ? "Sending it" : "Send my scoping request"}
         </Pill>
         <p className="max-w-[46ch] text-[12px] leading-[1.5] text-label">
           What you have made is a scope, not a quote - the price comes at step

@@ -57,6 +57,12 @@ export interface Answers {
   /** Yes, no, or not asked yet. */
   keep: boolean | null;
   sent: boolean;
+  /** True while the request is in the air, so the button cannot be pressed twice. */
+  sending: boolean;
+  /** What went wrong, in words, or null. Cleared on the next attempt. */
+  problem: string | null;
+  /** The reference that came back, so the sent screen can quote it. */
+  ref: string | null;
 }
 
 const EMPTY: Answers = {
@@ -72,6 +78,9 @@ const EMPTY: Answers = {
   touched: {},
   keep: null,
   sent: false,
+  sending: false,
+  problem: null,
+  ref: null,
 };
 
 let answers: Answers = EMPTY;
@@ -285,4 +294,28 @@ export function setKeep(keep: boolean) {
 
 export function setSent(sent: boolean) {
   updateAnswers((current) => ({ ...current, sent }));
+}
+
+/** In the air. Clears whatever went wrong last time, since this is a new try. */
+export function setSending(sending: boolean) {
+  updateAnswers((current) => ({
+    ...current,
+    sending,
+    problem: sending ? null : current.problem,
+  }));
+}
+
+export function setProblem(problem: string | null) {
+  updateAnswers((current) => ({ ...current, problem, sending: false }));
+}
+
+/** It went. The reference is what somebody can quote back at us. */
+export function setDelivered(ref: string) {
+  updateAnswers((current) => ({
+    ...current,
+    ref,
+    sent: true,
+    sending: false,
+    problem: null,
+  }));
 }
