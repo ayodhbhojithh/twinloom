@@ -85,12 +85,16 @@ export function NotesDock({
         aria-hidden={open}
         /* Out to the edge of the window, not the edge of the column.
 
-           `50% - 50vw` measures from the middle of a centred container to the
-           middle of the window, which is exactly the margin the page frame
-           holds back - so the tab reaches the glass without anything here
-           needing to know how wide that margin is. It still belongs to the
-           run-through: it is inside it, and it leaves with it. */
-        className="pointer-events-none absolute inset-y-0 right-[calc(50%-50vw)] z-30 w-0"
+           Measured back through the page frame's own gutter, which is the
+           padding standing between this column and the window.
+
+           It was `50% - 50vw`, the centred-container trick, and that is only
+           the same distance when the container is actually centred. This page
+           has the rail down its side, so it is not: the trick overshot by half
+           the rail's width and pushed the tab off the right of the window -
+           thirty pixels on a tablet, a hundred and fourteen on a laptop, and a
+           sideways scrollbar on a page that has nothing to its right. */
+        className="pointer-events-none absolute inset-y-0 -right-(--page-gutter) z-30 w-0"
       >
         <button
           type="button"

@@ -121,7 +121,11 @@ export function BuildFlow() {
           </span>
         </h1>
 
-        <div className="flex flex-none flex-col items-start gap-2 sm:items-end">
+        {/* `min-w-0` and allowed to shrink. `flex-none` held it at the width of
+            its longest line, which on a 320px screen was nine pixels wider than
+            the screen - so the narrowest phone there is got a sideways scroll
+            on the site's most important page. */}
+        <div className="flex min-w-0 flex-col items-start gap-2 sm:items-end">
           <div
             role="radiogroup"
             aria-label="How you want to do this"

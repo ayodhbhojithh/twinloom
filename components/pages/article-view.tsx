@@ -95,15 +95,21 @@ export function ArticleView({ article }: { article: Article }) {
               In this article
             </p>
 
-            <ol className="mt-3 flex flex-wrap gap-x-5 gap-y-2 xl:flex-col xl:gap-2.5">
+            {/* The gap lives in the rows rather than between them.
+
+                Between them it was ten pixels of nothing either side of an
+                eighteen pixel line, and on a phone this index is a wrapped run
+                of links a thumb has to hit. As padding it is the same rhythm
+                and each entry is a target big enough to press. */}
+            <ol className="-my-1 mt-2 flex flex-wrap gap-x-5 xl:-my-1 xl:flex-col xl:gap-x-0">
               {heads.map((head, n) => (
                 <li key={head} className="flex gap-2.5">
-                  <span className="mt-[3px] font-mono text-[9px] font-bold text-idx tabular-nums">
+                  <span className="mt-[7px] font-mono text-[9px] font-bold text-idx tabular-nums">
                     {String(n + 1).padStart(2, "0")}
                   </span>
                   <a
                     href={`#${sectId(head)}`}
-                    className="text-[12.5px] leading-[1.4] font-medium text-quiet transition-colors hover:text-ink"
+                    className="py-1 text-[12.5px] leading-[1.4] font-medium text-quiet transition-colors hover:text-ink"
                   >
                     {head}
                   </a>

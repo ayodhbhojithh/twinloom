@@ -22,7 +22,7 @@ export function ReadingSection() {
   const [lead, ...rest] = ARTICLES;
 
   return (
-    <section className="page-frame pt-20 pb-16 lg:pt-32 lg:pb-20">
+    <section className="page-frame pt-14 pb-12 sm:pt-20 sm:pb-16 lg:pt-32 lg:pb-20">
       {/* Down the middle. Every section head on this page sits on the same
           axis, so four stacked sections read as one page rather than as four
           layouts that happen to follow each other. */}

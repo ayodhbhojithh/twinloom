@@ -21,7 +21,7 @@ export function BuildSection() {
   return (
     <section
       id="build"
-      className="page-frame scroll-mt-[var(--nav-height)] py-20 lg:py-24"
+      className="page-frame scroll-mt-[var(--nav-height)] py-14 sm:py-20 lg:py-24"
     >
       {/* The head is centred and the tool under it is not. What is being said
           here is one address to the room, and it can sit in the middle of the

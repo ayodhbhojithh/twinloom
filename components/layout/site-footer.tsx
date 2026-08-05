@@ -58,12 +58,16 @@ export function SiteFooter() {
                 aria-label="Legal"
                 className="order-1 flex-none lg:order-2 lg:text-right"
               >
-                <ul className="flex flex-wrap gap-x-5 gap-y-2 lg:justify-end">
+                {/* Fourteen pixels tall is not a target, it is a line of type
+                    that happens to be pressable. The padding gives each one the
+                    height a thumb needs; the negative margin on the row keeps
+                    the set sitting where it did on the line above. */}
+                <ul className="-my-1 flex flex-wrap gap-x-5 lg:justify-end">
                   {FOOTER_LEGAL.map((link) => (
-                    <li key={link.href}>
+                    <li key={link.href} className="flex">
                       <Link
                         href={link.href}
-                        className="text-[12.5px] font-medium text-quiet underline decoration-planned decoration-1 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink"
+                        className="py-1.5 text-[12.5px] font-medium text-quiet underline decoration-planned decoration-1 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink"
                       >
                         {link.label}
                       </Link>
@@ -124,12 +128,20 @@ export function SiteFooter() {
                   {column.title}
                 </h3>
 
-                <ul className="mt-3.5 flex flex-col gap-2.5">
+                {/* The gap moved off the list and into the links.
+
+                    Set on the list, the rows were fifteen pixels tall with ten
+                    of air between them: a thumb aiming at one had a fifteen
+                    pixel window and the ten pixels either side did nothing.
+                    Made padding instead, the same rhythm now belongs to the
+                    links, so each is a 25px target with no gap left to miss
+                    into and the column looks exactly as it did. */}
+                <ul className="mt-2.5 flex flex-col">
                   {column.links.map((link) => (
-                    <li key={`${column.title}-${link.href}`}>
+                    <li key={`${column.title}-${link.href}`} className="flex">
                       <Link
                         href={link.href}
-                        className="text-[13.5px] leading-[1.3] font-medium text-quiet transition-colors hover:text-ink"
+                        className="py-1.5 text-[13.5px] leading-[1.3] font-medium text-quiet transition-colors hover:text-ink"
                       >
                         {link.label}
                       </Link>

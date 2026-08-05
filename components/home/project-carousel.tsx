@@ -136,10 +136,18 @@ export function ProjectCarousel({ className }: { className?: string }) {
             turn(-1);
           }
         }}
-        /* No mask and nothing to clip. The deck is sized so its outermost card
-           ends inside the column, so there is no overflow to hide and no reason
-           to blur the edges of a picture nobody is looking past. */
-        className="relative"
+        /* No mask, and no fade. The deck is sized so its outermost *visible*
+           card ends inside the column, so there is nothing to blur the edges of
+           a picture nobody is looking past.
+
+           `overflow-x-clip` all the same, and not for the visible cards. The
+           ones past the ends of the deck are still laid out where they would
+           be - they are only invisible - so on a six card deck showing three,
+           the other three sat far outside the column and the page could be
+           scrolled sideways to a stretch of nothing. `clip` rather than
+           `hidden`: `hidden` would make this a scroll container and force the
+           other axis to match, and the cards are meant to overhang vertically. */
+        className="relative overflow-x-clip"
         style={{ height: size.card / 0.7 }}
       >
         {PROJECTS.map((project, index) => {
@@ -243,7 +251,15 @@ export function ProjectCarousel({ className }: { className?: string }) {
           </Step>
         </div>
 
-        <ul className="flex items-center gap-2">
+        {/* The mark stays six pixels; the thing you press does not.
+
+            A 6px dot is a 6px target, and on a phone that is a quarter of the
+            24px a thumb is reckoned to need - so the row read as decoration
+            somebody had made pressable by accident. The button is now 24px tall
+            with the dot drawn inside it, which changes what the finger gets and
+            nothing about what the eye sees. `-my-*` keeps the taller targets
+            from pushing the row apart. */}
+        <ul className="-my-2.5 flex items-center">
           {PROJECTS.map((project, index) => (
             <li key={project.id}>
               <button
@@ -251,13 +267,18 @@ export function ProjectCarousel({ className }: { className?: string }) {
                 aria-label={`Show ${project.name}`}
                 aria-current={index === front}
                 onClick={() => setFront(index)}
-                className={cn(
-                  "block h-1.5 cursor-pointer rounded-pill transition-all",
-                  index === front
-                    ? "w-5 bg-ink"
-                    : "w-1.5 bg-planned hover:bg-label",
-                )}
-              />
+                className="group/dot flex size-6 cursor-pointer items-center justify-center"
+              >
+                <span
+                  aria-hidden
+                  className={cn(
+                    "block h-1.5 rounded-pill transition-all",
+                    index === front
+                      ? "w-5 bg-ink"
+                      : "w-1.5 bg-planned group-hover/dot:bg-label",
+                  )}
+                />
+              </button>
             </li>
           ))}
         </ul>

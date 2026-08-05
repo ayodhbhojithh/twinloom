@@ -17,7 +17,7 @@ import { ROUTES } from "@/lib/site";
  */
 export function PartnersSection() {
   return (
-    <section className="page-frame pt-20 pb-20 lg:pt-32 lg:pb-28">
+    <section className="page-frame pt-14 pb-14 sm:pt-20 sm:pb-20 lg:pt-32 lg:pb-28">
       {/* Down the middle, and the wall crosses underneath it. That is the
           whole reason a centred heading works here: a column of centred text
           has no second reading direction on its own, and something drifting

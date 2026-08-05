@@ -79,28 +79,40 @@ export default function LandingPage() {
             </h1>
           </div>
 
+          {/* Two of the same shape on a phone, side by side rather than one
+              under the other.
+
+              Stacked and each as wide as its own words, they were two different
+              lengths on two lines, left aligned against a headline three lines
+              deep - which reads as a list somebody has not finished laying out.
+              A row of two equal halves is one object with a middle, and it costs
+              the fold a line of height rather than two.
+
+              From `sm` they go back to their own widths, because there the row
+              sits beside the headline instead of under it and equal halves of
+              nothing would only stretch them. */}
           <div
             style={{ "--in": "120ms" } as React.CSSProperties}
-            className="rise flex flex-wrap items-center gap-2.5"
+            className="rise grid w-full grid-cols-2 gap-2.5 sm:flex sm:w-auto sm:flex-wrap sm:items-center"
           >
             <Link
               href={ROUTES.book}
-              className="group inline-flex items-center gap-2 rounded-pill bg-well px-5 py-2.5 text-[14.5px] font-semibold text-ink transition-colors hover:bg-hair"
+              className="group inline-flex items-center justify-center gap-2 rounded-pill bg-well px-4 py-2.5 text-[14px] font-semibold whitespace-nowrap text-ink transition-colors hover:bg-hair sm:justify-start sm:px-5 sm:text-[14.5px]"
             >
               Book a meeting
               <ArrowUpRight
                 aria-hidden
-                className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
               />
             </Link>
             <Link
               href={ROUTES.build}
-              className="group inline-flex items-center gap-2 rounded-pill bg-ink px-5 py-2.5 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-85"
+              className="group inline-flex items-center justify-center gap-2 rounded-pill bg-ink px-4 py-2.5 text-[14px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-85 sm:justify-start sm:px-5 sm:text-[14.5px]"
             >
               Build your website
               <ArrowUpRight
                 aria-hidden
-                className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
               />
             </Link>
           </div>

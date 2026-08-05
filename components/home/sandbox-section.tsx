@@ -256,7 +256,7 @@ export function SandboxSection() {
   const piece = PIECES.find((entry) => entry.key === at) ?? PIECES[0];
 
   return (
-    <section className="page-frame pt-20 pb-20 lg:pt-32 lg:pb-28">
+    <section className="page-frame pt-14 pb-14 sm:pt-20 sm:pb-20 lg:pt-32 lg:pb-28">
       <div className="flex flex-col items-center text-center">
         <h2 className="reveal section-head max-w-[26ch] text-ink">
           Things we built.

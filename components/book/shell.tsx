@@ -84,8 +84,23 @@ export function StepRail({
   onGo: (step: number) => void;
 }) {
   return (
-    <nav aria-label="Booking steps" className="mb-9 flex justify-center">
-      <ol className="flex items-start">
+    /* The rail is four fixed-width steps and a rule between each pair, which
+       comes to more than a phone is wide - four times 104 plus the rules is 416
+       against a 320px screen. It used to take the page with it and give the
+       whole booking screen a sideways scroll.
+
+       Scrolled on its own instead, and centred once it fits. A step rail is a
+       row by nature: stacking it would turn four marks on a line into a list of
+       four headings, and wrapping it would put step three under step one, which
+       says the order is something other than what it is. */
+    <nav
+      aria-label="Booking steps"
+      className="quiet-scroll -mx-(--page-gutter) mb-9 overflow-x-auto px-(--page-gutter)"
+    >
+      {/* `w-max` so the row keeps its full length and scrolls; `min-w-full` so
+          that once there is room for all of it, it is the width of the column
+          and `justify-center` has something to centre against. */}
+      <ol className="flex w-max min-w-full items-start justify-center">
         {STEPS.map((label, n) => {
           const here = n === at;
           const done = n < reached;
