@@ -179,6 +179,17 @@ export function outline(w: number, h: number, cut: Cuts): string {
   ].join(" ");
 }
 
+/**
+ * What stands in the notch, measured rather than estimated.
+ *
+ * Three 36px controls, a 2px gap between each pair, and 6px of padding at each
+ * end of the pill holding them. Written from the same numbers the markup below
+ * uses, because the notch is sized to hold this and a notch sized to hold a
+ * guess is a notch the bar hangs out of.
+ */
+const TOOL = 36;
+const BAR = TOOL * 3 + 2 * 2 + 6 * 2;
+
 export function NotchedCard({ className }: { className?: string }) {
   const box = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
@@ -259,11 +270,27 @@ export function NotchedCard({ className }: { className?: string }) {
     const flare = Math.max(22, Math.min(h * 0.04, 34));
 
     const barDepth = flare * 2;
+
     /* Only as wide as the bar it holds, plus a little air. Wider and the notch
        stops being a place for something and becomes a shape in its own right,
-       which is one shape too many. The floor still has to be flat, so the two
-       corner arcs are never allowed to meet in the middle. */
-    const barWidth = Math.max(flare * 2 + 40, Math.min(w * 0.11, 178));
+       which is one shape too many.
+
+       The floor is that bar, measured, not a fraction of the card. A fraction
+       of a narrow card is narrower than the thing standing in it: on a phone
+       `w * 0.11` came out at thirty pixels, the old floor lifted it to
+       eighty-four, and the hundred-and-twenty-four pixel bar sat twenty pixels
+       out over the card's top edge on each side - three arrows outside their
+       own notch. Sized from the bar, the notch cannot be too small for it at
+       any width, and on a desktop the fraction is the larger number anyway, so
+       nothing there moves.
+
+       The cap is the other end of the same argument: a notch is a piece taken
+       out of an edge, and it stops reading as one when there is no edge left
+       either side of it. This keeps a flat run past both corner arcs. */
+    const barWidth = Math.min(
+      Math.max(BAR + 12, Math.min(w * 0.11, 178)),
+      Math.max(flare * 2 + 60, w - 2 * (radius + flare) - 24),
+    );
 
     /* The bite is square-ish and sized to the thumbnail standing in it, with the
        same flare and the same corner as the notch above. */
