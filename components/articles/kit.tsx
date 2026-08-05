@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 /** The opening paragraph, at the one size that is larger than the rest. */
 export function Lede({ children }: { children: React.ReactNode }) {
   return (
-    <p className="max-w-[72ch] text-[clamp(16.5px,1.35vw,19px)] leading-[1.6] text-ink">
+    <p className="text-[clamp(17px,1.4vw,19.5px)] leading-[1.6] font-medium text-ink">
       {children}
     </p>
   );
@@ -43,7 +43,7 @@ export function Sect({
         <span className="mt-[9px] font-mono text-[10px] font-bold text-mark tabular-nums">
           {String(n).padStart(2, "0")}
         </span>
-        <span className="max-w-[24ch] text-[clamp(21px,1.9vw,28px)] leading-[1.12] font-extrabold tracking-[-0.032em] text-ink">
+        <span className="text-[clamp(22px,2vw,30px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink">
           {title}
         </span>
       </h2>
@@ -62,7 +62,7 @@ export const sectId = (title: string) =>
 /** A paragraph, at the article's one reading size. */
 export function P({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mt-4 max-w-[80ch] text-[15.5px] leading-[1.72] text-body first:mt-0">
+    <p className="mt-[1.1em] text-[1em] leading-[inherit] text-body first:mt-0">
       {children}
     </p>
   );
@@ -105,12 +105,12 @@ export function Terms({
           key={row.term}
           className="grid gap-x-7 gap-y-1 py-4 first:pt-0 lg:grid-cols-[minmax(0,13rem)_minmax(0,1fr)]"
         >
-          <dt className="text-[14.5px] leading-[1.35] font-extrabold tracking-[-0.02em] text-ink lg:mt-[3px] lg:text-right">
+          <dt className="text-[14.5px] leading-[1.35] font-extrabold tracking-[-0.02em] text-ink lg:mt-[3px]">
             {row.term}
           </dt>
 
           <dd className="min-w-0">
-            <p className="max-w-[76ch] text-[15px] leading-[1.65] text-body">
+            <p className="text-[15.5px] leading-[1.7] text-body">
               {row.text}
             </p>
 

@@ -11,14 +11,27 @@ import { ROUTES } from "@/lib/site";
 /**
  * One article.
  *
- * The head stands on a cut surface, because that is what the site does with the
- * thing a page is about. Under it the article is a plain column, because that
- * is what the site should do with six thousand words: one measure, one size of
- * type, and nothing in the margin competing for the eye.
+ * A document, in the shape a document is read in. No rules across it: space is
+ * what separates the head from the piece and the piece from what follows, and a
+ * line drawn as well is the same break said twice. The only rules left on the
+ * page are the ones inside a section, where they are doing work.
  *
- * The contents run down the side from `xl` and are dropped below it. An index
- * of eight headings is worth a column when there is a column spare, and is
- * worth nothing at all when it costs the article its width.
+ * The head is the cut surface the rest of the site is built from, with the
+ * piece's own picture in it. That part is unchanged, and deliberately: it is
+ * how every other surface here opens, and an article that opened differently
+ * would be the one page that had wandered off.
+ *
+ * What changed is everything under it. Every measure is set on the column now
+ * rather than on each element, so the article takes the room it is given and
+ * one number decides how wide a line gets. Capped per element, a paragraph
+ * stopped at eighty characters while the heading above it stopped at twenty
+ * four and the page they sat on was twice either - three different ideas of
+ * how wide the page was, on the same page.
+ *
+ * Left aligned throughout, including the term column in a definition list,
+ * which used to be set right. Ragged-left is a shape the eye has to find the
+ * start of on every line, and in a column of terms beside their meanings it
+ * put two edges in the middle of the page with nothing on either one.
  */
 export function ArticleView({ article }: { article: Article }) {
   const heads = CONTENTS[article.slug] ?? [];
@@ -76,13 +89,21 @@ export function ArticleView({ article }: { article: Article }) {
 
       {/* The article, and its contents beside it.
 
-          One measure, one size of type, and the arranging done in the body
-          itself rather than by anything here. The contents run down the side
-          from `xl` and are dropped below that: an index of six headings is
-          worth a column when there is a column spare and worth nothing at all
-          when it costs the article its width. */}
-      <div className="mt-9 grid gap-x-14 gap-y-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,200px)] xl:items-start">
-        <article className="min-w-0">
+          The index is a second column only from `xl`, where there is width to
+          spare. Below that it runs across the top as a short wrapped row: a
+          fixed lane held open for four links is width the words could have had,
+          and on this page the words are the whole of it. */}
+      <div className="mt-12 grid gap-x-16 gap-y-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,190px)] xl:items-start">
+        {/* One measure, set here, and set in pixels rather than characters.
+
+            `72ch` came out at 681 and left a quarter of the page empty beside
+            the index - a measure that ignores how much room it was actually
+            given. A thousand is a ceiling instead: below it the column takes
+            whatever the grid has, which on a laptop is the whole of it, and
+            above it the line stops growing. Without a ceiling an ultrawide
+            gives a single line of prose nineteen hundred pixels, and nobody
+            finds the start of the next one. */}
+        <article className="min-w-0 max-w-[1000px] text-[16.5px] leading-[1.75]">
           <ArticleBody slug={article.slug} />
         </article>
 
@@ -95,12 +116,8 @@ export function ArticleView({ article }: { article: Article }) {
               In this article
             </p>
 
-            {/* The gap lives in the rows rather than between them.
-
-                Between them it was ten pixels of nothing either side of an
-                eighteen pixel line, and on a phone this index is a wrapped run
-                of links a thumb has to hit. As padding it is the same rhythm
-                and each entry is a target big enough to press. */}
+            {/* The gap lives in the rows rather than between them, so each
+                entry is a target big enough to press on a phone. */}
             <ol className="-my-1 mt-2 flex flex-wrap gap-x-5 xl:-my-1 xl:flex-col xl:gap-x-0">
               {heads.map((head, n) => (
                 <li key={head} className="flex gap-2.5">
@@ -121,7 +138,7 @@ export function ArticleView({ article }: { article: Article }) {
       </div>
 
       {/* What to read next. Two, named, rather than a wall of everything. */}
-      <div className="mt-14">
+      <div className="mt-16">
         <p className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
           Read next
         </p>
