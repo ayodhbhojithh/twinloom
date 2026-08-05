@@ -24,9 +24,16 @@ import { LEGAL, ROUTES, SITE } from "./site";
  * No trailing slash, ever. `new URL("/about", origin)` is only predictable when
  * the origin has none, and one stray slash turns every absolute URL on the site
  * into a double-slashed variant of itself.
+ *
+ * `www` is a decision, not a detail. To a crawler `www.host` and `host` are two
+ * different sites, and if both answer, every page on this one exists twice with
+ * neither named as the original. Everything here names the `www` form, so that
+ * is the one that ranks - but a canonical is a hint, not a rule. The bare host
+ * still has to answer with a 301 to this one, and that is a redirect on the
+ * server rather than anything this file can do.
  */
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://twinloom.com"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.twinloom.twincoretech.com"
 ).replace(/\/+$/, "");
 
 /** A path, as the absolute URL a crawler is given. */
