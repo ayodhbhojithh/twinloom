@@ -855,9 +855,10 @@
     right: 0;
     width: var(--fold);
     height: var(--fold);
-    /* The underside of the leaf: the page's own grey, one step firmer, so it
-       reads as paper rather than as a coloured tag stuck on. */
-    background-color: var(--color-hair);
+    /* The underside of the leaf: the page's own grey at its firmest, so the
+       turned corner reads at a glance. `hair` was a shade off the leaf itself
+       and the fold disappeared into it. */
+    background-color: var(--color-border);
     clip-path: polygon(0 0, 100% 100%, 0 100%);
     pointer-events: none;
   }
@@ -877,7 +878,10 @@
     inset-block: 0;
     inset-inline-start: 14px;
     width: 1px;
-    background-color: color-mix(in oklab, var(--color-mark) 34%, transparent);
+    /* Mixed into the leaf's own surface rather than into `transparent`. Mixing
+       with transparent interpolates the alpha as well as the colour, and in
+       oklab that dragged the blue through green on the way. */
+    background-color: color-mix(in srgb, var(--color-mark) 30%, var(--color-canvas));
     pointer-events: none;
   }
 
