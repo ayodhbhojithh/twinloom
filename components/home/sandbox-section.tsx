@@ -2,19 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
-import {
-  ArrowUpRight,
-  CalendarClock,
-  Droplets,
-  Map,
-  Pause,
-  Pipette,
-  Play,
-  PoundSterling,
-  Sparkles,
-  Waves,
-  X,
-} from "lucide-react";
+import { ArrowUpRight, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -23,95 +11,54 @@ import { cutCardPath, cutCardPathTop } from "@/lib/shape";
 import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-import { LiquidWord } from "./liquid-word";
-import { LoomStrings } from "./loom-strings";
 import { PROJECTS } from "./projects";
-import { ParticleWordmark } from "./particle-wordmark";
 
 /* ---------------------------------------------------------------------------
-   The sandbox.
+   The work.
 
-   Everything else on this page is a claim about what we can build. This is a
-   bench: a shelf of pieces on the left, one of them running on the right, and
-   a way to say you want it in yours.
+   Everything else on this page is a claim about what we can build. This is the
+   answer to it: the things that got built, each one openable where it stands.
 
-   A grid of tiles was the wrong shape for it. Tiles say "look at these"; a
-   bench says "pick one up", which is the difference between a showreel and a
-   thing you can actually try - and it gives each widget the whole stage rather
-   than a quarter of a screen it immediately overran.
+   It was a bench before - a shelf of widgets on the left, one of them running
+   on the right, and the work in a row underneath. The shelf was the loudest
+   thing in the section and it was advertising components rather than finished
+   sites, so the work it stood above was the smaller half of a surface named
+   after it. Gone, the section says one thing.
 
-   Three of these run. The rest are named as ideas rather than drawn as though
-   they were finished, because a mock-up of something that does not exist is the
-   same lie as a logo of a client we do not have.
+   Laid out as a mosaic rather than as five equal tiles. Five of one size in a
+   row is a contact sheet: nothing in it is worth looking at first, so nothing
+   in it gets looked at. Given different sizes there is a way in, and the run
+   reads as an arrangement somebody made rather than as whatever the grid did.
 --------------------------------------------------------------------------- */
 
 /**
- * The pieces on the shelf, in the order they are offered.
+ * Where each piece of work sits in the mosaic.
  *
- * A name, a mark and whether it runs. No line of copy under each one: the three
- * that are live say what they are by running, and a sentence describing a thing
- * the reader is looking at is a caption for a picture that is not a picture.
- * The four that are not built carry their explanation on the stage instead,
- * where there is nothing else to look at and it is the whole point.
+ * By position rather than by project, because it is a fact about the shape of
+ * the run and not about the work: reorder the list and the first one still
+ * leads. Anything past the end of this falls back to a third-width tile, so
+ * adding a sixth project widens the run rather than breaking it.
  *
- * The live ones lead. The bench opens on whatever is first here, and opening on
- * a piece that is only an idea would make the shelf a list of things we have
- * not done.
+ * One column on a phone, two from `sm`, and the mosaic only from `lg`. A mosaic
+ * needs room to be one, and squeezed into a tablet it is just five tiles of
+ * arbitrary width.
+ *
+ * Twelve columns rather than six, and two rows rather than three. On six the
+ * tiles came out half the panel wide and one row tall - three and a half to one
+ * - which is a letterbox, and a picture cropped to a letterbox has nothing in it
+ * but the middle. Twelve divides finer, so a tile can be a quarter or a third of
+ * the width instead of only a half, and the whole run closes in two rows.
+ *
+ *   row 1:  lead (5)      |  (4)  |  (3)
+ *   row 2:  lead, still   |  (3)  |  (4)
  */
-const PIECES = [
-  {
-    key: "loom",
-    name: "The loom",
-    icon: Waves,
-    live: true,
-  },
-  {
-    key: "liquid",
-    name: "Liquid wordmark",
-    icon: Droplets,
-    live: true,
-  },
-  {
-    key: "particles",
-    name: "Particle wordmark",
-    icon: Sparkles,
-    live: true,
-  },
-  {
-    key: "diary",
-    name: "Availability, live",
-    icon: CalendarClock,
-    live: false,
-  },
-  {
-    key: "estimate",
-    name: "What it will cost",
-    icon: PoundSterling,
-    live: false,
-  },
-  {
-    key: "sitemap",
-    name: "Your sitemap, drawn",
-    icon: Map,
-    live: false,
-  },
-  {
-    key: "colour",
-    name: "A colour studio",
-    icon: Pipette,
-    live: false,
-    at: ROUTES.build,
-  },
-] as const;
-
-/**
- * A few notes, for the loom's bench.
- *
- * Web Audio rather than a file: six notes of a pentatonic scale weigh nothing,
- * cannot be out of tune and need no network. Nothing sounds until somebody
- * presses play, because audio that arrives uninvited is not a feature.
- */
-const SCALE = [261.63, 293.66, 349.23, 392.0, 440.0, 523.25];
+const PLACE = [
+  "sm:col-span-2 lg:col-span-5 lg:row-span-2",
+  "lg:col-span-4",
+  "lg:col-span-3",
+  "lg:col-span-3",
+  "lg:col-span-4",
+];
 
 /**
  * One picture for every card on the bench, for now.
@@ -141,90 +88,14 @@ const WORK_PLATE = "/partners/spheres-2.png";
 const SCRIM =
   "linear-gradient(to bottom, black 0%, black 26%, rgba(0,0,0,0.96) 38%, rgba(0,0,0,0.88) 48%, rgba(0,0,0,0.74) 58%, rgba(0,0,0,0.55) 68%, rgba(0,0,0,0.35) 78%, rgba(0,0,0,0.18) 87%, rgba(0,0,0,0.06) 95%, transparent 100%)";
 
-function useNotes() {
-  const rig = useRef<{ ctx: AudioContext; master: GainNode } | null>(null);
-  const timer = useRef<number | null>(null);
-  const step = useRef(0);
-  const [playing, setPlaying] = useState(false);
-
-  const stop = useCallback(() => {
-    if (timer.current) window.clearInterval(timer.current);
-    timer.current = null;
-    if (rig.current) {
-      const { ctx, master } = rig.current;
-      master.gain.setTargetAtTime(0, ctx.currentTime, 0.08);
-    }
-    setPlaying(false);
-  }, []);
-
-  /* Nothing is left running when this goes away. An interval holding a live
-     audio context is the one thing on a page that carries on making itself
-     heard after nobody is looking at it. */
-  useEffect(() => stop, [stop]);
-
-  const start = useCallback(() => {
-    if (!rig.current) {
-      const Ctx =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext })
-          .webkitAudioContext;
-      const ctx = new Ctx();
-      const master = ctx.createGain();
-      master.gain.value = 0;
-      master.connect(ctx.destination);
-      rig.current = { ctx, master };
-    }
-
-    const { ctx, master } = rig.current;
-    void ctx.resume();
-    master.gain.setTargetAtTime(0.15, ctx.currentTime, 0.15);
-
-    const pluck = () => {
-      const at = ctx.currentTime;
-      /* A wandering step rather than a loop, so it does not become a ringtone
-         inside twenty seconds. */
-      step.current = Math.max(
-        0,
-        Math.min(
-          SCALE.length - 1,
-          step.current + (Math.random() < 0.5 ? -1 : 1),
-        ),
-      );
-
-      const tone = ctx.createOscillator();
-      const swell = ctx.createGain();
-
-      tone.type = "sine";
-      tone.frequency.value = SCALE[step.current];
-      swell.gain.setValueAtTime(0, at);
-      swell.gain.linearRampToValueAtTime(1, at + 0.02);
-      swell.gain.exponentialRampToValueAtTime(0.0001, at + 2.4);
-
-      tone.connect(swell).connect(master);
-      tone.start(at);
-      tone.stop(at + 2.5);
-    };
-
-    pluck();
-    timer.current = window.setInterval(pluck, 1300);
-    setPlaying(true);
-  }, []);
-
-  return { playing, toggle: () => (playing ? stop() : start()) };
-}
-
 export function SandboxSection() {
-  /* Whatever is at the top of the shelf, rather than a key written out again
-     here. Named, the two drifted apart the moment the order changed and the
-     bench opened on the second row with the first one lit. */
-  const [at, setAt] = useState<string>(PIECES[0].key);
   /* Which piece of work is open, if any. */
   const [open, setOpen] = useState<string | null>(null);
   const bench = useRef<HTMLDivElement>(null);
 
   /* Closing has the same problem opening did, in reverse: the reader is looking
      at the foot of a tall panel, and the moment it goes the surface under them
-     is a short bench they are scrolled past the bottom of. So the bench comes
+     is a short run they are scrolled past the bottom of. So the work comes
      back to them rather than them having to go and find it. */
   const close = useCallback(() => {
     setOpen(null);
@@ -251,34 +122,30 @@ export function SandboxSection() {
       });
     });
   }, []);
-  const { playing, toggle } = useNotes();
 
-  const piece = PIECES.find((entry) => entry.key === at) ?? PIECES[0];
+  const shown = PROJECTS.findIndex((entry) => entry.id === open);
 
   return (
     <section className="page-frame pt-14 pb-14 sm:pt-20 sm:pb-20 lg:pt-32 lg:pb-28">
       <div className="flex flex-col items-center text-center">
         <h2 className="reveal section-head max-w-[26ch] text-ink">
           Things we built.
-          <span className="text-quiet"> Running, not described.</span>
+          <span className="text-quiet"> Opened, not listed.</span>
         </h2>
 
         <p className="reveal mt-5 max-w-[74ch] text-[15px] leading-[1.6] text-quiet [--step:1] sm:text-[16.5px]">
-          A bench rather than a showreel. Pick a piece up, let it run, and ask
-          for it in yours - every one of these is a component a site could
-          carry.
+          Press one and it opens where it stands - what it was for, who it was
+          written for, and how long it took. None of it is dressed up as a
+          client we do not have.
         </p>
       </div>
 
-      {/* The bench, cut the way every working surface on this site is cut:
-          which one of the set you are on stands in the bite, and the way on is
-          the disc in the corner.
+      {/* The surface, cut the way every working surface on this site is cut:
+          how many there are stands in the bite, and the way on is the disc in
+          the corner.
 
-          Nothing stands in the notch, so there is no notch. It named the piece
-          the shelf had already named one row to the left and lit in ink - the
-          surface was being cut open at the top to repeat a word the reader had
-          just pressed. Left empty the cut closes itself and the bench keeps a
-          clean top edge.
+          Nothing stands in the notch, so there is no notch. Left empty the cut
+          closes itself and the panel keeps a clean top edge.
 
           No rules inside it either. A plain box divided by hairlines was the one
           surface on this page that did not belong to the site - here the shape
@@ -289,14 +156,18 @@ export function SandboxSection() {
         tone="field"
         className="reveal mt-10 w-full [--step:2] lg:mt-12"
         aside={
+          /* How many there are, and which one you are in once you are in one.
+             It counted shelf rows before, and with the shelf gone a counter
+             that still pointed at it would have been counting nothing. */
           <div className="flex size-full flex-col items-center justify-center">
             <b className="font-mono text-[20px] leading-none font-bold text-ink tabular-nums">
-              {String(
-                PIECES.findIndex((entry) => entry.key === at) + 1,
-              ).padStart(2, "0")}
+              {String(shown >= 0 ? shown + 1 : PROJECTS.length).padStart(
+                2,
+                "0",
+              )}
             </b>
             <span className="mt-1.5 font-mono text-[8px] font-bold tracking-[0.1em] text-label uppercase">
-              of {PIECES.length}
+              {shown >= 0 ? `of ${PROJECTS.length}` : "built"}
             </span>
           </div>
         }
@@ -325,196 +196,41 @@ export function SandboxSection() {
 
             `popLayout` was meant to avoid the pause between them, but it takes
             the leaving panel out of the flow while leaving it drawn - so the
-            bench laid itself out underneath a full height ghost, and closing
-            showed both at once with the shelf stranded below the fading panel.
+            mosaic laid itself out underneath a full height ghost, and closing
+            showed both at once with the run stranded below the fading panel.
             Waiting is honest about the swap; keeping both moves short is what
             makes it read as one. */}
         <LayoutGroup>
           <AnimatePresence mode="wait" initial={false}>
             {open ? (
-              /* Opened, it takes the whole bench. Expanding underneath the
-                 shelf and the stage made it a third thing on a crowded
-                 surface; taking the surface makes it the thing you opened. */
+              /* Opened, it takes the whole surface. Expanding underneath the
+                 mosaic made it a second thing on the same panel; taking the
+                 panel makes it the thing you opened. */
               <WorkOpen
                 key="open"
-                project={PROJECTS[PROJECTS.findIndex((e) => e.id === open)]}
-                n={PROJECTS.findIndex((e) => e.id === open)}
+                project={PROJECTS[shown]}
+                n={shown}
                 onClose={close}
               />
             ) : (
               <motion.div
-                key="bench"
+                key="work"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.18, ease: "easeOut" }}
               >
-                <div className="grid gap-7 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] lg:grid-cols-[264px_minmax(0,1fr)]">
-                  {/* The shelf. Ink for the one in hand, the ground for the rest. */}
-                  <ul
-                    role="listbox"
-                    aria-label="Pieces"
-                    className="flex flex-col gap-1.5"
-                  >
-                    {PIECES.map((entry) => {
-                      const on = entry.key === at;
-
-                      return (
-                        <li key={entry.key}>
-                          <button
-                            type="button"
-                            role="option"
-                            aria-selected={on}
-                            onClick={() => setAt(entry.key)}
-                            className={cn(
-                              "flex w-full cursor-pointer items-center gap-3 rounded-[14px] px-3 py-2.5 text-left transition-colors",
-                              on ? "bg-ink" : "bg-canvas hover:bg-canvas-firm",
-                            )}
-                          >
-                            <span
-                              aria-hidden
-                              className={cn(
-                                "flex size-8 flex-none items-center justify-center rounded-pill transition-colors",
-                                on
-                                  ? "bg-white/15 text-white"
-                                  : entry.live
-                                    ? "bg-field text-quiet"
-                                    : "bg-field text-planned",
-                              )}
-                            >
-                              <entry.icon className="size-4" />
-                            </span>
-
-                            {/* The name, and nothing after it. Six rows each ending in
-                        LIVE or IDEA made a second column of shouting mono down
-                        the shelf, and it was saying twice over what the notch
-                        already says about the piece in hand and what the greyed
-                        mark already says about the rest. */}
-                            <span
-                              className={cn(
-                                "min-w-0 flex-1 truncate text-[13.5px] font-semibold",
-                                on ? "text-white" : "text-body",
-                              )}
-                            >
-                              {entry.name}
-                            </span>
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-
-                  {/* The stage. Clipped and given a height, because both widgets size
-              themselves to whatever box they are in and without one they grow
-              until they have taken the section.
-
-              Beside the shelf that height is the shelf's, and it is taken by
-              lifting the stage out of the flow rather than by asking it for
-              `height: 100%`. The percentage cannot work here: it would resolve
-              against a column whose own height is whatever its content asks
-              for, and the content asking is the stage - so the browser drops
-              back to the canvas's intrinsic size and the stage runs to twice
-              the shelf. Out of the flow it adds nothing to the row, the row is
-              the six shelf rows tall, and the stage fills exactly that.
-
-              Below `md` there is no shelf beside it to match, so it goes back
-              into the flow with a height of its own. */}
-                  <div className="relative min-w-0">
-                    <div className="relative h-[220px] overflow-hidden rounded-[18px] sm:h-[280px] md:absolute md:inset-0 md:h-auto">
-                      {piece.key === "particles" ? (
-                        <ParticleWordmark
-                          word="TwinLoom"
-                          className="h-full w-full"
-                        />
-                      ) : null}
-
-                      {piece.key === "liquid" ? (
-                        /* The home page's own liquid, at the bench's height rather than
-                   its own clamp. Crosshair because it is a surface you disturb
-                   rather than a picture you look at. */
-                        <LiquidWord
-                          word="TwinLoom"
-                          className="h-full w-full cursor-crosshair"
-                        />
-                      ) : null}
-
-                      {piece.key === "loom" ? (
-                        <>
-                          <div className="flex h-full items-center px-2">
-                            <LoomStrings word="Play it" className="w-full" />
-                          </div>
-
-                          {/* The one control that belongs to a piece rather than to the
-                      bench, so it stands on the piece. */}
-                          <button
-                            type="button"
-                            onClick={toggle}
-                            aria-pressed={playing}
-                            className={cn(
-                              "absolute top-3 right-3 flex cursor-pointer items-center gap-2 rounded-pill px-3.5 py-1.5 font-mono text-[8.5px] font-bold tracking-[0.12em] uppercase transition-colors",
-                              playing
-                                ? "bg-ink text-white"
-                                : "bg-field text-quiet hover:text-ink",
-                            )}
-                          >
-                            {playing ? (
-                              <Pause className="size-3" />
-                            ) : (
-                              <Play className="size-3" />
-                            )}
-                            {playing ? "Stop" : "Play"}
-                          </button>
-                        </>
-                      ) : null}
-
-                      {!piece.live ? (
-                        /* Not built, and said so. The bench names what it would carry
-                   rather than drawing a picture of a thing that does not
-                   exist. */
-                        <div className="flex h-full flex-col items-center justify-center px-6 text-center">
-                          <span
-                            aria-hidden
-                            className="flex size-12 items-center justify-center rounded-pill bg-field text-idx"
-                          >
-                            <piece.icon className="size-5" />
-                          </span>
-
-                          <p className="mt-4 max-w-[44ch] text-[13.5px] leading-[1.6] text-quiet">
-                            Not built yet. A piece we would write into a build
-                            rather than a thing we are pretending to have
-                            finished.
-                          </p>
-
-                          <Link
-                            href={
-                              "at" in piece && piece.at
-                                ? piece.at
-                                : ROUTES.build
-                            }
-                            className="group/ask mt-5 inline-flex items-center gap-2 rounded-pill bg-ink px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-85"
-                          >
-                            {"at" in piece && piece.at
-                              ? "See it working"
-                              : "Ask for it"}
-                            <ArrowUpRight
-                              aria-hidden
-                              className="size-3.5 transition-transform group-hover/ask:translate-x-0.5 group-hover/ask:-translate-y-0.5"
-                            />
-                          </Link>
-                        </div>
-                      ) : null}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Where the pieces end up: the work, as numbered cards cut the
-                    way everything else here is cut. */}
-                <div className="mt-9 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+                {/* The work, as a mosaic. The first one leads and the rest
+                    fall in around it; each card measures itself, so a run of
+                    different widths is one the shape can actually follow. */}
+                <div className="grid auto-rows-56 grid-cols-1 gap-3 sm:auto-rows-52 sm:grid-cols-2 lg:auto-rows-58 lg:grid-cols-12">
                   {PROJECTS.map((project, n) => (
                     <WorkCard
                       key={project.id}
                       project={project}
                       n={n}
+                      lead={n === 0}
+                      className={PLACE[n] ?? "lg:col-span-2"}
                       onOpen={() => setOpen(project.id)}
                     />
                   ))}
@@ -541,10 +257,17 @@ export function SandboxSection() {
 function WorkCard({
   project,
   n,
+  lead,
+  className,
   onOpen,
 }: {
   project: (typeof PROJECTS)[number];
   n: number;
+  /** The one that takes two rows, and is given the room to say more. */
+  lead?: boolean;
+  /** Where it sits in the mosaic. Passed in, because the shape of the run is
+      the run's business rather than the card's. */
+  className?: string;
   onOpen: () => void;
 }) {
   const box = useRef<HTMLButtonElement>(null);
@@ -571,13 +294,19 @@ function WorkCard({
   const path = size.w > 60 ? draw(size.w, size.h, cut, 20, 18) : "";
   const top = n % 2 === 1;
 
+  /* Height comes from the grid row the card lands in rather than from the card,
+     which is what lets one tile be twice as tall as its neighbour without
+     either of them knowing the other exists. */
   return (
     <button
       ref={box}
       type="button"
       onClick={onOpen}
       aria-label={`Open ${project.name}`}
-      className="group/work relative h-[clamp(180px,17vw,230px)] min-w-0 cursor-pointer text-left transition-transform duration-300 hover:-translate-y-1"
+      className={cn(
+        "group/work relative h-full min-w-0 cursor-pointer text-left transition-transform duration-300 hover:-translate-y-1",
+        className,
+      )}
     >
       {/* The picture is the card, cut to the outline and faded into ink at the
           foot so the name is read off the picture rather than off a bar laid
@@ -599,7 +328,11 @@ function WorkCard({
             alt=""
             fill
             quality={100}
-            sizes="(max-width: 640px) 92vw, (max-width: 1280px) 34vw, 20vw"
+            sizes={
+              lead
+                ? "(max-width: 640px) 92vw, (max-width: 1024px) 94vw, 48vw"
+                : "(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 30vw"
+            }
             className="object-cover object-center transition-transform duration-500 group-hover/work:scale-[1.06]"
             style={{ maskImage: SCRIM, WebkitMaskImage: SCRIM }}
           />
@@ -611,11 +344,33 @@ function WorkCard({
           "relative flex size-full flex-col justify-end p-5",
           /* Only the card whose cut is at the foot has to keep out of it. */
           top ? "" : "pr-16",
+          lead ? "sm:p-6" : "",
         )}
       >
-        <b className="block max-w-[18ch] text-[14.5px] leading-[1.18] font-extrabold tracking-[-0.025em] text-ink">
+        {/* The lead is bigger because it is the way in, and being bigger is the
+            only thing that makes it one. It gets the summary as well: on a card
+            of that height a name and a date leave a third of the surface empty,
+            and the words are already written. */}
+        <b
+          className={cn(
+            "block leading-[1.18] font-extrabold tracking-[-0.025em] text-ink",
+            lead
+              ? "max-w-[20ch] text-[16px] sm:text-[19px] lg:text-[22px]"
+              : "max-w-[18ch] text-[14.5px]",
+          )}
+        >
           {project.name}
         </b>
+
+        {/* `max-lg:hidden` rather than `hidden lg:block`: `line-clamp` sets a
+            display of its own, and which of the two won below `lg` came down to
+            which rule the stylesheet happened to emit last. */}
+        {lead ? (
+          <p className="mt-2 line-clamp-2 max-w-[46ch] text-[13px] leading-[1.55] text-quiet max-lg:hidden">
+            {project.summary}
+          </p>
+        ) : null}
+
         <span className="mt-1.5 block font-mono text-[8.5px] font-bold tracking-[0.14em] text-label uppercase">
           {project.kind} / {project.year}
         </span>
