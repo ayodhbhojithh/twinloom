@@ -33,6 +33,22 @@ export const SITE_URL = (
 export const absolute = (path: string) => new URL(path, SITE_URL).toString();
 
 /**
+ * The card image, named rather than inherited.
+ *
+ * `app/opengraph-image.tsx` is picked up automatically, but only where nothing
+ * below it states an `openGraph` block of its own - and `pageMeta` states one on
+ * every route. Left implicit, exactly one page on the site had an image and the
+ * other twenty-five unfurled as a bare link. Naming it costs one line and cannot
+ * be lost by a page doing the ordinary thing.
+ */
+export const OG_IMAGE = {
+  url: "/opengraph-image",
+  width: 1200,
+  height: 630,
+  alt: `${SITE.name} - ${SITE.tagline}`,
+} as const;
+
+/**
  * The locale, in the two forms that want it.
  *
  * `en_GB` for Open Graph, which uses underscores, and `en-GB` for the document
@@ -143,6 +159,7 @@ export function pageMeta({
       description,
       siteName: SITE.name,
       locale: LOCALE.og,
+      images: [OG_IMAGE],
       ...(type === "article" && published
         ? { publishedTime: published, modifiedTime: modified ?? published }
         : {}),
@@ -151,6 +168,7 @@ export function pageMeta({
       card: "summary_large_image",
       title,
       description,
+      images: [OG_IMAGE.url],
     },
   };
 }
