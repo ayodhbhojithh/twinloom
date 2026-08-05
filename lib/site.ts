@@ -107,18 +107,14 @@ export interface RailPage extends NavLink {
  * gives every page its previous and next.
  */
 export const RAIL_PAGES: readonly RailPage[] = [
-  {
-    label: "Home",
-    href: ROUTES.home,
-    children: [
-      { label: "Home v1", href: ROUTES.homeV1 },
-      { label: "Home v2", href: ROUTES.homeV2 },
-      { label: "Home v3", href: ROUTES.homeV3 },
-      { label: "Home v4", href: ROUTES.homeV4 },
-      { label: "Home v5", href: ROUTES.homeV5 },
-      { label: "Home v6", href: ROUTES.homeV6 },
-    ],
-  },
+  /* Home has no sub pages here any more.
+
+     The six variants are still routes and still build - they are working drafts
+     of one screen, reachable by typing the address. What they are not is six
+     more places for a visitor to go: they are the same page six times, and a
+     navigation that lists them is a table of contents for our own drafts. They
+     are already kept out of the index for the same reason. */
+  { label: "Home", href: ROUTES.home },
   { label: "Build your website", href: ROUTES.build },
   { label: "About us", href: ROUTES.about },
   { label: "Our partners", href: ROUTES.partners },
