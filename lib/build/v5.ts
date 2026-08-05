@@ -688,7 +688,7 @@ export const COLOUR_ANSWERS: Record<string, string> = {
  "have": "Use the colours we already have",
  "tidy": "We have colours, but they need tidying",
  "start": "Start from these",
- "you": "No strong view — choose for us"
+ "you": "No strong view - choose for us"
 } as const;
 
 /** The things somebody might already have. */
@@ -807,7 +807,7 @@ export const SECTORS: Record<string, string> = {
  "workshopsan": "Workshops and in-person classes",
  "professiona": "Professional training",
  "accountingl": "Accounting, legal and consulting",
- "agenciesmar": "Agencies — marketing, design, digital",
+ "agenciesmar": "Agencies - marketing, design, digital",
  "buildingele": "Building, electrical, plumbing",
  "cleaninggar": "Cleaning, gardening and regular services",
  "restaurants": "Restaurants, cafes and bars",
@@ -891,7 +891,7 @@ export const SECTOR_TAGS: Record<string, SectorTag> = {
    "GOODS"
   ],
   "p": [
-   "Condition: one-of-a-kind — singleton stock"
+   "Condition: one-of-a-kind - singleton stock"
   ]
  },
  "sportswear": {
@@ -946,7 +946,7 @@ export const SECTOR_TAGS: Record<string, SectorTag> = {
    "GOODS"
   ],
   "p": [
-   "Regulated — provider check first",
+   "Regulated - provider check first",
    "Age verification"
   ]
  },
@@ -968,7 +968,7 @@ export const SECTOR_TAGS: Record<string, SectorTag> = {
    "GOODS"
   ],
   "p": [
-   "Perishable — cold chain",
+   "Perishable - cold chain",
    "Subscriptions, probably"
   ]
  },
@@ -1002,7 +1002,7 @@ export const SECTOR_TAGS: Record<string, SectorTag> = {
    "GOODS"
   ],
   "p": [
-   "Oversized — freight, two-person delivery"
+   "Oversized - freight, two-person delivery"
   ]
  },
  "homewareand": {
@@ -1076,7 +1076,7 @@ export const SECTOR_TAGS: Record<string, SectorTag> = {
    "SERVICE"
   ],
   "p": [
-   "Insurance — we will check",
+   "Insurance - we will check",
    "Appointments"
   ]
  },
@@ -1131,7 +1131,7 @@ export const SECTOR_TAGS: Record<string, SectorTag> = {
    "GOODS"
   ],
   "p": [
-   "Made to order — personalisation question opens"
+   "Made to order - personalisation question opens"
   ]
  },
  "craftsuppli": {
@@ -1166,7 +1166,7 @@ export const SECTOR_TAGS: Record<string, SectorTag> = {
   ],
   "p": [
    "Class passes, probably",
-   "Insurance — we will check"
+   "Insurance - we will check"
   ]
  },
  "personaltra": {
@@ -1221,7 +1221,7 @@ export const SECTOR_TAGS: Record<string, SectorTag> = {
   ],
   "p": [
    "Venue capacity",
-   "Children — we will check"
+   "Children - we will check"
   ]
  },
  "professiona": {
@@ -1233,7 +1233,7 @@ export const SECTOR_TAGS: Record<string, SectorTag> = {
    "SERVICE"
   ],
   "p": [
-   "Invoicing employers — on account, probably"
+   "Invoicing employers - on account, probably"
   ]
  },
  "accountingl": {
@@ -1248,7 +1248,7 @@ export const SECTOR_TAGS: Record<string, SectorTag> = {
   ]
  },
  "agenciesmar": {
-  "n": "Agencies — marketing, design, digital",
+  "n": "Agencies - marketing, design, digital",
   "g": "Professional services",
   "t": [
    "PROJECT"
@@ -1278,7 +1278,7 @@ export const SECTOR_TAGS: Record<string, SectorTag> = {
    "TIME"
   ],
   "p": [
-   "Recurring visits — direct debit, probably"
+   "Recurring visits - direct debit, probably"
   ]
  },
  "restaurants": {
@@ -1366,7 +1366,7 @@ export const SECTOR_TAGS: Record<string, SectorTag> = {
    "SUPPORT"
   ],
   "p": [
-   "Gift Aid — declaration capture"
+   "Gift Aid - declaration capture"
   ]
  },
  "clubsandsoc": {
@@ -1400,7 +1400,7 @@ export const SECTOR_TAGS: Record<string, SectorTag> = {
    "MEMBERSHIP"
   ],
   "p": [
-   "Gift Aid — we will check",
+   "Gift Aid - we will check",
    "Events tickets, probably"
   ]
  },
@@ -1432,7 +1432,7 @@ export const SECTOR_TAGS: Record<string, SectorTag> = {
    "GOODS"
   ],
   "p": [
-   "Fitment data — which vehicle does it fit"
+   "Fitment data - which vehicle does it fit"
   ]
  },
  "servicingan": {
