@@ -71,13 +71,16 @@ export function StageSell({ at, answers, onGo }: StepProps) {
 
   if (open) {
     const card: CardLike | undefined =
-      open === three.id
-        ? { ...three, level: three.kicker }
-        : CARD_BY[open];
+      open === three.id ? { ...three, level: three.kicker } : CARD_BY[open];
 
     if (card) {
       return (
-        <StageStep at={at} answers={answers} onGo={onGo} scrollKey={open ?? "card"}>
+        <StageStep
+          at={at}
+          answers={answers}
+          onGo={onGo}
+          scrollKey={open ?? "card"}
+        >
           <CardSurface
             card={card}
             answers={answers}
@@ -112,54 +115,62 @@ export function StageSell({ at, answers, onGo }: StepProps) {
         ))}
       </div>
 
-      {/* How you sell today, and how they pay: the two follow-up questions the
-          source keeps beside the kinds. */}
-      {OPTION_LISTS.sell.map((list) => (
-        <section key={list.scope} className="mt-8 max-w-[720px]">
-          <SubTitle className="mt-0">{list.title}</SubTitle>
-          {list.note ? (
-            <p className="mt-0.5 text-[12.5px] leading-[1.45] text-label">
-              {list.note}
-            </p>
-          ) : null}
-          <div className="mt-2 grid gap-x-6 sm:grid-cols-2">
-            {list.rows.map((row) => (
-              <TickRow
-                key={row.k}
-                single={row.one}
-                on={isOn(answers, row.scope, row.k)}
-                name={row.n}
-                note={row.sub}
-                onToggle={() => {
-                  if (row.one) {
-                    setPick(row.scope, row.k, true, true);
-                    touchStep("sell");
-                    return;
-                  }
-                  togglePick(row.scope, row.k, "sell");
-                }}
+      {/* How you sell today, and how they pay: asked only once something is
+          being sold.
+
+          Both are questions about a shop, and a page that asks how they pay
+          before anybody has said anything is bought is asking about a thing
+          that does not exist yet. They arrive the moment a kind is ticked. */}
+      {selling
+        ? OPTION_LISTS.sell.map((list) => (
+            <section key={list.scope} className="mt-8 max-w-[720px]">
+              <SubTitle className="mt-0">{list.title}</SubTitle>
+              {list.note ? (
+                <p className="mt-0.5 text-[12.5px] leading-[1.45] text-label">
+                  {list.note}
+                </p>
+              ) : null}
+              <div className="mt-2 grid gap-x-6 sm:grid-cols-2">
+                {list.rows.map((row) => (
+                  <TickRow
+                    key={row.k}
+                    single={row.one}
+                    on={isOn(answers, row.scope, row.k)}
+                    name={row.n}
+                    note={row.sub}
+                    onToggle={() => {
+                      if (row.one) {
+                        setPick(row.scope, row.k, true, true);
+                        touchStep("sell");
+                        return;
+                      }
+                      togglePick(row.scope, row.k, "sell");
+                    }}
+                  />
+                ))}
+              </div>
+            </section>
+          ))
+        : null}
+
+      {selling ? (
+        <section className="mt-8 max-w-[1160px]">
+          <SubTitle count={PAY_WAYS.length} className="mt-0">
+            How they pay
+          </SubTitle>
+          <div className="mt-2 grid gap-x-6 lg:grid-cols-2">
+            {PAY_WAYS.map((way) => (
+              <ActionRow
+                key={way.k}
+                k={way.k}
+                scope="pay"
+                step="sell"
+                answers={answers}
               />
             ))}
           </div>
         </section>
-      ))}
-
-      <section className="mt-8 max-w-[1160px]">
-        <SubTitle count={PAY_WAYS.length} className="mt-0">
-          How they pay
-        </SubTitle>
-        <div className="mt-2 grid gap-x-6 lg:grid-cols-2">
-          {PAY_WAYS.map((way) => (
-            <ActionRow
-              key={way.k}
-              k={way.k}
-              scope="pay"
-              step="sell"
-              answers={answers}
-            />
-          ))}
-        </div>
-      </section>
+      ) : null}
 
       {/* The back of the shop, only once there is a shop. Its questions turn
           up late and cost money when they do, and "not sure yet" is a real
@@ -203,7 +214,12 @@ export function StageStyle({ at, answers, onGo }: StepProps) {
 
   if (open && CARD_BY[open]) {
     return (
-      <StageStep at={at} answers={answers} onGo={onGo} scrollKey={open ?? "card"}>
+      <StageStep
+        at={at}
+        answers={answers}
+        onGo={onGo}
+        scrollKey={open ?? "card"}
+      >
         <CardSurface
           card={CARD_BY[open]}
           answers={answers}
@@ -468,7 +484,10 @@ export function StageRefs({ at, answers, onGo }: StepProps) {
           <AddRow
             placeholder="A sentence, or a link"
             onAdd={(value) =>
-              addRef({ kind: REF_KINDS[kind], text: value, where: null }, "refs")
+              addRef(
+                { kind: REF_KINDS[kind], text: value, where: null },
+                "refs",
+              )
             }
           />
         </div>

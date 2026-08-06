@@ -1,14 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Check, Search } from "lucide-react";
 
-import {
-  ORG_KINDS,
-  SECTORS,
-  SECTOR_TAGS,
-  TYPE_NAMES,
-} from "@/lib/build/v5";
+import { ORG_KINDS, SECTORS, SECTOR_TAGS, TYPE_NAMES } from "@/lib/build/v5";
 import { SYSTEM_LINKS } from "@/lib/build/v5-systems";
 import {
   addOwn,
@@ -19,6 +14,8 @@ import {
   togglePick,
   type Answers,
 } from "@/lib/build/v5-store";
+import { cn } from "@/lib/utils";
+
 import { StageStep } from "./frame";
 import { AddRow, H, Kicker, Sub, SubTitle, TickRow } from "./kit";
 
@@ -72,22 +69,40 @@ function sectorFamilies() {
  */
 export function StageOrg({ at, answers, onGo }: StepProps) {
   const [find, setFind] = useState("");
+  const [family, setFamily] = useState<string | null>(null);
   const families = useMemo(() => sectorFamilies(), []);
   const chosen = picked(answers, "sector");
 
   const hunted = find.trim().toLowerCase();
+
+  /* Fifty-five rows, shown a family at a time.
+
+     All of them at once is not a choice, it is a wall: thirteen headings and
+     fifty-five radio buttons, of which fifty-four are wrong for everybody. So
+     the families come first - thirteen words, which is a glance - and one of
+     them opens its own rows. Searching skips the whole arrangement, because
+     somebody who knows their trade should be able to type it.
+
+     Anything already chosen stays visible whatever else is showing. A picker
+     that hides the answer you gave it is asking you to trust it. */
   const shown = hunted
     ? families
-        .map(([family, rows]) => [
-          family,
-          rows.filter(
-            (row) =>
-              row.n.toLowerCase().includes(hunted) ||
-              family.toLowerCase().includes(hunted),
-          ),
-        ] as const)
+        .map(
+          ([name, rows]) =>
+            [
+              name,
+              rows.filter(
+                (row) =>
+                  row.n.toLowerCase().includes(hunted) ||
+                  name.toLowerCase().includes(hunted),
+              ),
+            ] as const,
+        )
         .filter(([, rows]) => rows.length)
-    : families;
+    : families.filter(
+        ([name, rows]) =>
+          name === family || rows.some((row) => isOn(answers, "sector", row.k)),
+      );
 
   return (
     <StageStep at={at} answers={answers} onGo={onGo}>
@@ -113,7 +128,9 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
         </div>
       </section>
 
-      <SubTitle count={chosen.length || undefined}>The field you work in</SubTitle>
+      <SubTitle count={chosen.length || undefined}>
+        The field you work in
+      </SubTitle>
       <p className="mt-0.5 max-w-[62ch] text-[12.5px] leading-[1.45] text-label">
         Not a category for a form. It is what tells us the stock is perishable,
         or the goods are oversized, or that somebody is checking, before anybody
@@ -132,6 +149,41 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
           className="min-w-0 flex-1 bg-transparent text-[14px] text-ink outline-none placeholder:text-label"
         />
       </label>
+
+      {/* The families. Pressing one opens it and closes whatever was open:
+          two open at once is most of the wall back again. */}
+      {hunted ? null : (
+        <div className="mt-4 flex max-w-[1100px] flex-wrap gap-2">
+          {families.map(([name, rows]) => {
+            const on = name === family;
+            const has = rows.some((row) => isOn(answers, "sector", row.k));
+
+            return (
+              <button
+                key={name}
+                type="button"
+                aria-pressed={on}
+                onClick={() => setFamily(on ? null : name)}
+                className={cn(
+                  "flex cursor-pointer items-center gap-2 rounded-pill px-3.5 py-1.5 text-[13px] font-semibold transition-colors",
+                  on
+                    ? "bg-ink text-white"
+                    : "bg-canvas text-body hover:bg-hair hover:text-ink",
+                )}
+              >
+                {name}
+                {has ? (
+                  <Check
+                    aria-hidden
+                    className={cn("size-3", on ? "text-white" : "text-mark")}
+                    strokeWidth={3}
+                  />
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       <div className="mt-5 grid max-w-[1100px] gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
         {shown.map(([family, rows]) => (
@@ -288,7 +340,9 @@ export function StageSystems({ at, answers, onGo }: StepProps) {
                   on={chipOn(answers, "syslink", row.k)}
                   name={row.n}
                   note={row.note}
-                  onToggle={() => toggleChip("syslink", row.k, false, "systems")}
+                  onToggle={() =>
+                    toggleChip("syslink", row.k, false, "systems")
+                  }
                 />
               ))}
             </div>
