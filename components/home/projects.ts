@@ -23,6 +23,14 @@ export interface Project {
   facts: readonly { term: string; value: string }[];
   /** In `public`. Named for the project, so the mapping needs no lookup. */
   image: string;
+  /**
+   * A film, where there is one, played in place of the picture.
+   *
+   * The still stays: it is the poster while the film loads, what a reader gets
+   * where motion is not wanted, and the thumbnail in the bite. A project with no
+   * film simply leaves this out.
+   */
+  video?: string;
   /** What the picture shows, for anybody who cannot see it. */
   alt: string;
   /** The colour under the picture until it arrives. */
@@ -43,6 +51,7 @@ export const PROJECTS: readonly Project[] = [
       { term: "Visitors", value: "Investors" },
     ],
     image: "/work-investor.png",
+    video: "/videos/1.mp4",
     alt: "A reporting dashboard on a large screen.",
     tone: "#eceef1",
   },

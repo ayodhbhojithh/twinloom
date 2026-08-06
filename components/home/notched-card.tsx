@@ -2,26 +2,13 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { ArrowDown } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { ArrowDown, ArrowLeft, ArrowRight, Maximize2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import { PROJECTS } from "./projects";
-
-/* The carousel's own imports, held with it.
-   import { AnimatePresence, motion } from "motion/react";
-   import { ArrowLeft, ArrowRight, Maximize2 } from "lucide-react";
-   import { ProjectPanel } from "./project-panel";
-   import { type Project } from "./projects"; */
-
-/**
- * What the card plays.
- *
- * One file, named here rather than at the point of use, because the card is the
- * only thing that shows it and the next one to arrive should be a one-line
- * change in a place somebody can find.
- */
-const FILM = "/videos/1.mp4";
+import { ProjectPanel } from "./project-panel";
+import { PROJECTS, type Project } from "./projects";
 
 /* ---------------------------------------------------------------------------
    A card with pieces taken out of it.
@@ -200,79 +187,28 @@ export function outline(w: number, h: number, cut: Cuts): string {
  * uses, because the notch is sized to hold this and a notch sized to hold a
  * guess is a notch the bar hangs out of.
  */
-/* Held with the notch these sized.
-   const TOOL = 36;
-   const BAR = TOOL * 3 + 2 * 2 + 6 * 2; */
+/**
+ * The bar in the notch, measured rather than guessed.
+ *
+ * Three 36px controls, the plate's own padding, and the air either side. The
+ * notch is sized from this, so it can never come out narrower than the thing
+ * standing in it - which is what put three arrows outside their own cut on a
+ * phone.
+ */
+const TOOL = 36;
+const BAR = TOOL * 3 + 2 * 2 + 6 * 2;
 
 export function NotchedCard({ className }: { className?: string }) {
   const box = useRef<HTMLDivElement>(null);
   const film = useRef<HTMLVideoElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
-  /* Which picture the card in the bottom left is showing. */
   const [at, setAt] = useState(0);
+  const [open, setOpen] = useState<Project | null>(null);
 
-  /* The small card keeps turning through the work.
-
-     It is the carousel's clock, kept, on the one piece of the carousel that
-     stayed. Nothing drives it now - there are no arrows and it is not a button -
-     so it turns on its own or it shows one picture forever, and one picture
-     forever in a cut made for a changing one is a slot with something stuck in
-     it. Slower than the old five seconds: it is a thumbnail beside a film now
-     rather than the thing being looked at, and at five it competed.
-
-     Off entirely where reduced motion is asked for, same as the film. */
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const turn = window.setInterval(
-      () => setAt((was) => (was + 1) % PROJECTS.length),
-      7000,
-    );
-
-    return () => window.clearInterval(turn);
-  }, []);
-
-  /* The carousel's own state and its clock, held with it.
-     const [at, setAt] = useState(0);
-     const [open, setOpen] = useState<Project | null>(null);
-     const [held, setHeld] = useState(false);
-
-     useEffect(() => {
-       if (held || open) return;
-       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-       const turn = window.setInterval(
-         () => setAt((was) => (was + 1) % PROJECTS.length),
-         5000,
-       );
-
-       return () => window.clearInterval(turn);
-     }, [held, open]); */
-
-  /* Reduced motion is a request about the page, and a film that plays itself is
-     the loudest motion on it. `autoplay` alone cannot be asked this question in
-     markup, so it is asked here and the film is held on its first frame instead
-     of being taken away: the card keeps its picture, it just stops moving.
-
-     Watched rather than read once. Somebody can turn the preference on while the
-     page is open, and a card that only checked at mount would carry on playing
-     at them until they reloaded. */
-  useEffect(() => {
-    const node = film.current;
-    if (!node) return;
-
-    const ask = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-    const settle = () => {
-      if (ask.matches) node.pause();
-      else void node.play().catch(() => {});
-    };
-
-    settle();
-    ask.addEventListener("change", settle);
-
-    return () => ask.removeEventListener("change", settle);
-  }, []);
+  /* No clock. The card turns when somebody turns it - the arrows, the thumbnail
+     and the keyboard all do it - and nothing moves it on its own. A carousel
+     that advances by itself takes the picture out from under whoever is looking
+     at it, and the first slide here is a film, which is motion enough. */
 
   useEffect(() => {
     const node = box.current;
@@ -326,48 +262,24 @@ export function NotchedCard({ className }: { className?: string }) {
     /* The one curve every cut on this card is made of. */
     const flare = Math.max(22, Math.min(h * 0.04, 34));
 
-    /* The notch and the bite, held with the carousel they were cut for. Both
-       are set to nothing below, and `outline` gives their corners back as
-       ordinary rounded ones.
-
     const barDepth = flare * 2;
 
-       Only as wide as the bar it holds, plus a little air. Wider and the notch
-       stops being a place for something and becomes a shape in its own right,
-       which is one shape too many.
+    /* Only as wide as the bar it holds, plus a little air. Wider and the notch
+       stops being a place for something and becomes a shape in its own right.
 
-       The floor is that bar, measured, not a fraction of the card. A fraction
-       of a narrow card is narrower than the thing standing in it: on a phone
-       `w * 0.11` came out at thirty pixels, the old floor lifted it to
-       eighty-four, and the hundred-and-twenty-four pixel bar sat twenty pixels
-       out over the card's top edge on each side - three arrows outside their
-       own notch. Sized from the bar, the notch cannot be too small for it at
-       any width, and on a desktop the fraction is the larger number anyway, so
-       nothing there moves.
-
-       The cap is the other end of the same argument: a notch is a piece taken
-       out of an edge, and it stops reading as one when there is no edge left
-       either side of it. This keeps a flat run past both corner arcs.
+       The floor is that bar, measured, not a fraction of the card: a fraction of
+       a narrow card is narrower than the thing standing in it, and the bar ended
+       up hanging over the card's own top edge on a phone. The cap is the other
+       end of the same argument - a notch stops reading as one when there is no
+       edge left either side of it. */
 
     const barWidth = Math.min(
       Math.max(BAR + 12, Math.min(w * 0.11, 178)),
       Math.max(flare * 2 + 60, w - 2 * (radius + flare) - 24),
     );
 
-       The bite is square-ish and sized to the thumbnail standing in it, with the
-       same flare and the same corner as the notch above.
-
-       The floor was 124, which is a fixed number on a card that is not: it
-       dominated every width below about nine hundred, so a 280px phone card gave
-       up nearly half its bottom edge to a thumbnail and left nothing beside it
-       for the name. Ninety-six still holds a thumbnail worth looking at and
-       leaves the rest of the edge to the words.
-    */
-
-    /* The bite stays. It is the one part of the bottom edge that was not the
-       carousel: a piece cut out for a card to stand in, and the card standing in
-       it is still there. It can be square again now, because the name that used
-       to share the bottom edge with it went with the carousel. */
+    /* The bite, sized to the thumbnail standing in it, with the same flare and
+       the same corner as the notch above. */
     const bite = Math.max(96, Math.min(Math.min(w * 0.13, h * 0.26), 196));
 
     /* The corner for the way on. Square, like the bite, and only as large as
@@ -376,24 +288,10 @@ export function NotchedCard({ className }: { className?: string }) {
        around a 44px target. */
     const drop = Math.max(flare * 2 + 16, Math.min(w * 0.075, 96));
 
-    /* The notch and the bite are closed while the film is what the card holds.
-
-       A cut is a piece taken out of an edge for something to stand in, and both
-       of those were cut for parts of the carousel - the arrows in the top, the
-       next project in the bottom left. With those commented out the card would
-       carry two holes with nothing in them, which reads as damage rather than as
-       a shape. `outline` already knows what to do with a cut asked for at
-       nothing: it gives the corner back as an ordinary rounded one.
-
-       The bite and the drop stay: the card in the bottom left and the way on
-       down the page are both still standing in theirs.
-
-       To put the carousel back: swap the two zeroes for `barWidth`/`barDepth`
-       and uncomment the blocks below. */
     return {
       radius,
-      barWidth: 0, // barWidth,
-      barDepth: 0, // barDepth,
+      barWidth,
+      barDepth,
       barRadius: flare,
       barFlare: flare,
       biteWidth: bite,
@@ -409,90 +307,32 @@ export function NotchedCard({ className }: { className?: string }) {
 
   const path = size.w > 40 ? outline(size.w, size.h, cut) : "";
 
-  /* const tight = size.w > 40 && size.w - cut.biteWidth - cut.dropWidth < 210; */
+  const shown = PROJECTS[at];
+  const next = PROJECTS[(at + 1) % PROJECTS.length];
+
+  /* Where the name goes. Beside the thumbnail where there is room for it, and
+     above the bottom edge where there is not. */
+  const tight = size.w > 40 && size.w - cut.biteWidth - cut.dropWidth < 210;
 
   return (
     <div ref={box} className={cn("relative", className)}>
-      {/* The film, cut to the card's outline.
+      {/* The slide, cut to the card's outline, and the one before it still
+          drawn underneath while they cross.
 
-          The clip is on the wrapper, exactly as it was for the picture, so what
-          is playing does not have to know the card has pieces taken out of it.
+          Swapping the source under one element is a cut - the new picture simply
+          replaces the old on the next frame. Two elements crossing over is a
+          dissolve, and at nearly a second it reads as the card turning rather
+          than as a slide changing.
 
-          Four attributes, and every one of them is load-bearing. `muted` is not
-          a preference here: a browser will refuse to autoplay anything that can
-          make a noise, so without it the card shows a still frame and a play
-          button. `playsInline` keeps it in the card on an iPhone rather than
-          throwing it into the system fullscreen player. `loop` is what makes it
-          a surface rather than a clip that ends.
-
-          No controls, and it is hidden from anything reading the page out:
-          there is nothing in it to hear, nothing in it to pause for, and nothing
-          said in it that is not said in words elsewhere on the page. A silent
-          decorative loop announced to a screen reader is noise. */}
-      <div
-        aria-hidden
-        className="artwork absolute inset-0 overflow-hidden bg-canvas"
-        style={{ clipPath: path ? `path("${path}")` : undefined }}
-      >
-        <video
-          ref={film}
-          src={FILM}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          className="size-full object-cover"
-        />
-      </div>
-
-      {/* The card in the bottom left, standing in the bite.
-
-          A picture rather than a button now. It advanced the carousel before,
-          and a control that still looks pressable while the thing it drove is
-          commented out is worse than no control - so it keeps the pictures and
-          gives up the press.
-
-          The plate underneath is the project's own tone, so the shape is there
-          in the right colour before the file arrives. */}
-      <div
-        aria-hidden
-        className="absolute bottom-0 left-0"
-        style={{ width: cut.biteWidth - 14, height: cut.biteHeight - 14 }}
-      >
-        <span
-          /* No border. The bite around it is already the outline, and a second
-             one a few pixels inside reads as a sticker on the card rather than
-             as the thing the card was cut back for. */
-          className="artwork relative block size-full overflow-hidden rounded-[18px]"
-          style={{ backgroundColor: PROJECTS[at].tone }}
-        >
-          <Image
-            key={PROJECTS[at].id}
-            src={PROJECTS[at].image}
-            alt=""
-            fill
-            quality={100}
-            sizes="240px"
-            className="object-cover"
-          />
-        </span>
-      </div>
-
-      {/* ----------------------------------------------------------------
-          The carousel, kept.
-
-          Everything below is the card as it was before the film: the two
-          pictures crossing over, the arrows in the notch, the next project in
-          the bite, and the name across the bottom edge. It is commented rather
-          than deleted so putting it back is uncommenting rather than rewriting -
-          along with its imports at the top of this file, its state and clock
-          above, and the two zeroes in the cut.
-
+          Where the project has a film, the film is what plays. The still stays
+          as its poster, so the card is never empty while the file arrives, and
+          `muted`, `loop` and `playsInline` are all load-bearing: a browser will
+          not autoplay anything that can make a noise, and without `playsInline`
+          a phone throws it into the system fullscreen player. */}
       <AnimatePresence initial={false}>
         <motion.div
           key={shown.id}
-          layoutId={"shot-" + shown.id}
+          layoutId={`shot-${shown.id}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -504,23 +344,41 @@ export function NotchedCard({ className }: { className?: string }) {
           className="artwork absolute inset-0 cursor-pointer overflow-hidden"
           style={{
             backgroundColor: shown.tone,
-            clipPath: path ? "path(...)" : undefined,
+            clipPath: path ? `path("${path}")` : undefined,
           }}
         >
-          <Image
-            src={shown.image}
-            alt={shown.alt}
-            fill
-            quality={100}
-            preload
-            sizes="100vw"
-            className="object-cover"
-          />
+          {shown.video ? (
+            <video
+              ref={film}
+              key={shown.video}
+              src={shown.video}
+              poster={shown.image}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              className="size-full object-cover"
+            />
+          ) : (
+            <Image
+              src={shown.image}
+              alt={shown.alt}
+              fill
+              quality={100}
+              preload
+              sizes="100vw"
+              className="object-cover"
+            />
+          )}
         </motion.div>
       </AnimatePresence>
 
+      {/* The bar, standing in the top of the cut. No plate behind it: the notch
+          is already the outline, and a pill drawn inside it is a second shape
+          inside the first. */}
       <div
-        className="absolute top-0 left-1/2 flex -translate-x-1/2 justify-center"
+        className="absolute top-0 left-1/2 z-10 flex -translate-x-1/2 justify-center"
         style={{ width: cut.barWidth, height: cut.barDepth, paddingTop: 4 }}
       >
         <div className="flex h-9 items-center gap-0.5 rounded-pill px-1.5">
@@ -532,7 +390,7 @@ export function NotchedCard({ className }: { className?: string }) {
           >
             <ArrowLeft className="size-4" />
           </Tool>
-          <Tool label={"Open " + shown.name} onClick={() => setOpen(shown)}>
+          <Tool label={`Open ${shown.name}`} onClick={() => setOpen(shown)}>
             <Maximize2 className="size-[15px]" />
           </Tool>
           <Tool
@@ -544,14 +402,18 @@ export function NotchedCard({ className }: { className?: string }) {
         </div>
       </div>
 
+      {/* The next project, standing in the bite. */}
       <button
         type="button"
         onClick={() => setAt((was) => (was + 1) % PROJECTS.length)}
-        aria-label={"Next: " + next.name}
-        className="group absolute bottom-0 left-0 cursor-pointer rounded-[20px] p-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-active"
+        aria-label={`Next: ${next.name}`}
+        className="group absolute bottom-0 left-0 z-10 cursor-pointer rounded-[20px] p-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-active"
         style={{ width: cut.biteWidth - 14, height: cut.biteHeight - 14 }}
       >
         <span
+          /* No border. The bite around it is already the outline, and a second
+             one a few pixels inside reads as a sticker on the card rather than
+             as the thing the card was cut back for. */
           className="artwork block size-full overflow-hidden rounded-[18px] transition-transform duration-300 group-hover:-translate-y-1"
           style={{ backgroundColor: next.tone }}
         >
@@ -567,7 +429,7 @@ export function NotchedCard({ className }: { className?: string }) {
       </button>
 
       <p
-        className="absolute"
+        className="absolute z-10"
         style={
           tight
             ? {
@@ -592,8 +454,6 @@ export function NotchedCard({ className }: { className?: string }) {
       </p>
 
       <ProjectPanel project={open} onClose={() => setOpen(null)} />
-
-      ---------------------------------------------------------------- */}
 
       {/* The way on, standing in the corner the card gives up for it.
           On the page rather than on the picture, which is the rule the rest of
@@ -632,14 +492,11 @@ export function NotchedCard({ className }: { className?: string }) {
           />
         </a>
       </div>
-
     </div>
   );
 }
 
-/* One of the three controls that stood in the notch. Held with the rest of the
-   carousel.
-
+/** One of the three controls that stand in the notch. */
 function Tool({
   label,
   onClick,
@@ -660,4 +517,3 @@ function Tool({
     </button>
   );
 }
-*/
