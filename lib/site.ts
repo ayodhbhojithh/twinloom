@@ -119,6 +119,7 @@ export const RAIL_PAGES: readonly RailPage[] = [
   { label: "Home", href: ROUTES.home },
   { label: "Build your website", href: ROUTES.build },
   { label: "About us", href: ROUTES.about },
+  { label: "How we work", href: ROUTES.how },
   { label: "Our partners", href: ROUTES.partners },
   {
     label: "Contact us",

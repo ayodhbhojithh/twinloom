@@ -83,14 +83,17 @@ function Name({ stop }: { stop: (typeof STOPS)[number] }) {
 
 export function HowWeWorkView() {
   return (
-    <>
-      <section className="page-frame pt-4 pb-10 text-center">
-        <p className="mx-auto inline-flex items-center gap-2.5 rounded-pill bg-field py-2 pr-4 pl-3 text-[13.5px] font-semibold text-body">
-          <span aria-hidden className="size-2 rounded-pill bg-mark" />
-          {STOPS.length} steps, {ZONES.length} zones
-        </p>
+    /* Green, on this page only.
 
-        <h1 className="section-head mx-auto mt-7 max-w-[34ch] text-ink">
+       The accent everywhere else means "this is set". Here the one thing worth
+       marking is the launch - the single stop that is an event rather than a
+       stretch - and green is what says arrived without anybody being taught it.
+       Scoped by overriding the variable rather than by swapping classes, so the
+       launch dot, its name, the badge and the ends of the line all move
+       together and nothing can be missed. */
+    <div style={{ ["--color-mark" as string]: "var(--color-done)" }}>
+      <section className="page-frame pt-10 pb-12 text-center sm:pt-16 sm:pb-14">
+        <h1 className="section-head mx-auto max-w-[34ch] text-ink">
           One line from the first email
           <span className="text-quiet"> to live and hosted.</span>
         </h1>
@@ -207,7 +210,7 @@ export function HowWeWorkView() {
               `lg` it gives up and becomes the cards underneath. */}
           <div className="quiet-scroll -mx-1 mt-8 hidden overflow-x-auto px-1 pb-2 lg:block">
             <div
-              className="grid min-w-[1180px] items-end"
+              className="grid min-w-[1180px] items-end rounded-[18px] bg-canvas px-5 py-6"
               style={{
                 gridTemplateColumns: `repeat(${STOPS.length}, minmax(0, 1fr))`,
               }}
@@ -438,6 +441,6 @@ export function HowWeWorkView() {
           </p>
         </CutPanel>
       </section>
-    </>
+    </div>
   );
 }
