@@ -144,23 +144,6 @@ export function HowWeWorkView() {
         <CutPanel
           tone="field"
           className="w-full"
-          toolbar={
-            <span className="flex h-10 w-full items-center justify-center gap-2.5">
-              <span className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
-                How we work
-              </span>
-            </span>
-          }
-          aside={
-            <div className="flex size-full flex-col items-center justify-center">
-              <b className="font-mono text-[22px] leading-none font-bold text-ink tabular-nums">
-                {STOPS.length}
-              </b>
-              <span className="mt-1.5 font-mono text-[8px] font-bold tracking-[0.1em] text-label uppercase">
-                Stops
-              </span>
-            </div>
-          }
           corner={
             <Link
               href={ROUTES.build}
@@ -171,12 +154,9 @@ export function HowWeWorkView() {
             </Link>
           }
         >
-          {/* What the three marks on the line mean, said once. */}
-          <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-3">
-            <h2 className="max-w-[min(22ch,var(--notch-free,62ch))] text-[clamp(20px,2vw,28px)] leading-[1.1] font-extrabold tracking-[-0.035em] text-ink">
-              One line, {STOPS.length} stops, {ZONES.length} zones.
-            </h2>
-
+          {/* What the three marks mean, said once and nowhere else. The only
+              thing on this surface that is not the line itself. */}
+          <div className="flex justify-end">
             <ul className="hidden items-center gap-5 lg:flex">
               {[
                 { n: "Stop", cls: "bg-ink" },
@@ -208,9 +188,9 @@ export function HowWeWorkView() {
               It scrolls sideways rather than shrinking. A stop with a name it
               cannot fit is worse than a stop you have to scroll to, and below
               `lg` it gives up and becomes the cards underneath. */}
-          <div className="quiet-scroll -mx-1 mt-8 hidden overflow-x-auto px-1 pb-2 lg:block">
+          <div className="quiet-scroll -mx-1 mt-6 hidden overflow-x-auto px-1 pb-2 lg:block">
             <div
-              className="grid min-w-[1180px] items-end rounded-[18px] bg-canvas px-5 py-6"
+              className="grid min-w-[1560px] items-end rounded-[18px] bg-canvas px-6 py-7"
               style={{
                 gridTemplateColumns: `repeat(${STOPS.length}, minmax(0, 1fr))`,
               }}
@@ -241,7 +221,7 @@ export function HowWeWorkView() {
                 <div
                   key={`up-${stop.ix}`}
                   className={cn(
-                    "flex min-h-[118px] min-w-0 flex-col justify-end px-2 pb-3 text-center",
+                    "flex min-h-[124px] min-w-0 flex-col justify-end px-3 pb-3 text-center",
                     starts.has(n) && "border-l border-dashed border-border",
                   )}
                 >
@@ -298,7 +278,7 @@ export function HowWeWorkView() {
                 <div
                   key={`down-${stop.ix}`}
                   className={cn(
-                    "flex min-h-[118px] min-w-0 flex-col px-2 pt-3 text-center",
+                    "flex min-h-[124px] min-w-0 flex-col px-3 pt-3 text-center",
                     starts.has(n) && "border-l border-dashed border-border",
                   )}
                 >
@@ -307,12 +287,6 @@ export function HowWeWorkView() {
               ))}
             </div>
           </div>
-
-          <p className="mt-6 hidden max-w-[70ch] text-[12.5px] leading-[1.6] text-label lg:block">
-            After the last stop the run usually starts again: the next piece of
-            work arrives as a new submission rather than as a change to a
-            finished one.
-          </p>
         </CutPanel>
       </section>
 
