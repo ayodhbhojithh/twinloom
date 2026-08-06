@@ -34,6 +34,7 @@ export const ROUTES = {
   homeV6: "/home-v6",
   build: "/build",
   site: "/your-site",
+  how: "/how-we-work",
 
   about: "/about",
   partners: "/partners",
@@ -68,6 +69,7 @@ export interface NavLink {
  */
 export const HEADER_NAV: readonly NavLink[] = [
   { label: "About", href: ROUTES.about },
+  { label: "How we work", href: ROUTES.how },
   { label: "Partners", href: ROUTES.partners },
   { label: "FAQs", href: ROUTES.faq },
   { label: "Articles", href: ROUTES.blog },
@@ -143,6 +145,7 @@ export const FOOTER_COLUMNS: readonly {
     title: "About us",
     links: [
       { label: "About us", href: ROUTES.about },
+      { label: "How we work", href: ROUTES.how },
       { label: "Our partners", href: ROUTES.partners },
       { label: "Contact us", href: ROUTES.contact },
     ],
