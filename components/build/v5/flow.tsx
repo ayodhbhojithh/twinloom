@@ -14,7 +14,6 @@ import {
 import { cn } from "@/lib/utils";
 
 import { NotesDock } from "./notes";
-import { Panel } from "./panel";
 import { QuickPane } from "./quick";
 import { StageDo, StageWho } from "./stages-a";
 import { StageHave, StageRefs, StageSell, StageStyle } from "./stages-b";
@@ -179,15 +178,23 @@ export function BuildFlow() {
         <>
           <StepStrip step={step} answers={answers} onGo={goStep} />
 
-          <div className="grid items-start gap-7 xl:grid-cols-[minmax(0,1fr)_330px] 2xl:grid-cols-[minmax(0,1fr)_360px]">
+          {/* One column while the panel is out. Two columns with nothing in
+              the second is a step held to two thirds of its own surface. */}
+          <div className="grid items-start gap-7">
             <div className="min-w-0">{stage}</div>
 
-            {/* Held to the screen and scrolled inside itself from xl, where it
-                is a second column. Below that it follows the surface as
-                ordinary content. */}
-            <div className="quiet-scroll min-w-0 xl:sticky xl:top-[calc(var(--nav-height)+20px)] xl:max-h-[calc(100svh-var(--nav-height)-40px)] xl:overflow-y-auto">
-              <Panel answers={answers} />
-            </div>
+            {/* The panel, held.
+
+                It ran beside every step listing the pages the answers add up
+                to. Out for now, so a step has the whole surface and the
+                read-back is the one place the site is described.
+
+                Commented rather than deleted: it is the running answer, and it
+                is the first thing to want back.
+
+                <div className="quiet-scroll min-w-0 xl:sticky xl:top-[calc(var(--nav-height)+20px)] xl:max-h-[calc(100svh-var(--nav-height)-40px)] xl:overflow-y-auto">
+                  <Panel answers={answers} />
+                </div> */}
           </div>
         </>
       )}

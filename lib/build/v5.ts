@@ -104,12 +104,20 @@ export const STEPS: readonly Step[] = [
   "n": "Connecting to back end systems",
   "can": true
  },
+ /* The site your answers describe, held.
+
+    A step of its own that read the whole thing back before sending it. Out for
+    now: `StageRead` and its case in the flow are left where they are, so
+    putting the step back is uncommenting this entry and nothing else - the
+    stage it maps to has not moved.
+
  {
   "k": "read",
   "ph": "send",
   "n": "The site your answers describe",
   "can": true
  },
+ */
  {
   "k": "submit",
   "ph": "send",

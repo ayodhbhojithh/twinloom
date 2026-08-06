@@ -4,13 +4,7 @@ import { ArrowUpRight, Check, Send } from "lucide-react";
 import Link from "next/link";
 
 import { ASK_PARTS, MIN_MAP, STATES } from "@/lib/build/v5";
-import {
-  assumed,
-  pagesFrom,
-  readiness,
-  told,
-  zonesFrom,
-} from "@/lib/build/v5-derive";
+import { assumed, pagesFrom, readiness, told } from "@/lib/build/v5-derive";
 import { OPTION_LISTS } from "@/lib/build/v5-options";
 import { HOW_WE_WORK } from "@/lib/build/v5-work";
 import { sendScope, whatIsMissing } from "@/lib/build/submit";
@@ -77,7 +71,7 @@ export function StageRead({ at, answers, onGo, onGoKey }: StepProps) {
   const lines = told(answers);
   const takenAsRead = assumed(answers);
   const pages = pagesFrom(answers);
-  const zones = zonesFrom(pages);
+  /* Held with the section that used it: `const zones = zonesFrom(pages);` */
   const { state } = readiness(answers);
   const [stateName] = STATES[state];
 
@@ -198,7 +192,15 @@ export function StageRead({ at, answers, onGo, onGoKey }: StepProps) {
         </ol>
       </section>
 
-      {/* The site itself, since it is the thing being scoped. */}
+      {/* The site your answers describe, held.
+
+          It listed every page the answers add up to, grouped by zone. Out for
+          now: it said the same thing the panel beside the run was already
+          saying, and a document that repeats its own margin twice is longer
+          without being fuller. Commented rather than deleted, because it is the
+          part of the read-back a reader is most likely to ask for back.
+
+      |* The site itself, since it is the thing being scoped. *|
       <section className="mt-9 max-w-[1100px]">
         <SubTitle className="mt-0" count={pages.length}>
           The site your answers describe
@@ -228,6 +230,8 @@ export function StageRead({ at, answers, onGo, onGoKey }: StepProps) {
           ))}
         </div>
       </section>
+
+      */}
 
       {/* What was said, and what will be assumed. Side by side, because the
           second is only readable against the first. */}
