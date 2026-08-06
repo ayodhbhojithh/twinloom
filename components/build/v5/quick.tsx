@@ -69,12 +69,13 @@ export function QuickPane({
        it - in the order somebody does them. The floor is what the cuts need to
        be cuts, and nothing more. */
     <Stage className="min-h-[380px] w-full">
-      {/* Two columns again, but split where the work actually divides rather
-          than down the middle of one instruction. The writing is on the left
-          and everything you attach to it is on the right, so neither column
-          runs out while the other is still going - which is what made the
-          first two-column version leave a field of empty surface. */}
-      <div className="grid gap-x-10 gap-y-8 lg:grid-cols-2">
+      {/* One column, down the left.
+
+          It was two - the writing on one side and what you attach to it on the
+          other - and the right ran out long before the left did, so the pane
+          spent most of its height as an empty half. Stacked, everything is on
+          one axis, in the order it is done: write it, attach to it, send it. */}
+      <div className="max-w-[720px]">
         <div className="min-w-0">
           <H>Say it in your own words.</H>
           <Sub>
@@ -92,13 +93,13 @@ export function QuickPane({
           />
         </div>
 
-        <div className="min-w-0">
+        <div className="mt-8 min-w-0">
         {/* Files, then the line for the two things that are not files. No
             heading over either: the drop zone says what it is on its face, and
             a title above a control that already carries a label is the same
             words twice. */}
         <DropZone
-          className="mt-4"
+          className="mt-0"
           label="Drop files here, or choose them"
           note="Pictures, brochures, price lists, screenshots. Up to 10 MB each."
           files={files}
