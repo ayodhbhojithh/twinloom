@@ -43,7 +43,10 @@ export function BuildFlow() {
     getServerAnswers,
   );
 
-  const [tab, setTab] = useState<"quick" | "full">("full");
+  /* The short way round is what opens. It is first in the pill and it is what
+     most people want, and a page that lists the quick route first then starts
+     you on the long one is telling you two different things. */
+  const [tab, setTab] = useState<"quick" | "full">("quick");
   const [step, setStep] = useState(0);
 
   /* Where the reader is standing, so anything written on the desk files under
@@ -132,8 +135,12 @@ export function BuildFlow() {
           >
             {(
               [
-                { key: "full", label: "Detailed scoping" },
+                /* The short way round first. It is the one most people want
+                   and the one that asks least of them; putting twelve steps in
+                   front of it made the quick route read as the fallback rather
+                   than as the offer. */
                 { key: "quick", label: "Quick submission" },
+                { key: "full", label: "Detailed scoping" },
               ] as const
             ).map((entry) => (
               <button
