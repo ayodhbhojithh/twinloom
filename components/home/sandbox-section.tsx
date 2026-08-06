@@ -203,7 +203,7 @@ export function SandboxSection() {
                 {/* The work, as a mosaic. The first one leads and the rest
                     fall in around it; each card measures itself, so a run of
                     different widths is one the shape can actually follow. */}
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-12">
+                <div className="grid auto-rows-56 grid-cols-1 gap-3 sm:auto-rows-52 sm:grid-cols-2 lg:auto-rows-58 lg:grid-cols-12">
                   {PROJECTS.map((project, n) => (
                     <WorkCard
                       key={project.id}
@@ -289,8 +289,7 @@ function WorkCard({
       onClick={onOpen}
       aria-label={`Open ${project.name}`}
       className={cn(
-        "group/work relative flex min-w-0 cursor-pointer flex-col text-left transition-transform duration-300 hover:-translate-y-1",
-        lead && "lg:h-full",
+        "group/work relative h-full min-w-0 cursor-pointer text-left transition-transform duration-300 hover:-translate-y-1",
         className,
       )}
     >
@@ -308,12 +307,7 @@ function WorkCard({
             words. Run to the bottom it had to be darkened to be read over, and
             a dark card on a light page is the one object here wearing another
             scheme. */}
-        <span
-          className={cn(
-            "absolute inset-x-0 top-0 block w-full",
-            lead ? "aspect-video lg:aspect-auto lg:h-[74%]" : "aspect-video",
-          )}
-        >
+        <span className="absolute inset-x-0 top-0 block h-[78%]">
           <Image
             src={project.image}
             alt=""
@@ -330,22 +324,12 @@ function WorkCard({
         </span>
       </motion.span>
 
-      {/* The picture's own space, kept by an empty box of its ratio rather than
-          by a guessed height. */}
-      <span
-        aria-hidden
-        className={cn(
-          "block w-full",
-          lead ? "aspect-video lg:aspect-auto lg:h-[74%]" : "aspect-video",
-        )}
-      />
-
       <div
         className={cn(
-          "relative flex min-w-0 flex-1 flex-col justify-end p-5 pt-3",
+          "relative flex size-full flex-col justify-end p-5",
           /* Only the card whose cut is at the foot has to keep out of it. */
           top ? "" : "pr-16",
-          lead ? "sm:p-6 sm:pt-3" : "",
+          lead ? "sm:p-6" : "",
         )}
       >
         {/* The lead is bigger because it is the way in, and being bigger is the
@@ -492,7 +476,7 @@ function WorkOpen({
         ease: [0.22, 1, 0.36, 1],
         opacity: { duration: 0.18 },
       }}
-      className="relative overflow-hidden rounded-[22px] bg-canvas"
+      className="relative overflow-hidden rounded-[22px] bg-white"
     >
       {/* Words on the left, the picture on the right.
 
@@ -525,7 +509,7 @@ function WorkOpen({
             {project.facts.map((fact) => (
               <span
                 key={fact.term}
-                className="inline-flex items-center gap-2 rounded-pill bg-field px-3.5 py-1.5 text-[12.5px] text-body"
+                className="inline-flex items-center gap-2 rounded-pill bg-canvas px-3.5 py-1.5 text-[12.5px] text-body"
               >
                 <span className="font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase">
                   {fact.term}
@@ -534,7 +518,7 @@ function WorkOpen({
               </span>
             ))}
 
-            <span className="inline-flex items-center gap-2 rounded-pill bg-field px-3.5 py-1.5 text-[12.5px] text-body">
+            <span className="inline-flex items-center gap-2 rounded-pill bg-canvas px-3.5 py-1.5 text-[12.5px] text-body">
               <span className="font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase">
                 Preview
               </span>
@@ -557,7 +541,7 @@ function WorkOpen({
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-pill bg-field px-4 py-2 text-[13px] font-semibold text-quiet transition-colors hover:text-ink"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-pill bg-canvas px-4 py-2 text-[13px] font-semibold text-quiet transition-colors hover:text-ink"
             >
               <X className="size-3.5" />
               Back to the work
