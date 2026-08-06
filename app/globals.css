@@ -1008,12 +1008,42 @@
     animation-delay: calc(var(--step, 0) * 90ms);
   }
 
+  /* A rule that draws itself in rather than fading.
+
+     `scaleX` from the left, so a line reads as being laid down in the direction
+     the work runs. Only `transform` moves, so it is the compositor's job and
+     nothing is measured. */
+  [data-reveal="armed"] .reveal-line {
+    transform: translateY(-50%) scaleX(0);
+    will-change: transform;
+  }
+
+  [data-reveal="armed"] .reveal-line[data-in] {
+    animation: draw 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--step, 0) * 90ms);
+  }
+
+  @keyframes draw {
+    from {
+      transform: translateY(-50%) scaleX(0);
+    }
+    to {
+      transform: translateY(-50%) scaleX(1);
+    }
+  }
+
   /* The watcher disarms itself when motion is not wanted, so this only has to
      cover the moment before it runs. */
   @media (prefers-reduced-motion: reduce) {
     [data-reveal="armed"] .reveal,
     [data-reveal="armed"] .reveal[data-in] {
       opacity: 1;
+      animation: none;
+    }
+
+    [data-reveal="armed"] .reveal-line,
+    [data-reveal="armed"] .reveal-line[data-in] {
+      transform: translateY(-50%) scaleX(1);
       animation: none;
     }
   }
