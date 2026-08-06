@@ -36,18 +36,11 @@ import { PROJECTS } from "./projects";
  *
  * By position rather than by project, because it is a fact about the shape of
  * the run and not about the work: reorder the list and the first one still
- * leads. Anything past the end of this falls back to a third-width tile, so
- * adding a sixth project widens the run rather than breaking it.
+ * leads. Anything past the end of this falls back to a third-width tile, so a
+ * sixth project widens the run rather than breaking it.
  *
- * One column on a phone, two from `sm`, and the mosaic only from `lg`. A mosaic
- * needs room to be one, and squeezed into a tablet it is just five tiles of
- * arbitrary width.
- *
- * Twelve columns rather than six, and two rows rather than three. On six the
- * tiles came out half the panel wide and one row tall - three and a half to one
- * - which is a letterbox, and a picture cropped to a letterbox has nothing in it
- * but the middle. Twelve divides finer, so a tile can be a quarter or a third of
- * the width instead of only a half, and the whole run closes in two rows.
+ * One column on a phone, two from `sm`, and the mosaic only from `lg`, where
+ * there is room for one to be one.
  *
  *   row 1:  lead (5)      |  (4)  |  (3)
  *   row 2:  lead, still   |  (3)  |  (4)
@@ -59,19 +52,6 @@ const PLACE = [
   "lg:col-span-3",
   "lg:col-span-4",
 ];
-
-/**
- * One picture for every card on the bench, for now.
- *
- * The showcase stands in for work we have not photographed yet, and five
- * different pictures make five different claims about what each of these looks
- * like. One plate under all of them says what it is - a surface the names are
- * printed on - and it changes in one place when there are real screenshots to
- * put there.
- *
- * The landing carousel keeps its own images: there, the picture is the point.
- */
-const WORK_PLATE = "/partners/2.png";
 
 /**
  * How the picture leaves the card: thinned out into it, never cut.
@@ -223,14 +203,14 @@ export function SandboxSection() {
                 {/* The work, as a mosaic. The first one leads and the rest
                     fall in around it; each card measures itself, so a run of
                     different widths is one the shape can actually follow. */}
-                <div className="grid auto-rows-56 grid-cols-1 gap-3 sm:auto-rows-52 sm:grid-cols-2 lg:auto-rows-58 lg:grid-cols-12">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-12">
                   {PROJECTS.map((project, n) => (
                     <WorkCard
                       key={project.id}
                       project={project}
                       n={n}
                       lead={n === 0}
-                      className={PLACE[n] ?? "lg:col-span-2"}
+                      className={PLACE[n] ?? "lg:col-span-4"}
                       onOpen={() => setOpen(project.id)}
                     />
                   ))}
@@ -294,9 +274,14 @@ function WorkCard({
   const path = size.w > 60 ? draw(size.w, size.h, cut, 20, 18) : "";
   const top = n % 2 === 1;
 
-  /* Height comes from the grid row the card lands in rather than from the card,
-     which is what lets one tile be twice as tall as its neighbour without
-     either of them knowing the other exists. */
+  /* The card is the shape of the picture in it, except where the grid says
+     otherwise.
+
+     The covers are sixteen by nine posters with a layout inside them, so an
+     ordinary tile takes that ratio and puts the words underneath - which is the
+     only arrangement that shows a poster whole. The lead spans two rows of the
+     mosaic, so its height comes from the grid instead and its picture is given
+     the room that leaves. */
   return (
     <button
       ref={box}
@@ -304,7 +289,8 @@ function WorkCard({
       onClick={onOpen}
       aria-label={`Open ${project.name}`}
       className={cn(
-        "group/work relative h-full min-w-0 cursor-pointer text-left transition-transform duration-300 hover:-translate-y-1",
+        "group/work relative flex min-w-0 cursor-pointer flex-col text-left transition-transform duration-300 hover:-translate-y-1",
+        lead && "lg:h-full",
         className,
       )}
     >
@@ -322,15 +308,20 @@ function WorkCard({
             words. Run to the bottom it had to be darkened to be read over, and
             a dark card on a light page is the one object here wearing another
             scheme. */}
-        <span className="absolute inset-x-0 top-0 block h-[78%]">
+        <span
+          className={cn(
+            "absolute inset-x-0 top-0 block w-full",
+            lead ? "aspect-video lg:aspect-auto lg:h-[74%]" : "aspect-video",
+          )}
+        >
           <Image
-            src={WORK_PLATE}
+            src={project.image}
             alt=""
             fill
             quality={100}
             sizes={
               lead
-                ? "(max-width: 640px) 92vw, (max-width: 1024px) 94vw, 48vw"
+                ? "(max-width: 640px) 92vw, (max-width: 1024px) 94vw, 44vw"
                 : "(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 30vw"
             }
             className="object-cover object-center transition-transform duration-500 group-hover/work:scale-[1.06]"
@@ -339,12 +330,22 @@ function WorkCard({
         </span>
       </motion.span>
 
+      {/* The picture's own space, kept by an empty box of its ratio rather than
+          by a guessed height. */}
+      <span
+        aria-hidden
+        className={cn(
+          "block w-full",
+          lead ? "aspect-video lg:aspect-auto lg:h-[74%]" : "aspect-video",
+        )}
+      />
+
       <div
         className={cn(
-          "relative flex size-full flex-col justify-end p-5",
+          "relative flex min-w-0 flex-1 flex-col justify-end p-5 pt-3",
           /* Only the card whose cut is at the foot has to keep out of it. */
           top ? "" : "pr-16",
-          lead ? "sm:p-6" : "",
+          lead ? "sm:p-6 sm:pt-3" : "",
         )}
       >
         {/* The lead is bigger because it is the way in, and being bigger is the
@@ -493,90 +494,94 @@ function WorkOpen({
       }}
       className="relative overflow-hidden rounded-[22px] bg-canvas"
     >
-      {/* The picture, and it fades into the ground it sits on rather than
-          stopping at a line - so the panel is one surface that happens to begin
-          as a photograph. */}
-      <motion.span
-        layoutId={`work-${project.id}`}
-        onClick={onClose}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="relative block h-[clamp(220px,32vw,440px)] w-full cursor-pointer overflow-hidden"
-      >
-        <Image
-          src={WORK_PLATE}
-          alt={project.alt}
-          fill
-          quality={100}
-          sizes="(max-width: 1024px) 96vw, 60vw"
-          className="object-cover object-center"
-        />
-        <span
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to top, var(--color-canvas) 0%, color-mix(in oklab, var(--color-canvas) 55%, transparent) 34%, transparent 68%)",
-          }}
-        />
-      </motion.span>
+      {/* Words on the left, the picture on the right.
 
-      <div className="relative -mt-16 px-6 pb-6 sm:px-8 sm:pb-8">
-        <span className="font-mono text-[9px] font-bold tracking-[0.16em] text-mark uppercase">
-          {String(n + 1).padStart(2, "0")} · {project.kind} / {project.year}
-        </span>
+          Stacked, the poster took the whole width and pushed everything worth
+          reading below the fold of the panel - and a cover that is already a
+          left-to-right composition looked cropped a second time. Side by side,
+          the reading order is the order it is read in, and the picture keeps
+          its own ratio at whatever width it is given. */}
+      {/* The inset is on the panel, not on one column of it. Padding the words
+          and leaving the picture to the edges made the panel look like two
+          different surfaces stuck together. */}
+      <div className="grid items-center gap-6 p-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,54%)] lg:gap-10 lg:p-8">
+        <div className="order-2 min-w-0 lg:order-1">
+          <span className="font-mono text-[9px] font-bold tracking-[0.16em] text-mark uppercase">
+            {String(n + 1).padStart(2, "0")} · {project.kind} / {project.year}
+          </span>
 
-        <h4 className="mt-2 max-w-[24ch] text-[clamp(20px,2.2vw,30px)] leading-[1.08] font-extrabold tracking-[-0.035em] text-ink">
-          {project.name}
-        </h4>
+          <h4 className="mt-2 max-w-[24ch] text-[clamp(20px,2.2vw,30px)] leading-[1.08] font-extrabold tracking-[-0.035em] text-ink">
+            {project.name}
+          </h4>
 
-        <p className="mt-3 max-w-[68ch] text-[14px] leading-[1.65] text-body">
-          {project.summary}
-        </p>
+          <p className="mt-3 max-w-[68ch] text-[14px] leading-[1.65] text-body">
+            {project.summary}
+          </p>
 
-        {/* The facts as pills, and the two ways on. A preview is only offered
+          {/* The facts as pills, and the two ways on. A preview is only offered
             where there is one to open: a dead "live preview" is worse than no
             preview at all. */}
-        <div className="mt-5 flex flex-wrap items-center gap-2">
-          {project.facts.map((fact) => (
-            <span
-              key={fact.term}
-              className="inline-flex items-center gap-2 rounded-pill bg-field px-3.5 py-1.5 text-[12.5px] text-body"
-            >
-              <span className="font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase">
-                {fact.term}
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            {project.facts.map((fact) => (
+              <span
+                key={fact.term}
+                className="inline-flex items-center gap-2 rounded-pill bg-field px-3.5 py-1.5 text-[12.5px] text-body"
+              >
+                <span className="font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase">
+                  {fact.term}
+                </span>
+                <b className="font-semibold text-ink">{fact.value}</b>
               </span>
-              <b className="font-semibold text-ink">{fact.value}</b>
-            </span>
-          ))}
+            ))}
 
-          <span className="inline-flex items-center gap-2 rounded-pill bg-field px-3.5 py-1.5 text-[12.5px] text-body">
-            <span className="font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase">
-              Preview
+            <span className="inline-flex items-center gap-2 rounded-pill bg-field px-3.5 py-1.5 text-[12.5px] text-body">
+              <span className="font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase">
+                Preview
+              </span>
+              <b className="font-semibold text-quiet">On request</b>
             </span>
-            <b className="font-semibold text-quiet">On request</b>
-          </span>
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-center gap-2.5">
+            <Link
+              href={ROUTES.build}
+              className="group/like inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85"
+            >
+              Ask for one like this
+              <ArrowUpRight
+                aria-hidden
+                className="size-4 transition-transform group-hover/like:translate-x-0.5 group-hover/like:-translate-y-0.5"
+              />
+            </Link>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex cursor-pointer items-center gap-2 rounded-pill bg-field px-4 py-2 text-[13px] font-semibold text-quiet transition-colors hover:text-ink"
+            >
+              <X className="size-3.5" />
+              Back to the work
+            </button>
+          </div>
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center gap-2.5">
-          <Link
-            href={ROUTES.build}
-            className="group/like inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85"
-          >
-            Ask for one like this
-            <ArrowUpRight
-              aria-hidden
-              className="size-4 transition-transform group-hover/like:translate-x-0.5 group-hover/like:-translate-y-0.5"
-            />
-          </Link>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-pill bg-field px-4 py-2 text-[13px] font-semibold text-quiet transition-colors hover:text-ink"
-          >
-            <X className="size-3.5" />
-            Back to the work
-          </button>
-        </div>
+        {/* The picture, whole. It carries the `layoutId`, so it is the same
+            element that was on the card - the panel around it only fades. */}
+        <motion.span
+          layoutId={`work-${project.id}`}
+          onClick={onClose}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="relative order-1 block aspect-video w-full cursor-pointer overflow-hidden rounded-[16px] lg:order-2"
+        >
+          <Image
+            src={project.image}
+            alt={project.alt}
+            fill
+            quality={100}
+            sizes="(max-width: 1024px) 96vw, 54vw"
+            className="object-cover object-center"
+          />
+        </motion.span>
       </div>
     </motion.article>
   );

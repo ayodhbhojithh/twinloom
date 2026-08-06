@@ -1,0 +1,47 @@
+{
+  "note": "Cover images for the five projects on the landing page. One house style across all five so they read as a set: near-black, white, and a single blue used once per image. Each prompt is complete and self-contained - paste one and generate.",
+  "palette": {
+    "ink": "#111827",
+    "white": "#FFFFFF",
+    "blue": "#2563EB"
+  },
+  "output": {
+    "aspect_ratio": "16:9",
+    "resolution": "2560x1440",
+    "format": "PNG",
+    "save_to": "public/projects/"
+  },
+  "negative_prompt": "text, lettering, words, numbers, logos, brand names, watermark, UI mockups, screens, interfaces, human faces, crowds, clutter, busy composition, warm colours, orange, yellow, red, green, purple, pink, teal, neon, rainbow, heavy gradients, HDR, lens flare, grain, noise, borders, frames, collage, multiple panels, tiled variations",
+  "covers": [
+    {
+      "id": "clothing",
+      "for": "A clothing brand that sells its own way",
+      "filename": "public/projects/clothing.png",
+      "prompt": "Cinematic 3D product render of a single unbranded garment - a soft draped shirt - hanging on a plain matte black hanger, suspended in an infinite white studio void. The fabric falls in long clean folds that catch soft directional studio light from the upper left. One fine electric blue thread unravels from the hem and curls away through the air, trailing out of frame - the only colour in the entire image. Everything else is pure white and near-black. Matte, unpolished surfaces. Shallow depth of field with the far edge of the fabric softening. Generous negative space around the subject, subject occupying the centre-left third of the frame. Strict three-colour palette: near-black #111827, pure white #FFFFFF, one accent of blue #2563EB. Calm, editorial, premium, quiet. Landscape 16:9, straight-on view, even soft shadow beneath. No text, no logos, no people."
+    },
+    {
+      "id": "restaurant",
+      "for": "A restaurant that fills its tables",
+      "filename": "public/projects/restaurant.png",
+      "prompt": "Cinematic overhead 3D render of a restaurant table setting on a matte black surface: one empty white ceramic plate, two crisply folded white linen napkins, and a single tall glass with a thin electric blue rim - the only colour in the image. Soft directional studio light rakes across from the right, casting long gentle shadows. Nothing else on the table. Composition is spare and deliberate, almost a portrait of the setting rather than of food, with wide empty black space to one side. Shallow depth of field softening the far corner. Strict three-colour palette: near-black #111827, pure white #FFFFFF, one accent of blue #2563EB. Matte surfaces, no gloss, no reflections beyond a faint sheen. Calm, editorial, premium. Landscape 16:9, top-down. No text, no logos, no food, no people, no cutlery clutter."
+    },
+    {
+      "id": "medical",
+      "for": "A clinic people trust before they call",
+      "filename": "public/projects/medical.png",
+      "prompt": "Cinematic 3D render of a smooth abstract white shell form, like a rounded pod opening slightly along one seam, cradling a small perfect sphere of electric blue at its centre - the only colour in the image. Set against a soft white-to-pale-grey infinite background. Even, diffused, almost shadowless clinical light with one gentle soft shadow beneath the form. Every surface matte and seamless, no instruments, no medical equipment, no symbols, no cross, no cross-hatching. The mood is care and calm rather than clinical coldness: soft edges, nothing sharp, nothing sterile-looking. Shallow depth of field. Generous negative space, subject centred and small in frame. Strict three-colour palette: near-black #111827 used only in the deepest shadow, pure white #FFFFFF, one accent of blue #2563EB. Landscape 16:9, slight three-quarter angle. No text, no logos, no people."
+    },
+    {
+      "id": "delivery",
+      "for": "A delivery and pickup app",
+      "filename": "public/projects/delivery.png",
+      "prompt": "Cinematic 3D render of two identical matte black cube parcels against a clean white studio background. One is suspended in mid-air, caught mid-motion at a slight tilt, with a single continuous arc of electric blue light tracing the path it has travelled through the air behind it. The second parcel rests perfectly still on the white surface below - one moving, one arrived. Soft directional studio light, a crisp soft shadow under the resting parcel and a faint one below the airborne one. The blue arc is the only colour in the image. Shallow depth of field, generous negative space, composition weighted to the right. Strict three-colour palette: near-black #111827, pure white #FFFFFF, one accent of blue #2563EB. Matte surfaces, no tape, no labels, no markings. Calm, editorial, premium. Landscape 16:9, straight-on with a slight three-quarter angle. No text, no logos, no vehicles, no people."
+    },
+    {
+      "id": "bookings",
+      "for": "A bookings system that holds the diary",
+      "filename": "public/projects/bookings.png",
+      "prompt": "Cinematic 3D render of an abstract grid of small rounded white tiles laid out on a matte black surface, arranged in even rows and columns like a calendar month. Three tiles near the centre are raised slightly above the plane and lit from within in electric blue - the only colour in the image, reading as slots that have been taken. Soft directional studio light from above and behind, each tile casting a small precise shadow. Shallow depth of field so the far rows soften into darkness while the raised tiles stay sharp. Perfectly ordered, geometric, calm. Generous negative space above the grid. Strict three-colour palette: near-black #111827, pure white #FFFFFF, one accent of blue #2563EB. Matte surfaces, no gloss, no reflections. Landscape 16:9, low three-quarter angle looking across the grid. No text, no numbers, no dates, no logos, no people."
+    }
+  ]
+}
