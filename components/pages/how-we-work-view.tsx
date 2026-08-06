@@ -99,139 +99,124 @@ export function HowWeWorkView() {
             </Link>
           }
         >
-          {/* The ascent.
+          {/* Thirteen stops on one spine.
 
-              Every stop stands a little higher than the one before it, and a
-              riser drops from each back down to the floor of its flight. A flat
-              row of thirteen cards says these are thirteen things; a climb says
-              each one is only reachable from the one below it, which is the
-              actual claim being made.
+              The staircase needed a screen and a half of height to say what a
+              column says in a third of it - and a climb only reads as a climb if
+              you can see the top of it from the bottom.
 
-              Three flights rather than one, because that is where the work
-              changes hands - and because six cards is the most that can climb
-              across a screen while still holding a sentence each.
+              So: one vertical rule down the left, every stop hanging off it as a
+              row, and the three zones as bands along it. A row can be compact
+              because it reads across rather than down - number, icon, name, what
+              happens, how long - and thirteen of them stack without any of it
+              needing to be scrolled sideways or shrunk to fit.
 
-              The rise is set from the count, so a flight of two and a flight of
-              six reach the same height and the three read as one building
-              rather than three unrelated staircases. */}
-          <div className="mt-8 hidden flex-col gap-10 lg:flex">
+              The spine is the drawing. It runs unbroken through all three zones,
+              which is the one thing the earlier versions kept losing. */}
+          <div className="mt-8 hidden lg:block">
             {ZONES.map((zone, at) => (
               <section key={zone.key} className="min-w-0">
+                {/* The zone, on the spine rather than above it: its own mark
+                    sits where a stop's would, so a change of hands reads as
+                    part of the run rather than as a heading over it. */}
                 <div
-                  className="reveal flex flex-wrap items-baseline gap-x-4 gap-y-1"
+                  className="reveal relative flex gap-5 pl-[46px]"
                   style={{ ["--step" as string]: 0 }}
                 >
-                  <p className="font-mono text-[8.5px] font-bold tracking-[0.16em] text-mark uppercase">
-                    Flight {["one", "two", "three"][at]}
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "absolute top-0 bottom-0 left-[15px] w-px",
+                      at === 0 ? "top-1/2" : "",
+                      zone.key === "after" ? "bg-planned" : "bg-border",
+                    )}
+                  />
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "absolute top-1/2 left-[9px] size-3.5 -translate-y-1/2 rounded-pill ring-[3px]",
+                      zone.key === "after"
+                        ? "bg-field ring-planned"
+                        : "bg-field ring-ink",
+                    )}
+                  />
+
+                  <p
+                    className={cn(
+                      "flex flex-wrap items-baseline gap-x-3 gap-y-1",
+                      at === 0 ? "pb-5" : "py-5",
+                    )}
+                  >
+                    <b className="text-[14.5px] leading-[1.2] font-extrabold tracking-[-0.025em] text-ink">
+                      {zone.n}
+                    </b>
+                    <span className="text-[12px] leading-[1.5] text-quiet">
+                      {zone.note}
+                    </span>
                   </p>
-                  <b className="text-[15.5px] leading-[1.2] font-extrabold tracking-[-0.025em] text-ink">
-                    {zone.n}
-                  </b>
-                  <span className="text-[12.5px] leading-[1.5] text-quiet">
-                    {zone.note}
-                  </span>
                 </div>
 
-                {/* The floor each riser lands on. It is the only rule in the
-                    drawing, and it is what makes a flight a flight. */}
-                <ol className="mt-6 flex items-end border-b border-hair">
-                  {zone.stops.map((stop, n) => {
-                    const climb = (zone.stops.length - 1 - n) * 38;
+                <ol>
+                  {zone.stops.map((stop, n) => (
+                    <li
+                      key={stop.ix}
+                      className="reveal group/stop relative flex gap-5 pl-[46px]"
+                      style={{ ["--step" as string]: n + 1 }}
+                    >
+                      {/* The spine, drawn by each row so it arrives unbroken
+                          and stops with the last stop rather than running on. */}
+                      <span
+                        aria-hidden
+                        className={cn(
+                          "absolute left-[15px] w-px",
+                          zone.key === "after" ? "bg-planned" : "bg-border",
+                          at === ZONES.length - 1 && n === zone.stops.length - 1
+                            ? "top-0 h-1/2"
+                            : "inset-y-0",
+                        )}
+                      />
 
-                    return (
-                      <li
-                        key={stop.ix}
-                        className="reveal flex min-w-0 flex-1 flex-col px-1.5"
-                        style={{
-                          paddingTop: climb,
-                          ["--step" as string]: n + 1,
-                        }}
+                      {/* What the stop is, standing on the spine. */}
+                      <span
+                        aria-hidden
+                        className={cn(
+                          "absolute top-1/2 left-0 flex size-[31px] -translate-y-1/2 items-center justify-center rounded-pill transition-colors",
+                          stop.mark === "launch"
+                            ? "bg-mark text-white"
+                            : stop.mark === "interchange"
+                              ? "bg-field text-ink ring-1 ring-border"
+                              : "bg-canvas text-quiet",
+                        )}
                       >
-                        <article
+                        <stop.icon className="size-[15px]" strokeWidth={1.9} />
+                      </span>
+
+                      <span className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-4 gap-y-1 border-b border-hair py-3.5 transition-colors group-last/stop:border-b-0 group-hover/stop:border-border">
+                        <span className="font-mono text-[9.5px] font-bold text-idx tabular-nums">
+                          {stop.ix}
+                        </span>
+
+                        <b
                           className={cn(
-                            "min-w-0 rounded-[16px] p-4 transition-transform duration-300 hover:-translate-y-1",
-                            stop.mark === "launch"
-                              ? "bg-mark"
-                              : stop.mark === "interchange"
-                                ? "bg-canvas ring-1 ring-border"
-                                : "bg-canvas",
+                            "min-w-[15ch] flex-none text-[14px] leading-[1.25] font-extrabold tracking-[-0.02em]",
+                            stop.mark === "launch" ? "text-mark" : "text-ink",
                           )}
                         >
-                          <span className="flex items-center justify-between gap-2">
-                            <span
-                              aria-hidden
-                              className={cn(
-                                "flex size-7 items-center justify-center rounded-pill",
-                                stop.mark === "launch"
-                                  ? "bg-white/20 text-white"
-                                  : "bg-field text-quiet",
-                              )}
-                            >
-                              <stop.icon className="size-3.5" strokeWidth={2} />
-                            </span>
+                          {stop.n}
+                        </b>
 
-                            <span
-                              className={cn(
-                                "font-mono text-[9.5px] font-bold tabular-nums",
-                                stop.mark === "launch"
-                                  ? "text-white/60"
-                                  : "text-idx",
-                              )}
-                            >
-                              {stop.ix}
-                            </span>
+                        <span className="min-w-0 flex-1 text-[12.5px] leading-[1.5] text-quiet">
+                          {stop.sub}
+                        </span>
+
+                        {stop.takes ? (
+                          <span className="flex-none font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase tabular-nums">
+                            {stop.takes}
                           </span>
-
-                          <b
-                            className={cn(
-                              "mt-3 block text-[13.5px] leading-[1.2] font-extrabold tracking-[-0.02em]",
-                              stop.mark === "launch"
-                                ? "text-white"
-                                : "text-ink",
-                            )}
-                          >
-                            {stop.n}
-                          </b>
-
-                          <p
-                            className={cn(
-                              "mt-1.5 text-[11.5px] leading-[1.45]",
-                              stop.mark === "launch"
-                                ? "text-white/75"
-                                : "text-quiet",
-                            )}
-                          >
-                            {stop.sub}
-                          </p>
-
-                          {stop.takes ? (
-                            <p
-                              className={cn(
-                                "mt-2 font-mono text-[8.5px] font-bold tracking-[0.12em] uppercase",
-                                stop.mark === "launch"
-                                  ? "text-white/70"
-                                  : "text-label",
-                              )}
-                            >
-                              {stop.takes}
-                            </p>
-                          ) : null}
-                        </article>
-
-                        {/* The riser. It falls from the card to the floor, so
-                            the height of a stop is readable without counting
-                            anything. */}
-                        <span
-                          aria-hidden
-                          className={cn(
-                            "mx-auto block w-px flex-1",
-                            stop.mark === "launch" ? "bg-mark/40" : "bg-border",
-                          )}
-                          style={{ minHeight: 18 + climb / 2 }}
-                        />
-                      </li>
-                    );
-                  })}
+                        ) : null}
+                      </span>
+                    </li>
+                  ))}
                 </ol>
               </section>
             ))}
