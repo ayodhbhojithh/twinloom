@@ -32,6 +32,7 @@ import {
   H,
   Kicker,
   Misses,
+  RefText,
   Sub,
   SubTitle,
   TickInline,
@@ -482,7 +483,14 @@ export function StageRefs({ at, answers, onGo }: StepProps) {
 
         <div className="mt-2.5">
           <AddRow
-            placeholder="A sentence, or a link"
+            key={kind}
+            kind={kind === "site" ? "url" : "text"}
+            label={kind === "site" ? "A website address" : "A sentence"}
+            placeholder={
+              kind === "site"
+                ? "twinloom.com"
+                : "A sentence you want kept in your words"
+            }
             onAdd={(value) =>
               addRef(
                 { kind: REF_KINDS[kind], text: value, where: null },
@@ -501,7 +509,7 @@ export function StageRefs({ at, answers, onGo }: StepProps) {
               >
                 <Kicker className="w-[72px] flex-none">{ref.kind}</Kicker>
                 <span className="min-w-[16ch] flex-1 text-[13.5px] leading-[1.4] text-ink">
-                  {ref.text}
+                  <RefText text={ref.text} />
                 </span>
                 <input
                   value={answers.like[ref.n] ?? ""}

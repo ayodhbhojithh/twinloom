@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { isPicture, type Attached } from "@/lib/build/upload";
 
 import { DropZone } from "./drop";
-import { AddRow, Kicker } from "./kit";
+import { AddRow, Kicker, RefText } from "./kit";
 
 /* ---------------------------------------------------------------------------
    The desk, as a panel that floats.
@@ -317,7 +317,7 @@ export function NotesDock({
                                   : "font-mono text-[12px] break-all",
                               )}
                             >
-                              {ref.text}
+                              <RefText text={ref.text} />
                             </p>
 
                             {/* Only where the question means anything. A note

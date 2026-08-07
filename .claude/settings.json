@@ -6,7 +6,8 @@
       "PowerShell(if \\($?\\) { \"tsc: clean\" })",
       "PowerShell(if \\($?\\) { \"lint: clean\" })",
       "PowerShell(if \\($?\\) { \"tsc: clean\" } else { \"tsc: FAILED\" })",
-      "PowerShell(if \\($?\\) { \"lint: clean\" } else { \"lint: FAILED\" })"
+      "PowerShell(if \\($?\\) { \"lint: clean\" } else { \"lint: FAILED\" })",
+      "Bash(node -e ' *)"
     ]
   }
 }

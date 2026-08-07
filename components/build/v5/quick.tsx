@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { isPicture, type Attached } from "@/lib/build/upload";
 
 import { DropZone } from "./drop";
-import { AddRow, Chip, H, Kicker, Pill, Sub } from "./kit";
+import { AddRow, Chip, H, Kicker, Pill, RefText, Sub } from "./kit";
 import { Stage } from "./stage";
 
 /* ---------------------------------------------------------------------------
@@ -132,8 +132,18 @@ export function QuickPane({
         </div>
 
         <div className="mt-2.5">
+          {/* The row follows the chip. One placeholder for both said "a
+              sentence, or a link" and then took either as text, so a website
+              was filed under a label saying Website and never became one. */}
           <AddRow
-            placeholder="A sentence, or a link"
+            key={kind}
+            kind={kind === "site" ? "url" : "text"}
+            label={kind === "site" ? "A website address" : "A sentence"}
+            placeholder={
+              kind === "site"
+                ? "twinloom.com"
+                : "A sentence you want kept in your words"
+            }
             onAdd={(value) =>
               addRef({ kind: REF_KINDS[kind], text: value, where: null })
             }
@@ -149,7 +159,7 @@ export function QuickPane({
               >
                 <Kicker className="w-[72px] flex-none">{ref.kind}</Kicker>
                 <span className="min-w-[14ch] flex-1 text-[13.5px] leading-[1.4] text-ink">
-                  {ref.text}
+                  <RefText text={ref.text} />
                 </span>
                 <input
                   value={answers.like[ref.n] ?? ""}
