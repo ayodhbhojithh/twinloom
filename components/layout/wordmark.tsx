@@ -74,6 +74,7 @@ export function Wordmark({
       <span className="truncate text-[18px] leading-none font-extrabold tracking-[-0.03em] text-ink">
         {SITE.name}
       </span>
+
     </>
   );
 

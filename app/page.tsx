@@ -10,19 +10,22 @@ import { SandboxSection } from "@/components/home/sandbox-section";
 import { pageMeta } from "@/lib/seo";
 import { ROUTES, SITE } from "@/lib/site";
 
+/** The services line, whole, for the places that take one string. */
+const SERVICES = `${SITE.services.ink} ${SITE.services.quiet}`;
+
 export const metadata: Metadata = {
   ...pageMeta({
     /* The landing page is the one that has to say what the company does in the
        title itself. `TwinLoom` alone is a result nobody clicks who does not
        already know the name, and the people who know the name are not the ones
        this page is for. */
-    title: `${SITE.name} - ${SITE.tagline}`,
+    title: `${SITE.name} - ${SERVICES}`,
     description: SITE.description,
     path: ROUTES.home,
   }),
   /* `absolute` because the layout appends the company name to every title, and
      this one already carries it. */
-  title: { absolute: `${SITE.name} - ${SITE.tagline}` },
+  title: { absolute: `${SITE.name} - ${SERVICES}` },
 };
 
 /**
@@ -52,10 +55,6 @@ export const metadata: Metadata = {
  * on the build page.
  */
 export default function LandingPage() {
-  const at = SITE.tagline.indexOf(". ");
-  const claim = at > -1 ? SITE.tagline.slice(0, at + 1) : SITE.tagline;
-  const promise = at > -1 ? SITE.tagline.slice(at + 2) : "";
-
   return (
     <>
       {/* The film on the card, asked for before the card exists.
@@ -87,14 +86,18 @@ export default function LandingPage() {
                 length, which turns a headline into a block. Filling the first
                 line and letting the second run short gives the shape a top edge
                 and a diagonal, which is the thing that reads as a headline
-                rather than as a paragraph. */}
-            <h1 className="rise section-head max-w-[25ch] text-ink [text-wrap:pretty]">
-              {claim}
-              {/* The second sentence a grade quieter, which is the same split
-                  the footer makes: the ask in ink, the promise behind it. Tone
-                  says what the gradient was saying, and says it in the one
-                  palette the page has. */}
-              {promise ? <span className="text-quiet"> {promise}</span> : null}
+                rather than as a paragraph.
+
+                Thirty-four characters, which is where this line falls in two.
+                Twenty-five was set for a shorter headline and takes this one to
+                three, and the third line comes off the card below it. */}
+            <h1 className="rise section-head max-w-[34ch] text-ink [text-wrap:pretty]">
+              {SITE.services.ink}
+              {/* The second half a grade quieter, which is the same split the
+                  footer makes: the thing we are known for in ink, everything
+                  else behind it. Tone says what a gradient would have said, and
+                  says it in the one palette the page has. */}
+              <span className="text-quiet"> {SITE.services.quiet}</span>
             </h1>
           </div>
 

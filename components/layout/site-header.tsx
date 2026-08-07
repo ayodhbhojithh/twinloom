@@ -35,11 +35,13 @@ import { cn } from "@/lib/utils";
  * the call to action and the menu button read as one set rather than three
  * borrowed parts.
  *
- * What is shown when: the brand and the way into the menu are always there; the
- * search field arrives at `lg`, where the rail has docked and there is room; the
- * seven links arrive at `2xl`, which is the first width at which all four zones fit
- * without crowding. Nothing is lost below those widths, because the menu carries
- * the whole rail and the rail carries every page.
+ * What is shown when: the eight links arrive at `xl`, which is the first width
+ * that holds them, the brand and the call to action without crowding. Below that
+ * the menu button appears in their place and the sheet carries the same list.
+ *
+ * The menu used to stop at `lg` because the docked rail covered everything
+ * above it. There is no rail now, so the two have to meet exactly: one of them
+ * is on at every width, and between them every page is always one press away.
  */
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -59,7 +61,7 @@ export function SiteHeader() {
 
         <nav
           aria-label="Primary"
-          className="hidden shrink-0 flex-nowrap items-center gap-x-6 2xl:flex"
+          className="hidden shrink-0 flex-nowrap items-center gap-x-4 xl:flex 2xl:gap-x-6"
         >
           {HEADER_NAV.map((item) => {
             /* `startsWith` so a child route still marks its parent, but the home
@@ -75,7 +77,7 @@ export function SiteHeader() {
                 href={item.href}
                 aria-current={on ? "page" : undefined}
                 className={cn(
-                  "text-[14.5px] whitespace-nowrap hover:underline",
+                  "text-[13.5px] whitespace-nowrap hover:underline 2xl:text-[14.5px]",
                   on ? "font-semibold text-mark" : "text-quiet hover:text-ink",
                 )}
               >
@@ -116,7 +118,7 @@ export function SiteHeader() {
             aria-label="Open menu"
             aria-expanded={open}
             aria-controls="site-menu"
-            className="flex size-8 shrink-0 items-center justify-center rounded-field text-ink transition-colors hover:bg-hair lg:hidden"
+            className="flex size-8 shrink-0 items-center justify-center rounded-field text-ink transition-colors hover:bg-hair xl:hidden"
           >
             <Menu className="size-[18px]" />
           </button>
@@ -128,7 +130,7 @@ export function SiteHeader() {
       {open ? (
         <div
           id="site-menu"
-          className="fixed inset-0 z-50 flex flex-col bg-field lg:hidden"
+          className="fixed inset-0 z-50 flex flex-col bg-field xl:hidden"
         >
           <div className="flex items-center gap-4 border-b border-border px-5 py-2.5 sm:px-8">
             <Wordmark as="text" className="min-w-0" />

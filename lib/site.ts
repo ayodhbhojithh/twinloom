@@ -15,6 +15,23 @@ export const SITE = {
   name: "TwinLoom",
   /** For the header, where a longer name crowds everything beside it. */
   short: "TwinLoom",
+  /**
+   * The landing page's header.
+   *
+   * `lockup` is not on it. It was set above the services line and read as a
+   * label on a screen whose whole job is one claim; the footer's legal line
+   * already says whose company this is, and says it where somebody looking for
+   * that would go. Kept here because it is still the correct form of the name.
+   *
+   * The services line is held as the two halves it is set in rather than split
+   * at a comma in the view. There are three commas in it and only one of them
+   * is the one where the tone changes.
+   */
+  lockup: "TwinLoom, a TwinCoreTech company",
+  services: {
+    ink: "Websites, brand identity,",
+    quiet: "digital consultancy and ongoing services.",
+  },
   tagline: "Tell us who your website is for. We write the rest down for you.",
   description:
     "You answer one question. We send back a written scope in your own words, within two working days. It costs nothing and commits you to nothing.",
@@ -61,19 +78,31 @@ export interface NavLink {
 }
 
 /**
- * The header's links.
+ * The header's links: every page the site has.
  *
- * Five, because v4 took pricing and the services pages off the nav entirely. The
- * build page is the single way in and it is the call to action, so it is not
- * repeated here.
+ * It used to be five, because the rail carried the whole list and the header
+ * only needed the pages a visitor reaches for. With the rail gone the header is
+ * the navigation, so nothing may be missing from it - a page that is only in
+ * the footer is a page nobody finds.
+ *
+ * Short labels rather than the rail's. "Our partners" and "Blogs and articles"
+ * read well down a column and are twice as wide as they need to be across a
+ * bar, and eight of them have to fit on one line at every width that shows
+ * them.
+ *
+ * The build page is still not here: it is the call to action, filled in the
+ * accent at the right hand end, and the same link twice in one bar reads as a
+ * mistake rather than as emphasis.
  */
 export const HEADER_NAV: readonly NavLink[] = [
+  { label: "Home", href: ROUTES.home },
   { label: "About", href: ROUTES.about },
   { label: "How we work", href: ROUTES.how },
   { label: "Partners", href: ROUTES.partners },
+  { label: "Contact", href: ROUTES.contact },
+  { label: "Book a meeting", href: ROUTES.book },
   { label: "FAQs", href: ROUTES.faq },
   { label: "Articles", href: ROUTES.blog },
-  { label: "Contact", href: ROUTES.contact },
 ];
 
 /** The one call to action in the chrome, and the site's only way in. */

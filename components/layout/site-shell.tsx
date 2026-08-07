@@ -6,7 +6,7 @@ import { ROUTES } from "@/lib/site";
 
 import { SiteFooter } from "./site-footer";
 import { SiteHeader } from "./site-header";
-import { SiteRail } from "./site-rail";
+// import { SiteRail } from "./site-rail";
 
 /**
  * The routes that end at the fold.
@@ -46,10 +46,15 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <SiteHeader />
 
       <div className="flex flex-1 items-start">
-        {/* The landing page has no rail. It is a front door rather than a page
-            of the site, and a list of every other page beside a front door is a
-            corridor with a doormat in it. Everything reached from it has one. */}
-        {pathname === ROUTES.home ? null : <SiteRail />}
+        {/* No rail. Every page it carried is in the header now, and a docked
+            column repeating the bar above it spent a fifth of the window
+            saying what one line already said.
+
+            Left commented rather than deleted: the component, its remembered
+            open state and its markers all still work, and this is the one line
+            that puts them back.
+
+            {pathname === ROUTES.home ? null : <SiteRail />} */}
 
         <div className="flex min-w-0 flex-1 flex-col">
           <main className="flex-1">{children}</main>
