@@ -34,11 +34,12 @@ export const FRAMEWORK_PAGES: readonly FrameworkPage[] = [
     title: "About us",
     lead: "Who we are, and how we work.",
     description:
-      "Who does the work, how we work, and what we will not do. Specialist partners are part of a build rather than an extra.",
+      "TwinLoom builds websites, supported by our digital and consultancy services. The same eleven inclusions on every site, whatever its size.",
     belongs: [
-      "Who does the work, named.",
-      "How we work, in the order it happens.",
-      "What we will not do, which matters as much.",
+      "What we build, and what TwinCoreTech builds behind it.",
+      "The eleven inclusions every site gets, whatever its size.",
+      "The services that run alongside the build.",
+      "How a project proceeds, and where the scope comes from.",
       "Specialist partners, shown as integral rather than as an extra.",
     ],
   },
