@@ -75,94 +75,102 @@ export function Disc({
 export function StepRail({
   at,
   reached,
+  said,
   onGo,
 }: {
   at: number;
   reached: number;
+  said: readonly string[];
   onGo: (step: number) => void;
 }) {
-  /* Four equal columns, so a mark sits at 12.5, 37.5, 62.5 and 87.5 per cent.
-     The track runs between the first and the last of those rather than edge to
-     edge - a line that overshoots its end marks reads as a rule with dots on
-     it, not as a run with a beginning and an end. */
-  const from = 12.5;
-  const span = 75;
-  const done = STEPS.length - 1 === 0 ? 0 : reached / (STEPS.length - 1);
-
   return (
-    /* The run of four, standing in the notch.
+    /* The run of four, standing in the notch the surface was cut for.
 
-       One continuous track with the marks sitting on it, rather than four
-       buttons with short rules wedged between them. That is the difference
-       between a timeline and a row of tabs: the line is one thing, it is
-       always there, and the part of it behind you is filled in.
+       Four fixed-width steps with a rule between each pair: a mark, the step's
+       name, and under it what was chosen for it - "Intro call", the date, the
+       name - so the run is a record of the booking rather than a row of
+       headings.
 
-       A notch is one line deep, so the names go above the track and nothing
-       goes below it. What was chosen for a step is not repeated here - it
-       stands in the bite at the other end of the surface, where there is room
-       to read it. */
+       Fixed widths rather than four equal parts. Every step then sits at the
+       same distance from the next whatever its name is, which is what makes
+       the rules between them read as one line rather than as three different
+       lines. */
     <nav
       aria-label="Booking steps"
-      className="quiet-scroll flex h-10 w-full min-w-0 items-center overflow-x-auto"
+      className="quiet-scroll flex max-w-full justify-center overflow-x-auto"
     >
-      <ol className="relative grid w-full min-w-[360px] grid-cols-4 pb-1">
-        {/* The track, behind the marks. */}
-        <span
-          aria-hidden
-          className="absolute bottom-[6px] block h-[3px] rounded-pill bg-hair"
-          style={{ left: `${from}%`, width: `${span}%` }}
-        />
-        <span
-          aria-hidden
-          className="absolute bottom-[6px] block h-[3px] rounded-pill bg-ink transition-[width] duration-500 ease-out"
-          style={{ left: `${from}%`, width: `${span * done}%` }}
-        />
-
+      <ol className="flex w-max items-start justify-center">
         {STEPS.map((label, n) => {
           const here = n === at;
-          const passed = n < reached;
+          const done = n < reached;
           const open = n <= reached;
 
+
           return (
-            <li key={label} className="relative flex min-w-0 justify-center">
+            <li key={label} className="flex items-start">
               <button
                 type="button"
                 disabled={!open}
                 aria-current={here ? "step" : undefined}
                 onClick={() => onGo(n)}
                 className={cn(
-                  "group/step flex min-w-0 flex-col items-center gap-1.5",
+                  "group/step flex w-[104px] flex-col items-center gap-2.5 px-1 sm:w-[132px]",
                   open ? "cursor-pointer" : "cursor-default",
                 )}
               >
-                <span
-                  className={cn(
-                    "max-w-full truncate px-1 text-[12px] leading-none font-bold tracking-[-0.012em] transition-colors",
-                    here
-                      ? "text-ink"
-                      : open
-                        ? "text-quiet group-hover/step:text-ink"
-                        : "text-planned",
-                  )}
-                >
-                  {label}
-                </span>
-
-                {/* The mark. Hollow where you are, filled where you have been,
-                    and the same size throughout - a mark that grows when it is
-                    current bends the line it is standing on. */}
+                {/* The mark. A ring round the one you are on rather than a
+                    larger dot, so the line through them all stays straight. */}
                 <span
                   aria-hidden
                   className={cn(
-                    "size-3 rounded-pill transition-all duration-300",
+                    "flex size-3 items-center justify-center rounded-pill transition-all",
                     here
-                      ? "bg-field ring-[3px] ring-ink"
-                      : passed
-                        ? "bg-ink"
-                        : "bg-hair group-hover/step:bg-idx",
+                      ? "bg-ink ring-4 ring-ink/15"
+                      : done
+                        ? "bg-mark"
+                        : "bg-planned group-hover/step:bg-idx",
                   )}
                 />
+
+                <span className="flex min-w-0 flex-col items-center">
+                  <b
+                    className={cn(
+                      "block text-[13px] leading-[1.2] font-bold tracking-[-0.01em] transition-colors",
+                      here
+                        ? "text-ink"
+                        : open
+                          ? "text-quiet group-hover/step:text-ink"
+                          : "text-planned",
+                    )}
+                  >
+                    {label}
+                  </b>
+
+                  {/* Only where there is something to say. "Open" and
+                      "Locked" were a second line under every step repeating
+                      what the mark and the colour already say - and three of
+                      the four said the same word. What was chosen for a step
+                      is worth a line; the state of one is not. */}
+                  {said[n] ? (
+                    <span className="mt-1 block max-w-full truncate font-mono text-[9px] font-bold tracking-[0.1em] text-mark uppercase">
+                      {said[n]}
+                    </span>
+                  ) : null}
+                </span>
               </button>
+
+              {n < STEPS.length - 1 ? (
+                /* The line between two marks, and it is the line: it sits at
+                   the height of the marks rather than under the labels, so the
+                   four of them read as one run. */
+                <span
+                  aria-hidden
+                  className={cn(
+                    "mt-[5px] -mx-6 h-0.5 w-12 rounded-pill transition-colors sm:w-16",
+                    n < reached ? "bg-mark" : "bg-hair",
+                  )}
+                />
+              ) : null}
             </li>
           );
         })}
@@ -228,12 +236,12 @@ export function BookStage({
       className={cn("min-h-[clamp(380px,46vh,520px)] w-full", className)}
       bar="wide"
       toolbar={
-        <div className="flex h-10 w-full min-w-0 items-center gap-1 pr-2 pl-1">
+        <div className="flex h-full w-full min-w-0 items-center gap-1 pr-2 pl-1">
           <Disc label="Previous step" onClick={onBack} disabled={at === 0}>
             <ArrowLeft className="size-4" />
           </Disc>
 
-          <div className="flex min-w-0 flex-1">{rail}</div>
+          <div className="flex min-w-0 flex-1 justify-center">{rail}</div>
         </div>
       }
       aside={

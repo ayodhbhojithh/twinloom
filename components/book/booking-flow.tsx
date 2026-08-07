@@ -259,6 +259,15 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
     );
   }
 
+  /* What has been settled, in the reader's own terms, so the run of steps is a
+     record of the booking rather than a row of headings. */
+  const said = [
+    meeting ? meeting.name : "",
+    when ? `${whenShort} · ${whenTime}` : "",
+    details.name.trim(),
+    "",
+  ];
+
   return (
     <div>
       {/* The head.
@@ -294,7 +303,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
         {at === 0 ? (
           <BookStage
             rail={
-              <StepRail at={at} reached={reached} onGo={setAt} />
+              <StepRail at={at} reached={reached} said={said} onGo={setAt} />
             }
             at={at}
             title="What kind of meeting?"
@@ -419,7 +428,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
         {at === 1 ? (
           <BookStage
             rail={
-              <StepRail at={at} reached={reached} onGo={setAt} />
+              <StepRail at={at} reached={reached} said={said} onGo={setAt} />
             }
             at={at}
             title="When suits you?"
@@ -543,7 +552,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
         {at === 2 ? (
           <BookStage
             rail={
-              <StepRail at={at} reached={reached} onGo={setAt} />
+              <StepRail at={at} reached={reached} said={said} onGo={setAt} />
             }
             at={at}
             title="Who are we meeting?"
@@ -618,7 +627,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
         {at === 3 ? (
           <BookStage
             rail={
-              <StepRail at={at} reached={reached} onGo={setAt} />
+              <StepRail at={at} reached={reached} said={said} onGo={setAt} />
             }
             at={at}
             title="Check it over."
