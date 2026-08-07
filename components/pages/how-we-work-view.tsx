@@ -41,27 +41,23 @@ const RAMP = [
   { from: "#3b82f6", to: "#8b5cf6" },
 ] as const;
 
-/** The two ways in, which join the same process. */
-const PATHS = [
-  {
-    href: ROUTES.book,
-    kicker: "Path one - from a blank page",
-    n: "Get us involved from the start",
-    sub: "You know you need something, but not yet what it looks like. Book a call and we will work the requirements out with you.",
-    go: "Book a meeting",
-    tint: "#8b5cf6",
-    filled: false,
-  },
-  {
-    href: ROUTES.build,
-    kicker: "Path two - you have done the groundwork",
-    n: "Send us what you have",
-    sub: "Already worked out what you need? Write it down on this site and send it, or email us whatever you already have.",
-    go: "Start a submission",
-    tint: "#06b6d4",
-    filled: true,
-  },
-] as const;
+/**
+ * The way in.
+ *
+ * One, not two. The second card sent people to the scoping run, which is what
+ * the button in the header does on every page of the site and what the two
+ * home page sections above it do - a third copy of it here was the same offer
+ * for the third time, and it made the pair read as a choice when only one of
+ * them was about this page.
+ */
+const PATH = {
+  href: ROUTES.book,
+  kicker: "Before anything is written down",
+  n: "Get us involved from the start",
+  sub: "You know you need something, but not yet what it looks like. Book a call and we will work the requirements out with you - nothing is priced and nothing is committed.",
+  go: "Book a meeting",
+  tint: "#8b5cf6",
+} as const;
 
 /**
  * The one line under a zone's name.
@@ -97,80 +93,62 @@ export function HowWeWorkView() {
         <div className="rounded-[24px] border border-hair bg-field p-6 sm:p-9 lg:p-11">
           {/* The head: the line on the left, what it means on the right, both
               on one baseline. */}
-          <div className="flex flex-wrap items-end justify-between gap-x-12 gap-y-5">
-            <div className="min-w-0">
-              <p
-                className="font-mono text-[10px] font-bold tracking-[0.18em] uppercase"
-                style={{ color: RAMP[0].to }}
-              >
-                How we work
-              </p>
+          <div className="text-center">
+            <p
+              className="font-mono text-[10px] font-bold tracking-[0.18em] uppercase"
+              style={{ color: RAMP[0].to }}
+            >
+              How we work
+            </p>
 
-              <h1 className="mt-3 max-w-[18ch] text-[clamp(26px,3vw,34px)] leading-[1.14] font-extrabold tracking-[-0.03em] text-ink">
-                How we normally work
-              </h1>
-            </div>
+            <h1 className="mx-auto mt-3 max-w-[22ch] text-[clamp(26px,3vw,34px)] leading-[1.14] font-extrabold tracking-[-0.03em] text-ink">
+              How we normally work
+            </h1>
 
-            <p className="max-w-[46ch] text-[13.5px] leading-[1.6] text-quiet">
-              There are two broad ways in, depending on how far you have got
-              with your requirements. Both join the same process, and neither
-              commits you to anything.
+            <p className="mx-auto mt-4 max-w-[64ch] text-[14px] leading-[1.65] text-quiet">
+              The same run for every project. What changes between them is what
+              happens inside a step, never which steps there are - so you can
+              see the whole of it before you have committed to any of it.
             </p>
           </div>
 
           {/* The two ways in. Ruled cards rather than cut surfaces: they are a
               pair of equal choices, and a cut is for a control standing in it -
               these carry theirs on the face. */}
-          <div className="mt-9 grid gap-3.5 lg:grid-cols-2">
-            {PATHS.map((path) => (
-              <div
-                key={path.href}
-                className="flex flex-col items-start gap-3 rounded-[14px] border border-hair p-6 sm:p-7"
-              >
-                <p
-                  className="font-mono text-[9.5px] font-bold tracking-[0.16em] uppercase"
-                  style={{ color: path.tint }}
-                >
-                  {path.kicker}
-                </p>
+          <div className="mx-auto mt-9 flex max-w-[46rem] flex-col items-center gap-3 rounded-[14px] border border-hair p-7 text-center sm:p-8">
+            <p
+              className="font-mono text-[9.5px] font-bold tracking-[0.16em] uppercase"
+              style={{ color: PATH.tint }}
+            >
+              {PATH.kicker}
+            </p>
 
-                <h2 className="max-w-[24ch] text-[20px] leading-[1.3] font-bold tracking-[-0.022em] text-ink">
-                  {path.n}
-                </h2>
+            <h2 className="max-w-[24ch] text-[20px] leading-[1.3] font-bold tracking-[-0.022em] text-ink">
+              {PATH.n}
+            </h2>
 
-                <p className="max-w-[48ch] text-[13.5px] leading-[1.6] text-quiet">
-                  {path.sub}
-                </p>
+            <p className="max-w-[52ch] text-[13.5px] leading-[1.6] text-quiet">
+              {PATH.sub}
+            </p>
 
-                <Link
-                  href={path.href}
-                  className={cn(
-                    "group/go mt-auto inline-flex items-center gap-2 rounded-[9px] px-6 py-3 text-[14px] font-semibold transition-opacity hover:opacity-85",
-                    path.filled ? "text-white" : "border-[1.5px] bg-field",
-                  )}
-                  style={
-                    path.filled
-                      ? {
-                          backgroundImage: `linear-gradient(100deg, ${RAMP[0].from}, ${RAMP[0].to})`,
-                        }
-                      : { borderColor: path.tint, color: path.tint }
-                  }
-                >
-                  {path.go}
-                  <ArrowUpRight
-                    aria-hidden
-                    className="size-4 transition-transform group-hover/go:translate-x-0.5 group-hover/go:-translate-y-0.5"
-                  />
-                </Link>
-              </div>
-            ))}
+            <Link
+              href={PATH.href}
+              className="group/go mt-2 inline-flex items-center gap-2 rounded-[9px] border-[1.5px] bg-field px-6 py-3 text-[14px] font-semibold transition-opacity hover:opacity-85"
+              style={{ borderColor: PATH.tint, color: PATH.tint }}
+            >
+              {PATH.go}
+              <ArrowUpRight
+                aria-hidden
+                className="size-4 transition-transform group-hover/go:translate-x-0.5 group-hover/go:-translate-y-0.5"
+              />
+            </Link>
           </div>
 
           {/* The rule that joins the two. */}
           <div className="mt-7 flex items-center gap-5">
             <span aria-hidden className="h-px flex-1 bg-hair" />
             <span className="text-center font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase">
-              From there, the process is the same
+              However it starts, the process is the same
             </span>
             <span aria-hidden className="h-px flex-1 bg-hair" />
           </div>
@@ -241,25 +219,34 @@ export function HowWeWorkView() {
                       It stacks below `sm` rather than wrapping. Wrapping put a
                       title on its own line and took the sentence with it, so a
                       row broke into three pieces at no particular width. */}
-                  <div className="relative pb-7">
+                  {/* The steps, on one rail and in one column.
+
+                      Held to a measure and centred rather than spread across
+                      the whole card: at full width the title and its sentence
+                      were a hundred and eighty pixels apart with nothing
+                      between them, and the duration ended up so far right it
+                      wrapped onto two lines.
+
+                      One line in the whole block, and it is the rail. The
+                      hairline under every row was five more rules saying what
+                      the marks on the rail already say, on a page whose point
+                      is that there is a single run through it. */}
+                  <div className="relative mx-auto max-w-[62rem] pb-8">
                     <span
                       aria-hidden
-                      className="absolute top-9 bottom-12 left-[16px] hidden w-0.5 bg-hair sm:block"
+                      className="absolute top-6 bottom-8 left-[16px] w-0.5 bg-hair"
                     />
 
                     <ol>
                       {zone.stops.map((stop, n) => (
                         <li
                           key={stop.ix}
-                          className={cn(
-                            "relative flex flex-col items-start gap-x-6 gap-y-1.5 py-4 sm:flex-row sm:items-start",
-                            n > 0 && "border-t border-hair",
-                          )}
+                          className="relative flex flex-col items-start gap-x-7 gap-y-1.5 py-3.5 sm:flex-row sm:items-baseline"
                         >
                           <span
                             aria-hidden
                             className={cn(
-                              "flex h-[34px] w-[34px] shrink-0 grow-0 basis-[34px] items-center justify-center rounded-pill text-[13px] font-bold tabular-nums",
+                              "flex h-[34px] w-[34px] shrink-0 grow-0 basis-[34px] items-center justify-center self-start rounded-pill text-[13px] font-bold tabular-nums",
                               stop.mark === "launch"
                                 ? "text-white"
                                 : "bg-ink text-white",
@@ -275,15 +262,15 @@ export function HowWeWorkView() {
                             {n + 1}
                           </span>
 
-                          <b className="min-w-0 pt-1.5 text-[16px] leading-[1.35] font-bold tracking-[-0.018em] text-ink sm:w-[300px] sm:shrink-0 sm:grow-0">
+                          <b className="min-w-0 text-[15.5px] leading-[1.35] font-bold tracking-[-0.018em] text-ink sm:w-[250px] sm:shrink-0 sm:grow-0">
                             {stop.n}
                           </b>
 
-                          <span className="min-w-0 grow text-[13.5px] leading-[1.6] text-quiet sm:pt-2">
+                          <span className="min-w-0 grow text-[13.5px] leading-[1.6] text-quiet">
                             {stop.sub}
                           </span>
 
-                          <span className="shrink-0 font-mono text-[9.5px] font-bold tracking-[0.1em] text-label uppercase tabular-nums sm:w-[9ch] sm:pt-2.5 sm:text-right">
+                          <span className="shrink-0 font-mono text-[9.5px] font-bold tracking-[0.1em] whitespace-nowrap text-label uppercase tabular-nums">
                             {stop.takes ?? ""}
                           </span>
                         </li>

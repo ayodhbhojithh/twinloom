@@ -71,7 +71,14 @@ export function QuickPane({
        this was two columns - each half had a heading of its own, and the two
        were saying the same thing. */
     <Stage className="min-h-[380px] w-full">
-      <div className="w-full">
+      {/* The same column every step of the run-through gets.
+
+          The quick pane goes through `Stage` directly rather than through
+          `StageStep`, so it never picked up the measure the frame puts on the
+          ten steps - it ran edge to edge of the surface while every screen
+          beside it was held to 1100 and centred. Two ways in should not be two
+          different widths. */}
+      <div className="mx-auto w-full max-w-[1100px]">
         <div className="min-w-0">
           <H>Say it in your own words.</H>
           <Sub>
@@ -204,8 +211,14 @@ export function QuickPane({
             rather than at the top where they have not started.
 
             No rule over it. Space is already saying the same thing. */}
-        <div className="mt-8 min-w-0">
-          <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">
+        {/* The way out, under both columns and on their centre line.
+
+            It sat under the left column because it is the next thing in the
+            flow after it, which put a pair of buttons and two lines of small
+            print against one edge of a surface whose heading is centred over
+            the whole of it. */}
+        <div className="mt-8 min-w-0 text-center">
+          <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
             <Pill
               tone="ink"
               arrow
@@ -224,7 +237,7 @@ export function QuickPane({
             </Pill>
           </div>
 
-          <p className="mt-3 max-w-[62ch] text-[12.5px] leading-[1.55] text-quiet">
+          <p className="mx-auto mt-4 max-w-[62ch] text-[12.5px] leading-[1.55] text-quiet">
             Nothing is thrown away and nothing is final. It comes back as the
             same written scope, and you can answer the rest at any point.
           </p>
@@ -232,7 +245,7 @@ export function QuickPane({
           {/* At the point of collection, not seven links down the footer. This
               pane takes free text, files and contact details, and a privacy
               notice somebody has to go looking for is not one that was given. */}
-          <p className="mt-2 max-w-[62ch] text-[12px] leading-[1.55] text-label">
+          <p className="mx-auto mt-2 max-w-[62ch] text-[12px] leading-[1.55] text-label">
             What happens to your details is set out in our{" "}
             <Link
               href={ROUTES.privacy}
