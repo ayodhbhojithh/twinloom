@@ -105,7 +105,6 @@ export function ServiceWall({
 }) {
   const track = useRef<HTMLDivElement>(null);
   const held = useRef(false);
-  const over = useRef(false);
   const [grabbing, setGrabbing] = useState(false);
 
   /**
@@ -119,34 +118,52 @@ export function ServiceWall({
    *
    * The list is rendered twice and the position wraps at half the width, so
    * the seam falls where the copy repeats and there is nothing to see. It
-   * stops under the pointer and while a drag is in progress, because a row
-   * nobody can hold still is a row nobody can read.
+   * stops while a drag is in progress and at no other time.
+   *
+   * It does not check `prefers-reduced-motion`. It did, and that was the
+   * reason it looked broken on a machine with animations turned off in the
+   * operating system - which is most Windows laptops that have ever had a
+   * battery-saver on. Asked for explicitly, so it runs; it is a slow drift
+   * rather than anything that flashes, and a hand on it stops it.
    */
   useEffect(() => {
     const node = track.current;
     if (!node) return;
 
-    /* Somebody who has asked for less motion gets the row without the drift.
-       It is still draggable, which is the part that was theirs to control. */
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
     let frame = 0;
     let last = 0;
+    /* The position is kept here, in a float, and written to the element -
+       never read back from it.
+
+       That is the fix for the row standing still. At thirty pixels a second a
+       frame moves it half a pixel, and `scrollLeft += 0.5` is a read, an add
+       and a write: the browser rounds the value it stores, the next read gets
+       the rounded number back, and the half pixel is lost every frame forever.
+       Accumulating outside the DOM means the fraction survives until it adds
+       up to something the element can hold. */
+    let pos = node.scrollLeft;
 
     const tick = (now: number) => {
       const step = last ? Math.min(now - last, 64) : 16;
       last = now;
 
-      if (!held.current && !over.current) {
-        node.scrollLeft += (step / 1000) * 26;
-      }
-
-      /* Wrap on the half, in both directions - a drag can run it backwards
-         past the start as easily as the drift runs it past the end. */
       const half = node.scrollWidth / 2;
-      if (half > 0) {
-        if (node.scrollLeft >= half) node.scrollLeft -= half;
-        else if (node.scrollLeft < 0) node.scrollLeft += half;
+
+      if (held.current) {
+        /* A hand is on it. Follow where it was put, so letting go does not
+           snap back to wherever the drift had got to. */
+        pos = node.scrollLeft;
+      } else {
+        pos += (step / 1000) * 34;
+
+        /* Wrap on the half, in both directions - a drag can run it backwards
+           past the start as easily as the drift runs it past the end. */
+        if (half > 0) {
+          if (pos >= half) pos -= half;
+          else if (pos < 0) pos += half;
+        }
+
+        node.scrollLeft = pos;
       }
 
       frame = requestAnimationFrame(tick);
@@ -186,12 +203,6 @@ export function ServiceWall({
         bleed ? "mx-[calc(50%-50vw)] w-screen" : "",
         className,
       )}
-      onPointerEnter={() => {
-        over.current = true;
-      }}
-      onPointerLeave={() => {
-        over.current = false;
-      }}
     >
       <div
         ref={track}
@@ -206,6 +217,11 @@ export function ServiceWall({
           maskImage: EDGES,
           WebkitMaskImage: EDGES,
           scrollbarWidth: "none",
+          /* Not smooth. `html` carries `scroll-behavior: smooth` for the
+             page's own anchors, and a scroller that inherits it animates
+             every one of these one-pixel-a-frame writes - which cancel each
+             other out and leave the row standing still. */
+          scrollBehavior: "auto",
         }}
         className={cn(
           "flex gap-4 overflow-x-auto px-4 py-3 [&::-webkit-scrollbar]:hidden sm:px-6",
