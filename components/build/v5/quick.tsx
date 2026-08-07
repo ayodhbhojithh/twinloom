@@ -3,14 +3,21 @@
 import { useState } from "react";
 import Link from "next/link";
 
-import { REF_KINDS } from "@/lib/build/v5";
+import { ASK_PARTS, REF_KINDS } from "@/lib/build/v5";
+import { sendScope, whatIsMissing } from "@/lib/build/submit";
 import { ROUTES } from "@/lib/site";
 import {
   addRef,
+  chipOn,
   dropRef,
+  setAsk,
+  setDelivered,
   setLike,
+  setProblem,
+  setSending,
   setShort,
   setText,
+  toggleChip,
   type Answers,
 } from "@/lib/build/v5-store";
 import { cn } from "@/lib/utils";
@@ -18,7 +25,18 @@ import { cn } from "@/lib/utils";
 import { isPicture, type Attached } from "@/lib/build/upload";
 
 import { DropZone } from "./drop";
-import { AddRow, Chip, H, Kicker, Pill, RefText, Sub } from "./kit";
+import {
+  AddRow,
+  Chip,
+  Field,
+  H,
+  Kicker,
+  Pill,
+  RefText,
+  Sub,
+  TickSet,
+} from "./kit";
+import { FIELDS } from "./stages-c";
 import { Stage } from "./stage";
 
 /* ---------------------------------------------------------------------------
@@ -57,6 +75,37 @@ export function QuickPane({
 }) {
   const [kind, setKind] = useState<string>("note");
   const [files, setFiles] = useState<Attached[]>([]);
+  /* Opened by pressing send with something still missing, and never closed
+     again - somebody who has been asked for their name once should not have
+     the field taken away while they look for it. */
+  const [asking, setAsking] = useState(false);
+
+  const missing = whatIsMissing(answers);
+
+  /**
+   * Send it.
+   *
+   * The button used to call `setShort(true)` and nothing else, which set a
+   * flag on the desk saying the short way had been taken and never posted
+   * anything anywhere. It sends now - and where the four things a submission
+   * cannot go without are not there yet, it asks for them rather than
+   * refusing.
+   */
+  async function send() {
+    if (answers.sending) return;
+
+    if (missing.length) {
+      setAsking(true);
+      return;
+    }
+
+    setShort(true);
+    setSending(true);
+
+    const result = await sendScope(answers);
+    if (result.ok) setDelivered(result.ref);
+    else setProblem(result.problem);
+  }
 
   return (
     /* One instruction over two columns.
@@ -78,7 +127,7 @@ export function QuickPane({
           ten steps - it ran edge to edge of the surface while every screen
           beside it was held to 1100 and centred. Two ways in should not be two
           different widths. */}
-      <div className="mx-auto w-full max-w-[1100px]">
+      <div className="mx-auto w-full max-w-[1320px]">
         <div className="min-w-0">
           <H>Say it in your own words.</H>
           <Sub>
@@ -223,6 +272,57 @@ export function QuickPane({
             rather than at the top where they have not started.
 
             No rule over it. Space is already saying the same thing. */}
+        {/* Who is asking, once pressing send has shown that we do not know.
+
+            Not a field on the screen from the start: the whole offer of this
+            pane is that you write a paragraph and go. Asked at the moment it
+            actually blocks something, it is four fields filled in by somebody
+            who has already decided to send. */}
+        {asking && !answers.sent ? (
+          <div className="mx-auto mt-9 w-full max-w-[720px] rounded-[18px] bg-canvas p-5 text-left sm:p-6">
+            <b className="block text-[15px] leading-[1.25] font-extrabold tracking-[-0.02em] text-ink">
+              Who is asking
+            </b>
+            <p className="mt-1.5 text-[12.5px] leading-[1.5] text-label">
+              The only part about you, and the only part we cannot do without.
+            </p>
+
+            <div className="mt-4 grid gap-x-6 gap-y-5 sm:grid-cols-2">
+              {FIELDS.map((field) => (
+                <Field
+                  key={field.k}
+                  id={`quick-ask-${field.k}`}
+                  label={field.label}
+                  required={field.req}
+                  why={field.why}
+                  type={field.k === "email" ? "email" : "text"}
+                  value={answers.ask[field.k] ?? ""}
+                  onChange={(value) => setAsk(field.k, value)}
+                />
+              ))}
+            </div>
+
+            <div className="mt-6">
+              <div className="mb-2 flex items-baseline justify-between gap-3">
+                <b className="text-[13.5px] font-semibold text-ink">
+                  What part do you play in this decision
+                </b>
+                <Kicker className="text-mark">Required</Kicker>
+              </div>
+
+              <TickSet
+                single
+                options={ASK_PARTS.map((part) => ({
+                  k: part.v,
+                  label: part.label,
+                }))}
+                isOn={(k: string) => chipOn(answers, "ask.part", k)}
+                onPick={(k: string) => toggleChip("ask.part", k, true, "submit")}
+              />
+            </div>
+          </div>
+        ) : null}
+
         {/* The way out, under both columns and on their centre line.
 
             It sat under the left column because it is the next thing in the
@@ -230,16 +330,37 @@ export function QuickPane({
             print against one edge of a surface whose heading is centred over
             the whole of it. */}
         <div className="mt-8 min-w-0 text-center">
+          {/* What went wrong, or what is still needed, above the control
+              rather than after it has been pressed again. A button that
+              refuses without saying why is a button somebody presses four
+              times. */}
+          {answers.problem ? (
+            <p
+              role="alert"
+              className="mx-auto mb-5 max-w-[62ch] rounded-[12px] bg-blocked/[0.08] px-4 py-3 text-[13px] leading-[1.6] text-blocked"
+            >
+              {answers.problem}
+            </p>
+          ) : asking && missing.length ? (
+            <p className="mx-auto mb-5 max-w-[62ch] text-[13px] leading-[1.6] text-quiet">
+              Before this can go we need{" "}
+              {missing.join(", ").toLowerCase()}.
+            </p>
+          ) : null}
+
           <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
             <Pill
               tone="ink"
               arrow
               className="justify-center sm:justify-start"
-              onClick={() => setShort(true)}
+              disabled={answers.sending}
+              onClick={send}
             >
-              {answers.short
-                ? "Sent as a quick submission"
-                : "Send it as a quick submission"}
+              {answers.sent
+                ? "Sent"
+                : answers.sending
+                  ? "Sending it"
+                  : "Send it as a quick submission"}
             </Pill>
             <Pill
               className="justify-center sm:justify-start"
@@ -249,24 +370,37 @@ export function QuickPane({
             </Pill>
           </div>
 
-          <p className="mx-auto mt-4 max-w-[62ch] text-[12.5px] leading-[1.55] text-quiet">
-            Nothing is thrown away and nothing is final. It comes back as the
-            same written scope, and you can answer the rest at any point.
-          </p>
+          {answers.sent && answers.ref ? (
+            <p className="mx-auto mt-4 max-w-[62ch] text-[13px] leading-[1.6] text-body">
+              It is with us. Your reference is{" "}
+              <b className="font-mono font-bold text-ink">{answers.ref}</b> -
+              quote it in any reply and everything you attached is filed under
+              it.
+            </p>
+          ) : (
+            <>
+              <p className="mx-auto mt-4 max-w-[62ch] text-[12.5px] leading-[1.55] text-quiet">
+                Nothing is thrown away and nothing is final. It comes back as
+                the same written scope, and you can answer the rest at any
+                point.
+              </p>
 
-          {/* At the point of collection, not seven links down the footer. This
-              pane takes free text, files and contact details, and a privacy
-              notice somebody has to go looking for is not one that was given. */}
-          <p className="mx-auto mt-2 max-w-[62ch] text-[12px] leading-[1.55] text-label">
-            What happens to your details is set out in our{" "}
-            <Link
-              href={ROUTES.privacy}
-              className="font-semibold text-body underline decoration-hair underline-offset-2 transition-colors hover:text-mark hover:decoration-mark"
-            >
-              Privacy notice
-            </Link>
-            .
-          </p>
+              {/* At the point of collection, not seven links down the footer.
+                  This pane takes free text, files and contact details, and a
+                  privacy notice somebody has to go looking for is not one that
+                  was given. */}
+              <p className="mx-auto mt-2 max-w-[62ch] text-[12px] leading-[1.55] text-label">
+                What happens to your details is set out in our{" "}
+                <Link
+                  href={ROUTES.privacy}
+                  className="font-semibold text-body underline decoration-hair underline-offset-2 transition-colors hover:text-mark hover:decoration-mark"
+                >
+                  Privacy notice
+                </Link>
+                .
+              </p>
+            </>
+          )}
         </div>
       </div>
     </Stage>

@@ -309,7 +309,7 @@ export function StageRead({ at, answers, onGo, onGoKey }: StepProps) {
 
 /* --------------------------------------------------------------- 10 asking */
 
-const FIELDS = [
+export const FIELDS = [
   {
     k: "name",
     label: "Your name",

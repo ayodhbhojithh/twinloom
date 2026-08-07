@@ -118,7 +118,7 @@ export function StageStep({
           The words inside stay left. Centring the block is what stops a step
           drifting; centring the sentences would make every line start
           somewhere different, which is the opposite. */}
-      <div className="mx-auto w-full max-w-[1100px]">{children}</div>
+      <div className="mx-auto w-full max-w-[1320px]">{children}</div>
     </Stage>
   );
 }
