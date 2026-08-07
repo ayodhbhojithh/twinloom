@@ -30,8 +30,20 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-# .env*
+# env files.
+#
+# `.env.local` is committed on purpose: the repository is private, and having
+# one place the values live means the deploy and a new machine read the same
+# file rather than somebody re-entering four secrets per environment.
+#
+# What that costs, said once so it is not a surprise: everybody with read
+# access to this repository has the Cloudinary API secret and the Google
+# service account private key, and both stay in the history after any later
+# edit. Rotate them the day that list stops being short.
+#
+# Every other `.env` variant stays out.
+.env*
+!.env.local
 
 # vercel
 .vercel
@@ -39,3 +51,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Service account keys and anything else downloaded from a provider console.
+# The key belongs in .env.local, and the file it arrived in belongs nowhere in
+# the repository.
+security/
+*service-account*.json
+*-key.json
