@@ -8,7 +8,8 @@ import { ArrowDown, ArrowLeft, ArrowRight, Maximize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { ProjectPanel } from "./project-panel";
-import { PROJECTS, type Project } from "./projects";
+import { HERO_SLIDES } from "./hero-slides";
+import { type Project } from "./projects";
 
 /* ---------------------------------------------------------------------------
    A card with pieces taken out of it.
@@ -224,8 +225,8 @@ export function NotchedCard({ className }: { className?: string }) {
     return () => watcher.disconnect();
   }, []);
 
-  /* const shown = PROJECTS[at];
-     const next = PROJECTS[(at + 1) % PROJECTS.length]; */
+  /* const shown = HERO_SLIDES[at];
+     const next = HERO_SLIDES[(at + 1) % HERO_SLIDES.length]; */
 
   /**
    * The four numbers that decide whether this looks drawn or assembled.
@@ -307,8 +308,8 @@ export function NotchedCard({ className }: { className?: string }) {
 
   const path = size.w > 40 ? outline(size.w, size.h, cut) : "";
 
-  const shown = PROJECTS[at];
-  const next = PROJECTS[(at + 1) % PROJECTS.length];
+  const shown = HERO_SLIDES[at];
+  const next = HERO_SLIDES[(at + 1) % HERO_SLIDES.length];
 
   /* Where the name goes. Beside the thumbnail where there is room for it, and
      above the bottom edge where there is not. */
@@ -385,7 +386,7 @@ export function NotchedCard({ className }: { className?: string }) {
           <Tool
             label="Previous project"
             onClick={() =>
-              setAt((was) => (was - 1 + PROJECTS.length) % PROJECTS.length)
+              setAt((was) => (was - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)
             }
           >
             <ArrowLeft className="size-4" />
@@ -395,7 +396,7 @@ export function NotchedCard({ className }: { className?: string }) {
           </Tool>
           <Tool
             label="Next project"
-            onClick={() => setAt((was) => (was + 1) % PROJECTS.length)}
+            onClick={() => setAt((was) => (was + 1) % HERO_SLIDES.length)}
           >
             <ArrowRight className="size-4" />
           </Tool>
@@ -405,7 +406,7 @@ export function NotchedCard({ className }: { className?: string }) {
       {/* The next project, standing in the bite. */}
       <button
         type="button"
-        onClick={() => setAt((was) => (was + 1) % PROJECTS.length)}
+        onClick={() => setAt((was) => (was + 1) % HERO_SLIDES.length)}
         aria-label={`Next: ${next.name}`}
         className="group absolute bottom-0 left-0 z-10 cursor-pointer rounded-[20px] p-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-active"
         style={{ width: cut.biteWidth - 14, height: cut.biteHeight - 14 }}
