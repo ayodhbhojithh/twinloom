@@ -90,7 +90,7 @@ export function BlogView() {
           {lead.topic}
         </p>
 
-        <h2 className="mt-3 max-w-[min(18ch,var(--notch-free,62ch))] text-[clamp(24px,2.6vw,38px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink">
+        <h2 className="mt-3 max-w-[min(24ch,var(--notch-free,62ch))] text-[clamp(24px,2.6vw,38px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink">
           <Link
             href={`${ROUTES.blog}/${lead.slug}`}
             className="transition-opacity hover:opacity-70"
@@ -148,7 +148,7 @@ export function BlogView() {
                 <span className="absolute inset-0 bg-field/35 transition-colors group-hover/piece:bg-well/35" />
               </span>
 
-              <span className="relative grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-5 gap-y-3 p-6 sm:p-7 lg:max-w-[56%]">
+              <span className="relative grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-5 gap-y-3 p-6 sm:p-7 lg:max-w-[68%]">
                 <span className="mt-[3px] font-mono text-[11px] font-bold text-idx tabular-nums">
                   {String(n + 2).padStart(2, "0")}
                 </span>
@@ -163,11 +163,11 @@ export function BlogView() {
                     </span>
                   </span>
 
-                  <b className="mt-2 block max-w-[26ch] text-[clamp(18px,1.7vw,24px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink">
+                  <b className="mt-2 block max-w-[34ch] text-[clamp(18px,1.7vw,24px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink">
                     {article.title}
                   </b>
 
-                  <span className="mt-2 block max-w-[46ch] text-[13.5px] leading-[1.55] text-quiet">
+                  <span className="mt-2 block max-w-[58ch] text-[13.5px] leading-[1.55] text-quiet">
                     {article.note}
                   </span>
 

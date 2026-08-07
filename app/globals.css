@@ -91,8 +91,9 @@
      corridor of empty space between itself and the section index.
 
      `--container-*` is what Tailwind builds its max-width scale from, so this is
-     `max-w-measure` at every use. */
-  --container-measure: 860px;
+     `max-w-measure` at every use - and changing it here changes every page of
+     prose on the site at once, which is the point of there being one. */
+  --container-measure: 940px;
 
   /* The second and last width on the site: what a working surface is allowed to
      reach when it is not prose. The build tool needs three cards across and a
