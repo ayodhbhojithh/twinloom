@@ -9,12 +9,14 @@ import {
   Mail,
   RotateCcw,
   User,
+  Video,
 } from "lucide-react";
 
 import { CutPanel } from "@/components/layout/cut-panel";
 import { cn } from "@/lib/utils";
 
 import { Calendar } from "./calendar";
+import { useDiary } from "./availability";
 import {
   OFFICE_ZONE,
   SLOTS,
@@ -81,6 +83,15 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
   const [showErrors, setShowErrors] = useState(false);
   const [inOfficeZone, setInOfficeZone] = useState(false);
   const [done, setDone] = useState(false);
+  /* What went wrong sending it, in words, or null. Cleared on the next go. */
+  const [problem, setProblem] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
+  const [meet, setMeet] = useState<string | null>(null);
+
+  /* The diary itself. Read once, and again after a booking lands, because the
+     only thing that changes it in between is somebody else booking - and for
+     that, the check made at the moment of writing is the one that counts. */
+  const diary = useDiary();
 
   if (!reader) return <Waiting />;
 
@@ -162,6 +173,69 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
     setDetails(EMPTY);
     setShowErrors(false);
     setDone(false);
+    setProblem(null);
+    setMeet(null);
+  }
+
+  /**
+   * Send it.
+   *
+   * The slot is checked again on the server immediately before the event is
+   * written, so a `409` here means somebody took it in the seconds since this
+   * page was drawn. That is not a failure to report and leave: it is a reason
+   * to send the reader back to the calendar with the diary re-read, which is
+   * what happens.
+   */
+  async function sendIt() {
+    if (sending || slotAt === null || !day || !meeting) return;
+
+    setSending(true);
+    setProblem(null);
+
+    try {
+      const sent = await fetch("/api/booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          meeting: meeting.key,
+          minutes,
+          start: instantOf(slotAt).toISOString(),
+          name: details.name.trim(),
+          email: details.email.trim(),
+          notes: details.notes.trim(),
+        }),
+      });
+
+      const body = await sent.json().catch(() => null);
+
+      if (!sent.ok || !body?.ok) {
+        setProblem(
+          typeof body?.problem === "string"
+            ? body.problem
+            : "It did not go through. Nothing has been booked - try once more.",
+        );
+
+        if (body?.taken) {
+          /* The time has gone. Re-read the diary, drop the choice, and put
+             them back on the calendar rather than leaving them looking at a
+             slot that no longer exists. */
+          diary.again();
+          setSlotAt(null);
+          setAt(1);
+        }
+        return;
+      }
+
+      setMeet(typeof body.meet === "string" ? body.meet : null);
+      setDone(true);
+      diary.again();
+    } catch {
+      setProblem(
+        "It could not reach us just now. Nothing has been booked - try again in a moment.",
+      );
+    } finally {
+      setSending(false);
+    }
   }
 
   if (done) {
@@ -173,6 +247,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
         whenTime={whenTime}
         zone={zone}
         email={details.email}
+        meet={meet}
         onRestart={restart}
       />
     );
@@ -382,6 +457,8 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
           <div className="grid gap-x-10 gap-y-7 lg:grid-cols-[minmax(0,1fr)_16rem]">
             <div className="min-w-0">
               <Calendar
+                busy={diary.busy}
+                minutes={minutes}
                 reader={reader}
                 selected={dayKeyChosen}
                 onSelect={(key) => {
@@ -404,6 +481,15 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
                   : "Times"}
               </p>
 
+              {diary.problem ? (
+                <p
+                  role="alert"
+                  className="mt-3 rounded-[12px] bg-blocked/[0.08] px-4 py-3 text-[12.5px] leading-[1.6] text-blocked"
+                >
+                  {diary.problem} Times below may not be current.
+                </p>
+              ) : null}
+
               {day ? (
                 <div
                   role="group"
@@ -415,7 +501,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
                   className="mt-3 grid grid-cols-3 gap-1.5 sm:grid-cols-4 lg:grid-cols-2"
                 >
                   {SLOTS.map((_slot, index) => {
-                    const gone = takenSlots(day)[index];
+                    const gone = takenSlots(day, diary.busy, minutes)[index];
                     const on = slotAt === index;
 
                     return (
@@ -531,7 +617,11 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
         <BookStage
           at={at}
           title="Check it over."
-          note="Nothing is sent until you press the tick."
+          note={
+            sending
+              ? "Booking it now."
+              : "Nothing is booked until you press the tick."
+          }
           held={
             <>
               <b className="font-mono text-[15px] leading-none font-bold text-ink tabular-nums">
@@ -542,10 +632,10 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
               </span>
             </>
           }
-          canGoOn
+          canGoOn={!sending}
           last
           onBack={back}
-          onNext={() => setDone(true)}
+          onNext={sendIt}
         >
           <dl className="max-w-[42rem] overflow-hidden rounded-[16px] bg-field">
             <Line icon={Clock} term="Meeting">
@@ -569,6 +659,19 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
               </Line>
             ) : null}
           </dl>
+
+          {/* What went wrong, above the control rather than after it is
+              pressed a second time. Every message from the route says whether
+              anything was booked, because that is the only question somebody
+              has when a booking screen shows an error. */}
+          {problem ? (
+            <p
+              role="alert"
+              className="mt-6 max-w-[42rem] rounded-[12px] bg-blocked/[0.08] px-4 py-3 text-[13px] leading-[1.6] text-blocked"
+            >
+              {problem}
+            </p>
+          ) : null}
         </BookStage>
       ) : null}
     </div>
@@ -656,8 +759,10 @@ function Line({
  * The end of the flow, told truthfully.
  *
  * A booking screen that says "confirmed" when nothing has been sent is the one
- * thing this page must not do. The summary is real, the tick is real, and the
- * sentence under it says exactly what did and did not happen.
+ * thing this page must not do. It used to say so out loud, because nothing was
+ * sent. Now the event is on the calendar and the invitation has gone before
+ * this screen is reached, so it says that instead - and it still says only what
+ * actually happened.
  */
 function Finished({
   meeting,
@@ -666,6 +771,7 @@ function Finished({
   whenTime,
   zone,
   email,
+  meet,
   onRestart,
 }: {
   meeting: ReturnType<typeof findMeeting>;
@@ -674,6 +780,8 @@ function Finished({
   whenTime: string;
   zone: string;
   email: string;
+  /** The joining link, where the calendar made one. */
+  meet: string | null;
   onRestart: () => void;
 }) {
   return (
@@ -689,7 +797,7 @@ function Finished({
           >
             <Check className="size-3.5" strokeWidth={3} />
           </span>
-          <b className="text-[13px] font-bold text-ink">Written down</b>
+          <b className="text-[13px] font-bold text-ink">Booked</b>
         </span>
       }
       corner={
@@ -705,13 +813,14 @@ function Finished({
       }
     >
       <h2 className="max-w-[20ch] text-[clamp(26px,3vw,38px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink">
-        Your request is written down.
+        The time is yours.
       </h2>
 
       <p className="mt-4 max-w-[58ch] text-[15px] leading-[1.6] text-body">
-        Nothing has been sent. This calendar is not connected to a diary yet, so
-        the time below is not held for you. When it is, a confirmation and a
-        calendar invitation would arrive at {email || "your email address"}.
+        It is in the diary, and a calendar invitation is on its way to{" "}
+        {email || "your email address"}. Accepting it puts the meeting in your
+        own calendar; moving or cancelling it there tells us straight away.
+        Nothing to prepare and nothing to bring.
       </p>
 
       <dl className="mt-8 max-w-[42rem] overflow-hidden rounded-[16px] bg-field text-left">
@@ -724,6 +833,18 @@ function Finished({
         <Line icon={Globe} term="Time">
           {whenTime} in {zone.replace(/_/g, " ")}
         </Line>
+        {meet ? (
+          <Line icon={Video} term="Joining">
+            <a
+              href={meet}
+              target="_blank"
+              rel="noreferrer"
+              className="break-all underline decoration-hair underline-offset-2 transition-colors hover:text-mark hover:decoration-mark"
+            >
+              {meet.replace(/^https?:\/\//, "")}
+            </a>
+          </Line>
+        ) : null}
       </dl>
     </CutPanel>
   );

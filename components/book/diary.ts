@@ -137,22 +137,71 @@ export function isBookable(date: Date): boolean {
 }
 
 /**
- * Which of a day's slots are already gone.
+ * Air either side of a meeting.
  *
- * Worked out from the date rather than drawn at random, so a slot that was taken
- * a second ago is still taken now. A picker whose availability reshuffles while
- * you look at it teaches people not to trust it.
- *
- * This stands in for a diary that is not connected yet, and the page says so.
+ * Nobody walks out of one conversation and into the next on the same minute,
+ * and a diary that lets them do it produces a day that cannot actually be
+ * worked. Change this one number to change the gap everywhere.
  */
-export function takenSlots(date: Date): boolean[] {
-  const seed = date.getDate() * 7 + date.getMonth() * 13 + date.getFullYear();
-  return SLOTS.map((_slot, at) => (seed + at * 5) % 11 < 3);
+export const BUFFER_MINUTES = 15;
+
+/** One stretch of time the calendar is not free. */
+export interface Busy {
+  start: string;
+  end: string;
 }
 
-export function freeCount(date: Date): number {
+/** The instant a slot begins, whatever zone the reader is in. */
+export function slotInstant(date: Date, slot: (typeof SLOTS)[number]): Date {
+  return officeInstant(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    slot.hour,
+    slot.minute,
+  );
+}
+
+/**
+ * Which of a day's slots are already gone.
+ *
+ * Read from the calendar rather than invented. It used to be a hash of the
+ * date, which was a stand-in for a diary that did not exist and made the page
+ * lie in a way that looked exactly like the truth.
+ *
+ * A slot is gone if a meeting of the chosen length starting there would touch
+ * anything already in the diary, plus the buffer at each end. The length
+ * matters: half past three is free for fifteen minutes and not for an hour.
+ */
+export function takenSlots(
+  date: Date,
+  busy: readonly Busy[],
+  minutes: number,
+): boolean[] {
+  const pad = BUFFER_MINUTES * 60_000;
+
+  return SLOTS.map((slot) => {
+    const from = slotInstant(date, slot).getTime();
+    const to = from + minutes * 60_000;
+
+    /* Anything already begun is gone, however free the calendar looks. */
+    if (from <= Date.now()) return true;
+
+    return busy.some((entry) => {
+      const start = new Date(entry.start).getTime() - pad;
+      const end = new Date(entry.end).getTime() + pad;
+      return from < end && to > start;
+    });
+  });
+}
+
+export function freeCount(
+  date: Date,
+  busy: readonly Busy[],
+  minutes: number,
+): number {
   if (!isBookable(date)) return 0;
-  return takenSlots(date).filter((taken) => !taken).length;
+  return takenSlots(date, busy, minutes).filter((taken) => !taken).length;
 }
 
 /**

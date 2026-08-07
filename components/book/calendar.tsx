@@ -10,6 +10,7 @@ import {
   dayKey,
   firstBookable,
   freeCount,
+  type Busy,
   isBookable,
   lastBookable,
   monthGrid,
@@ -44,10 +45,17 @@ export function Calendar({
   reader,
   selected,
   onSelect,
+  busy,
+  minutes,
 }: {
   reader: Reader;
   selected: string | null;
   onSelect: (key: string) => void;
+  /* What the calendar is not free for, and how long the meeting is. Both are
+     needed to say whether a day has anything left: half past three is free for
+     fifteen minutes and not for an hour. */
+  busy: readonly Busy[];
+  minutes: number;
 }) {
   const opening = firstBookable();
   const closing = lastBookable();
@@ -193,7 +201,7 @@ export function Calendar({
               const outside = date.getMonth() !== view.month;
               const open = isBookable(date);
               const chosen = key === selected;
-              const free = freeCount(date);
+              const free = freeCount(date, busy, minutes);
 
               return (
                 <div

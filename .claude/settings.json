@@ -14,7 +14,9 @@
       "Bash(rm -f ./cloudtest.mjs)",
       "Bash(nslookup -type=MX twincoretech.com 8.8.8.8)",
       "Bash(nslookup -type=TXT twincoretech.com 8.8.8.8)",
-      "Bash(node -e \"console.log\\(require\\('google-auth-library/package.json'\\).version\\)\")"
+      "Bash(node -e \"console.log\\(require\\('google-auth-library/package.json'\\).version\\)\")",
+      "Bash(cd \"c:/Users/prave/Desktop/PROJECTS/very-good-websites\" *)",
+      "Read(//c/Users/prave/Desktop/PROJECTS/very-good-websites/components/book/**)"
     ]
   }
 }
