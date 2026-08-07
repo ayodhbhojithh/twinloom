@@ -20,6 +20,7 @@ import { CutPanel } from "@/components/layout/cut-panel";
 import { PartnerWall } from "@/components/pages/partners-view";
 import { STOPS } from "@/lib/journey";
 import { CONTACT_INFO, ROUTES } from "@/lib/site";
+import { cn } from "@/lib/utils";
 
 /* ---------------------------------------------------------------------------
    About us.
@@ -33,17 +34,15 @@ import { CONTACT_INFO, ROUTES } from "@/lib/site";
    what every one of them includes, what runs alongside it, and how the whole
    thing actually proceeds.
 
-   Two things the source copy does that this does not.
+   The three ways in appear three times, as the copy has them: at the top for
+   somebody who arrived decided, under the eleven inclusions where the page
+   first says something concrete enough to act on, and at the foot for somebody
+   who read all of it.
 
-   It repeats the same three calls to action three times. Twice is enough - at
-   the top for somebody who arrived decided, and at the foot for somebody who
-   read the page - and a third in the middle reads as a page that does not
-   trust its own words.
-
-   It also restates the thirteen steps. They have their own page now, drawn as
-   one line, and telling them twice is how the two versions start to disagree.
-   The count is read from that page's list rather than typed here, so it cannot
-   go stale.
+   One thing the copy does that this does not: restate the thirteen steps. They
+   have their own page now, drawn as one line, and telling them twice is how the
+   two versions start to disagree. The count is read from that page's list
+   rather than typed here, so it cannot go stale.
 --------------------------------------------------------------------------- */
 
 /** The two things you can actually buy, and who builds each. */
@@ -120,10 +119,22 @@ const SERVICES: readonly {
  * it down is the one that ends in something you can read, and the other two are
  * for people who would rather not start that way.
  */
-function Ways({ className }: { className?: string }) {
+function Ways({
+  className,
+  center,
+}: {
+  className?: string;
+  /** On a panel whose words are centred, so the row is not the one thing left. */
+  center?: boolean;
+}) {
   return (
     <div className={className}>
-      <div className="flex flex-wrap items-center gap-2.5">
+      <div
+        className={cn(
+          "flex flex-wrap items-center gap-2.5",
+          center && "justify-center",
+        )}
+      >
         <Link
           href={ROUTES.build}
           className="group/one inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2.5 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85"
@@ -201,7 +212,7 @@ export function AboutView() {
       >
         <div className="max-w-[76ch]">
           <p className="font-mono text-[9px] font-bold tracking-[0.16em] text-mark uppercase">
-            About us
+            About TwinLoom
           </p>
 
           <h1 className="mt-3 max-w-[min(28ch,var(--notch-free,72ch))] text-[clamp(26px,2.9vw,42px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink">
@@ -293,16 +304,30 @@ export function AboutView() {
             </span>
           }
         >
-          <h2 className="max-w-[min(22ch,var(--notch-free,62ch))] text-[clamp(21px,1.9vw,28px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink">
-            The same eleven inclusions.
+          {/* Centred, unlike every other panel on the page.
+
+              The list under it is three columns across the whole surface, and a
+              heading held to the left third above it left the top of the panel
+              two thirds empty and the bottom of it full. Centred, the words sit
+              over the middle of what they introduce.
+
+              `mt-8` because the notch is at the top centre: with the heading on
+              the left there was room beside it, and on the centre line there is
+              not. */}
+          <h2 className="mx-auto mt-8 max-w-[30ch] text-center text-[clamp(21px,1.9vw,28px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink">
+            Every site we build gets the same eleven inclusions, whatever its
+            size.
           </h2>
 
-          <p className="mt-3 max-w-[70ch] text-[15px] leading-[1.65] text-quiet">
+          <p className="mx-auto mt-3 max-w-[64ch] text-center text-[15px] leading-[1.65] text-quiet">
             Not a tier, not an upgrade, and not something to ask for. A five page
             site gets the list a fifty page site gets.
           </p>
 
-          <ol className="mt-8 grid gap-x-8 gap-y-3.5 sm:grid-cols-2 xl:grid-cols-3">
+          {/* The eleven stay left within their rows. A number, then a line of
+              words, is a row that reads from one edge; centring each one would
+              give eleven different left edges and nothing to run an eye down. */}
+          <ol className="mx-auto mt-10 grid max-w-[1180px] gap-x-8 gap-y-3.5 sm:grid-cols-2 xl:grid-cols-3">
             {INCLUDED.map((line, n) => (
               <li key={line} className="flex min-w-0 gap-3.5">
                 <span
@@ -317,6 +342,11 @@ export function AboutView() {
               </li>
             ))}
           </ol>
+
+          {/* The ways again, under the list they belong to. Cut once as a
+              repetition; it is not one - it is the first point in the page
+              where somebody has read something concrete enough to act on. */}
+          <Ways className="mt-10" center />
         </CutPanel>
       </section>
 
@@ -358,9 +388,14 @@ export function AboutView() {
           a number typed on this page, so adding a step cannot leave this saying
           thirteen. */}
       <section className="mt-16">
+        <Head
+          n="How we work."
+          sub={`We work in ${STOPS.length} steps, from the first conversation to the site going live. You can see all ${STOPS.length} before you commit to any of them.`}
+        />
+
         <CutPanel
           tone="field"
-          className="w-full"
+          className="mt-7 w-full"
           corner={
             <Link
               href={ROUTES.how}
@@ -372,9 +407,9 @@ export function AboutView() {
             </Link>
           }
         >
-          <h2 className="max-w-[min(24ch,var(--notch-free,62ch))] text-[clamp(21px,1.9vw,28px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink">
-            {STOPS.length} steps, from the first conversation to live.
-          </h2>
+          <h3 className="max-w-[min(24ch,var(--notch-free,62ch))] text-[clamp(19px,1.7vw,25px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink">
+            It starts with scoping.
+          </h3>
 
           <div className="mt-5 grid max-w-[104ch] gap-x-10 gap-y-4 lg:grid-cols-2">
             <p className="text-[15px] leading-[1.65] text-body">
@@ -395,7 +430,7 @@ export function AboutView() {
             className="group/all mt-7 inline-flex items-center gap-2 rounded-pill bg-canvas px-4.5 py-2.5 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair"
           >
             <Route aria-hidden className="size-4" strokeWidth={1.9} />
-            See all {STOPS.length} before you commit to any of them
+            See all {STOPS.length} steps
             <ArrowUpRight
               aria-hidden
               className="size-4 transition-transform group-hover/all:translate-x-0.5 group-hover/all:-translate-y-0.5"
