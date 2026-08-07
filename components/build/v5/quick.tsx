@@ -139,7 +139,13 @@ export function QuickPane({
        other look like an afterthought. That is what went wrong the last time
        this was two columns - each half had a heading of its own, and the two
        were saying the same thing. */
-    <Stage className="min-h-[380px] w-full">
+    /* `scrollKey` moves with what the pane is showing, so pressing send takes
+       the reader back to the top of the surface rather than leaving them at
+       the foot of a form looking at a button that has changed its label. */
+    <Stage
+      scrollKey={answers.sent ? "sent" : asking ? "asking" : "quick"}
+      className="min-h-[380px] w-full"
+    >
       {/* The same column every step of the run-through gets.
 
           The quick pane goes through `Stage` directly rather than through
