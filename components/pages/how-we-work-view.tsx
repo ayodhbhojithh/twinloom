@@ -112,49 +112,8 @@ export function HowWeWorkView() {
             </p>
           </div>
 
-          {/* The two ways in. Ruled cards rather than cut surfaces: they are a
-              pair of equal choices, and a cut is for a control standing in it -
-              these carry theirs on the face. */}
-          <div className="mx-auto mt-9 flex max-w-[46rem] flex-col items-center gap-3 rounded-[14px] border border-hair p-7 text-center sm:p-8">
-            <p
-              className="font-mono text-[9.5px] font-bold tracking-[0.16em] uppercase"
-              style={{ color: PATH.tint }}
-            >
-              {PATH.kicker}
-            </p>
-
-            <h2 className="max-w-[24ch] text-[20px] leading-[1.3] font-bold tracking-[-0.022em] text-ink">
-              {PATH.n}
-            </h2>
-
-            <p className="max-w-[52ch] text-[13.5px] leading-[1.6] text-quiet">
-              {PATH.sub}
-            </p>
-
-            <Link
-              href={PATH.href}
-              className="group/go mt-2 inline-flex items-center gap-2 rounded-[9px] border-[1.5px] bg-field px-6 py-3 text-[14px] font-semibold transition-opacity hover:opacity-85"
-              style={{ borderColor: PATH.tint, color: PATH.tint }}
-            >
-              {PATH.go}
-              <ArrowUpRight
-                aria-hidden
-                className="size-4 transition-transform group-hover/go:translate-x-0.5 group-hover/go:-translate-y-0.5"
-              />
-            </Link>
-          </div>
-
-          {/* The rule that joins the two. */}
-          <div className="mt-7 flex items-center gap-5">
-            <span aria-hidden className="h-px flex-1 bg-hair" />
-            <span className="text-center font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase">
-              However it starts, the process is the same
-            </span>
-            <span aria-hidden className="h-px flex-1 bg-hair" />
-          </div>
-
           {/* The three zones, each opening onto its own steps. */}
-          <div className="mt-6">
+          <div className="mt-9">
             {ZONES.map((zone, at) => {
               const ramp = RAMP[at] ?? RAMP[RAMP.length - 1];
               const first = zone.stops[0]?.ix;
@@ -231,51 +190,96 @@ export function HowWeWorkView() {
                       hairline under every row was five more rules saying what
                       the marks on the rail already say, on a page whose point
                       is that there is a single run through it. */}
-                  <div className="relative mx-auto max-w-[62rem] pb-8">
-                    <span
-                      aria-hidden
-                      className="absolute top-6 bottom-8 left-[16px] w-0.5 bg-hair"
-                    />
+                  <div
+                    className={cn(
+                      "mx-auto max-w-[62rem] gap-10 pb-8",
+                      /* The way in sits beside the first zone rather than
+                         above the whole run. It is a way into step one, not a
+                         second heading for the page, and standing over the
+                         three zones it read as though it applied to all of
+                         them. */
+                      at === 0
+                        ? "lg:grid lg:grid-cols-[minmax(0,1fr)_270px]"
+                        : "",
+                    )}
+                  >
+                    <div className="relative">
+                      <span
+                        aria-hidden
+                        className="absolute top-6 bottom-8 left-[16px] w-0.5 bg-hair"
+                      />
 
-                    <ol>
-                      {zone.stops.map((stop, n) => (
-                        <li
-                          key={stop.ix}
-                          className="relative flex flex-col items-start gap-x-7 gap-y-1.5 py-3.5 sm:flex-row sm:items-baseline"
-                        >
-                          <span
-                            aria-hidden
-                            className={cn(
-                              "flex h-[34px] w-[34px] shrink-0 grow-0 basis-[34px] items-center justify-center self-start rounded-pill text-[13px] font-bold tabular-nums",
-                              stop.mark === "launch"
-                                ? "text-white"
-                                : "bg-ink text-white",
-                            )}
-                            style={
-                              stop.mark === "launch"
-                                ? {
-                                    backgroundImage: `linear-gradient(135deg, ${ramp.from}, ${ramp.to})`,
-                                  }
-                                : undefined
-                            }
+                      <ol>
+                        {zone.stops.map((stop, n) => (
+                          <li
+                            key={stop.ix}
+                            className="relative flex flex-col items-start gap-x-7 gap-y-1.5 py-3.5 sm:flex-row sm:items-baseline"
                           >
-                            {n + 1}
-                          </span>
+                            <span
+                              aria-hidden
+                              className={cn(
+                                "flex h-[34px] w-[34px] shrink-0 grow-0 basis-[34px] items-center justify-center self-start rounded-pill text-[13px] font-bold tabular-nums",
+                                stop.mark === "launch"
+                                  ? "text-white"
+                                  : "bg-ink text-white",
+                              )}
+                              style={
+                                stop.mark === "launch"
+                                  ? {
+                                      backgroundImage: `linear-gradient(135deg, ${ramp.from}, ${ramp.to})`,
+                                    }
+                                  : undefined
+                              }
+                            >
+                              {n + 1}
+                            </span>
 
-                          <b className="min-w-0 text-[15.5px] leading-[1.35] font-bold tracking-[-0.018em] text-ink sm:w-[250px] sm:shrink-0 sm:grow-0">
-                            {stop.n}
-                          </b>
+                            <b className="min-w-0 text-[15.5px] leading-[1.35] font-bold tracking-[-0.018em] text-ink sm:w-[250px] sm:shrink-0 sm:grow-0">
+                              {stop.n}
+                            </b>
 
-                          <span className="min-w-0 grow text-[13.5px] leading-[1.6] text-quiet">
-                            {stop.sub}
-                          </span>
+                            <span className="min-w-0 grow text-[13.5px] leading-[1.6] text-quiet">
+                              {stop.sub}
+                            </span>
 
-                          <span className="shrink-0 font-mono text-[9.5px] font-bold tracking-[0.1em] whitespace-nowrap text-label uppercase tabular-nums">
-                            {stop.takes ?? ""}
-                          </span>
-                        </li>
-                      ))}
-                    </ol>
+                            <span className="shrink-0 font-mono text-[9.5px] font-bold tracking-[0.1em] whitespace-nowrap text-label uppercase tabular-nums">
+                              {stop.takes ?? ""}
+                            </span>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+
+                    {at === 0 ? (
+                      <aside className="mt-8 flex flex-col items-start gap-3 self-start rounded-[16px] bg-canvas p-6 lg:mt-0">
+                        <p
+                          className="font-mono text-[9px] font-bold tracking-[0.16em] uppercase"
+                          style={{ color: PATH.tint }}
+                        >
+                          {PATH.kicker}
+                        </p>
+
+                        <b className="text-[16px] leading-[1.3] font-bold tracking-[-0.022em] text-ink">
+                          {PATH.n}
+                        </b>
+
+                        <p className="text-[13px] leading-[1.6] text-quiet">
+                          {PATH.sub}
+                        </p>
+
+                        <Link
+                          href={PATH.href}
+                          className="group/go mt-2 inline-flex items-center gap-2 rounded-[9px] border-[1.5px] bg-field px-5 py-2.5 text-[13.5px] font-semibold transition-opacity hover:opacity-85"
+                          style={{ borderColor: PATH.tint, color: PATH.tint }}
+                        >
+                          {PATH.go}
+                          <ArrowUpRight
+                            aria-hidden
+                            className="size-4 transition-transform group-hover/go:translate-x-0.5 group-hover/go:-translate-y-0.5"
+                          />
+                        </Link>
+                      </aside>
+                    ) : null}
                   </div>
                 </details>
               );
