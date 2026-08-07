@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { send, wiring } from "@/lib/booking/google";
 import { isReference, makeReference } from "@/lib/build/reference";
 
 /* ---------------------------------------------------------------------------
@@ -70,23 +71,47 @@ export async function POST(request: Request) {
      could point at any of them. */
   const ref = isReference(body.desk) ? body.desk : makeReference();
 
-  /* ---------------------------------------------------------------------
-     The seam.
+  /* The log first, and always.
 
-     Replace this with the send - an email to the inbox, a row in a table, a
-     webhook - and everything upstream stays exactly as it is. Until then it
-     is written to the server log, which is a real place: it survives the
-     request, it is timestamped, and on any host worth using it is searchable.
-     What it is not is a promise, so nothing here or on the screen claims the
-     request has been filed anywhere it has not.
-
-     Whatever replaces it must not throw into the response. A scope that was
-     received and could not be forwarded is still received, and telling
-     somebody it failed makes them send it twice.
-  --------------------------------------------------------------------- */
+     It survives whether or not the mail goes, it is timestamped, and on any
+     host worth using it is searchable. A scope that arrived and could not be
+     forwarded is still a scope that arrived. */
   console.info(
-    `[scope ${ref}] from ${ask.name} at ${ask.company} <${ask.email}>\n${body.document}`,
+    `[scope ${ref}] from ${ask.name} at ${ask.company} <${ask.email}>
+${body.document}`,
   );
+
+  /* Then the inbox. Sent as the same account the diary belongs to, so there is
+     one credential for the whole site and no second sending domain to keep
+     authenticated.
+
+     It must not throw into the response. A scope that was received and could
+     not be forwarded is still received, and telling somebody it failed makes
+     them send it twice. */
+  const w = wiring();
+
+  if (w) {
+    await send(
+      w,
+      w.notify,
+      `Scoping request ${ref}: ${ask.company}`,
+      [
+        `From: ${ask.name} at ${ask.company} <${ask.email}>`,
+        ask.phone ? `Phone: ${ask.phone}` : "",
+        `Reference: ${ref}`,
+        "",
+        body.document,
+      ]
+        .filter(Boolean)
+        .join("\n"),
+    ).catch((wrong) => {
+      console.error(`[scope ${ref}] could not be forwarded`, wrong);
+    });
+  } else {
+    console.warn(
+      `[scope ${ref}] no mail credentials in this environment - log only`,
+    );
+  }
 
   return NextResponse.json({ ok: true, ref });
 }
