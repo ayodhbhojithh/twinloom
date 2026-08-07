@@ -43,6 +43,16 @@ import { useCallback, useEffect, useRef } from "react";
  */
 const DENSITY = 15;
 
+/**
+ * The same, for a box narrower than 560px.
+ *
+ * Twice as fine, because the type is roughly a third the size: the letters are
+ * set to the width of the box, so a phone gets the whole phrase at 35px where a
+ * desktop gets it at 110px. Sampled at the desktop density those strokes are
+ * thinner than the gap between two threads and most of them land in between.
+ */
+const PHONE_DENSITY = 34;
+
 /** Points down a thread. Enough for the curve to look drawn rather than folded. */
 const STEPS = 34;
 
@@ -263,7 +273,17 @@ export function LoomStrings({
 
       const pixels = ink.getImageData(0, 0, probe.width, probe.height).data;
 
-      const count = Math.max(24, Math.round((width / 100) * DENSITY));
+      /* Finer threads on a narrow cloth.
+
+         The word is set to the width of the box, so on a phone the letters are
+         a third the size they are on a desktop while the threads sampling them
+         stayed the same distance apart. A stroke narrower than the gap between
+         two threads falls between them and is simply not there, which is why
+         the word read as stripes rather than as a word. Density is per 100px,
+         so holding it fixed is what caused this: the sampling has to get finer
+         as the type gets smaller, not stay level. */
+      const density = width < 560 ? PHONE_DENSITY : DENSITY;
+      const count = Math.max(24, Math.round((width / 100) * density));
       const gap = width / (count + 1);
       const next: Thread[] = [];
 

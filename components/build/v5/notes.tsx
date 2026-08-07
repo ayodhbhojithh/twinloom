@@ -124,19 +124,19 @@ export function NotesDock({
           onClick={() => setOpen(true)}
           aria-expanded={open}
           className={cn(
-            "sticky top-[46vh] flex -translate-x-full cursor-pointer flex-col items-center gap-2.5 rounded-l-[12px] bg-ink px-2.5 py-4 text-white transition-colors hover:bg-body",
+            "sticky top-[46vh] flex -translate-x-full cursor-pointer flex-col items-center gap-2 rounded-l-[10px] bg-ink px-2 py-3 text-white transition-colors hover:bg-body",
             open ? "pointer-events-none opacity-0" : "pointer-events-auto",
           )}
         >
           <span
-            className="font-mono text-[9.5px] font-bold tracking-[0.16em] uppercase"
+            className="font-mono text-[8.5px] font-bold tracking-[0.14em] uppercase"
             style={{ writingMode: "vertical-rl" }}
           >
             Your notes
           </span>
           <span
             className={cn(
-              "flex min-w-[19px] items-center justify-center rounded-pill px-1 py-0.5 font-mono text-[9.5px] font-bold tabular-nums",
+              "flex min-w-4 items-center justify-center rounded-pill px-1 py-px font-mono text-[8.5px] font-bold tabular-nums",
               count ? "bg-mark text-white" : "bg-white/15 text-white/60",
             )}
           >
