@@ -75,63 +75,69 @@ export function Disc({
 export function StepRail({
   at,
   reached,
-  said,
   onGo,
 }: {
   at: number;
   reached: number;
-  said: readonly string[];
   onGo: (step: number) => void;
 }) {
+  /* Four equal columns, so a mark sits at 12.5, 37.5, 62.5 and 87.5 per cent.
+     The track runs between the first and the last of those rather than edge to
+     edge - a line that overshoots its end marks reads as a rule with dots on
+     it, not as a run with a beginning and an end. */
+  const from = 12.5;
+  const span = 75;
+  const done = STEPS.length - 1 === 0 ? 0 : reached / (STEPS.length - 1);
+
   return (
     /* The run of four, standing in the notch.
 
-       It used to be a surface of its own above the card, which made it a
-       second object competing with the one thing on the page - and the card
-       already had a cut drawn in its top edge for exactly this kind of
-       control. One shape, with the navigation standing in it.
+       One continuous track with the marks sitting on it, rather than four
+       buttons with short rules wedged between them. That is the difference
+       between a timeline and a row of tabs: the line is one thing, it is
+       always there, and the part of it behind you is filled in.
 
-       Compact, because a notch is one line deep. The step's name is here; what
-       was chosen for it stands in the bite at the other end of the surface,
-       where there is room to read it. */
+       A notch is one line deep, so the names go above the track and nothing
+       goes below it. What was chosen for a step is not repeated here - it
+       stands in the bite at the other end of the surface, where there is room
+       to read it. */
     <nav
       aria-label="Booking steps"
-      className="quiet-scroll flex h-10 max-w-full items-center overflow-x-auto px-1"
+      className="quiet-scroll flex h-10 w-full min-w-0 items-center overflow-x-auto"
     >
-      <ol className="flex items-center">
+      <ol className="relative grid w-full min-w-[360px] grid-cols-4 pb-1">
+        {/* The track, behind the marks. */}
+        <span
+          aria-hidden
+          className="absolute bottom-[6px] block h-[3px] rounded-pill bg-hair"
+          style={{ left: `${from}%`, width: `${span}%` }}
+        />
+        <span
+          aria-hidden
+          className="absolute bottom-[6px] block h-[3px] rounded-pill bg-ink transition-[width] duration-500 ease-out"
+          style={{ left: `${from}%`, width: `${span * done}%` }}
+        />
+
         {STEPS.map((label, n) => {
           const here = n === at;
-          const done = n < reached;
+          const passed = n < reached;
           const open = n <= reached;
 
           return (
-            <li key={label} className="flex items-center">
+            <li key={label} className="relative flex min-w-0 justify-center">
               <button
                 type="button"
                 disabled={!open}
                 aria-current={here ? "step" : undefined}
                 onClick={() => onGo(n)}
-                title={said[n] || (open ? "Open" : "Locked")}
                 className={cn(
-                  "group/step flex shrink-0 items-center gap-1.5 rounded-pill px-2 py-1 transition-colors",
-                  open ? "cursor-pointer hover:bg-canvas" : "cursor-default",
+                  "group/step flex min-w-0 flex-col items-center gap-1.5",
+                  open ? "cursor-pointer" : "cursor-default",
                 )}
               >
                 <span
-                  aria-hidden
                   className={cn(
-                    "size-2 shrink-0 rounded-pill transition-all",
-                    here
-                      ? "bg-ink ring-[3px] ring-ink/15"
-                      : done
-                        ? "bg-mark"
-                        : "bg-planned group-hover/step:bg-idx",
-                  )}
-                />
-
-                <span
-                  className={cn(
-                    "text-[12px] leading-none font-bold tracking-[-0.01em] whitespace-nowrap transition-colors",
+                    "max-w-full truncate px-1 text-[12px] leading-none font-bold tracking-[-0.012em] transition-colors",
                     here
                       ? "text-ink"
                       : open
@@ -141,19 +147,22 @@ export function StepRail({
                 >
                   {label}
                 </span>
-              </button>
 
-              {n < STEPS.length - 1 ? (
-                /* The line between two marks, at the height of the marks
-                   rather than under the words, so the four read as one run. */
+                {/* The mark. Hollow where you are, filled where you have been,
+                    and the same size throughout - a mark that grows when it is
+                    current bends the line it is standing on. */}
                 <span
                   aria-hidden
                   className={cn(
-                    "h-px w-4 shrink-0 rounded-pill transition-colors sm:w-6",
-                    n < reached ? "bg-mark" : "bg-hair",
+                    "size-3 rounded-pill transition-all duration-300",
+                    here
+                      ? "bg-field ring-[3px] ring-ink"
+                      : passed
+                        ? "bg-ink"
+                        : "bg-hair group-hover/step:bg-idx",
                   )}
                 />
-              ) : null}
+              </button>
             </li>
           );
         })}
@@ -210,16 +219,21 @@ export function BookStage({
          And a real floor. The two cuts along the bottom need room to be cuts,
          and a surface that shrinks to a short answer loses the shape it is
          drawn from. */
+      /* A floor, not a fill. Told to take the whole window it left a third of
+         itself empty under a short answer, which is worse than a smaller card:
+         the corner disc ended up floating alone in a void. The floor is what
+         the two cuts along the bottom need to be cuts, and the surface grows
+         from there with whatever is asked. */
       tone="field"
-      className={cn("min-h-[clamp(400px,50vh,540px)] w-full", className)}
+      className={cn("min-h-[clamp(380px,46vh,520px)] w-full", className)}
       bar="wide"
       toolbar={
-        <div className="flex h-10 w-full items-center gap-1 px-1.5">
+        <div className="flex h-10 w-full min-w-0 items-center gap-1 pr-2 pl-1">
           <Disc label="Previous step" onClick={onBack} disabled={at === 0}>
             <ArrowLeft className="size-4" />
           </Disc>
 
-          <div className="flex min-w-0 flex-1 justify-center">{rail}</div>
+          <div className="flex min-w-0 flex-1">{rail}</div>
         </div>
       }
       aside={
@@ -252,17 +266,23 @@ export function BookStage({
         </button>
       }
     >
-      <h2 className="max-w-[min(24ch,var(--notch-free,62ch))] text-[clamp(20px,1.9vw,27px)] leading-[1.08] font-extrabold tracking-[-0.032em] text-ink">
-        {title}
-      </h2>
+      <div className="mx-auto mt-6 max-w-[1180px] text-center">
+        <h2 className="mx-auto max-w-[24ch] text-[clamp(20px,1.9vw,27px)] leading-[1.08] font-extrabold tracking-[-0.032em] text-ink">
+          {title}
+        </h2>
 
-      {note ? (
-        <p className="mt-1.5 max-w-[62ch] text-[13.5px] leading-[1.5] text-quiet sm:text-[14px]">
-          {note}
-        </p>
-      ) : null}
+        {note ? (
+          <p className="mx-auto mt-2 max-w-[62ch] text-[13.5px] leading-[1.5] text-quiet sm:text-[14px]">
+            {note}
+          </p>
+        ) : null}
+      </div>
 
-      <div className="mt-5">{children}</div>
+      {/* One inset, one measure. The step's own content sits on the same
+          centre line as its heading rather than running the full surface, so
+          three cards and four chips read as one block instead of two rows that
+          happen to start in the same place. */}
+      <div className="mx-auto mt-8 w-full max-w-[1180px]">{children}</div>
     </CutPanel>
   );
 }

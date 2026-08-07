@@ -259,17 +259,8 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
     );
   }
 
-  /* What has been settled, in the reader's own terms, so the rail is a record
-     of the booking rather than a row of numbers. */
-  const said = [
-    meeting ? meeting.name : "",
-    when ? `${whenShort} · ${whenTime}` : "",
-    details.name.trim(),
-    "",
-  ];
-
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div>
       {/* The head.
 
           The page had none. It was lost when this screen stopped being a
@@ -299,12 +290,11 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
       {/* The surface, filling what the head leaves - the landing page's own
           arrangement, where the card is the page and the words are a band
           above it. */}
-      <div className="page-frame mt-7 flex min-h-0 w-full flex-1 flex-col">
+      <div className="page-frame mt-8 w-full">
         {at === 0 ? (
           <BookStage
-            className="h-full"
             rail={
-              <StepRail at={at} reached={reached} said={said} onGo={setAt} />
+              <StepRail at={at} reached={reached} onGo={setAt} />
             }
             at={at}
             title="What kind of meeting?"
@@ -314,7 +304,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
             onBack={back}
             onNext={next}
           >
-            <ul className="grid gap-2.5 md:grid-cols-3">
+            <ul className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
               {MEETINGS.map((entry) => {
                 const on = entry.key === meetingKey;
 
@@ -328,7 +318,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
                         if (!wanted) setMinutes(entry.minutes);
                       }}
                       className={cn(
-                        "flex h-full w-full cursor-pointer flex-col rounded-[16px] p-4 text-left transition-colors",
+                        "flex h-full min-h-[190px] w-full cursor-pointer flex-col justify-between rounded-[18px] p-5 text-left transition-colors",
                         on ? "bg-ink" : "bg-canvas hover:bg-canvas-firm",
                       )}
                     >
@@ -358,7 +348,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
                         </span>
                       </span>
 
-                      <span className="mt-3.5 flex items-baseline gap-2">
+                      <span className="mt-6 flex items-baseline gap-2">
                         <span
                           className={cn(
                             "text-[15.5px] font-bold",
@@ -428,9 +418,8 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
 
         {at === 1 ? (
           <BookStage
-            className="h-full"
             rail={
-              <StepRail at={at} reached={reached} said={said} onGo={setAt} />
+              <StepRail at={at} reached={reached} onGo={setAt} />
             }
             at={at}
             title="When suits you?"
@@ -553,9 +542,8 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
 
         {at === 2 ? (
           <BookStage
-            className="h-full"
             rail={
-              <StepRail at={at} reached={reached} said={said} onGo={setAt} />
+              <StepRail at={at} reached={reached} onGo={setAt} />
             }
             at={at}
             title="Who are we meeting?"
@@ -629,9 +617,8 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
 
         {at === 3 ? (
           <BookStage
-            className="h-full"
             rail={
-              <StepRail at={at} reached={reached} said={said} onGo={setAt} />
+              <StepRail at={at} reached={reached} onGo={setAt} />
             }
             at={at}
             title="Check it over."
@@ -719,7 +706,7 @@ function Field({
   autoComplete?: string;
 }) {
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div>
       <label
         htmlFor={id}
         className="mb-2 block text-[13.5px] font-semibold text-ink"
