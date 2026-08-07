@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 
-import { outline, type Cuts } from "@/components/home/notched-card";
 import { CutPanel } from "@/components/layout/cut-panel";
 import { cn } from "@/lib/utils";
 

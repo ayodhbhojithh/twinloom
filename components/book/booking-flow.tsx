@@ -281,25 +281,19 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
           Centred, because the rail under it is centred and a left aligned
           title over a centred row is two decisions. Compact, because this is a
           tool: the head introduces it and then gets out of the way. */}
-      {/* The head, arranged the way the landing page arranges its own: the
-          line on the left, the control on the right, both on one baseline and
-          both reaching the edges. The rail is that control - it is where you
-          are and it is how you go back, which is exactly what stands beside a
-          headline on the front page. */}
-      <div className="page-frame flex w-full shrink-0 flex-wrap items-end justify-between gap-x-12 gap-y-6">
-        <div className="min-w-0">
-          <h1 className="section-head max-w-[16ch] text-ink [text-wrap:pretty]">
-            Pick a time
-            <span className="text-quiet"> that suits you.</span>
-          </h1>
+      {/* Only the words are outside the surface. Everything you can press is
+          on it or standing in a piece cut out of it, which is the rule the
+          landing card states and the rest of the site follows. */}
+      <div className="page-frame w-full shrink-0 text-center">
+        <h1 className="section-head mx-auto max-w-[22ch] text-ink [text-wrap:pretty]">
+          Pick a time
+          <span className="text-quiet"> that suits you.</span>
+        </h1>
 
-          <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.6] text-quiet">
-            Four questions, nothing to prepare, and real availability - so a
-            time you can pick is a time you can have.
-          </p>
-        </div>
-
-        <StepRail at={at} reached={reached} said={said} onGo={setAt} />
+        <p className="mx-auto mt-4 max-w-[68ch] text-[15px] leading-[1.6] text-quiet">
+          Four questions, nothing to prepare, and real availability - so a time
+          you can pick is a time you can have.
+        </p>
       </div>
 
       {/* The surface, filling what the head leaves - the landing page's own
@@ -309,6 +303,9 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
         {at === 0 ? (
           <BookStage
             className="h-full"
+            rail={
+              <StepRail at={at} reached={reached} said={said} onGo={setAt} />
+            }
             at={at}
             title="What kind of meeting?"
             note="Three to choose from. None of them commits you to anything."
@@ -432,6 +429,9 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
         {at === 1 ? (
           <BookStage
             className="h-full"
+            rail={
+              <StepRail at={at} reached={reached} said={said} onGo={setAt} />
+            }
             at={at}
             title="When suits you?"
             note="Pick a day, then a time. Every time is shown in your own clock."
@@ -554,6 +554,9 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
         {at === 2 ? (
           <BookStage
             className="h-full"
+            rail={
+              <StepRail at={at} reached={reached} said={said} onGo={setAt} />
+            }
             at={at}
             title="Who are we meeting?"
             note="Two things we need, and one you can leave blank."
@@ -627,6 +630,9 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
         {at === 3 ? (
           <BookStage
             className="h-full"
+            rail={
+              <StepRail at={at} reached={reached} said={said} onGo={setAt} />
+            }
             at={at}
             title="Check it over."
             note={
