@@ -114,13 +114,21 @@ export function HowWeWorkView() {
                   </span>
                 </span>
               }
-              /* The numeral, standing in the bite. It is the feature of this
-                 page: everything else is ink and grey, which is what lets one
-                 object on each surface be coloured. */
+              /* The numeral, standing in the bite.
+
+                 A disc, like every other thing that stands in a cut on this
+                 site - the arrows on the landing card, the way on in the
+                 corner, the marks on the rail below. A rounded square was one
+                 shape the site does not otherwise use, sitting inside a cut
+                 whose own corners are round.
+
+                 It is the feature of the page: everything else is ink and
+                 grey, which is what lets one object on each surface carry the
+                 colour. */
               aside={
                 <div
                   aria-hidden
-                  className="flex size-[52px] items-center justify-center rounded-[20px] text-[19px] leading-none font-bold tracking-[-0.02em] text-white tabular-nums"
+                  className="flex size-[52px] items-center justify-center rounded-pill text-[18px] leading-none font-bold tracking-[-0.02em] text-white tabular-nums"
                   style={{
                     backgroundImage: `linear-gradient(135deg, ${ramp.from}, ${ramp.to})`,
                   }}
