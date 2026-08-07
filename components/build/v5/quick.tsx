@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { ASK_PARTS, REF_KINDS } from "@/lib/build/v5";
 import { sendScope, whatIsMissing } from "@/lib/build/submit";
+import { askDone } from "@/lib/build/v5-derive";
 import { ROUTES } from "@/lib/site";
 import {
   addRef,
@@ -79,6 +80,11 @@ export function QuickPane({
      again - somebody who has been asked for their name once should not have
      the field taken away while they look for it. */
   const [asking, setAsking] = useState(false);
+  /* Whether send has been pressed and refused. Only then does an empty
+     required field turn red: marking one before anybody has tried tells
+     somebody they have done something wrong when all they have done is not
+     finished yet. */
+  const [tried, setTried] = useState(false);
 
   const missing = whatIsMissing(answers);
 
@@ -96,6 +102,20 @@ export function QuickPane({
 
     if (missing.length) {
       setAsking(true);
+      setTried(true);
+
+      /* The first field that is actually stopping it, focused. Told what is
+         missing and then left to find it themselves, somebody reads five
+         labels; the caret is a better answer than a sentence. */
+      requestAnimationFrame(() => {
+        const first = FIELDS.find(
+          (field) => field.req && !askDone(answers, field.k),
+        );
+        document
+          .getElementById(first ? `quick-ask-${first.k}` : "quick-ask-part")
+          ?.scrollIntoView({ block: "center", behavior: "smooth" });
+        if (first) document.getElementById(`quick-ask-${first.k}`)?.focus();
+      });
       return;
     }
 
@@ -297,17 +317,26 @@ export function QuickPane({
                   why={field.why}
                   type={field.k === "email" ? "email" : "text"}
                   value={answers.ask[field.k] ?? ""}
+                  bad={tried && field.req && !askDone(answers, field.k)}
                   onChange={(value) => setAsk(field.k, value)}
                 />
               ))}
             </div>
 
-            <div className="mt-6">
+            <div id="quick-ask-part" className="mt-6 scroll-mt-24">
               <div className="mb-2 flex items-baseline justify-between gap-3">
                 <b className="text-[13.5px] font-semibold text-ink">
                   What part do you play in this decision
                 </b>
-                <Kicker className="text-mark">Required</Kicker>
+                <Kicker
+                  className={
+                    tried && !askDone(answers, "part")
+                      ? "text-blocked"
+                      : "text-mark"
+                  }
+                >
+                  Required
+                </Kicker>
               </div>
 
               <TickSet
@@ -319,6 +348,12 @@ export function QuickPane({
                 isOn={(k: string) => chipOn(answers, "ask.part", k)}
                 onPick={(k: string) => toggleChip("ask.part", k, true, "submit")}
               />
+
+              {tried && !askDone(answers, "part") ? (
+                <p className="mt-2 text-[12px] leading-[1.4] font-semibold text-blocked">
+                  Pick one before this can go.
+                </p>
+              ) : null}
             </div>
           </div>
         ) : null}

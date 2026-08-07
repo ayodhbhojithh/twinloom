@@ -332,6 +332,7 @@ export function Field({
   type = "text",
   value,
   placeholder,
+  bad,
   onChange,
 }: {
   id: string;
@@ -342,6 +343,15 @@ export function Field({
   type?: string;
   value: string;
   placeholder?: string;
+  /**
+   * Required, empty, and somebody has already pressed send.
+   *
+   * Not "empty": marking a field red before anybody has tried to submit tells
+   * somebody they have done something wrong when all they have done is not
+   * finished yet. It turns on at the first refusal and off the moment the
+   * field is filled in.
+   */
+  bad?: boolean;
   onChange: (value: string) => void;
 }) {
   return (
@@ -350,7 +360,11 @@ export function Field({
         <label htmlFor={id} className="text-[13.5px] font-semibold text-ink">
           {label}
         </label>
-        <Kicker className={required ? "text-mark" : undefined}>
+        <Kicker
+          className={
+            bad ? "text-blocked" : required ? "text-mark" : undefined
+          }
+        >
           {required ? "Required" : "Optional"}
         </Kicker>
       </div>
@@ -360,11 +374,25 @@ export function Field({
         type={type}
         value={value}
         placeholder={placeholder ?? label}
+        aria-invalid={bad || undefined}
+        aria-describedby={bad ? `${id}-bad` : undefined}
         onChange={(event) => onChange(event.target.value)}
-        className="h-9 w-full rounded-field border border-border bg-field px-3.5 text-[14px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
+        className={cn(
+          "h-9 w-full rounded-field border bg-field px-3.5 text-[14px] text-ink outline-none transition-colors placeholder:text-label",
+          bad
+            ? "border-blocked bg-blocked/[0.04] focus:border-blocked"
+            : "border-border focus:border-ink",
+        )}
       />
 
-      {why ? (
+      {bad ? (
+        <p
+          id={`${id}-bad`}
+          className="mt-1 text-[12px] leading-[1.4] font-semibold text-blocked"
+        >
+          {label} is needed before this can go.
+        </p>
+      ) : why ? (
         <p className="mt-1 text-[12px] leading-[1.4] text-label">{why}</p>
       ) : null}
     </div>
