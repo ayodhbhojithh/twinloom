@@ -473,31 +473,39 @@ export function StageRefs({ at, answers, onGo }: StepProps) {
           }
         />
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          {(["note", "site"] as const).map((key) => (
-            <Chip key={key} on={kind === key} onClick={() => setKind(key)}>
-              {REF_KINDS[key]}
-            </Chip>
-          ))}
-        </div>
+        {/* The chips and the row they change, side by side.
 
-        <div className="mt-2.5">
-          <AddRow
-            key={kind}
-            kind={kind === "site" ? "url" : "text"}
-            label={kind === "site" ? "A website address" : "A sentence"}
-            placeholder={
-              kind === "site"
-                ? "twinloom.com"
-                : "A sentence you want kept in your words"
-            }
-            onAdd={(value) =>
-              addRef(
-                { kind: REF_KINDS[kind], text: value, where: null },
-                "refs",
-              )
-            }
-          />
+            Stacked, the two read as separate controls and the row asked its
+            question twice - once as a pair of chips and again as a placeholder
+            underneath them. On one line the chip is plainly the switch for the
+            field beside it. */}
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <div className="flex flex-none items-center gap-2">
+            {(["note", "site"] as const).map((key) => (
+              <Chip key={key} on={kind === key} onClick={() => setKind(key)}>
+                {REF_KINDS[key]}
+              </Chip>
+            ))}
+          </div>
+
+          <div className="min-w-[240px] flex-1">
+            <AddRow
+              key={kind}
+              kind={kind === "site" ? "url" : "text"}
+              label={kind === "site" ? "A website address" : "A sentence"}
+              placeholder={
+                kind === "site"
+                  ? "twinloom.com"
+                  : "A sentence you want kept in your words"
+              }
+              onAdd={(value) =>
+                addRef(
+                  { kind: REF_KINDS[kind], text: value, where: null },
+                  "refs",
+                )
+              }
+            />
+          </div>
         </div>
 
         {answers.refs.length ? (

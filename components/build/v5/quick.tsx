@@ -57,141 +57,149 @@ export function QuickPane({
   const [files, setFiles] = useState<Attached[]>([]);
 
   return (
-    /* One column, capped at the reading measure.
+    /* One instruction over two columns.
 
-       It was two, and the two were saying the same thing: a heading on the left
-       telling somebody to say it in their own words, and a heading on the right
-       telling them to say it however they would say it, with the box under the
-       second one. Split like that the left ran out a third of the way down and
-       left a column of empty surface beside a form.
+       Writing on the left, everything you hand over on the right. Stacked, the
+       page was a tall box with a drop zone somewhere below the fold, and the
+       two halves of one answer read as two separate jobs.
 
-       One column is one instruction, one box, and the things you can attach to
-       it - in the order somebody does them. The floor is what the cuts need to
-       be cuts, and nothing more. */
+       The heading stays over both rather than over either: it is the question
+       the whole pane is asking, and putting it above one column would make the
+       other look like an afterthought. That is what went wrong the last time
+       this was two columns - each half had a heading of its own, and the two
+       were saying the same thing. */
     <Stage className="min-h-[380px] w-full">
-      {/* One column, down the left.
-
-          It was two - the writing on one side and what you attach to it on the
-          other - and the right ran out long before the left did, so the pane
-          spent most of its height as an empty half. Stacked, everything is on
-          one axis, in the order it is done: write it, attach to it, send it. */}
-      <div className="mx-auto max-w-[720px]">
-        <div className="min-w-0 text-center [&>h2]:mx-auto [&>p]:mx-auto">
+      <div className="w-full">
+        <div className="min-w-0">
           <H>Say it in your own words.</H>
           <Sub>
             No questions, no order, no structure. Who you are, what you offer,
             and how to get hold of you - it goes exactly as you typed it.
           </Sub>
-
-          <textarea
-            rows={12}
-            aria-label="Say it in your own words"
-            value={answers.text["quick.words"] ?? ""}
-            placeholder="What the business does, who it is for, what the website has to do, and anything you already know you want."
-            onChange={(event) => setText("quick.words", event.target.value)}
-            className="mt-5 w-full resize-y rounded-[14px] border border-border bg-field px-4 py-3 text-[14px] leading-[1.6] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
-          />
         </div>
 
-        <div className="mt-8 min-w-0">
-        {/* Files, then the line for the two things that are not files. No
+        <div className="mt-7 grid items-start gap-6 lg:grid-cols-2 lg:gap-8">
+          {/* The writing. `flex-1` on the box rather than a row count, so on a
+              wide screen it grows to whatever the column beside it needs and
+              the two halves end level. */}
+          <div className="flex min-w-0 flex-col">
+            <textarea
+              rows={12}
+              aria-label="Say it in your own words"
+              value={answers.text["quick.words"] ?? ""}
+              placeholder="What the business does, who it is for, what the website has to do, and anything you already know you want."
+              onChange={(event) => setText("quick.words", event.target.value)}
+              className="min-h-[280px] w-full flex-1 resize-y rounded-[14px] border border-border bg-field px-4 py-3 text-[14px] leading-[1.6] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
+            />
+          </div>
+
+          <div className="min-w-0">
+            {/* Files, then the line for the two things that are not files. No
             heading over either: the drop zone says what it is on its face, and
             a title above a control that already carries a label is the same
             words twice. */}
-        <DropZone
-          className="mt-0"
-          label="Drop files here, or choose them"
-          note="Pictures, brochures, price lists, screenshots. Up to 10 MB each."
-          files={files}
-          onAdd={(taken) => {
-            setFiles((was) => [...was, ...taken]);
-            for (const file of taken) {
-              addRef({
-                kind: isPicture(file.type) ? REF_KINDS.image : REF_KINDS.file,
-                text: file.name,
-                where: null,
-              });
-            }
-          }}
-          onDrop={(at) =>
-            setFiles((was) => was.filter((_, index) => index !== at))
-          }
-        />
+            <DropZone
+              className="mt-0"
+              label="Drop files here, or choose them"
+              note="Pictures, brochures, price lists, screenshots. Up to 10 MB each."
+              files={files}
+              onAdd={(taken) => {
+                setFiles((was) => [...was, ...taken]);
+                for (const file of taken) {
+                  addRef({
+                    kind: isPicture(file.type)
+                      ? REF_KINDS.image
+                      : REF_KINDS.file,
+                    text: file.name,
+                    where: null,
+                  });
+                }
+              }}
+              onDrop={(at) =>
+                setFiles((was) => was.filter((_, index) => index !== at))
+              }
+            />
 
-        <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-          {SAYABLE.map((key) => (
-            <Chip
-              key={key}
-              on={kind === key}
-              title={KIND_WHY[key]}
-              onClick={() => setKind(key)}
-            >
-              {REF_KINDS[key]}
-            </Chip>
-          ))}
-        </div>
+            {/* The chips and the row they change, side by side.
 
-        <div className="mt-2.5">
-          {/* The row follows the chip. One placeholder for both said "a
+            Stacked, the two read as separate controls and the row asked its
+            question twice - once as a pair of chips and again as a placeholder
+            underneath them. On one line the chip is plainly the switch for the
+            field beside it. */}
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <div className="flex flex-none items-center gap-2">
+                {SAYABLE.map((key) => (
+                  <Chip
+                    key={key}
+                    on={kind === key}
+                    title={KIND_WHY[key]}
+                    onClick={() => setKind(key)}
+                  >
+                    {REF_KINDS[key]}
+                  </Chip>
+                ))}
+              </div>
+
+              {/* The field follows the chip. One placeholder for both said "a
               sentence, or a link" and then took either as text, so a website
               was filed under a label saying Website and never became one. */}
-          <AddRow
-            key={kind}
-            kind={kind === "site" ? "url" : "text"}
-            label={kind === "site" ? "A website address" : "A sentence"}
-            placeholder={
-              kind === "site"
-                ? "twinloom.com"
-                : "A sentence you want kept in your words"
-            }
-            onAdd={(value) =>
-              addRef({ kind: REF_KINDS[kind], text: value, where: null })
-            }
-          />
-        </div>
-
-        {answers.refs.length ? (
-          <ul className="mt-3 flex flex-col gap-2">
-            {answers.refs.map((ref) => (
-              <li
-                key={ref.n}
-                className="flex flex-wrap items-center gap-x-3.5 gap-y-2 rounded-[12px] bg-canvas px-3.5 py-2.5"
-              >
-                <Kicker className="w-[72px] flex-none">{ref.kind}</Kicker>
-                <span className="min-w-[14ch] flex-1 text-[13.5px] leading-[1.4] text-ink">
-                  <RefText text={ref.text} />
-                </span>
-                <input
-                  value={answers.like[ref.n] ?? ""}
-                  placeholder="What you like about it"
-                  onChange={(event) => setLike(ref.n, event.target.value)}
-                  className={cn(
-                    "h-8 w-full rounded-field border border-border bg-field px-3 text-[12.5px] text-ink outline-none transition-colors",
-                    "placeholder:text-label focus:border-ink sm:w-[200px]",
-                  )}
+              <div className="min-w-[240px] flex-1">
+                <AddRow
+                  key={kind}
+                  kind={kind === "site" ? "url" : "text"}
+                  label={kind === "site" ? "A website address" : "A sentence"}
+                  placeholder={
+                    kind === "site"
+                      ? "twinloom.com"
+                      : "A sentence you want kept in your words"
+                  }
+                  onAdd={(value) =>
+                    addRef({ kind: REF_KINDS[kind], text: value, where: null })
+                  }
                 />
-                <button
-                  type="button"
-                  onClick={() => dropRef(ref.n)}
-                  className="flex-none cursor-pointer font-mono text-[9px] font-bold tracking-[0.12em] text-label uppercase transition-colors hover:text-ink"
-                >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : null}
+              </div>
+            </div>
 
+            {answers.refs.length ? (
+              <ul className="mt-3 flex flex-col gap-2">
+                {answers.refs.map((ref) => (
+                  <li
+                    key={ref.n}
+                    className="flex flex-wrap items-center gap-x-3.5 gap-y-2 rounded-[12px] bg-canvas px-3.5 py-2.5"
+                  >
+                    <Kicker className="w-[72px] flex-none">{ref.kind}</Kicker>
+                    <span className="min-w-[14ch] flex-1 text-[13.5px] leading-[1.4] text-ink">
+                      <RefText text={ref.text} />
+                    </span>
+                    <input
+                      value={answers.like[ref.n] ?? ""}
+                      placeholder="What you like about it"
+                      onChange={(event) => setLike(ref.n, event.target.value)}
+                      className={cn(
+                        "h-8 w-full rounded-field border border-border bg-field px-3 text-[12.5px] text-ink outline-none transition-colors",
+                        "placeholder:text-label focus:border-ink sm:w-[200px]",
+                      )}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => dropRef(ref.n)}
+                      className="flex-none cursor-pointer font-mono text-[9px] font-bold tracking-[0.12em] text-label uppercase transition-colors hover:text-ink"
+                    >
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
         </div>
 
-        {/* The way out, at the end - where somebody has finished rather than at
-            the top where they have not started.
+        {/* The way out, under both columns - where somebody has finished
+            rather than at the top where they have not started.
 
-            No rule over it. Space is already saying the same thing, and the
-            `lg:col-span-2` it carried was left from when this pane was two
-            columns and there was a second one to span. */}
+            No rule over it. Space is already saying the same thing. */}
         <div className="mt-8 min-w-0">
-          <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
+          <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
             <Pill
               tone="ink"
               arrow
@@ -210,7 +218,7 @@ export function QuickPane({
             </Pill>
           </div>
 
-          <p className="mx-auto mt-3 max-w-[62ch] text-center text-[12.5px] leading-[1.55] text-quiet">
+          <p className="mt-3 max-w-[62ch] text-[12.5px] leading-[1.55] text-quiet sm:ml-auto sm:text-right">
             Nothing is thrown away and nothing is final. It comes back as the
             same written scope, and you can answer the rest at any point.
           </p>
