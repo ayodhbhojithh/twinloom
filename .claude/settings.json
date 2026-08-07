@@ -11,7 +11,9 @@
       "Bash(node -e \"const p=require\\('./package.json'\\);console.log\\(Object.keys\\({...p.dependencies,...p.devDependencies}\\).join\\(' '\\)\\)\")",
       "Bash(cp \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/cloudtest.mjs\" ./cloudtest.mjs)",
       "Bash(node ./cloudtest.mjs)",
-      "Bash(rm -f ./cloudtest.mjs)"
+      "Bash(rm -f ./cloudtest.mjs)",
+      "Bash(nslookup -type=MX twincoretech.com 8.8.8.8)",
+      "Bash(nslookup -type=TXT twincoretech.com 8.8.8.8)"
     ]
   }
 }
