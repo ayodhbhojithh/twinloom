@@ -120,8 +120,12 @@ export function BuildFlow() {
           the surface below it. Left against the edge it was one short block in
           the corner of a very wide screen, with the question it introduces
           centred underneath. */}
-      <div className="mb-8 text-center">
-        <h1 className="section-head mx-auto max-w-[26ch] text-ink">
+      <div className="mb-7 text-center sm:mb-8">
+        {/* `text-balance` off below `sm`. Balancing evens the lines, which on a
+            phone turns a four line headline into four short ones with a ragged
+            block of space beside them - the measure is already doing the
+            breaking there. */}
+        <h1 className="section-head mx-auto max-w-[26ch] text-ink max-sm:[text-wrap:pretty]">
           Build your website.
           <span className="text-quiet">
             {" "}

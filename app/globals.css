@@ -272,6 +272,23 @@
     scroll-behavior: smooth;
   }
 
+  /* Nothing on this site scrolls sideways.
+
+     `clip` rather than `hidden`: both stop the overflow, but `hidden` makes
+     the element a scroll container, which silently breaks every `position:
+     sticky` inside it - the header, the section index and the notes tab all
+     depend on one. `clip` has no such side effect.
+
+     It is a floor, not a licence. The full-bleed rows on this site are drawn
+     with `50% - 50vw`, and a scrollbar makes `100vw` wider than the document
+     by exactly the bar's width - which is a sideways scroll on every page with
+     one of those on it, and on a phone it is the difference between a headline
+     that wraps and a page zoomed out to fit something nobody can see. */
+  html,
+  body {
+    overflow-x: clip;
+  }
+
   body {
     /* The ground is the tinted one and the surfaces are white, rather than the
        other way round. A white page with tinted cards on it makes the cards the

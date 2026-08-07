@@ -46,7 +46,10 @@ export function StageStep({
   return (
     <Stage
       scrollKey={`${step.k}:${scrollKey ?? ""}`}
-      className="min-h-[540px] w-full"
+      /* A floor the cuts need, sized to the screen. 540 is most of a phone
+         before anything has been asked, which put the first question below the
+         fold on the page the whole site points at. */
+      className="min-h-[420px] w-full sm:min-h-[540px]"
       toolbar={
         <Plate>
           <Disc label="Previous step" onClick={() => onGo(at - 1)} disabled={first}>
