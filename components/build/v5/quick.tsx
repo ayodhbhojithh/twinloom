@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 import { REF_KINDS } from "@/lib/build/v5";
+import { ROUTES } from "@/lib/site";
 import {
   addRef,
   dropRef,
@@ -225,6 +227,20 @@ export function QuickPane({
           <p className="mt-3 max-w-[62ch] text-[12.5px] leading-[1.55] text-quiet">
             Nothing is thrown away and nothing is final. It comes back as the
             same written scope, and you can answer the rest at any point.
+          </p>
+
+          {/* At the point of collection, not seven links down the footer. This
+              pane takes free text, files and contact details, and a privacy
+              notice somebody has to go looking for is not one that was given. */}
+          <p className="mt-2 max-w-[62ch] text-[12px] leading-[1.55] text-label">
+            What happens to your details is set out in our{" "}
+            <Link
+              href={ROUTES.privacy}
+              className="font-semibold text-body underline decoration-hair underline-offset-2 transition-colors hover:text-mark hover:decoration-mark"
+            >
+              Privacy notice
+            </Link>
+            .
           </p>
         </div>
       </div>

@@ -201,11 +201,11 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
           title over a centred row is two decisions. Compact, because this is a
           tool: the head introduces it and then gets out of the way. */}
       <header className="mb-9 text-center">
-        <p className="font-mono text-[9px] font-bold tracking-[0.16em] text-mark uppercase">
-          Book a meeting
-        </p>
-
-        <h1 className="mx-auto mt-3 max-w-[20ch] text-[clamp(26px,2.9vw,42px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink">
+        {/* No kicker over it. The nav item that got somebody here says "Book a
+            meeting", the tab says it, and a third copy directly above a
+            headline that means the same thing is the page introducing itself
+            twice. */}
+        <h1 className="mx-auto max-w-[20ch] text-[clamp(26px,2.9vw,42px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink">
           Pick a time
           <span className="text-quiet"> that suits you.</span>
         </h1>

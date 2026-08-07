@@ -42,6 +42,7 @@ const PAGES: readonly {
      looking for them rather than to compete for anything. Dropping them
      entirely would be worse - a privacy policy that cannot be found is a
      compliance problem before it is an SEO one. */
+  { path: ROUTES.legal, priority: 0.3, changeFrequency: "yearly" },
   { path: ROUTES.privacy, priority: 0.3, changeFrequency: "yearly" },
   { path: ROUTES.cookies, priority: 0.3, changeFrequency: "yearly" },
   { path: ROUTES.terms, priority: 0.3, changeFrequency: "yearly" },

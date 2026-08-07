@@ -342,7 +342,6 @@ const FIELDS = [
   },
 ] as const;
 
-
 /* ----------------------------------------------------------------- 11 keep */
 
 /* --------------------------------------------------------------- 12 submit */
@@ -452,9 +451,7 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
       onGo={onGo}
       corner={
         <Disc
-          label={
-            answers.sending ? "Sending" : "Send my scoping request"
-          }
+          label={answers.sending ? "Sending" : "Send my scoping request"}
           tone="ink"
           disabled={answers.sending || missing.length > 0}
           onClick={send}
@@ -507,7 +504,10 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
 
           <TickSet
             single
-            options={ASK_PARTS.map((part) => ({ k: part.v, label: part.label }))}
+            options={ASK_PARTS.map((part) => ({
+              k: part.v,
+              label: part.label,
+            }))}
             isOn={(k: string) => chipOn(answers, "ask.part", k)}
             onPick={(k: string) => toggleChip("ask.part", k, true, "submit")}
           />
@@ -778,6 +778,23 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
           yours.
         </p>
       </div>
+
+      {/* Beside the button that sends it, not only in the footer.
+
+          This screen collects a name, a company, an email, a phone number,
+          free text, uploaded files and answers about somebody's business. A
+          privacy notice seven links down the foot of the page is not a notice
+          given at the point of collection. */}
+      <p className="mt-5 max-w-[52ch] text-[12px] leading-[1.5] text-label">
+        What happens to your details is set out in our{" "}
+        <Link
+          href={ROUTES.privacy}
+          className="font-semibold text-body underline decoration-hair underline-offset-2 transition-colors hover:text-mark hover:decoration-mark"
+        >
+          Privacy notice
+        </Link>
+        .
+      </p>
     </StageStep>
   );
 }

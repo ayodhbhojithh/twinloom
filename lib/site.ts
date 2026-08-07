@@ -60,6 +60,8 @@ export const ROUTES = {
   faq: "/faqs",
   blog: "/blog",
 
+  /* The way into the other seven, and where the company details are set out. */
+  legal: "/legal",
   privacy: "/privacy",
   cookies: "/cookies",
   terms: "/terms",
@@ -105,13 +107,13 @@ export const HEADER_NAV: readonly NavLink[] = [
      scanned from both ends - the name at one, the way to reach somebody at the
      other - and an item in an unexpected place costs a reader a whole pass. */
   { label: "Home", href: ROUTES.home },
-  { label: "About", href: ROUTES.about },
   { label: "How we work", href: ROUTES.how },
   { label: "Partners", href: ROUTES.partners },
   { label: "Articles", href: ROUTES.blog },
   { label: "FAQs", href: ROUTES.faq },
   { label: "Book a meeting", href: ROUTES.book },
   { label: "Contact", href: ROUTES.contact },
+  { label: "About", href: ROUTES.about },
 ];
 
 /** The one call to action in the chrome, and the site's only way in. */
@@ -206,6 +208,7 @@ export const FOOTER_COLUMNS: readonly {
  * the company statement instead.
  */
 export const FOOTER_LEGAL: readonly NavLink[] = [
+  { label: "Legal", href: ROUTES.legal },
   { label: "Privacy", href: ROUTES.privacy },
   { label: "Cookies", href: ROUTES.cookies },
   { label: "Terms of use", href: ROUTES.terms },
@@ -216,14 +219,19 @@ export const FOOTER_LEGAL: readonly NavLink[] = [
 ];
 
 /**
- * The legal line, with the draft's own placeholders left in.
+ * The legal line, now that there is one.
  *
- * The square brackets are deliberate. A made up company number is worse than a
- * visible gap, and a visible gap is the thing that gets filled before launch.
+ * The placeholders are gone: the company number, the registered office and the
+ * VAT number arrived with the policy documents. One wording, read by the footer
+ * and by every page of the legal set, because eight pages each saying it
+ * slightly differently is eight chances to say it wrong.
  */
 export const LEGAL = {
   entity: "TwinCoreTech Ltd",
-  line: "TwinLoom is a trading name of TwinCoreTech Ltd, a company registered in England and Wales under company number [company number]. Registered office: [registered office]. [VAT registration wording.]",
+  number: "15997244",
+  vat: "489 0108 74",
+  office: "Bromley Old Town Hall, 30 Tweedy Road, Bromley BR1 3FE",
+  line: "TwinLoom is a trading name of TwinCoreTech Ltd, registered in England and Wales, company number 15997244. Registered office: Bromley Old Town Hall, 30 Tweedy Road, Bromley BR1 3FE. VAT registration number 489 0108 74.",
   rights: "All rights reserved.",
 } as const;
 
@@ -243,6 +251,9 @@ export const CONTACT_INFO = {
     "sales@twincoretech.com",
     "careers@twincoretech.com",
     "privacy@twincoretech.com",
+    /* Where a problem using the site itself goes - the accessibility statement
+       and the complaints page both send people here. */
+    "info@twincoretech.com",
     "hello@twincoretech.com",
   ],
   primaryEmail: "hello@twincoretech.com",
