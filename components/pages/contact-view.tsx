@@ -1,34 +1,72 @@
-import { ArrowUpRight, CalendarClock, PencilLine } from "lucide-react";
+import {
+  ArrowUpRight,
+  AtSign,
+  Briefcase,
+  CalendarClock,
+  Clock,
+  MapPin,
+  PencilLine,
+  Phone,
+  ShieldCheck,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 
-import { EmptyMark } from "@/components/blocks/build-note";
 import { PageShell } from "@/components/layout";
 import { CutPanel } from "@/components/layout/cut-panel";
-import { ROUTES } from "@/lib/site";
+import { ContactMap } from "@/components/pages/contact-map";
+import { CONTACT_INFO, ROUTES } from "@/lib/site";
 
 /* ---------------------------------------------------------------------------
    Contact us.
 
-   Two ways in that actually exist, on cut surfaces of their own, and an honest
-   account of the ones that do not yet.
+   The page used to say that the phone number, the address and the inbox did
+   not exist yet. They do now, so the apology comes out and the details take
+   the top of the page - which is what somebody who opened a contact page came
+   for, whatever the rest of the site would rather they did first.
 
-   Nothing here is invented, and that is the whole difficulty of the page: a
-   contact screen wants a phone number, an address and an inbox, and this
-   company has none of them written down anywhere. A plausible-looking number is
-   worse than a gap - somebody rings it. So the two routes that are real are
-   given the whole page, and what is missing is named as missing.
+   Three registers, in the order a reader wants them:
+
+     the lines that reach a person, and where we actually are
+     the two ways in that end in a written scope
+     the four inboxes, so nothing has to be forwarded twice
+
+   Arranged in the site's own surfaces rather than as a list of icons and
+   labels: an address is a fact, and a fact reads better set large on a surface
+   of its own than shrunk into a row of tiles.
 --------------------------------------------------------------------------- */
 
-/** The ways in that exist today. */
+/** The four addresses, and the one thing each is for. */
+const DESKS = [
+  {
+    icon: Briefcase,
+    address: "sales@twincoretech.com",
+    n: "New work",
+    sub: "Quotes, scopes and anything about a project that has not started yet.",
+  },
+  {
+    icon: Users,
+    address: "careers@twincoretech.com",
+    n: "Working with us",
+    sub: "Applications, portfolios and speculative notes from people who build.",
+  },
+  {
+    icon: ShieldCheck,
+    address: "privacy@twincoretech.com",
+    n: "Data and your rights",
+    sub: "Access requests, deletion, and anything about what we hold and why.",
+  },
+] as const;
+
+/** The ways in that end in something written. */
 const WAYS = [
   {
     href: ROUTES.build,
     icon: PencilLine,
     kicker: "Best first move",
     n: "Tell us what the site is for",
-    sub: "Eleven questions, all of them optional, and a written scope back within two working days. It costs nothing and commits you to nothing.",
+    sub: "Ten questions, all of them optional, and a written scope back within two working days. It costs nothing and commits you to nothing.",
     go: "Start the run-through",
-    tone: "ink" as const,
   },
   {
     href: ROUTES.book,
@@ -37,9 +75,8 @@ const WAYS = [
     n: "Book a time",
     sub: "Pick a length and a slot. Come with the run-through done or come with nothing - both are a conversation we can have.",
     go: "Book a meeting",
-    tone: "quiet" as const,
   },
-];
+] as const;
 
 export function ContactView() {
   return (
@@ -50,11 +87,19 @@ export function ContactView() {
       <CutPanel
         tone="field"
         className="w-full"
-        /* The picture is the right half of the head, cut to the surface's own
-           outline. Without one the panel is a paragraph with a field of empty
-           white beside it - the shape is drawn for a picture and reads as
-           missing one. */
         image="/partners/hero-marble.png"
+        /* The hours stand in the bottom notch. They are one line, they belong
+           with the number rather than above it, and a notch holds exactly one
+           line - which is the whole test for what goes in one. */
+        foot={
+          <span className="flex items-center gap-2 whitespace-nowrap">
+            <Clock aria-hidden className="size-3.5 text-mark" strokeWidth={2} />
+            <span className="font-mono text-[9.5px] font-bold tracking-[0.14em] text-label uppercase">
+              {CONTACT_INFO.hours}
+            </span>
+          </span>
+        }
+        footIn="notch"
         corner={
           <Link
             href={ROUTES.build}
@@ -71,17 +116,109 @@ export function ContactView() {
             Contact us
           </p>
 
-          <h1 className="mt-3 max-w-[min(20ch,var(--notch-free,62ch))] text-[clamp(26px,2.9vw,42px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink">
-            Two ways in, and neither is a form.
+          <h1 className="mt-3 max-w-[min(19ch,var(--notch-free,62ch))] text-[clamp(26px,2.9vw,42px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink">
+            Write, ring, or come
+            <span className="text-quiet"> and find us.</span>
           </h1>
 
           <p className="mt-4 text-[clamp(15px,1.2vw,17px)] leading-[1.6] text-body">
-            Answer what you like and we write it down, or book a time and say it
-            out loud. Whichever you pick, the same thing comes back: your scope,
-            in your own words.
+            A person reads every one of these, and answers within a working day.
+            None of them is a form, and none of them puts you on a list.
           </p>
         </div>
       </CutPanel>
+
+      {/* The lines that reach a person, and the place they sit in.
+
+          Two surfaces rather than one row of tiles: the address is a different
+          kind of fact from a number you can press, and giving each its own
+          shape is cheaper to read than four identical boxes that happen to
+          hold different things. */}
+      <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <CutPanel
+          tone="field"
+          className="w-full"
+          toolbar={
+            <span className="flex h-10 w-full items-center justify-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
+              Direct lines
+            </span>
+          }
+        >
+          {/* Set large, because they are the answer to the question the page
+              was opened with. A contact detail in body copy is a contact
+              detail somebody has to hunt for. */}
+          <dl className="mt-2 flex flex-col gap-6">
+            <div>
+              <dt className="flex items-center gap-2 font-mono text-[9px] font-bold tracking-[0.14em] text-label uppercase">
+                <AtSign aria-hidden className="size-3.5" strokeWidth={2.2} />
+                Email
+              </dt>
+              <dd className="mt-2">
+                <a
+                  href={`mailto:${CONTACT_INFO.primaryEmail}`}
+                  className="inline-block text-[clamp(17px,1.7vw,23px)] leading-[1.15] font-extrabold tracking-[-0.035em] break-all text-ink transition-colors hover:text-mark"
+                >
+                  {CONTACT_INFO.primaryEmail}
+                </a>
+              </dd>
+            </div>
+
+            <div>
+              <dt className="flex items-center gap-2 font-mono text-[9px] font-bold tracking-[0.14em] text-label uppercase">
+                <Phone aria-hidden className="size-3.5" strokeWidth={2.2} />
+                Phone
+              </dt>
+              <dd className="mt-2">
+                <a
+                  href={CONTACT_INFO.phoneHref}
+                  className="inline-block text-[clamp(17px,1.7vw,23px)] leading-[1.15] font-extrabold tracking-[-0.035em] text-ink transition-colors hover:text-mark"
+                >
+                  {CONTACT_INFO.phone}
+                </a>
+              </dd>
+            </div>
+          </dl>
+
+          <p className="mt-7 max-w-[42ch] text-[13.5px] leading-[1.6] text-quiet">
+            Outside those hours the line goes to voicemail and the inbox is read
+            the next morning. Both are answered by the people who would do the
+            work.
+          </p>
+        </CutPanel>
+
+        <CutPanel
+          tone="field"
+          className="w-full"
+          toolbar={
+            <span className="flex h-10 w-full items-center justify-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
+              Where we are
+            </span>
+          }
+        >
+          <address className="mt-2 flex gap-3 not-italic">
+            <MapPin
+              aria-hidden
+              className="mt-1 size-4 flex-none text-mark"
+              strokeWidth={2.2}
+            />
+            <span className="min-w-0">
+              <b className="block text-[clamp(16px,1.4vw,19px)] leading-[1.2] font-extrabold tracking-[-0.03em] text-ink">
+                {CONTACT_INFO.address.name}
+              </b>
+              <span className="mt-1.5 block text-[14px] leading-[1.6] text-body">
+                {CONTACT_INFO.address.street}
+                <br />
+                {CONTACT_INFO.address.cityLine}
+              </span>
+            </span>
+          </address>
+
+          {/* The map is cut to the site's outline and carries the way out to
+              the real one in its corner, so nothing has to sit under it saying
+              "open in maps". */}
+          <ContactMap className="group/map relative mt-5 block h-[clamp(190px,20vw,240px)] w-full cursor-pointer" />
+        </CutPanel>
+      </div>
 
       {/* The two routes, each on a surface of its own.
 
@@ -93,11 +230,7 @@ export function ContactView() {
           it. */}
       <div className="mt-10 grid gap-4 lg:grid-cols-2">
         {WAYS.map((way) => (
-          <CutPanel
-            key={way.href}
-            tone="field"
-            className="w-full"
-          >
+          <CutPanel key={way.href} tone="field" className="w-full">
             <span
               aria-hidden
               className="flex size-11 items-center justify-center rounded-pill bg-canvas text-ink"
@@ -131,20 +264,71 @@ export function ContactView() {
         ))}
       </div>
 
-      {/* What is not here, said rather than faked. */}
-      <section className="mt-14">
-        <EmptyMark />
+      {/* The other three inboxes.
 
-        <h2 className="mt-6 max-w-[26ch] text-[clamp(19px,1.6vw,24px)] leading-[1.16] font-extrabold tracking-[-0.03em] text-ink">
-          A phone number, an address and an inbox.
-        </h2>
+          Written out rather than hidden behind the word "here", because half
+          of what these get is a message somebody would rather send from their
+          own mail client than from a browser. */}
+      <section className="mt-10">
+        <CutPanel
+          tone="field"
+          className="w-full"
+          toolbar={
+            <span className="flex h-10 w-full items-center justify-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
+              Straight to a desk
+            </span>
+          }
+        >
+          <h2 className="max-w-[min(24ch,var(--notch-free,62ch))] text-[clamp(19px,1.7vw,26px)] leading-[1.12] font-extrabold tracking-[-0.035em] text-ink">
+            Three addresses, so nothing gets forwarded twice.
+          </h2>
 
-        <p className="mt-3 max-w-[68ch] text-[15px] leading-[1.65] text-quiet">
-          They belong on this page and they are not on it yet, because they are
-          not written down anywhere for us to put here. A number nobody answers
-          is worse than no number at all, so this says so instead. They go in the
-          day they exist.
-        </p>
+          <ul className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {DESKS.map((desk) => (
+              <li key={desk.address}>
+                <a
+                  href={`mailto:${desk.address}`}
+                  className="group/desk flex h-full flex-col rounded-[18px] bg-canvas p-5 transition-colors hover:bg-canvas-firm"
+                >
+                  <span
+                    aria-hidden
+                    className="flex size-9 items-center justify-center rounded-pill bg-field text-ink"
+                  >
+                    <desk.icon className="size-4" strokeWidth={2} />
+                  </span>
+
+                  <b className="mt-4 block text-[15px] leading-[1.2] font-extrabold tracking-[-0.025em] text-ink">
+                    {desk.n}
+                  </b>
+
+                  <span className="mt-2 block flex-1 text-[13px] leading-[1.55] text-quiet">
+                    {desk.sub}
+                  </span>
+
+                  <span className="mt-4 flex items-center gap-1.5 font-mono text-[10.5px] font-semibold break-all text-mark">
+                    {desk.address}
+                    <ArrowUpRight
+                      aria-hidden
+                      className="size-3.5 flex-none transition-transform group-hover/desk:translate-x-0.5 group-hover/desk:-translate-y-0.5"
+                    />
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-7 max-w-[68ch] text-[12.5px] leading-[1.6] text-label">
+            {CONTACT_INFO.companyName}. If you are not sure which of these it
+            is, use{" "}
+            <a
+              href={`mailto:${CONTACT_INFO.primaryEmail}`}
+              className="font-semibold text-body underline decoration-hair underline-offset-2 transition-colors hover:text-mark hover:decoration-mark"
+            >
+              {CONTACT_INFO.primaryEmail}
+            </a>{" "}
+            and it will get to the right desk.
+          </p>
+        </CutPanel>
       </section>
     </PageShell>
   );

@@ -190,6 +190,39 @@ export const LEGAL = {
 } as const;
 
 /**
+ * How to reach a person, held in one place.
+ *
+ * The contact page is not the only screen that wants an address: the footer,
+ * the booking confirmation and the legal pages all reach for one, and three
+ * copies of a postcode is three chances for two of them to be wrong.
+ *
+ * The postcode is in `cityLine` only. It arrived on both that and `street`,
+ * which put "BR1 3FE" on two lines of the same address.
+ */
+export const CONTACT_INFO = {
+  companyName: "TwinCoreTech Ltd",
+  emails: [
+    "sales@twincoretech.com",
+    "careers@twincoretech.com",
+    "privacy@twincoretech.com",
+    "hello@twincoretech.com",
+  ],
+  primaryEmail: "hello@twincoretech.com",
+  phone: "+44 (0) 753 973 0098",
+  phoneHref: "tel:+447539730098",
+  address: {
+    name: "Bromley Old Town Hall",
+    street: "30 Tweedy Road",
+    cityLine: "Bromley, BR1 3FE, United Kingdom",
+    mapUrl:
+      "https://maps.google.com/?q=Bromley+Old+Town+Hall,+30+Tweedy+Road,+BR1+3FE",
+    embedUrl:
+      "https://maps.google.com/maps?width=100%25&height=600&hl=en&q=Bromley%20Old%20Town%20Hall,%2030%20Tweedy%20Road,%20Bromley,%20BR1%203FE,%20United%20Kingdom+(TwinCoreTech%20Ltd)&t=&z=15&ie=UTF8&iwloc=B&output=embed",
+  },
+  hours: "Mon - Fri, 9AM - 6PM GMT",
+} as const;
+
+/**
  * The rail, flattened into reading order.
  *
  * The rail is the site's table of contents, so its order is the order the pages
