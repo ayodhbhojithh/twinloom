@@ -26,7 +26,6 @@
    was doing nothing but making the whole thing heavier. White, with one
    hairline where a surface has to end.
 --------------------------------------------------------------------------- */
-
 const INK = "#111827";
 const BODY = "#374151";
 const QUIET = "#5b6474";
@@ -35,25 +34,19 @@ const MARK = "#2563eb";
 const CANVAS = "#f6f7f9";
 const FIELD = "#ffffff";
 const HAIR = "#d1d6df";
-
 /** What a mail client will actually have. No web fonts load here. */
-const SANS =
-  "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
-const MONO =
-  "ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace";
-
+const SANS = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
+const MONO = "ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace";
 export const palette = { INK, BODY, QUIET, LABEL, MARK, CANVAS, FIELD, HAIR };
 export const fonts = { SANS, MONO };
-
 /** Text a mail client is about to render, with the four that break it out. */
-export function esc(value: string) {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+export function esc(value) {
+    return value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
 }
-
 /**
  * A mono label, in a tinted pill.
  *
@@ -61,32 +54,24 @@ export function esc(value: string) {
  * client: a background colour, a radius and letter-spacing are all any of them
  * need to understand.
  */
-export function kicker(text: string, tint = MARK) {
-  return `<span style="display:inline-block;padding:5px 10px;border-radius:999px;background:${tint}12;color:${tint};font-family:${MONO};font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;line-height:1">${esc(
-    text,
-  )}</span>`;
+export function kicker(text, tint = MARK) {
+    return `<span style="display:inline-block;padding:5px 10px;border-radius:999px;background:${tint}12;color:${tint};font-family:${MONO};font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;line-height:1">${esc(text)}</span>`;
 }
-
 /** A fact set apart to be copied: a reference, an address, a time. */
-export function plate(label: string, value: string) {
-  return `
+export function plate(label, value) {
+    return `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:22px 0 0">
       <tr>
         <td style="padding:13px 16px;background:${CANVAS};border-radius:14px 14px 14px 4px">
-          <div style="font-family:${MONO};font-size:8.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${LABEL};line-height:1">${esc(
-            label,
-          )}</div>
-          <div style="margin-top:7px;font-family:${MONO};font-size:15px;font-weight:700;color:${INK};line-height:1.3;word-break:break-all">${esc(
-            value,
-          )}</div>
+          <div style="font-family:${MONO};font-size:8.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${LABEL};line-height:1">${esc(label)}</div>
+          <div style="margin-top:7px;font-family:${MONO};font-size:15px;font-weight:700;color:${INK};line-height:1.3;word-break:break-all">${esc(value)}</div>
         </td>
       </tr>
     </table>`;
 }
-
 /** One row of a short list, numbered, the way the site numbers its steps. */
-export function step(n: number, title: string, sub: string) {
-  return `
+export function step(n, title, sub) {
+    return `
     <tr>
       <td width="34" valign="top" style="padding:10px 14px 10px 0">
         <table role="presentation" cellpadding="0" cellspacing="0" border="0">
@@ -96,33 +81,24 @@ export function step(n: number, title: string, sub: string) {
         </table>
       </td>
       <td valign="top" style="padding:10px 0">
-        <div style="font-family:${SANS};font-size:13.5px;font-weight:700;color:${INK};line-height:1.35">${esc(
-          title,
-        )}</div>
-        <div style="margin-top:3px;font-family:${SANS};font-size:12.5px;color:${QUIET};line-height:1.55">${esc(
-          sub,
-        )}</div>
+        <div style="font-family:${SANS};font-size:13.5px;font-weight:700;color:${INK};line-height:1.35">${esc(title)}</div>
+        <div style="margin-top:3px;font-family:${SANS};font-size:12.5px;color:${QUIET};line-height:1.55">${esc(sub)}</div>
       </td>
     </tr>`;
 }
-
 /** The one thing we would like them to do, as a pill. */
-export function button(href: string, text: string) {
-  return `
+export function button(href, text) {
+    return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:26px 0 0">
       <tr>
         <td align="center" style="background:${MARK};border-radius:999px">
-          <a href="${esc(href)}" style="display:inline-block;padding:11px 22px;font-family:${SANS};font-size:13px;font-weight:600;color:#ffffff;text-decoration:none;line-height:1">${esc(
-            text,
-          )}</a>
+          <a href="${esc(href)}" style="display:inline-block;padding:11px 22px;font-family:${SANS};font-size:13px;font-weight:600;color:#ffffff;text-decoration:none;line-height:1">${esc(text)}</a>
         </td>
       </tr>
     </table>`;
 }
-
 /** A hairline, where a break needs to be seen rather than felt. */
 export const rule = `<div style="height:1px;background:${HAIR};margin:24px 0"></div>`;
-
 /**
  * The whole message.
  *
@@ -131,18 +107,8 @@ export const rule = `<div style="height:1px;background:${HAIR};margin:24px 0"></
  * point: a message that looks like the website it came from is a message
  * somebody can place in a second.
  */
-export function shell({
-  title,
-  preview,
-  body,
-}: {
-  /** The `<title>`, and what a reading pane may show as the subject line. */
-  title: string;
-  /** The first line a client previews. Written, not left to chance. */
-  preview: string;
-  body: string;
-}) {
-  return `<!doctype html>
+export function shell({ title, preview, body, }) {
+    return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -155,9 +121,7 @@ export function shell({
 
 <!-- The preview line, and enough blank after it that the client does not
      borrow the first sentence of the message to finish the snippet. -->
-<div style="display:none;max-height:0;overflow:hidden;opacity:0">${esc(
-    preview,
-  )}${"&#847;&zwnj;&nbsp;".repeat(60)}</div>
+<div style="display:none;max-height:0;overflow:hidden;opacity:0">${esc(preview)}${"&#847;&zwnj;&nbsp;".repeat(60)}</div>
 
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${FIELD}">
   <tr>

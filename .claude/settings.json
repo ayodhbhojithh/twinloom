@@ -34,7 +34,8 @@
       "Bash(cp \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/mailtest.mjs\" ./mailtest.mjs)",
       "Bash(node ./mailtest.mjs)",
       "Bash(rm -f ./mailtest.mjs)",
-      "Bash(sed -i 's|from \"./shell\"|from \"./shell.js\"|' .mailtest/templates.js)"
+      "Bash(sed -i 's|from \"./shell\"|from \"./shell.js\"|' .mailtest/templates.js)",
+      "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/lighten.py\")"
     ]
   }
 }

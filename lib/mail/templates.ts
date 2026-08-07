@@ -34,12 +34,12 @@ export interface Message {
 }
 
 const h1 = (text: string) =>
-  `<h1 style="margin:18px 0 0;font-family:${SANS};font-size:26px;line-height:1.15;font-weight:800;letter-spacing:-0.03em;color:${INK}">${esc(
+  `<h1 style="margin:14px 0 0;font-family:${SANS};font-size:21px;line-height:1.2;font-weight:800;letter-spacing:-0.028em;color:${INK}">${esc(
     text,
   )}</h1>`;
 
-const p = (text: string, size = 15) =>
-  `<p style="margin:14px 0 0;font-family:${SANS};font-size:${size}px;line-height:1.65;color:${BODY}">${text}</p>`;
+const p = (text: string, size = 13.5) =>
+  `<p style="margin:12px 0 0;font-family:${SANS};font-size:${size}px;line-height:1.65;color:${BODY}">${text}</p>`;
 
 /**
  * The receipt for a scoping request.
@@ -75,12 +75,12 @@ export function scopeReceipt({
             attachments === 1 ? "file" : "files"
           } you attached are filed under it.`
         : "Quote it in any reply, and anything you add later is filed under it.",
-      13.5,
+      12.5,
     )}
 
     ${rule}
 
-    <div style="font-family:${SANS};font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${QUIET};line-height:1">What happens next</div>
+    <div style="font-family:${SANS};font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${QUIET};line-height:1">What happens next</div>
 
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:12px 0 0">
       ${step(1, "We read it", "In full, and we work out what is missing rather than guessing at it.")}
@@ -92,7 +92,7 @@ export function scopeReceipt({
 
     ${p(
       `Nothing here commits you to anything, and you can reply to this message with anything you forgot.`,
-      13,
+      12,
     )}`;
 
   const text = [
@@ -172,14 +172,14 @@ export function bookingConfirmation({
     ${
       meet
         ? `${rule}
-    <div style="font-family:${SANS};font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${QUIET};line-height:1">Joining</div>
+    <div style="font-family:${SANS};font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${QUIET};line-height:1">Joining</div>
     ${p(
       `<a href="${esc(
         meet,
       )}" style="color:${INK};font-weight:600;word-break:break-all">${esc(
         meet.replace(/^https?:\/\//, ""),
       )}</a>`,
-      14,
+      13,
     )}`
         : ""
     }
@@ -188,7 +188,7 @@ export function bookingConfirmation({
 
     ${p(
       "You do not have to. Come with it done or come with nothing - both are a conversation we can have.",
-      13,
+      12,
     )}`;
 
   const text = [
