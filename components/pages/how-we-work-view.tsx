@@ -68,14 +68,10 @@ export function HowWeWorkView() {
     <>
       {/* The head, on the centre line every surface below it shares. */}
       <section className="page-frame pt-10 pb-10 text-center sm:pt-14">
-        <p
-          className="font-mono text-[10px] font-bold tracking-[0.18em] uppercase"
-          style={{ color: RAMP[0].to }}
-        >
-          How we work
-        </p>
-
-        <h1 className="section-head mx-auto mt-3 max-w-[22ch] text-ink">
+        {/* No kicker over it. The nav item that got somebody here says "How we
+            work", the tab says it, and a third copy directly above a headline
+            that means the same thing is the page introducing itself twice. */}
+        <h1 className="section-head mx-auto max-w-[22ch] text-ink">
           How we
           <span className="text-quiet"> normally work.</span>
         </h1>
