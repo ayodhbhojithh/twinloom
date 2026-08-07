@@ -49,7 +49,7 @@ export function PartnersSection() {
         <ServiceWall bleed />
       </div>
 
-      <p className="reveal mx-auto mt-6 max-w-[68ch] text-center text-[14px] leading-[1.6] text-quiet [--step:3]">
+      <p className="reveal mx-auto mt-6 max-w-[92ch] text-center text-[14px] leading-[1.6] text-quiet [--step:3]">
         One contract, one invoice, and named in the proposal before the work
         starts. Most projects need none of them - a specialist is added because
         the work justifies one.
