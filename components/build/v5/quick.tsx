@@ -75,8 +75,8 @@ export function QuickPane({
           other - and the right ran out long before the left did, so the pane
           spent most of its height as an empty half. Stacked, everything is on
           one axis, in the order it is done: write it, attach to it, send it. */}
-      <div className="max-w-[720px]">
-        <div className="min-w-0">
+      <div className="mx-auto max-w-[720px]">
+        <div className="min-w-0 text-center [&>h2]:mx-auto [&>p]:mx-auto">
           <H>Say it in your own words.</H>
           <Sub>
             No questions, no order, no structure. Who you are, what you offer,
@@ -118,7 +118,7 @@ export function QuickPane({
           }
         />
 
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
           {SAYABLE.map((key) => (
             <Chip
               key={key}
@@ -174,12 +174,14 @@ export function QuickPane({
 
         </div>
 
-        {/* The way out, across both columns and at the end - where somebody has
-            finished rather than at the top where they have not started. It
-            belongs to the whole pane, not to the attachments it happens to sit
-            under, so it spans rather than hanging off one side. */}
-        <div className="min-w-0 border-t border-hair pt-6 lg:col-span-2">
-          <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">
+        {/* The way out, at the end - where somebody has finished rather than at
+            the top where they have not started.
+
+            No rule over it. Space is already saying the same thing, and the
+            `lg:col-span-2` it carried was left from when this pane was two
+            columns and there was a second one to span. */}
+        <div className="mt-8 min-w-0">
+          <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
             <Pill
               tone="ink"
               arrow
@@ -198,7 +200,7 @@ export function QuickPane({
             </Pill>
           </div>
 
-          <p className="mt-3 max-w-[62ch] text-[12.5px] leading-[1.55] text-quiet">
+          <p className="mx-auto mt-3 max-w-[62ch] text-center text-[12.5px] leading-[1.55] text-quiet">
             Nothing is thrown away and nothing is final. It comes back as the
             same written scope, and you can answer the rest at any point.
           </p>
