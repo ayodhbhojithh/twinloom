@@ -525,9 +525,9 @@ export function FaqsView() {
         </h1>
 
         <p className="mt-5 max-w-[70ch] text-[clamp(15px,1.2vw,17px)] leading-[1.65] text-body">
-          Every answer here is one the rest of the site already commits to, and
-          says where. Where the honest answer is that it depends, the answer
-          says what it depends on.
+          Answered from what the rest of the site already commits to, with a
+          link to the clause or the page that says it. Where the honest answer
+          is that it depends, the answer says what it depends on.
         </p>
       </header>
 
