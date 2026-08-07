@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowUpRight, Check } from "lucide-react";
 
 import { ASSUMPTIONS, STEPS } from "@/lib/build/v5";
+import { asLink, isLink } from "@/lib/build/url";
 import { STEP_COPY } from "@/lib/build/v5-copy";
 import {
   addOwn,
@@ -371,31 +372,65 @@ export function Field({
 export function AddRow({
   placeholder,
   label,
+  kind = "text",
   onAdd,
 }: {
   placeholder: string;
   label?: string;
+  /**
+   * What is being collected.
+   *
+   * `url` reads what was typed as an address before handing it over, so a
+   * website is stored as one rather than as a line of text wearing the label.
+   * A bare `example.com` is filled out; anything that is not an address is
+   * refused here rather than filed and found on the call.
+   */
+  kind?: "text" | "url";
   onAdd: (value: string) => void;
 }) {
   const [draft, setDraft] = useState("");
+  const [bad, setBad] = useState(false);
 
   return (
     <form
-      className="flex items-center gap-2"
+      className="flex flex-wrap items-center gap-2"
       onSubmit={(event) => {
         event.preventDefault();
         const said = draft.trim();
         if (!said) return;
-        onAdd(said);
+
+        if (kind === "url") {
+          const link = asLink(said);
+          if (!link) {
+            setBad(true);
+            return;
+          }
+          onAdd(link.href);
+        } else {
+          onAdd(said);
+        }
+
         setDraft("");
+        setBad(false);
       }}
     >
       <input
         value={draft}
+        type={kind === "url" ? "url" : "text"}
+        inputMode={kind === "url" ? "url" : undefined}
+        autoComplete={kind === "url" ? "url" : undefined}
+        spellCheck={kind === "url" ? false : undefined}
         aria-label={label ?? placeholder}
+        aria-invalid={bad || undefined}
         placeholder={placeholder}
-        onChange={(event) => setDraft(event.target.value)}
-        className="h-9 min-w-0 flex-1 rounded-field border border-border bg-field px-3.5 text-[14px] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
+        onChange={(event) => {
+          setDraft(event.target.value);
+          if (bad) setBad(false);
+        }}
+        className={cn(
+          "h-9 min-w-0 flex-1 rounded-field border bg-field px-3.5 text-[14px] text-ink outline-none transition-colors placeholder:text-label",
+          bad ? "border-blocked" : "border-border focus:border-ink",
+        )}
       />
       {/* No fill on it. An empty box has nothing to add, so a solid button
           beside it was a grey slab sitting there being ignored - and once there
@@ -407,7 +442,47 @@ export function AddRow({
       >
         Add
       </button>
+
+      {bad ? (
+        <p className="w-full text-[12px] leading-[1.5] text-blocked">
+          That is not an address we can open. Try something like
+          twinloom.com, or add it as a note instead.
+        </p>
+      ) : null}
     </form>
+  );
+}
+
+/**
+ * One line off the desk, rendered as what it is.
+ *
+ * A website opens; everything else is the words somebody wrote. Tested on the
+ * stored line rather than on the label beside it, so a kind renamed in the
+ * copy cannot turn addresses back into text.
+ */
+export function RefText({
+  text,
+  className,
+}: {
+  text: string;
+  className?: string;
+}) {
+  const link = isLink(text) ? asLink(text) : null;
+  if (!link) return <>{text}</>;
+
+  return (
+    <a
+      href={link.href}
+      target="_blank"
+      rel="noreferrer noopener"
+      title={link.href}
+      className={cn(
+        "break-all underline decoration-hair underline-offset-2 transition-colors hover:text-mark hover:decoration-mark",
+        className,
+      )}
+    >
+      {link.label}
+    </a>
   );
 }
 

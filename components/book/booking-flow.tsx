@@ -189,6 +189,34 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
 
   return (
     <div>
+      {/* The head.
+
+          The page had none. It was lost when this screen stopped being a
+          framework page and became a tool, and what was left opened on a step
+          rail with nothing above it saying what was being stepped through -
+          and with no `h1` anywhere in the document, which is the first thing a
+          screen reader asks for.
+
+          Centred, because the rail under it is centred and a left aligned
+          title over a centred row is two decisions. Compact, because this is a
+          tool: the head introduces it and then gets out of the way. */}
+      <header className="mb-9 text-center">
+        <p className="font-mono text-[9px] font-bold tracking-[0.16em] text-mark uppercase">
+          Book a meeting
+        </p>
+
+        <h1 className="mx-auto mt-3 max-w-[20ch] text-[clamp(26px,2.9vw,42px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink">
+          Pick a time
+          <span className="text-quiet"> that suits you.</span>
+        </h1>
+
+        <p className="mx-auto mt-4 max-w-[64ch] text-[15px] leading-[1.6] text-quiet">
+          Real availability, four questions, and nothing to prepare. Holding a
+          slot costs nothing and commits you to nothing, and you can move it or
+          drop it afterwards.
+        </p>
+      </header>
+
       <StepRail at={at} reached={reached} said={said} onGo={setAt} />
 
       {at === 0 ? (
