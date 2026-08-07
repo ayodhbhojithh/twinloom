@@ -95,14 +95,23 @@ export interface NavLink {
  * mistake rather than as emphasis.
  */
 export const HEADER_NAV: readonly NavLink[] = [
+  /* The order every site of this kind uses, and the order a reader has been
+     trained on by every other one they have visited: who we are, how we work,
+     who with, what we have written, what people ask, and then the two ways to
+     get hold of us at the far end with contact last.
+
+     It is not the rail's reading order, which put contact in the middle
+     because the rail is a table of contents and this is a bar. A bar is
+     scanned from both ends - the name at one, the way to reach somebody at the
+     other - and an item in an unexpected place costs a reader a whole pass. */
   { label: "Home", href: ROUTES.home },
   { label: "About", href: ROUTES.about },
   { label: "How we work", href: ROUTES.how },
   { label: "Partners", href: ROUTES.partners },
-  { label: "Contact", href: ROUTES.contact },
-  { label: "Book a meeting", href: ROUTES.book },
-  { label: "FAQs", href: ROUTES.faq },
   { label: "Articles", href: ROUTES.blog },
+  { label: "FAQs", href: ROUTES.faq },
+  { label: "Book a meeting", href: ROUTES.book },
+  { label: "Contact", href: ROUTES.contact },
 ];
 
 /** The one call to action in the chrome, and the site's only way in. */

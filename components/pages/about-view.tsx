@@ -89,26 +89,39 @@ const SERVICES: readonly {
   icon: LucideIcon;
   n: string;
   sub: string;
+  /**
+   * Ours or a partner's. The one thing a reader wants resolved about these.
+   *
+   * Taken from the partners page's own disciplines rather than decided here:
+   * brand and identity, and search and paid media, are two of the six named
+   * there, and it says we apply a brand that exists while a partner makes one
+   * that does not. Consultancy and the ongoing services are not on that list.
+   */
+  by: string;
 }[] = [
   {
     icon: Compass,
     n: "Digital consultancy",
     sub: "Working out what the site has to do, who it is for, and what it needs to connect to.",
+    by: "By us",
   },
   {
     icon: LifeBuoy,
     n: "Ongoing services",
     sub: "Keeping the site current once it is live, and the services that run alongside it: domain and business email, social media set-up and maintenance, and regular content.",
+    by: "By us",
   },
   {
     icon: Palette,
     n: "Brand identity",
     sub: "Logo, visual identity, photography and imagery, artwork, and the words on the page.",
+    by: "Us, or a partner",
   },
   {
     icon: Megaphone,
     n: "Digital campaign management",
     sub: "Running and measuring campaigns once the site is live.",
+    by: "With a partner",
   },
 ];
 
@@ -327,7 +340,7 @@ export function AboutView() {
           {/* The eleven stay left within their rows. A number, then a line of
               words, is a row that reads from one edge; centring each one would
               give eleven different left edges and nothing to run an eye down. */}
-          <ol className="mx-auto mt-10 grid max-w-[1180px] gap-x-8 gap-y-3.5 sm:grid-cols-2 xl:grid-cols-3">
+          <ol className="mx-auto mt-10 grid w-full max-w-[1440px] gap-x-8 gap-y-3.5 sm:grid-cols-2 xl:grid-cols-3">
             {INCLUDED.map((line, n) => (
               <li key={line} className="flex min-w-0 gap-3.5">
                 <span
@@ -350,38 +363,80 @@ export function AboutView() {
         </CutPanel>
       </section>
 
-      {/* What runs alongside the build. Plain cards, because these are four of
-          a kind and giving each its own cut surface would say they are four
-          different kinds of thing. */}
+      {/* What runs alongside the build.
+
+          On white, on one surface, four across. They were canvas-grey tiles on
+          a canvas-grey page - the same colour as the ground they stood on - so
+          there was no card there at all, only an icon and two lines of text
+          floating in the middle of an empty half of the screen.
+
+          Numbered, and each says whose it is. "Provided by us or through our
+          specialist partners" is the one thing the reader wants resolved, and a
+          sentence above four unlabelled boxes does not resolve it. */}
       <section className="mt-16">
-        <Head
-          n="Our services."
-          sub="Provided by us or through our specialist partners. Named in the proposal before the work starts, either way."
-        />
-
-        <div className="mt-7 grid gap-3 sm:grid-cols-2">
-          {SERVICES.map((service) => (
-            <div
-              key={service.n}
-              className="flex min-w-0 flex-col rounded-[18px] bg-canvas p-5 transition-colors hover:bg-canvas-firm sm:p-6"
+        <CutPanel
+          tone="field"
+          className="w-full"
+          toolbar={
+            <span className="flex h-10 w-full items-center justify-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
+              Our services
+            </span>
+          }
+          corner={
+            <Link
+              href={ROUTES.partners}
+              aria-label="How partners work"
+              title="How partners work"
+              className="flex size-11 items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
             >
-              <span
-                aria-hidden
-                className="flex size-10 items-center justify-center rounded-pill bg-field text-ink"
+              <ArrowUpRight className="size-[18px]" strokeWidth={2.2} />
+            </Link>
+          }
+        >
+          <h2 className="mx-auto mt-8 max-w-[30ch] text-center text-[clamp(21px,1.9vw,28px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink">
+            Everything that is not the build itself.
+          </h2>
+
+          <p className="mx-auto mt-3 max-w-[62ch] text-center text-[15px] leading-[1.65] text-quiet">
+            Provided by us or through our specialist partners, and named in the
+            proposal before the work starts either way. Take any of them, or
+            none.
+          </p>
+
+          <ul className="mx-auto mt-10 grid w-full max-w-[1440px] gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {SERVICES.map((service, n) => (
+              <li
+                key={service.n}
+                className="group/svc flex min-w-0 flex-col rounded-[20px] bg-canvas p-5 transition-colors hover:bg-canvas-firm"
               >
-                <service.icon className="size-[18px]" strokeWidth={1.9} />
-              </span>
+                <span className="flex items-center justify-between gap-3">
+                  <span
+                    aria-hidden
+                    className="flex size-10 items-center justify-center rounded-pill bg-field text-ink transition-colors group-hover/svc:bg-ink group-hover/svc:text-white"
+                  >
+                    <service.icon className="size-[18px]" strokeWidth={1.9} />
+                  </span>
 
-              <b className="mt-4 block max-w-[24ch] text-[16px] leading-[1.2] font-extrabold tracking-[-0.025em] text-ink">
-                {service.n}
-              </b>
+                  <span className="font-mono text-[9.5px] font-bold text-idx tabular-nums">
+                    {String(n + 1).padStart(2, "0")}
+                  </span>
+                </span>
 
-              <p className="mt-2 max-w-[52ch] text-[13.5px] leading-[1.6] text-quiet">
-                {service.sub}
-              </p>
-            </div>
-          ))}
-        </div>
+                <b className="mt-4 block text-[15.5px] leading-[1.2] font-extrabold tracking-[-0.025em] text-ink">
+                  {service.n}
+                </b>
+
+                <p className="mt-2 flex-1 text-[13px] leading-[1.6] text-quiet">
+                  {service.sub}
+                </p>
+
+                <span className="mt-4 font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase">
+                  {service.by}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </CutPanel>
       </section>
 
       {/* How it proceeds. The count comes from the run itself rather than from
