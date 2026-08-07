@@ -46,7 +46,7 @@ export function BlogView() {
             `w-full` first and `flex-1` only from `sm`. Given `flex-1` at every
             width it shrank to nothing once the row wrapped on a phone - sixty
             pixels wide and twenty-two lines deep.  */}
-        <p className="w-full min-w-0 max-w-[68ch] text-[14.5px] leading-[1.6] text-quiet sm:flex-1">
+        <p className="w-full min-w-0 max-w-[92ch] text-[14.5px] leading-[1.6] text-quiet sm:flex-1">
           The decisions behind a website, written out in full: what each piece
           of technology actually touches, what it costs to run, and where we
           would tell you to do something other than what we sell.
