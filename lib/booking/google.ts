@@ -25,6 +25,9 @@ import { JWT } from "google-auth-library";
 const CALENDAR = "https://www.googleapis.com/calendar/v3";
 const GMAIL = "https://gmail.googleapis.com/gmail/v1";
 
+/** The line ending RFC 2822 asks for, named so it is written once. */
+const CRLF = String.fromCharCode(13, 10);
+
 const SCOPES = [
   "https://www.googleapis.com/auth/calendar",
   "https://www.googleapis.com/auth/gmail.send",
@@ -209,27 +212,56 @@ export async function book(w: Wiring, m: Booking): Promise<Booked> {
 }
 
 /**
- * Send a plain message, as the mailbox.
+ * Send a message, as the mailbox.
  *
  * Base64url of an RFC 2822 message, which is what the Gmail API takes. No
- * third-party sending service and no new DNS record: it leaves from the account
- * itself, so SPF and DKIM already pass.
+ * third-party sending service and no new DNS record: it leaves from the
+ * account itself, so SPF and DKIM already pass.
+ *
+ * Where there is HTML it goes as `multipart/alternative` with the text first,
+ * which is the order the standard asks for - a client shows the last part it
+ * understands, so text first and HTML second means the better one wins. Both
+ * parts are always sent: a message with no text alternative scores worse with
+ * every spam filter there is, and some people read mail as text on purpose.
  */
 export async function send(
   w: Wiring,
   to: string,
   subject: string,
   text: string,
+  html?: string,
 ) {
-  const message = [
+  /* A boundary that cannot appear in either part. Derived rather than random
+     so a retry of the same message is byte-identical. */
+  const edge = `twinloom-${Buffer.from(subject).toString("hex").slice(0, 24)}`;
+
+  const head = [
     `To: ${to}`,
-    `From: ${w.calendarId}`,
+    `From: TwinLoom <${w.calendarId}>`,
     `Subject: ${subject}`,
     "MIME-Version: 1.0",
-    'Content-Type: text/plain; charset="UTF-8"',
-    "",
-    text,
-  ].join("\r\n");
+  ];
+
+  const message = html
+    ? [
+        ...head,
+        `Content-Type: multipart/alternative; boundary="${edge}"`,
+        "",
+        `--${edge}`,
+        'Content-Type: text/plain; charset="UTF-8"',
+        "",
+        text,
+        "",
+        `--${edge}`,
+        'Content-Type: text/html; charset="UTF-8"',
+        "",
+        html,
+        "",
+        `--${edge}--`,
+      ].join(CRLF)
+    : [...head, 'Content-Type: text/plain; charset="UTF-8"', "", text].join(
+        CRLF,
+      );
 
   const raw = Buffer.from(message)
     .toString("base64")

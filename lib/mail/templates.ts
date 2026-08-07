@@ -1,0 +1,225 @@
+import {
+  button,
+  esc,
+  fonts,
+  kicker,
+  palette,
+  plate,
+  rule,
+  shell,
+  step,
+} from "./shell";
+
+/* ---------------------------------------------------------------------------
+   The messages this site sends.
+
+   Two of them go to somebody outside the company - the receipt for a scoping
+   request and the confirmation of a booking - and both are written here rather
+   than in the route handlers that send them. A route decides that a thing
+   happened; what a person then reads about it is a piece of writing, and it
+   belongs with the other pieces of writing.
+
+   Each returns a plain-text part as well as the HTML. That is not a courtesy:
+   a message with no text alternative scores worse with every spam filter there
+   is, and some people read mail as text on purpose.
+--------------------------------------------------------------------------- */
+
+const { INK, BODY, QUIET } = palette;
+const { SANS } = fonts;
+
+export interface Message {
+  subject: string;
+  text: string;
+  html: string;
+}
+
+const h1 = (text: string) =>
+  `<h1 style="margin:18px 0 0;font-family:${SANS};font-size:26px;line-height:1.15;font-weight:800;letter-spacing:-0.03em;color:${INK}">${esc(
+    text,
+  )}</h1>`;
+
+const p = (text: string, size = 15) =>
+  `<p style="margin:14px 0 0;font-family:${SANS};font-size:${size}px;line-height:1.65;color:${BODY}">${text}</p>`;
+
+/**
+ * The receipt for a scoping request.
+ *
+ * The thing it exists to carry is the reference. Everything somebody attached
+ * is filed under it, and until this message arrived the only place it had ever
+ * appeared was a screen they were about to close.
+ */
+export function scopeReceipt({
+  name,
+  ref,
+  attachments,
+}: {
+  name: string;
+  ref: string;
+  /** How many files came with it, so the message can say where they went. */
+  attachments: number;
+}): Message {
+  const body = `
+    ${kicker("Received")}
+    ${h1("We have your scoping request.")}
+    ${p(
+      `Thank you, ${esc(
+        name,
+      )}. A person reads every one of these - what comes back is a written scope in your own words, within two working days.`,
+    )}
+
+    ${plate("Your reference", ref)}
+
+    ${p(
+      attachments > 0
+        ? `Quote it in any reply. The ${attachments} ${
+            attachments === 1 ? "file" : "files"
+          } you attached are filed under it.`
+        : "Quote it in any reply, and anything you add later is filed under it.",
+      13.5,
+    )}
+
+    ${rule}
+
+    <div style="font-family:${SANS};font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${QUIET};line-height:1">What happens next</div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:12px 0 0">
+      ${step(1, "We read it", "In full, and we work out what is missing rather than guessing at it.")}
+      ${step(2, "A written scope comes back", "Your answers turned into a description of a website, with anything we assumed marked as an assumption.")}
+      ${step(3, "You tell us what is wrong with it", "Nothing is priced until that document is right. It is a description, not a quote.")}
+    </table>
+
+    ${button("https://twinloom.com/book", "Book a time to talk it through")}
+
+    ${p(
+      `Nothing here commits you to anything, and you can reply to this message with anything you forgot.`,
+      13,
+    )}`;
+
+  const text = [
+    `Hello ${name},`,
+    "",
+    "We have your scoping request. A person reads every one of these - what",
+    "comes back is a written scope in your own words, within two working days.",
+    "",
+    `Your reference is ${ref}.`,
+    attachments > 0
+      ? `Quote it in any reply. The ${attachments} ${
+          attachments === 1 ? "file" : "files"
+        } you attached are filed under it.`
+      : "Quote it in any reply, and anything you add later is filed under it.",
+    "",
+    "WHAT HAPPENS NEXT",
+    "1. We read it, in full, and work out what is missing rather than guessing.",
+    "2. A written scope comes back, with anything we assumed marked as an assumption.",
+    "3. You tell us what is wrong with it. Nothing is priced until it is right.",
+    "",
+    "If you would rather talk it through first: https://twinloom.com/book",
+    "",
+    "Nothing here commits you to anything, and you can reply to this message",
+    "with anything you forgot.",
+    "",
+    "TwinLoom is a trading name of TwinCoreTech Ltd, registered in England and",
+    "Wales, company number 15997244.",
+  ].join("\n");
+
+  return {
+    subject: `We have your scoping request - ${ref}`,
+    text,
+    html: shell({
+      title: "We have your scoping request",
+      preview: `Your reference is ${ref}. A written scope comes back within two working days.`,
+      body,
+    }),
+  };
+}
+
+/**
+ * The confirmation of a booked meeting.
+ *
+ * The calendar invitation carries the time; this carries what the invitation
+ * cannot - that there is nothing to prepare, and what happens if the time
+ * stops working.
+ */
+export function bookingConfirmation({
+  name,
+  meeting,
+  minutes,
+  when,
+  zone,
+  meet,
+}: {
+  name: string;
+  meeting: string;
+  minutes: number;
+  /** Already formatted for the reader, in their own zone. */
+  when: string;
+  zone: string;
+  meet: string | null;
+}): Message {
+  const body = `
+    ${kicker("Booked")}
+    ${h1("The time is yours.")}
+    ${p(
+      `Thank you, ${esc(
+        name,
+      )}. It is in the diary and a calendar invitation is on its way to this address - accepting it puts the meeting in your own calendar, and moving or cancelling it there tells us straight away.`,
+    )}
+
+    ${plate(meeting, `${when} · ${zone}`)}
+
+    ${p(`${minutes} minutes. Nothing to prepare and nothing to bring.`, 13.5)}
+
+    ${
+      meet
+        ? `${rule}
+    <div style="font-family:${SANS};font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${QUIET};line-height:1">Joining</div>
+    ${p(
+      `<a href="${esc(
+        meet,
+      )}" style="color:${INK};font-weight:600;word-break:break-all">${esc(
+        meet.replace(/^https?:\/\//, ""),
+      )}</a>`,
+      14,
+    )}`
+        : ""
+    }
+
+    ${button("https://twinloom.com/build", "Write down what you want first")}
+
+    ${p(
+      "You do not have to. Come with it done or come with nothing - both are a conversation we can have.",
+      13,
+    )}`;
+
+  const text = [
+    `Hello ${name},`,
+    "",
+    `Your ${meeting.toLowerCase()} is booked.`,
+    "",
+    `${when} (${zone})`,
+    `${minutes} minutes. Nothing to prepare and nothing to bring.`,
+    meet ? `\nJoining link: ${meet}` : "",
+    "",
+    "A calendar invitation is on its way to this address. Accepting it puts the",
+    "meeting in your own calendar, and moving or cancelling it there tells us",
+    "straight away.",
+    "",
+    "If you would like to write down what you want first: https://twinloom.com/build",
+    "You do not have to - come with it done or come with nothing.",
+    "",
+    "TwinLoom is a trading name of TwinCoreTech Ltd, registered in England and",
+    "Wales, company number 15997244.",
+  ]
+    .filter((line) => line !== "")
+    .join("\n");
+
+  return {
+    subject: `Booked: ${meeting} with TwinLoom`,
+    text,
+    html: shell({
+      title: "Your meeting is booked",
+      preview: `${when} in ${zone}. Nothing to prepare and nothing to bring.`,
+      body,
+    }),
+  };
+}

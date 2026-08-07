@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { book, busyBetween, clashes, send, wiring } from "@/lib/booking/google";
+import { bookingConfirmation } from "@/lib/mail/templates";
 import { BUFFER_MINUTES } from "@/components/book/diary";
 import { MEETINGS } from "@/components/book/meetings";
 
@@ -146,31 +147,39 @@ export async function POST(request: Request) {
       meet: true,
     });
 
-    /* The invitation comes from the calendar. This is the note beside it, in
-       words, because an invitation on its own tells somebody a meeting exists
-       without telling them what happens next. */
-    const when = start.toISOString();
+    /* The invitation comes from the calendar. This is the note beside it,
+       because an invitation on its own tells somebody a meeting exists without
+       telling them what happens next - and it is the same shell the scoping
+       receipt is set in, so two messages from this site look like two messages
+       from the same company. */
+    /* The time in the office's own zone and in words, rather than an ISO
+       stamp. The invitation renders the instant in whatever zone the reader
+       keeps; this has to be readable on its own. */
+    const when = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Europe/London",
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(start);
+
+    const confirmation = bookingConfirmation({
+      name,
+      meeting: meeting.name,
+      minutes,
+      when,
+      zone: "Europe/London",
+      meet: booked.meet,
+    });
 
     await send(
       w,
       email,
-      `Booked: ${meeting.name} with TwinLoom`,
-      [
-        `Hello ${name},`,
-        "",
-        `Your ${meeting.name.toLowerCase()} is booked for ${minutes} minutes.`,
-        booked.meet ? `Joining link: ${booked.meet}` : "",
-        "",
-        "A calendar invitation is on its way to this address. Accepting it puts",
-        "the meeting in your own diary, and moving or cancelling it there tells",
-        "us straight away.",
-        "",
-        "Nothing to prepare and nothing to bring.",
-        "",
-        "TwinLoom, a TwinCoreTech company",
-      ]
-        .filter((line) => line !== "")
-        .join("\n"),
+      confirmation.subject,
+      confirmation.text,
+      confirmation.html,
     ).catch((wrong) => {
       /* The meeting is booked and the invitation has gone. A failed covering
          note is not a failed booking, and telling somebody it failed makes

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { send, wiring } from "@/lib/booking/google";
+import { scopeReceipt } from "@/lib/mail/templates";
 import { isReference, makeReference } from "@/lib/build/reference";
 
 /* ---------------------------------------------------------------------------
@@ -27,6 +28,7 @@ export async function POST(request: Request) {
     desk?: unknown;
     document?: string;
     ask?: Record<string, string>;
+    answers?: { refs?: { url?: unknown }[] };
   };
 
   try {
@@ -118,28 +120,23 @@ ${body.document}`,
 
        Sent second, and its failure is caught separately. If ours goes and
        theirs does not, the request is still received. */
+    const refs = Array.isArray(body.answers?.refs) ? body.answers.refs : [];
+    const files = refs.filter(
+      (entry) => typeof entry?.url === "string" && entry.url,
+    ).length;
+
+    const receipt = scopeReceipt({
+      name: ask.name!.trim(),
+      ref,
+      attachments: files,
+    });
+
     await send(
       w,
       ask.email!.trim(),
-      `We have your scoping request - ${ref}`,
-      [
-        `Hello ${ask.name},`,
-        "",
-        "Thank you - your scoping request has arrived and a person will read",
-        "it. What comes back is a written scope in your own words, within two",
-        "working days.",
-        "",
-        `Your reference is ${ref}. Quote it in any reply, and anything you`,
-        "attached is filed under it.",
-        "",
-        "It is a description of a website rather than a quote. Nothing in it is",
-        "priced, and nothing you answered commits you to anything.",
-        "",
-        "If you would rather talk it through first, you can book a time at",
-        "https://twinloom.com/book",
-        "",
-        "TwinLoom, a TwinCoreTech company",
-      ].join("\n"),
+      receipt.subject,
+      receipt.text,
+      receipt.html,
     ).catch((wrong) => {
       console.error(`[scope ${ref}] receipt to sender failed`, wrong);
     });
