@@ -210,10 +210,15 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
           <span className="text-quiet"> that suits you.</span>
         </h1>
 
+        {/* Not "real availability". The times below come from a fixed weekly
+            template in `diary.ts`, not from anybody's calendar, and nothing is
+            sent when the last step is pressed - which the final screen says
+            plainly. A headline that claims otherwise is the one thing a
+            booking page must not do. */}
         <p className="mx-auto mt-4 max-w-[64ch] text-[15px] leading-[1.6] text-quiet">
-          Real availability, four questions, and nothing to prepare. Holding a
-          slot costs nothing and commits you to nothing, and you can move it or
-          drop it afterwards.
+          Four questions, and nothing to prepare. These are our standard hours
+          rather than a live diary, so the time you pick is written down and
+          confirmed with you rather than held automatically.
         </p>
       </header>
 
