@@ -394,51 +394,69 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
 
   if (answers.sent) {
     return (
-      <StageStep at={at} answers={answers} onGo={onGo} corner={null}>
-        {/* The badge sits in a block of its own so it can be given a margin.
-            Left inline, the only thing between it and the heading was the
-            leading of its own line box - about six pixels under a 27px
-            extrabold line, which read as the two being one stuck together lump
-            rather than a mark and the sentence it introduces. `flex` keeps the
-            pill shrunk to its label instead of stretching the row. */}
-        <div className="mb-4 flex">
-          <span className="inline-flex items-center gap-2 rounded-pill bg-mark/[0.08] py-1.5 pr-4 pl-3">
-            <span aria-hidden className="size-2 rounded-pill bg-mark" />
-            <Kicker className="text-mark">Sent</Kicker>
-          </span>
-        </div>
+      /* `scrollKey` so the surface takes the reader back to its own top.
 
-        <H>We read it. All of it.</H>
-        <Sub>
-          Including the parts in your own words, which are usually the useful
-          part. Two or three questions come back in writing, within two working
-          days.
-        </Sub>
+         Sending replaces the step's contents without changing which step it
+         is, so the key `StageStep` builds from the step alone did not move -
+         and somebody who pressed send at the foot of a long form was left
+         looking at the bottom of a screen whose whole message is at the top.
+         Giving the sent state a key of its own is the one thing that tells the
+         surface something changed. */
+      <StageStep
+        at={at}
+        answers={answers}
+        onGo={onGo}
+        corner={null}
+        scrollKey="sent"
+      >
+        {/* The whole screen on one centre line.
 
-        {/* The measure, the size and the leading of the line above it, because
-            it is the same quiet voice saying the next thing. On a shorter
-            measure the two paragraphs wrapped at different widths and gave the
-            screen two ragged right edges where it should have one column. The
-            gap is a line of that column: a paragraph break, not a new block. */}
-        {/* The reference, quoted back. It is the one thing somebody wants
-            from a confirmation screen that they cannot work out for
-            themselves, and the one thing worth writing down. */}
-        {answers.ref ? (
-          <p className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <Kicker>Your reference</Kicker>
-            <b className="font-mono text-[15px] font-bold tracking-[0.08em] text-ink tabular-nums">
-              {answers.ref}
-            </b>
+            The heading and its line are centred by the kit, and everything
+            round them was left against the edge - so a confirmation with six
+            things on it had the two in the middle and the four beside them,
+            which reads as a screen that has come apart rather than one that
+            has finished.
+
+            The badge is in a block of its own so it can be given a margin.
+            Inline, the only thing between it and the heading was the leading
+            of its own line box - about six pixels under a 27px extrabold line,
+            which read as the two being one lump rather than a mark and the
+            sentence it introduces. */}
+        <div className="text-center">
+          <div className="mb-4 flex justify-center">
+            <span className="inline-flex items-center gap-2 rounded-pill bg-mark/[0.08] py-1.5 pr-4 pl-3">
+              <span aria-hidden className="size-2 rounded-pill bg-mark" />
+              <Kicker className="text-mark">Sent</Kicker>
+            </span>
+          </div>
+
+          <H>We read it. All of it.</H>
+          <Sub>
+            Including the parts in your own words, which are usually the useful
+            part. Two or three questions come back in writing, within two
+            working days.
+          </Sub>
+
+          {/* The reference, quoted back. It is the one thing somebody wants
+              from a confirmation screen that they cannot work out for
+              themselves, and the one thing worth writing down. */}
+          {answers.ref ? (
+            <p className="mt-6 flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
+              <Kicker>Your reference</Kicker>
+              <b className="font-mono text-[15px] font-bold tracking-[0.08em] text-ink tabular-nums">
+                {answers.ref}
+              </b>
+            </p>
+          ) : null}
+
+          <p className="mx-auto mt-5 max-w-[58ch] text-[13.5px] leading-[1.5] text-quiet sm:text-[14px]">
+            Your answers are still here and still yours - keep changing them and
+            send it again, and the newer one is the one we read.
           </p>
-        ) : null}
 
-        <p className="mt-5 max-w-[58ch] text-[13.5px] leading-[1.5] text-quiet sm:text-[14px]">
-          Your answers are still here and still yours - keep changing them and
-          send it again, and the newer one is the one we read.
-        </p>
-
-        <div className="mt-7 flex">
-          <Pill onClick={() => setSent(false)}>Keep answering</Pill>
+          <div className="mt-7 flex justify-center">
+            <Pill onClick={() => setSent(false)}>Keep answering</Pill>
+          </div>
         </div>
       </StageStep>
     );
