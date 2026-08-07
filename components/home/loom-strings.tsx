@@ -53,6 +53,18 @@ const DENSITY = 15;
  */
 const PHONE_DENSITY = 34;
 
+/**
+ * How much of the width the sideways fade eats at each end, and the room the
+ * word is then allowed inside what is left.
+ *
+ * The two belong together: set the word wider than the clear band and its first
+ * and last letters are erased by the fade that is supposed to be a margin.
+ */
+const EDGE = 0.11;
+const ROOM = 0.94;
+const PHONE_EDGE = 0.07;
+const PHONE_ROOM = 0.84;
+
 /** Points down a thread. Enough for the curve to look drawn rather than folded. */
 const STEPS = 34;
 
@@ -253,7 +265,10 @@ export function LoomStrings({
 
       /* As large as the box will take, then backed off so the letters keep clear
          of the fade at the top and bottom and have air to be plucked into. */
-      let size = Math.min((width * 0.94) / (word.length * 0.52), height * 0.72);
+      /* Inside the sideways fade, not out to the edge of the box. */
+      const room = width * (width < 560 ? PHONE_ROOM : ROOM);
+
+      let size = Math.min(room / (word.length * 0.52), height * 0.72);
       ink.font = `900 ${size}px ${family}`;
 
       /* Measured and then set, in both directions. The guess above is per
@@ -262,7 +277,7 @@ export function LoomStrings({
          filling the cloth and a long one stranded in the middle of it. */
       const measured = ink.measureText(word).width;
       if (measured > 0) {
-        size = Math.min((size * (width * 0.94)) / measured, height * 0.72);
+        size = Math.min((size * room) / measured, height * 0.72);
       }
 
       ink.font = `900 ${size}px ${family}`;
@@ -430,15 +445,25 @@ export function LoomStrings({
         fadeY.addColorStop(at, `rgba(0,0,0,${alpha})`);
       }
 
+      /* Held to the outer twentieth on a narrow box.
+
+         Sideways the fade is a proportion, so the wider it is the more of the
+         word it takes: eleven per cent of a laptop is a margin, eleven per cent
+         of a phone is two whole letters. The word was being set to the full
+         width of the box and then having its first and last characters erased -
+         which is the other half of why it could not be read on a phone, and no
+         amount of extra threads would have fixed it. */
+      const edge = width < 560 ? PHONE_EDGE : EDGE;
+
       fadeX = paper.createLinearGradient(0, 0, width, 0);
       for (const [at, alpha] of [
         [0, 0.95],
-        [0.03, 0.6],
-        [0.07, 0.2],
-        [0.11, 0],
-        [0.89, 0],
-        [0.93, 0.2],
-        [0.97, 0.6],
+        [edge * 0.27, 0.6],
+        [edge * 0.64, 0.2],
+        [edge, 0],
+        [1 - edge, 0],
+        [1 - edge * 0.64, 0.2],
+        [1 - edge * 0.27, 0.6],
         [1, 0.95],
       ] as const) {
         fadeX.addColorStop(at, `rgba(0,0,0,${alpha})`);
