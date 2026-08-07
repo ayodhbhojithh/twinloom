@@ -1,4 +1,4 @@
-import { ArrowUpRight, Check } from "lucide-react";
+import { ArrowUpRight, Check, Plus } from "lucide-react";
 import Link from "next/link";
 
 import { CutPanel } from "@/components/layout/cut-panel";
@@ -9,16 +9,80 @@ import { cn } from "@/lib/utils";
 /* ---------------------------------------------------------------------------
    How we work.
 
-   One line with thirteen stops on it, in three zones. The line is the point:
-   the question a reader actually has is not what step four is called, it is how
-   far in they are and how many hands the thing changes before it is theirs.
+   Built to the arrangement in Docs/Engagement Process.html, option 5a: a
+   vertical list with the title on the left, the detail on the right, and a
+   gradient threading the numerals.
 
-   Drawn in the site's own shapes rather than as a diagram. Each zone is a cut
-   surface with its number standing in the bite and its name in the notch, and
-   the stops inside it are the same numbered cards the scoping run uses. A
-   railway map would be a second visual language on a site that already has one.
+   One card holds the whole thing - the head, the two ways in, the rule that
+   joins them, and the three zones. Split across separate surfaces they read as
+   four unrelated blocks; on one surface they read as one account of how a
+   project runs.
+
+   The zones open and close rather than all thirteen steps standing on the page
+   at once. Thirteen is the honest answer to "how does this work" and also more
+   than anybody reads in one go; three named stretches, each of which can be
+   opened, is the same answer at the size somebody actually asks it.
+
+   `details` and `summary` rather than a state hook: they open before the
+   JavaScript arrives, the browser's own find-in-page can open them, and they
+   are reachable from a keyboard with no code at all.
 --------------------------------------------------------------------------- */
 
+/**
+ * The gradient each zone's numeral carries, from the reference.
+ *
+ * One ramp across the three: it starts where this page's green already sits
+ * and arrives at the site's blue, which is what makes the three read as one
+ * run rather than as three coloured tiles.
+ */
+const RAMP = [
+  { from: "#10b981", to: "#06b6d4" },
+  { from: "#06b6d4", to: "#3b82f6" },
+  { from: "#3b82f6", to: "#8b5cf6" },
+] as const;
+
+/** The two ways in, which join the same process. */
+const PATHS = [
+  {
+    href: ROUTES.book,
+    kicker: "Path one - from a blank page",
+    n: "Get us involved from the start",
+    sub: "You know you need something, but not yet what it looks like. Book a call and we will work the requirements out with you.",
+    go: "Book a meeting",
+    tint: "#8b5cf6",
+    filled: false,
+  },
+  {
+    href: ROUTES.build,
+    kicker: "Path two - you have done the groundwork",
+    n: "Send us what you have",
+    sub: "Already worked out what you need? Write it down on this site and send it, or email us whatever you already have.",
+    go: "Start a submission",
+    tint: "#06b6d4",
+    filled: true,
+  },
+] as const;
+
+/**
+ * The one line under a zone's name.
+ *
+ * Short on purpose. `zone.note` is a sentence written for a reader who has
+ * opened the zone; on the closed summary row it wrapped to two lines and put
+ * the numeral, the name and a paragraph on one row. This says how many steps
+ * there are and what the stretch is for, and stops.
+ *
+ * The count comes from the data rather than from the words, so a step added to
+ * a zone cannot leave this saying five.
+ */
+const HOW_MANY = ["One", "Two", "Three", "Four", "Five", "Six", "Seven"];
+
+const ZONE_LINE: Record<string, string> = {
+  start: "and you start here",
+  build: "scope agreed up front, delivered in milestones",
+  after: "chosen rather than assumed, and priced separately",
+};
+
+/** What holds across all thirteen. */
 const RULES = [
   "Nothing is priced until there is a written scope to price.",
   "You sign off each milestone as it lands, not all of it at the end.",
@@ -28,279 +92,209 @@ const RULES = [
 
 export function HowWeWorkView() {
   return (
-    /* Green, on this page only.
+    <>
+      <section className="page-frame pt-10 pb-12 sm:pt-14">
+        <div className="rounded-[24px] border border-hair bg-field p-6 sm:p-9 lg:p-11">
+          {/* The head: the line on the left, what it means on the right, both
+              on one baseline. */}
+          <div className="flex flex-wrap items-end justify-between gap-x-12 gap-y-5">
+            <div className="min-w-0">
+              <p
+                className="font-mono text-[10px] font-bold tracking-[0.18em] uppercase"
+                style={{ color: RAMP[0].to }}
+              >
+                How we work
+              </p>
 
-       The accent everywhere else means "this is set". Here the one thing worth
-       marking is the launch - the single stop that is an event rather than a
-       stretch - and green is what says arrived without anybody being taught it.
-       Scoped by overriding the variable rather than by swapping classes, so the
-       launch dot, its name, the badge and the ends of the line all move
-       together and nothing can be missed. */
-    <div style={{ ["--color-mark" as string]: "var(--color-done)" }}>
-      <section className="page-frame pt-10 pb-12 text-center sm:pt-16 sm:pb-14">
-        <h1 className="section-head mx-auto max-w-[34ch] text-ink">
-          One line from the first email
-          <span className="text-quiet"> to live and hosted.</span>
-        </h1>
+              <h1 className="mt-3 max-w-[18ch] text-[clamp(26px,3vw,34px)] leading-[1.14] font-extrabold tracking-[-0.03em] text-ink">
+                How we normally work
+              </h1>
+            </div>
 
-        <p className="mx-auto mt-6 max-w-[78ch] text-[16px] leading-[1.65] text-quiet sm:text-[17.5px]">
-          The same run for every project. What changes between them is what
-          happens inside a step, never which steps there are - so you can see
-          the whole of it before you have committed to any of it.
-        </p>
+            <p className="max-w-[46ch] text-[13.5px] leading-[1.6] text-quiet">
+              There are two broad ways in, depending on how far you have got
+              with your requirements. Both join the same process, and neither
+              commits you to anything.
+            </p>
+          </div>
 
-        <div className="mt-9 flex flex-wrap items-center justify-center gap-2.5">
-          <Link
-            href={ROUTES.build}
-            className="group inline-flex items-center gap-2 rounded-pill bg-ink px-5 py-2.5 text-[14.5px] font-semibold text-white transition-opacity hover:opacity-85"
-          >
-            Start at step one
-            <ArrowUpRight
-              aria-hidden
-              className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-            />
-          </Link>
-          <Link
-            href={ROUTES.book}
-            className="group inline-flex items-center gap-2 rounded-pill bg-field px-5 py-2.5 text-[14.5px] font-semibold text-ink transition-colors hover:bg-hair"
-          >
-            Talk it through first
-            <ArrowUpRight
-              aria-hidden
-              className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-            />
-          </Link>
-        </div>
-      </section>
-
-      {/* The line itself.
-
-          One rule across the whole run with thirteen stops on it, the labels
-          alternating above and below so a stop has room for a name and a
-          sentence without the next one touching it. The zones are bands behind
-          the line rather than three separate cards: the point of the drawing is
-          that it is one line, and cutting it into three says the opposite.
-
-          Wide, and it says so. Thirteen stops cannot be read at phone width, so
-          below `lg` the map gives up and the same thirteen become the cards
-          underneath - which are not a fallback so much as the same information
-          at the size it fits. */}
-      <section className="page-frame pb-14">
-        <CutPanel
-          tone="field"
-          className="w-full"
-          corner={
-            <Link
-              href={ROUTES.build}
-              aria-label="Start at step one"
-              className="flex size-11 items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
-            >
-              <ArrowUpRight className="size-[18px]" strokeWidth={2.2} />
-            </Link>
-          }
-        >
-          {/* Thirteen stops on one spine.
-
-              The staircase needed a screen and a half of height to say what a
-              column says in a third of it - and a climb only reads as a climb if
-              you can see the top of it from the bottom.
-
-              So: one vertical rule down the left, every stop hanging off it as a
-              row, and the three zones as bands along it. A row can be compact
-              because it reads across rather than down - number, icon, name, what
-              happens, how long - and thirteen of them stack without any of it
-              needing to be scrolled sideways or shrunk to fit.
-
-              The spine is the drawing. It runs unbroken through all three zones,
-              which is the one thing the earlier versions kept losing. */}
-          <div className="mt-8 hidden lg:block">
-            {ZONES.map((zone, at) => (
-              <section key={zone.key} className="min-w-0">
-                {/* The zone, on the spine rather than above it: its own mark
-                    sits where a stop's would, so a change of hands reads as
-                    part of the run rather than as a heading over it. */}
-                <div
-                  className="reveal relative flex gap-5 pl-[46px]"
-                  style={{ ["--step" as string]: 0 }}
+          {/* The two ways in. Ruled cards rather than cut surfaces: they are a
+              pair of equal choices, and a cut is for a control standing in it -
+              these carry theirs on the face. */}
+          <div className="mt-9 grid gap-3.5 lg:grid-cols-2">
+            {PATHS.map((path) => (
+              <div
+                key={path.href}
+                className="flex flex-col items-start gap-3 rounded-[14px] border border-hair p-6 sm:p-7"
+              >
+                <p
+                  className="font-mono text-[9.5px] font-bold tracking-[0.16em] uppercase"
+                  style={{ color: path.tint }}
                 >
-                  <span
+                  {path.kicker}
+                </p>
+
+                <h2 className="max-w-[24ch] text-[20px] leading-[1.3] font-bold tracking-[-0.022em] text-ink">
+                  {path.n}
+                </h2>
+
+                <p className="max-w-[48ch] text-[13.5px] leading-[1.6] text-quiet">
+                  {path.sub}
+                </p>
+
+                <Link
+                  href={path.href}
+                  className={cn(
+                    "group/go mt-auto inline-flex items-center gap-2 rounded-[9px] px-6 py-3 text-[14px] font-semibold transition-opacity hover:opacity-85",
+                    path.filled ? "text-white" : "border-[1.5px] bg-field",
+                  )}
+                  style={
+                    path.filled
+                      ? {
+                          backgroundImage: `linear-gradient(100deg, ${RAMP[0].from}, ${RAMP[0].to})`,
+                        }
+                      : { borderColor: path.tint, color: path.tint }
+                  }
+                >
+                  {path.go}
+                  <ArrowUpRight
                     aria-hidden
-                    className={cn(
-                      "absolute top-0 bottom-0 left-[15px] w-px",
-                      at === 0 ? "top-1/2" : "",
-                      zone.key === "after" ? "bg-planned" : "bg-border",
-                    )}
+                    className="size-4 transition-transform group-hover/go:translate-x-0.5 group-hover/go:-translate-y-0.5"
                   />
-                  <span
-                    aria-hidden
-                    className={cn(
-                      "absolute top-1/2 left-[9px] size-3.5 -translate-y-1/2 rounded-pill ring-[3px]",
-                      zone.key === "after"
-                        ? "bg-field ring-planned"
-                        : "bg-field ring-ink",
-                    )}
-                  />
-
-                  <p
-                    className={cn(
-                      "flex flex-wrap items-baseline gap-x-3 gap-y-1",
-                      at === 0 ? "pb-5" : "py-5",
-                    )}
-                  >
-                    <b className="text-[14.5px] leading-[1.2] font-extrabold tracking-[-0.025em] text-ink">
-                      {zone.n}
-                    </b>
-                    <span className="text-[12px] leading-[1.5] text-quiet">
-                      {zone.note}
-                    </span>
-                  </p>
-                </div>
-
-                <ol>
-                  {zone.stops.map((stop, n) => (
-                    <li
-                      key={stop.ix}
-                      className="reveal group/stop relative flex gap-5 pl-[46px]"
-                      style={{ ["--step" as string]: n + 1 }}
-                    >
-                      {/* The spine, drawn by each row so it arrives unbroken
-                          and stops with the last stop rather than running on. */}
-                      <span
-                        aria-hidden
-                        className={cn(
-                          "absolute left-[15px] w-px",
-                          zone.key === "after" ? "bg-planned" : "bg-border",
-                          at === ZONES.length - 1 && n === zone.stops.length - 1
-                            ? "top-0 h-1/2"
-                            : "inset-y-0",
-                        )}
-                      />
-
-                      {/* What the stop is, standing on the spine. */}
-                      <span
-                        aria-hidden
-                        className={cn(
-                          "absolute top-1/2 left-0 flex size-[31px] -translate-y-1/2 items-center justify-center rounded-pill transition-colors",
-                          stop.mark === "launch"
-                            ? "bg-mark text-white"
-                            : stop.mark === "interchange"
-                              ? "bg-field text-ink ring-1 ring-border"
-                              : "bg-canvas text-quiet",
-                        )}
-                      >
-                        <stop.icon className="size-[15px]" strokeWidth={1.9} />
-                      </span>
-
-                      <span className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-4 gap-y-1 border-b border-hair py-3.5 transition-colors group-last/stop:border-b-0 group-hover/stop:border-border">
-                        <span className="font-mono text-[9.5px] font-bold text-idx tabular-nums">
-                          {stop.ix}
-                        </span>
-
-                        <b
-                          className={cn(
-                            "min-w-[15ch] flex-none text-[14px] leading-[1.25] font-extrabold tracking-[-0.02em]",
-                            stop.mark === "launch" ? "text-mark" : "text-ink",
-                          )}
-                        >
-                          {stop.n}
-                        </b>
-
-                        <span className="min-w-0 flex-1 text-[12.5px] leading-[1.5] text-quiet">
-                          {stop.sub}
-                        </span>
-
-                        {stop.takes ? (
-                          <span className="flex-none font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase tabular-nums">
-                            {stop.takes}
-                          </span>
-                        ) : null}
-                      </span>
-                    </li>
-                  ))}
-                </ol>
-              </section>
+                </Link>
+              </div>
             ))}
           </div>
-        </CutPanel>
-      </section>
 
-      {/* The same thirteen, as cards. This is what the map becomes below `lg`,
-          and it is the only version on a phone. */}
-      <section className="page-frame flex flex-col gap-4 pb-14 lg:hidden">
-        {ZONES.map((zone, at) => (
-          <CutPanel
-            key={zone.key}
-            tone="field"
-            className="w-full"
-            toolbar={
-              <span className="flex h-10 w-full items-center justify-center gap-2.5">
-                <span className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
-                  Zone {at + 1}
-                </span>
-                <b className="truncate text-[13.5px] leading-none font-bold text-ink">
-                  {zone.n}
-                </b>
-              </span>
-            }
-          >
-            <p className="max-w-[58ch] text-[14px] leading-[1.6] text-quiet">
-              {zone.note}
-            </p>
+          {/* The rule that joins the two. */}
+          <div className="mt-7 flex items-center gap-5">
+            <span aria-hidden className="h-px flex-1 bg-hair" />
+            <span className="text-center font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase">
+              From there, the process is the same
+            </span>
+            <span aria-hidden className="h-px flex-1 bg-hair" />
+          </div>
 
-            <ol className="mt-6 grid gap-3 sm:grid-cols-2">
-              {zone.stops.map((stop) => (
-                <li
-                  key={stop.ix}
-                  className={cn(
-                    "flex min-w-0 flex-col rounded-[18px] p-5",
-                    stop.mark === "launch" ? "bg-ink" : "bg-canvas",
-                  )}
+          {/* The three zones, each opening onto its own steps. */}
+          <div className="mt-6">
+            {ZONES.map((zone, at) => {
+              const ramp = RAMP[at] ?? RAMP[RAMP.length - 1];
+              const first = zone.stops[0]?.ix;
+              const last = zone.stops[zone.stops.length - 1]?.ix;
+
+              return (
+                <details
+                  key={zone.key}
+                  open={at === 0}
+                  className="group/zone border-t border-hair"
                 >
-                  <span className="flex items-center justify-between gap-3">
+                  <summary className="flex cursor-pointer list-none items-center gap-5 py-6 sm:gap-6 [&::-webkit-details-marker]:hidden">
+                    {/* The numeral, carrying the gradient. It is the feature of
+                        this arrangement: everything else on the row is ink and
+                        grey, which is what lets one object be coloured. */}
                     <span
-                      className={cn(
-                        "font-mono text-[10px] font-bold tabular-nums",
-                        stop.mark === "launch" ? "text-white/50" : "text-idx",
-                      )}
+                      aria-hidden
+                      className="flex size-[62px] flex-none items-center justify-center rounded-[18px] text-[23px] leading-none font-bold tracking-[-0.02em] text-white tabular-nums sm:size-[74px] sm:text-[28px]"
+                      style={{
+                        backgroundImage: `linear-gradient(135deg, ${ramp.from}, ${ramp.to})`,
+                        boxShadow: `0 6px 18px color-mix(in oklab, ${ramp.to} 28%, transparent)`,
+                      }}
                     >
-                      {stop.ix}
+                      {String(at + 1).padStart(2, "0")}
                     </span>
-                    {stop.takes ? (
-                      <span
-                        className={cn(
-                          "font-mono text-[8.5px] font-bold tracking-[0.12em] uppercase",
-                          stop.mark === "launch"
-                            ? "text-white/60"
-                            : "text-label",
-                        )}
-                      >
-                        {stop.takes}
+
+                    <span className="flex min-w-0 flex-1 flex-col gap-1.5">
+                      <b className="text-[clamp(19px,1.9vw,26px)] leading-[1.15] font-bold tracking-[-0.025em] text-ink">
+                        {zone.n}
+                      </b>
+                      <span className="max-w-[62ch] text-[13px] leading-[1.5] text-quiet">
+                        {HOW_MANY[zone.stops.length - 1] ?? zone.stops.length}{" "}
+                        steps, {ZONE_LINE[zone.key]}
                       </span>
-                    ) : null}
-                  </span>
+                    </span>
 
-                  <b
-                    className={cn(
-                      "mt-2.5 block max-w-[22ch] text-[15px] leading-[1.2] font-extrabold tracking-[-0.025em]",
-                      stop.mark === "launch" ? "text-white" : "text-ink",
-                    )}
-                  >
-                    {stop.n}
-                  </b>
+                    <span
+                      className="hidden flex-none font-mono text-[10px] font-bold tracking-[0.14em] uppercase tabular-nums lg:block"
+                      style={{ color: ramp.to }}
+                    >
+                      Steps {first} - {last}
+                    </span>
 
-                  <p
-                    className={cn(
-                      "mt-2 text-[13px] leading-[1.55]",
-                      stop.mark === "launch" ? "text-white/70" : "text-quiet",
-                    )}
-                  >
-                    {stop.sub}
-                  </p>
-                </li>
-              ))}
-            </ol>
-          </CutPanel>
-        ))}
+                    {/* Open and shut, said with one mark that turns. */}
+                    <span
+                      aria-hidden
+                      className="flex size-8 flex-none items-center justify-center rounded-pill border border-hair text-quiet transition-transform duration-300 group-open/zone:rotate-45"
+                    >
+                      <Plus className="size-4" strokeWidth={2} />
+                    </span>
+                  </summary>
+
+                  {/* The steps, hanging off one rail.
+
+                      A flex row with widths written on the children, not a
+                      grid with an arbitrary template. `grid-cols-[34px_...]`
+                      never made it into the stylesheet, so every row fell back
+                      to one column and each child stretched the full width -
+                      which is why the marks were rendering as black bars.
+                      Widths on the children cannot fail that way.
+
+                      It stacks below `sm` rather than wrapping. Wrapping put a
+                      title on its own line and took the sentence with it, so a
+                      row broke into three pieces at no particular width. */}
+                  <div className="relative pb-7">
+                    <span
+                      aria-hidden
+                      className="absolute top-9 bottom-12 left-[16px] hidden w-0.5 bg-hair sm:block"
+                    />
+
+                    <ol>
+                      {zone.stops.map((stop, n) => (
+                        <li
+                          key={stop.ix}
+                          className={cn(
+                            "relative flex flex-col items-start gap-x-6 gap-y-1.5 py-4 sm:flex-row sm:items-start",
+                            n > 0 && "border-t border-hair",
+                          )}
+                        >
+                          <span
+                            aria-hidden
+                            className={cn(
+                              "flex h-[34px] w-[34px] shrink-0 grow-0 basis-[34px] items-center justify-center rounded-pill text-[13px] font-bold tabular-nums",
+                              stop.mark === "launch"
+                                ? "text-white"
+                                : "bg-ink text-white",
+                            )}
+                            style={
+                              stop.mark === "launch"
+                                ? {
+                                    backgroundImage: `linear-gradient(135deg, ${ramp.from}, ${ramp.to})`,
+                                  }
+                                : undefined
+                            }
+                          >
+                            {n + 1}
+                          </span>
+
+                          <b className="min-w-0 pt-1.5 text-[16px] leading-[1.35] font-bold tracking-[-0.018em] text-ink sm:w-[300px] sm:shrink-0 sm:grow-0">
+                            {stop.n}
+                          </b>
+
+                          <span className="min-w-0 grow text-[13.5px] leading-[1.6] text-quiet sm:pt-2">
+                            {stop.sub}
+                          </span>
+
+                          <span className="shrink-0 font-mono text-[9.5px] font-bold tracking-[0.1em] text-label uppercase tabular-nums sm:w-[9ch] sm:pt-2.5 sm:text-right">
+                            {stop.takes ?? ""}
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                </details>
+              );
+            })}
+          </div>
+        </div>
       </section>
 
       {/* What holds across all thirteen. */}
@@ -310,13 +304,14 @@ export function HowWeWorkView() {
           className="w-full"
           toolbar={
             <span className="flex h-10 w-full items-center justify-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
-              True at every stop
+              True at every step
             </span>
           }
           corner={
             <Link
               href={ROUTES.build}
               aria-label="Build your website"
+              title="Build your website"
               className="flex size-11 items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
             >
               <ArrowUpRight className="size-[18px]" strokeWidth={2.2} />
@@ -343,12 +338,12 @@ export function HowWeWorkView() {
           </ul>
 
           <p className="mt-7 max-w-[64ch] text-[12.5px] leading-[1.6] text-label">
-            After the last stop the run usually starts again: the next piece of
+            After the last step the run usually starts again: the next piece of
             work arrives as a new submission rather than as a change to a
             finished one.
           </p>
         </CutPanel>
       </section>
-    </div>
+    </>
   );
 }

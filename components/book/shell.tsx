@@ -75,21 +75,17 @@ export function Disc({
 export function StepRail({
   at,
   reached,
-  said,
   onGo,
 }: {
   at: number;
   reached: number;
-  said: readonly string[];
   onGo: (step: number) => void;
 }) {
   return (
     /* The run of four, standing in the notch the surface was cut for.
 
-       Four fixed-width steps with a rule between each pair: a mark, the step's
-       name, and under it what was chosen for it - "Intro call", the date, the
-       name - so the run is a record of the booking rather than a row of
-       headings.
+       Four fixed-width steps with a rule between each pair: a mark and the
+       step's name, and nothing else.
 
        Fixed widths rather than four equal parts. Every step then sits at the
        same distance from the next whatever its name is, which is what makes
@@ -97,7 +93,7 @@ export function StepRail({
        lines. */
     <nav
       aria-label="Booking steps"
-      className="quiet-scroll flex max-w-full justify-center overflow-x-auto"
+      className="quiet-scroll flex max-w-full justify-center overflow-x-auto py-1.5"
     >
       <ol className="flex w-max items-start justify-center">
         {STEPS.map((label, n) => {
@@ -132,31 +128,26 @@ export function StepRail({
                   )}
                 />
 
-                <span className="flex min-w-0 flex-col items-center">
-                  <b
-                    className={cn(
-                      "block text-[13px] leading-[1.2] font-bold tracking-[-0.01em] transition-colors",
-                      here
-                        ? "text-ink"
-                        : open
-                          ? "text-quiet group-hover/step:text-ink"
-                          : "text-planned",
-                    )}
-                  >
-                    {label}
-                  </b>
+                {/* The name, and nothing under it.
 
-                  {/* Only where there is something to say. "Open" and
-                      "Locked" were a second line under every step repeating
-                      what the mark and the colour already say - and three of
-                      the four said the same word. What was chosen for a step
-                      is worth a line; the state of one is not. */}
-                  {said[n] ? (
-                    <span className="mt-1 block max-w-full truncate font-mono text-[9px] font-bold tracking-[0.1em] text-mark uppercase">
-                      {said[n]}
-                    </span>
-                  ) : null}
-                </span>
+                    There were two lines here: the state of the step, and then
+                    what had been chosen for it. Both went. The state is what
+                    the mark and its colour already say, and the choice is
+                    already on the surface below - once in the answer itself,
+                    and again in the bite when it matters. A run of steps that
+                    repeats the whole booking is not a run of steps. */}
+                <b
+                  className={cn(
+                    "block max-w-full truncate text-[13px] leading-[1.2] font-bold tracking-[-0.01em] transition-colors",
+                    here
+                      ? "text-ink"
+                      : open
+                        ? "text-quiet group-hover/step:text-ink"
+                        : "text-planned",
+                  )}
+                >
+                  {label}
+                </b>
               </button>
 
               {n < STEPS.length - 1 ? (
@@ -236,12 +227,14 @@ export function BookStage({
       className={cn("min-h-[clamp(380px,46vh,520px)] w-full", className)}
       bar="wide"
       toolbar={
-        <div className="flex h-full w-full min-w-0 items-center gap-1 pr-2 pl-1">
-          <Disc label="Previous step" onClick={onBack} disabled={at === 0}>
-            <ArrowLeft className="size-4" />
-          </Disc>
+        <div className="relative flex h-full w-full min-w-0 items-center">
+          <span className="absolute top-1/2 left-1 z-10 -translate-y-1/2">
+            <Disc label="Previous step" onClick={onBack} disabled={at === 0}>
+              <ArrowLeft className="size-4" />
+            </Disc>
+          </span>
 
-          <div className="flex min-w-0 flex-1 justify-center">{rail}</div>
+          <div className="flex min-w-0 flex-1 justify-center px-11">{rail}</div>
         </div>
       }
       aside={

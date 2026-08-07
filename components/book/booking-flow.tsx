@@ -259,15 +259,6 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
     );
   }
 
-  /* What has been settled, in the reader's own terms, so the run of steps is a
-     record of the booking rather than a row of headings. */
-  const said = [
-    meeting ? meeting.name : "",
-    when ? `${whenShort} · ${whenTime}` : "",
-    details.name.trim(),
-    "",
-  ];
-
   return (
     <div>
       {/* The head.
@@ -303,7 +294,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
         {at === 0 ? (
           <BookStage
             rail={
-              <StepRail at={at} reached={reached} said={said} onGo={setAt} />
+              <StepRail at={at} reached={reached} onGo={setAt} />
             }
             at={at}
             title="What kind of meeting?"
@@ -428,7 +419,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
         {at === 1 ? (
           <BookStage
             rail={
-              <StepRail at={at} reached={reached} said={said} onGo={setAt} />
+              <StepRail at={at} reached={reached} onGo={setAt} />
             }
             at={at}
             title="When suits you?"
@@ -552,7 +543,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
         {at === 2 ? (
           <BookStage
             rail={
-              <StepRail at={at} reached={reached} said={said} onGo={setAt} />
+              <StepRail at={at} reached={reached} onGo={setAt} />
             }
             at={at}
             title="Who are we meeting?"
@@ -627,7 +618,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
         {at === 3 ? (
           <BookStage
             rail={
-              <StepRail at={at} reached={reached} said={said} onGo={setAt} />
+              <StepRail at={at} reached={reached} onGo={setAt} />
             }
             at={at}
             title="Check it over."
@@ -651,7 +642,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
             onBack={back}
             onNext={sendIt}
           >
-            <dl className="max-w-[42rem] overflow-hidden rounded-[16px] bg-canvas">
+            <dl className="mx-auto w-full max-w-[46rem] overflow-hidden rounded-[18px] bg-canvas py-2">
               <Line icon={Clock} term="Meeting">
                 {meeting?.name}, {minutes} minutes
               </Line>
@@ -681,7 +672,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
             {problem ? (
               <p
                 role="alert"
-                className="mt-6 max-w-[42rem] rounded-[12px] bg-blocked/[0.08] px-4 py-3 text-[13px] leading-[1.6] text-blocked"
+                className="mx-auto mt-6 w-full max-w-[46rem] rounded-[12px] bg-blocked/[0.08] px-4 py-3 text-[13px] leading-[1.6] text-blocked"
               >
                 {problem}
               </p>
@@ -760,12 +751,14 @@ function Line({
     /* No rule between the rows. The list already sits on a ground of its own,
        and a hairline under every line of a six line list is more drawing than
        the list is worth. */
-    <div className="grid grid-cols-[minmax(0,8rem)_minmax(0,1fr)] items-start gap-4 px-4 py-2.5 sm:px-5">
-      <dt className="flex items-center gap-2.5 text-[13.5px] font-semibold text-quiet">
+    <div className="flex flex-wrap items-baseline gap-x-6 gap-y-1 px-5 py-3 sm:px-7">
+      <dt className="flex w-[9rem] flex-none items-center gap-2.5 text-[13px] font-semibold text-quiet">
         <Icon aria-hidden className="size-4 shrink-0 text-label" />
         {term}
       </dt>
-      <dd className="text-[14.5px] leading-[1.45] text-ink">{children}</dd>
+      <dd className="min-w-0 flex-1 text-[14.5px] leading-[1.5] text-ink">
+        {children}
+      </dd>
     </div>
   );
 }
@@ -839,7 +832,7 @@ function Finished({
         Nothing to prepare and nothing to bring.
       </p>
 
-      <dl className="mt-8 max-w-[42rem] overflow-hidden rounded-[16px] bg-canvas text-left">
+      <dl className="mx-auto mt-8 w-full max-w-[46rem] overflow-hidden rounded-[18px] bg-canvas py-2 text-left">
         <Line icon={Clock} term="Meeting">
           {meeting?.name}, {minutes} minutes
         </Line>

@@ -140,13 +140,18 @@ export function CutPanel({
        The bottom cuts keep the full flare: they hold a 44px disc and have the
        depth to spend on it. The notch holds a 40px plate and was being cut to
        fifty-six, so a third of it was empty surface under the words. */
-    /* A wide notch is a deep one. It has to hold a run of steps two lines
-       tall, and depth is not a free number: a cut is exactly as deep as its
-       flare plus its corner, because that is where the two arcs meet. To make
-       it deeper the arcs have to be drawn larger, which is what this does -
-       taking depth off any other way puts a straight wall down each side. */
+    /* A wide notch is a deeper one.
+
+       Depth is not a free number here: a cut is exactly as deep as its flare
+       plus its corner, because that is where its two arcs meet, so the only
+       way to make it deeper is to draw the arcs larger. Taking depth off any
+       other way puts a straight wall down each side.
+
+       It has to be deeper because what stands in a wide notch is a run of
+       steps two lines tall - a mark and a name - and at 44px the names were
+       finishing flush with the floor of the cut. */
     const barCurve =
-      bar === "wide" ? Math.min(flare * 1.7, 36) : Math.min(flare, 22);
+      bar === "wide" ? Math.min(flare * 1.4, 30) : Math.min(flare, 22);
 
     const barDepth = toolbar ? barCurve * 2 : 0.01;
     const want =
