@@ -72,9 +72,9 @@ const RULES = [
   "One contract, and it is with us.",
   "One invoice, and it comes from us.",
   "Named in the proposal before the work starts.",
-  "Briefed and reviewed inside the project, not beside it.",
+  "Briefed and reviewed inside the project, never beside it.",
   "Their part of the result is our responsibility.",
-  "Where they handle personal data, they are listed as a sub-processor.",
+  "Listed as a sub-processor wherever they touch personal data.",
 ] as const;
 
 /**
@@ -404,22 +404,51 @@ export function ServicesView() {
             </Link>
           }
         >
-          <ul className="mx-auto mt-8 grid max-w-[92ch] gap-x-12 gap-y-3 sm:grid-cols-2">
-            {RULES.map((rule) => (
-              <li key={rule} className="flex gap-2.5">
-                <Check
+          <h2 className="mx-auto mt-8 max-w-[30ch] text-center text-[clamp(21px,2.1vw,30px)] leading-[1.1] font-extrabold tracking-[-0.035em] text-ink">
+            Six things that hold, whoever does the work.
+          </h2>
+
+          <p className="mx-auto mt-3 max-w-[64ch] text-center text-[14px] leading-[1.65] text-quiet">
+            The difference between a specialist inside a project and a supplier
+            beside one is which of us you have to chase. It is never you.
+          </p>
+
+          {/* Tiles rather than a tick list.
+
+              Six ticks in two columns read as a feature list on a pricing
+              page - the same mark six times, saying only that six things are
+              true. Numbered tiles say there are six of them and that each is
+              its own commitment, which is what these are. */}
+          <ul className="mx-auto mt-9 grid w-full max-w-[1180px] gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {/* One row per rule, not two. The mark and the number sat on a
+                line of their own with the words underneath, which made a six
+                word commitment three lines tall and left a band of empty tile
+                between them. Read across, a tile is the height of what is in
+                it. */}
+            {RULES.map((rule, n) => (
+              <li
+                key={rule}
+                className="flex min-w-0 items-center gap-3.5 rounded-[16px] bg-canvas py-3.5 pr-4 pl-4 transition-colors hover:bg-canvas-firm"
+              >
+                <span
                   aria-hidden
-                  className="mt-[4px] size-3.5 flex-none text-mark"
-                  strokeWidth={3}
-                />
-                <span className="text-[14px] leading-[1.55] text-body">
+                  className="flex size-8 flex-none items-center justify-center rounded-pill bg-field text-mark"
+                >
+                  <Check className="size-3.5" strokeWidth={3} />
+                </span>
+
+                <span className="min-w-0 flex-1 text-[13.5px] leading-[1.45] font-semibold text-ink">
                   {rule}
+                </span>
+
+                <span className="flex-none font-mono text-[9.5px] font-bold text-idx tabular-nums">
+                  {String(n + 1).padStart(2, "0")}
                 </span>
               </li>
             ))}
           </ul>
 
-          <p className="mx-auto mt-8 max-w-[80ch] text-center text-[12.5px] leading-[1.6] text-label">
+          <p className="mx-auto mt-9 max-w-[80ch] text-center text-[12.5px] leading-[1.6] text-label">
             Most projects need none of the specialist work. Where one is needed
             it is named before the work starts, rather than added to an invoice
             afterwards.

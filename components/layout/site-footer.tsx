@@ -54,9 +54,15 @@ export function SiteFooter() {
                 {LEGAL.line}
               </p>
 
+              {/* Right, at the far end of the row from the entity line.
+
+                  The two are a pair - who we are on one side, the documents
+                  that say so on the other - and putting both against the same
+                  edge made one long ragged column of small print rather than a
+                  band with something at each end. */}
               <nav
                 aria-label="Legal"
-                className="order-1 flex-none lg:order-2 lg:text-right"
+                className="order-1 min-w-0 lg:order-2 lg:text-right"
               >
                 {/* Fourteen pixels tall is not a target, it is a line of type
                     that happens to be pressable. The padding gives each one the
@@ -77,15 +83,10 @@ export function SiteFooter() {
               </nav>
             </div>
 
-            {/* The notice, last and centred, on the site's own middle line.
-                It sat right aligned under the legal links, which read as a
-                caption belonging to them - it is not paperwork about the
-                company, it is the claim the whole page is made under, and a
-                line that belongs to everything above it stands under the
-                middle of it. The band is inset by a cut on each side and the
-                two cuts are the same size, so centred here is centred on the
-                surface. */}
-            <p className="text-center text-[11.5px] leading-[1.55] text-quiet">
+            {/* The notice, last, and on the same left edge as the rest of the
+                foot. It was centred, which put the only centred line on a page
+                of left-aligned columns directly under them. */}
+            <p className="text-[11.5px] leading-[1.55] text-quiet">
               &copy; {year} {LEGAL.entity}. {LEGAL.rights}
               <span className="sr-only"> {SITE.name}.</span>
             </p>
