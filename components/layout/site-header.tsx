@@ -3,41 +3,36 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, UserRound, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 import { RailNav } from "./rail-nav";
 import { Wordmark } from "./wordmark";
 
-import { HEADER_NAV, ROUTES } from "@/lib/site";
+import { HEADER_CTA, HEADER_NAV, ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 /**
  * The site header.
  *
- * The name at 700 in ink, the links in the quiet grey, and one call to action
- * pushed to the right. No logo mark, no shadow and no rule: the page starts far
- * enough below that a line would only draw a boundary the space already draws.
+ * The name at 700 in ink and the links in the quiet grey. No logo mark, no
+ * shadow and no rule: the page starts far enough below that a line would only
+ * draw a boundary the space already draws.
  *
- * One departure: the draft outlines the call to action in ink, reserving ink for
- * primary actions. This fills it in `active` instead, the system's only accent, so
- * the one thing the site wants you to do is the one coloured thing in the chrome.
- *
- * The draft renders the nav as inert spans because it is a single file prototype
- * that switches screens with JavaScript. Here they are real links, and the one
- * matching the current route is marked, which the prototype had no way to do.
+ * Nothing on it but navigation. The call to action and the contact disc were at
+ * the right hand end and both came off: every page ends in the two ways in, the
+ * landing page carries them a row under the headline, and `Book a meeting` and
+ * `Contact` are two of the eight links here - so that end of the bar held a
+ * third and fourth copy of what was already on screen.
  *
  * Three zones with equal weight on the outside, so the links sit on the header's
  * true centre line rather than wherever the brand happens to end. Nothing wraps at
  * any width: a header that grows a second row as the window narrows shoves the
  * whole page down as it does it.
  *
- * Every control on the bar is 32px tall and shares one radius, so the search field,
- * the call to action and the menu button read as one set rather than three
- * borrowed parts.
- *
  * What is shown when: the eight links arrive at `xl`, which is the first width
- * that holds them, the brand and the call to action without crowding. Below that
- * the menu button appears in their place and the sheet carries the same list.
+ * that holds them beside the brand without crowding. Below that the menu button
+ * appears in their place and the sheet carries the same list - and the sheet
+ * keeps a way in at its foot, because a phone has no bar to have lost it from.
  *
  * The menu used to stop at `lg` because the docked rail covered everything
  * above it. There is no rail now, so the two have to meet exactly: one of them
@@ -46,7 +41,6 @@ import { cn } from "@/lib/utils";
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const landing = pathname === ROUTES.home;
 
   /* No rule under it, and opaque. The two go together: a translucent bar shows the
      page sliding through it, and without a rule there is nothing left to mark where
