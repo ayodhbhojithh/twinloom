@@ -103,7 +103,7 @@ export function StageSell({ at, answers, onGo }: StepProps) {
         row. Skip it all if nothing is bought on the site.
       </Sub>
 
-      <div className="mt-6 grid max-w-[1160px] gap-x-6 lg:grid-cols-2">
+      <div className="mt-6 grid mx-auto max-w-[1160px] gap-x-6 lg:grid-cols-2">
         {SELL_KINDS.map((kind) => (
           <ActionRow
             key={kind.k}
@@ -124,7 +124,7 @@ export function StageSell({ at, answers, onGo }: StepProps) {
           that does not exist yet. They arrive the moment a kind is ticked. */}
       {selling
         ? OPTION_LISTS.sell.map((list) => (
-            <section key={list.scope} className="mt-8 max-w-[720px]">
+            <section key={list.scope} className="mt-8 mx-auto max-w-[720px]">
               <SubTitle className="mt-0">{list.title}</SubTitle>
               {list.note ? (
                 <p className="mt-0.5 text-[12.5px] leading-[1.45] text-label">
@@ -155,7 +155,7 @@ export function StageSell({ at, answers, onGo }: StepProps) {
         : null}
 
       {selling ? (
-        <section className="mt-8 max-w-[1160px]">
+        <section className="mt-8 mx-auto max-w-[1160px]">
           <SubTitle count={PAY_WAYS.length} className="mt-0">
             How they pay
           </SubTitle>
@@ -177,7 +177,7 @@ export function StageSell({ at, answers, onGo }: StepProps) {
           up late and cost money when they do, and "not sure yet" is a real
           answer to every one of them. */}
       {selling ? (
-        <section className="mt-8 max-w-[720px]">
+        <section className="mt-8 mx-auto max-w-[720px]">
           <button
             type="button"
             onClick={() => setOpen(three.id)}
@@ -241,7 +241,7 @@ export function StageStyle({ at, answers, onGo }: StepProps) {
         on your site - it changes how every page you have described looks.
       </Sub>
 
-      <section className="mt-6 max-w-[1100px]">
+      <section className="mt-6 mx-auto max-w-[1100px]">
         <SubTitle className="mt-0">{feel.title}</SubTitle>
         <p className="mt-0.5 text-[12.5px] leading-[1.45] text-label">
           {feel.note}
@@ -261,7 +261,7 @@ export function StageStyle({ at, answers, onGo }: StepProps) {
 
       {/* The three one-answer questions, side by side: colour, light or dark,
           and type. Chips, because each is a choice between alternatives. */}
-      <div className="mt-8 grid max-w-[1100px] gap-x-10 gap-y-7 lg:grid-cols-3">
+      <div className="mt-8 grid mx-auto max-w-[1100px] gap-x-10 gap-y-7 lg:grid-cols-3">
         {single.map((list) => (
           <section key={list.scope} className="min-w-0">
             <SubTitle className="mt-0">{list.title}</SubTitle>
@@ -289,7 +289,7 @@ export function StageStyle({ at, answers, onGo }: StepProps) {
 
       <ColourStudioPanel />
 
-      <section className="mt-8 max-w-[1100px]">
+      <section className="mt-8 mx-auto max-w-[1100px]">
         <SubTitle className="mt-0">Behind this, if you have them</SubTitle>
         <div className="mt-2.5 grid gap-3 sm:grid-cols-3">
           {STYLE_CARDS.map((id) => {
@@ -348,7 +348,7 @@ export function StageHave({ at, answers, onGo }: StepProps) {
         time. Marking a row as needing help removes questions later on.
       </Sub>
 
-      <div className="mt-6 grid max-w-[1240px] gap-x-10 gap-y-7 xl:grid-cols-2">
+      <div className="mt-6 grid mx-auto max-w-[1240px] gap-x-10 gap-y-7 xl:grid-cols-2">
         {HAVE_GROUPS.map((group) => (
           <section key={group.title} className="min-w-0">
             <SubTitle className="mt-0">{group.title}</SubTitle>
@@ -443,7 +443,7 @@ export function StageRefs({ at, answers, onGo }: StepProps) {
         is worth more to us than the link on its own.
       </Sub>
 
-      <div className="mt-6 max-w-[720px]">
+      <div className="mt-6 mx-auto max-w-[720px]">
         {/* The file goes in rather than getting named.
 
             "Or the name of a file" was the whole of the old answer: somebody

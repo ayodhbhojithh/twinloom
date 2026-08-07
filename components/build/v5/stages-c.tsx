@@ -122,7 +122,7 @@ export function StageRead({ at, answers, onGo, onGoKey }: StepProps) {
       </Sub>
 
       {/* The front of the document: whose it is, and what it adds up to. */}
-      <div className="mt-6 max-w-[1100px] rounded-[18px] bg-canvas p-6 sm:p-7">
+      <div className="mt-6 mx-auto max-w-[1100px] rounded-[18px] bg-canvas p-6 sm:p-7">
         <div className="flex flex-wrap items-start justify-between gap-x-10 gap-y-5">
           <div className="min-w-0">
             <Kicker className="block">Scoping request</Kicker>
@@ -159,7 +159,7 @@ export function StageRead({ at, answers, onGo, onGoKey }: StepProps) {
 
       {/* Contents. Numbered, and each line the way back to the question that
           writes that section. */}
-      <section className="mt-8 max-w-[1100px]">
+      <section className="mt-8 mx-auto max-w-[1100px]">
         <SubTitle className="mt-0">Contents</SubTitle>
 
         <ol className="mt-2.5 grid gap-x-10 sm:grid-cols-2">
@@ -201,7 +201,7 @@ export function StageRead({ at, answers, onGo, onGoKey }: StepProps) {
           part of the read-back a reader is most likely to ask for back.
 
       |* The site itself, since it is the thing being scoped. *|
-      <section className="mt-9 max-w-[1100px]">
+      <section className="mt-9 mx-auto max-w-[1100px]">
         <SubTitle className="mt-0" count={pages.length}>
           The site your answers describe
         </SubTitle>
@@ -235,7 +235,7 @@ export function StageRead({ at, answers, onGo, onGoKey }: StepProps) {
 
       {/* What was said, and what will be assumed. Side by side, because the
           second is only readable against the first. */}
-      <div className="mt-9 grid max-w-[1100px] gap-x-10 gap-y-8 lg:grid-cols-2">
+      <div className="mt-9 grid mx-auto max-w-[1100px] gap-x-10 gap-y-8 lg:grid-cols-2">
         <section className="min-w-0">
           <SubTitle count={lines.length} className="mt-0">
             What you told us
@@ -472,7 +472,7 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
           to walk through before they are allowed to finish. Asked here, they
           are filled in by the person who has already decided to send it, which
           is the only moment any of it is worth knowing. */}
-      <section className="mt-6 max-w-[720px]">
+      <section className="mt-6 mx-auto max-w-[720px]">
         <SubTitle className="mt-0">Who is asking</SubTitle>
         <p className="mt-0.5 text-[12.5px] leading-[1.45] text-label">
           The only part about you, and the only part we cannot do without. Four
@@ -521,7 +521,7 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
 
       {/* Where it stands, and the named things still missing, each a link
           straight to its question. */}
-      <section className="mt-6 max-w-[720px] rounded-[16px] bg-canvas p-5">
+      <section className="mt-6 mx-auto max-w-[720px] rounded-[16px] bg-canvas p-5">
         <div className="flex items-center gap-2.5">
           <span
             aria-hidden
@@ -595,7 +595,7 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
         </ul>
       </section>
 
-      <section className="mt-7 max-w-[720px]">
+      <section className="mt-7 mx-auto max-w-[720px]">
         <SubTitle className="mt-0">{talk.title}</SubTitle>
         <p className="mt-0.5 text-[12.5px] leading-[1.45] text-label">
           {talk.note}
@@ -691,7 +691,7 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
         ) : null}
       </section>
 
-      <section className="mt-8 max-w-[1100px]">
+      <section className="mt-8 mx-auto max-w-[1100px]">
         <SubTitle className="mt-0">Where you are in how we work</SubTitle>
         <p className="mt-0.5 text-[12.5px] leading-[1.45] text-label">
           Thirteen steps, from this run-through to the end of early life

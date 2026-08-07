@@ -108,7 +108,17 @@ export function StageStep({
         ) : null
       }
     >
-      {children}
+      {/* One measure, centred, for every step.
+
+          The surface is as wide as the window and a question is not. Left
+          against the edge, a heading and a drop zone sat in the first third of
+          a very wide card with two thirds of nothing beside them - and each
+          step chose its own width, so no two of the ten lined up.
+
+          The words inside stay left. Centring the block is what stops a step
+          drifting; centring the sentences would make every line start
+          somewhere different, which is the opposite. */}
+      <div className="mx-auto w-full max-w-[1100px]">{children}</div>
     </Stage>
   );
 }

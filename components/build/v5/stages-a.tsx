@@ -55,7 +55,7 @@ export function StageWho({ at, answers, onGo }: StepProps) {
         tick here, so nothing is ever on offer that nobody asked for.
       </Sub>
 
-      <div className="mt-6 grid max-w-[1100px] gap-x-6 sm:grid-cols-2">
+      <div className="mt-6 grid mx-auto max-w-[1100px] gap-x-6 sm:grid-cols-2">
         {GROUPS.map((group) => (
           <TickRow
             key={group.k}
@@ -216,7 +216,7 @@ export function StageDo({ at, answers, onGo }: StepProps) {
         if (!rows.length) return null;
 
         return (
-          <section key={band.band} className="mt-7 max-w-[1160px]">
+          <section key={band.band} className="mt-7 mx-auto max-w-[1160px]">
             <SubTitle count={rows.length} className="mt-0">
               {band.title}
             </SubTitle>
@@ -244,7 +244,7 @@ export function StageDo({ at, answers, onGo }: StepProps) {
       })}
 
       {order.length > 1 ? (
-        <section className="mt-8 max-w-[560px]">
+        <section className="mt-8 mx-auto max-w-[560px]">
           <SubTitle className="mt-0">{CARD_BY["dw-order"].title}</SubTitle>
           <p className="mt-0.5 text-[12.5px] leading-[1.45] text-label">
             {CARD_BY["dw-order"].note}

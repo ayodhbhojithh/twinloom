@@ -177,7 +177,7 @@ export function Stage({
     : "62ch";
 
   return (
-    <div ref={box} className={cn("relative", className)}>
+    <div ref={box} className={cn("relative flex flex-col", className)}>
       {/* The ground. Nothing but a shape: it carries no content, so clipping
           it costs nothing and the words above it stay whole. */}
       <div
@@ -220,9 +220,15 @@ export function Stage({
         </div>
       ) : null}
 
-      {/* The content, held clear of every cut by the numbers that made them. */}
+      {/* The content, held clear of every cut by the numbers that made them.
+
+          `min-h-full` and a centred column: the surface has a floor so its
+          cuts have room to be cuts, and a short answer used to sit against the
+          top of it with the rest of the card empty underneath. Centred, the
+          empty room is shared above and below instead of all falling to the
+          bottom, and the question sits where the eye already is. */}
       <div
-        className="relative z-10"
+        className="relative z-10 flex flex-1 flex-col justify-center"
         style={{
           /* Under the notch, not a whole band under it. The bar is only as
              deep as its own arcs, and on a wide surface it leaves most of the
@@ -239,7 +245,15 @@ export function Stage({
              nothing in its top edge - the quick submission is the one - put its
              heading twelve pixels down while holding it thirty from the side.
              The same fault was in `CutPanel` and is fixed there the same way. */
-          paddingTop: toolbar ? (beside ? pad : cut.barDepth + 12) : pad,
+          /* Always clear of the bar, never beside it.
+
+             `beside` was the right answer while a step's heading stood in the
+             left corner: on a wide surface there is a column of free top edge
+             either side of the notch, and the heading belonged in it. Headings
+             are centred now, so they are always under the notch - and taking
+             the `beside` branch put the first line of type hard against the
+             floor of the cut. */
+          paddingTop: toolbar ? cut.barDepth + 20 : pad,
           /* What the heading may take before it would run under the bar. */
           ["--notch-free" as string]: headRoom,
           /* Clear of the bite and then some. The content only has to miss the

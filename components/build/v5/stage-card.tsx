@@ -93,7 +93,7 @@ export function CardSurface({
       {/* The questions, on a card of their own. Cut like everything else, and
           white so it reads as laid on the step rather than as the step. */}
       <CutPanel tone="field" className="mt-6 w-full">
-        <div className="flex max-w-[760px] flex-col gap-6">
+        <div className="flex mx-auto max-w-[760px] flex-col gap-6">
           {card.questions.map((question, n) => (
             <Question
               key={question.q || `${card.id}-q${n}`}
@@ -251,7 +251,7 @@ function Question({
           onChange={(event) =>
             setText(question.textarea!.t, event.target.value, stepKey)
           }
-          className="mt-3 w-full max-w-[560px] resize-y rounded-card border border-border bg-well px-3.5 py-2 text-[14px] leading-[1.6] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
+          className="mt-3 w-full mx-auto max-w-[560px] resize-y rounded-card border border-border bg-well px-3.5 py-2 text-[14px] leading-[1.6] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
         />
       ) : null}
     </div>

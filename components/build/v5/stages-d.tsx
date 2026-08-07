@@ -114,7 +114,7 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
         way.
       </Sub>
 
-      <section className="mt-6 max-w-[1100px]">
+      <section className="mt-6 mx-auto max-w-[1100px]">
         <div className="grid gap-x-6 sm:grid-cols-2">
           {Object.entries(ORG_KINDS).map(([k, n]) => (
             <TickRow
@@ -140,7 +140,7 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
       {/* A search over fifty-five rows, because thirteen headings still take
           scrolling and somebody who knows their trade should be able to type
           it. */}
-      <label className="mt-3 flex max-w-[420px] items-center gap-2.5 rounded-field bg-canvas px-3.5 py-2.5">
+      <label className="mt-3 flex mx-auto max-w-[420px] items-center gap-2.5 rounded-field bg-canvas px-3.5 py-2.5">
         <Search aria-hidden className="size-4 flex-none text-idx" />
         <input
           value={find}
@@ -153,7 +153,7 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
       {/* The families. Pressing one opens it and closes whatever was open:
           two open at once is most of the wall back again. */}
       {hunted ? null : (
-        <div className="mt-4 flex max-w-[1100px] flex-wrap gap-2">
+        <div className="mt-4 flex mx-auto max-w-[1100px] flex-wrap gap-2">
           {families.map(([name, rows]) => {
             const on = name === family;
             const has = rows.some((row) => isOn(answers, "sector", row.k));
@@ -185,7 +185,7 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
         </div>
       )}
 
-      <div className="mt-5 grid max-w-[1100px] gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-5 grid mx-auto max-w-[1100px] gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
         {shown.map(([family, rows]) => (
           <section key={family} className="min-w-0">
             <Kicker className="block text-ink">{family}</Kicker>
@@ -211,7 +211,7 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
 
       {/* What the picks imply, said back rather than kept. */}
       {chosen.length ? (
-        <section className="mt-8 max-w-[820px] rounded-[16px] bg-canvas p-5">
+        <section className="mt-8 mx-auto max-w-[820px] rounded-[16px] bg-canvas p-5">
           <Kicker className="block">What that brings with it</Kicker>
           <ul className="mt-3 flex flex-col gap-3">
             {chosen.map((k) => {
@@ -246,7 +246,7 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
       {/* Held to the reading measure and off whatever is above it. Run
           full width against the panel it follows, it read as part of that
           panel rather than as the next thing to do. */}
-      <div className="mt-6 max-w-[720px]">
+      <div className="mt-6 mx-auto max-w-[720px]">
         <AddRow
           label="Something else"
           placeholder="Tell us in your own words."
@@ -278,7 +278,7 @@ export function StageWidgets({ at, answers, onGo }: StepProps) {
         the site.
       </Sub>
 
-      <section className="mt-6 max-w-[720px] rounded-[16px] bg-canvas p-5">
+      <section className="mt-6 mx-auto max-w-[720px] rounded-[16px] bg-canvas p-5">
         <Kicker className="block">The list you pick from</Kicker>
         <p className="mt-2 text-[13px] leading-[1.6] text-body">
           Being put together with the people who build these. Until it is here,
@@ -289,7 +289,7 @@ export function StageWidgets({ at, answers, onGo }: StepProps) {
       {/* Held to the reading measure and off whatever is above it. Run
           full width against the panel it follows, it read as part of that
           panel rather than as the next thing to do. */}
-      <div className="mt-6 max-w-[720px]">
+      <div className="mt-6 mx-auto max-w-[720px]">
         <AddRow
           label="Tell us what it has to do"
           placeholder="A calculator that works out what a job costs, a map of where you deliver, a search that reads your stock."
@@ -328,7 +328,7 @@ export function StageSystems({ at, answers, onGo }: StepProps) {
           arguing what a record has to hold and whether we would build it - and
           that is a conversation to have with somebody, not a question to put to
           them before they have said what they run. */}
-      <div className="mt-6 flex max-w-[860px] flex-col gap-6">
+      <div className="mt-6 flex mx-auto max-w-[860px] flex-col gap-6">
         {SYSTEM_LINKS.map((group) => (
           <section key={group.title} className="min-w-0">
             <Kicker className="block text-ink">{group.title}</Kicker>
@@ -350,7 +350,7 @@ export function StageSystems({ at, answers, onGo }: StepProps) {
         ))}
       </div>
 
-      <div className="mt-6 max-w-[720px]">
+      <div className="mt-6 mx-auto max-w-[720px]">
         <AddRow
           label="Something else it has to talk to"
           placeholder="Name it, and what it is called."
