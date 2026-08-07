@@ -199,7 +199,7 @@ export function QuickPane({
 
             No rule over it. Space is already saying the same thing. */}
         <div className="mt-8 min-w-0">
-          <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+          <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">
             <Pill
               tone="ink"
               arrow
@@ -218,7 +218,7 @@ export function QuickPane({
             </Pill>
           </div>
 
-          <p className="mt-3 max-w-[62ch] text-[12.5px] leading-[1.55] text-quiet sm:ml-auto sm:text-right">
+          <p className="mt-3 max-w-[62ch] text-[12.5px] leading-[1.55] text-quiet">
             Nothing is thrown away and nothing is final. It comes back as the
             same written scope, and you can answer the rest at any point.
           </p>
