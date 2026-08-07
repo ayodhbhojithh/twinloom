@@ -112,6 +112,8 @@ export function QuickPane({
                       : REF_KINDS.file,
                     text: file.name,
                     where: null,
+                    url: file.url,
+                    publicId: file.publicId,
                   });
                 }
               }}
@@ -120,14 +122,15 @@ export function QuickPane({
               }
             />
 
-            {/* The chips and the row they change, side by side.
+            {/* The chips over the row they change.
 
-            Stacked, the two read as separate controls and the row asked its
-            question twice - once as a pair of chips and again as a placeholder
-            underneath them. On one line the chip is plainly the switch for the
-            field beside it. */}
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <div className="flex flex-none items-center gap-2">
+                On one line the two shared a column with the drop zone and the
+                field was left about a third of it - wide enough for a link and
+                not for a sentence. Given a line each, the field is the width
+                of the column and the chips still sit directly above what they
+                switch. */}
+            <div className="mt-3">
+              <div className="flex flex-wrap items-center gap-2">
                 {SAYABLE.map((key) => (
                   <Chip
                     key={key}
@@ -140,10 +143,11 @@ export function QuickPane({
                 ))}
               </div>
 
-              {/* The field follows the chip. One placeholder for both said "a
-              sentence, or a link" and then took either as text, so a website
-              was filed under a label saying Website and never became one. */}
-              <div className="min-w-[240px] flex-1">
+              {/* The field follows the chip. One placeholder for both said
+                  "a sentence, or a link" and then took either as text, so a
+                  website was filed under a label saying Website and never
+                  became one. */}
+              <div className="mt-2.5">
                 <AddRow
                   key={kind}
                   kind={kind === "site" ? "url" : "text"}

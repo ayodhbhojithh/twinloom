@@ -231,6 +231,8 @@ export function NotesDock({
                     kind: isPicture(file.type) ? "Image" : "Document",
                     text: file.name,
                     where: filed,
+                    url: file.url,
+                    publicId: file.publicId,
                   });
                 }
               }}

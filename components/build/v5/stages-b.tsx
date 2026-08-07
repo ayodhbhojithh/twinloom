@@ -463,6 +463,8 @@ export function StageRefs({ at, answers, onGo }: StepProps) {
                   kind: isPicture(file.type) ? REF_KINDS.image : REF_KINDS.file,
                   text: file.name,
                   where: null,
+                  url: file.url,
+                  publicId: file.publicId,
                 },
                 "refs",
               );

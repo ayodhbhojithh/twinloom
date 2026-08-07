@@ -6,6 +6,7 @@ import {
   SECTORS,
   SYS_LINKS,
 } from "./v5";
+import { deskRef, hasDeskRef, newDesk } from "./desk";
 import { assumed, askDone, pagesFrom, told, zonesFrom } from "./v5-derive";
 import { chipsIn, type Answers } from "./v5-store";
 
@@ -100,10 +101,14 @@ export function scopeDocument(answers: Answers) {
             (ref) =>
               `- [${ref.kind}] ${ref.text}${
                 answers.like[ref.n] ? ` - ${answers.like[ref.n]}` : ""
-              }`,
+              }${ref.url ? `\n  ${ref.url}` : ""}`,
           )
           .join("\n")
       : "- None added",
+    /* Where the attachments are, said once rather than left to be worked out
+       from a column of URLs. Everything from one desk is in one Cloudinary
+       folder, named after the reference this submission comes back with. */
+    ...(hasDeskRef() ? ["", "ATTACHMENTS", `- Folder: ${deskRef()}`] : []),
   ];
 
   return parts.filter((part) => part !== "").join("\n");
@@ -135,6 +140,11 @@ export async function sendScope(answers: Answers): Promise<SendResult> {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        /* The reference the attachments were filed under, so what comes back
+           on the sent screen and the folder they are in are one string. It is
+           only sent where a file was actually taken; otherwise the route makes
+           its own. */
+        desk: hasDeskRef() ? deskRef() : undefined,
         document: scopeDocument(answers),
         ask: answers.ask,
         /* The raw answers, for anything that wants to read them by machine
@@ -152,6 +162,11 @@ export async function sendScope(answers: Answers): Promise<SendResult> {
           "It did not send. Nothing has been lost - try once more.",
       };
     }
+
+    /* A new desk from here on. Somebody who carries straight into a second
+       submission gets a folder of their own rather than adding to the one that
+       has already been sent and read. */
+    newDesk();
 
     return body;
   } catch {

@@ -22,6 +22,17 @@ export interface Ref {
   n: number;
   /** Set when the ref stands for an attachment promised by a specific control. */
   tie?: string;
+  /**
+   * Where an attached file is, once it has been uploaded.
+   *
+   * On the ref rather than only in the control that took the file, because the
+   * refs are what get submitted. Held in component state alone, every link
+   * died with the tab and the scope that arrived listed file names nobody
+   * could open.
+   */
+  url?: string;
+  /** What Cloudinary calls it, for finding it in the media library. */
+  publicId?: string;
 }
 
 /** Where in the run-through something was written down. */

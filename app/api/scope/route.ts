@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { isReference, makeReference } from "@/lib/build/reference";
+
 /* ---------------------------------------------------------------------------
    Where a scoping request lands.
 
@@ -19,23 +21,12 @@ const REQUIRED_FIELDS = ["name", "company", "email"] as const;
 /** Enough to catch a typo, not enough to argue with a real address. */
 const LOOKS_LIKE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-/**
- * A reference somebody can quote at us.
- *
- * Date first so a folder of them sorts into order, then a short random tail so
- * two on the same day cannot collide. Not a database id, because there is no
- * database yet, and a reference that means nothing to us is worse than one that
- * at least says when it arrived.
- */
-function reference() {
-  const now = new Date();
-  const day = now.toISOString().slice(0, 10).replace(/-/g, "");
-  const tail = Math.random().toString(36).slice(2, 7).toUpperCase();
-  return `TL-${day}-${tail}`;
-}
-
 export async function POST(request: Request) {
-  let body: { document?: string; ask?: Record<string, string> };
+  let body: {
+    desk?: unknown;
+    document?: string;
+    ask?: Record<string, string>;
+  };
 
   try {
     body = await request.json();
@@ -70,7 +61,14 @@ export async function POST(request: Request) {
     );
   }
 
-  const ref = reference();
+  /* The browser's reference where it has one.
+
+     Attachments were uploaded into a Cloudinary folder of that name long
+     before this request was made, so minting a second reference here would
+     hand somebody a number that matches nothing. Only one of the right shape
+     is taken - it decides a folder path, and a client that can choose its own
+     could point at any of them. */
+  const ref = isReference(body.desk) ? body.desk : makeReference();
 
   /* ---------------------------------------------------------------------
      The seam.
