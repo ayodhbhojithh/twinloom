@@ -107,6 +107,42 @@ ${body.document}`,
     ).catch((wrong) => {
       console.error(`[scope ${ref}] could not be forwarded`, wrong);
     });
+
+    /* And the person who sent it.
+
+       Only our own inbox was told. Somebody wrote out what they wanted,
+       attached files to it, pressed send and got a reference on a screen they
+       were about to close - with nothing in writing anywhere they could find
+       it again. The reference is what everything they attached is filed
+       under, so it has to reach them somewhere they keep.
+
+       Sent second, and its failure is caught separately. If ours goes and
+       theirs does not, the request is still received. */
+    await send(
+      w,
+      ask.email!.trim(),
+      `We have your scoping request - ${ref}`,
+      [
+        `Hello ${ask.name},`,
+        "",
+        "Thank you - your scoping request has arrived and a person will read",
+        "it. What comes back is a written scope in your own words, within two",
+        "working days.",
+        "",
+        `Your reference is ${ref}. Quote it in any reply, and anything you`,
+        "attached is filed under it.",
+        "",
+        "It is a description of a website rather than a quote. Nothing in it is",
+        "priced, and nothing you answered commits you to anything.",
+        "",
+        "If you would rather talk it through first, you can book a time at",
+        "https://twinloom.com/book",
+        "",
+        "TwinLoom, a TwinCoreTech company",
+      ].join("\n"),
+    ).catch((wrong) => {
+      console.error(`[scope ${ref}] receipt to sender failed`, wrong);
+    });
   } else {
     console.warn(
       `[scope ${ref}] no mail credentials in this environment - log only`,
