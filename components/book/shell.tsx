@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 
+import { outline, type Cuts } from "@/components/home/notched-card";
 import { CutPanel } from "@/components/layout/cut-panel";
 import { cn } from "@/lib/utils";
 
@@ -84,87 +86,72 @@ export function StepRail({
   onGo: (step: number) => void;
 }) {
   return (
-    /* The rail is four fixed-width steps and a rule between each pair, which
-       comes to more than a phone is wide - four times 104 plus the rules is 416
-       against a 320px screen. It used to take the page with it and give the
-       whole booking screen a sideways scroll.
+    /* The run of four, standing in the notch.
 
-       Scrolled on its own instead, and centred once it fits. A step rail is a
-       row by nature: stacking it would turn four marks on a line into a list of
-       four headings, and wrapping it would put step three under step one, which
-       says the order is something other than what it is. */
+       It used to be a surface of its own above the card, which made it a
+       second object competing with the one thing on the page - and the card
+       already had a cut drawn in its top edge for exactly this kind of
+       control. One shape, with the navigation standing in it.
+
+       Compact, because a notch is one line deep. The step's name is here; what
+       was chosen for it stands in the bite at the other end of the surface,
+       where there is room to read it. */
     <nav
       aria-label="Booking steps"
-      className="quiet-scroll -mx-(--page-gutter) mb-9 overflow-x-auto px-(--page-gutter)"
+      className="quiet-scroll flex h-10 max-w-full items-center overflow-x-auto px-1"
     >
-      {/* `w-max` so the row keeps its full length and scrolls; `min-w-full` so
-          that once there is room for all of it, it is the width of the column
-          and `justify-center` has something to centre against. */}
-      <ol className="flex w-max min-w-full items-start justify-center">
+      <ol className="flex items-center">
         {STEPS.map((label, n) => {
           const here = n === at;
           const done = n < reached;
           const open = n <= reached;
 
           return (
-            <li key={label} className="flex items-start">
+            <li key={label} className="flex items-center">
               <button
                 type="button"
                 disabled={!open}
                 aria-current={here ? "step" : undefined}
                 onClick={() => onGo(n)}
+                title={said[n] || (open ? "Open" : "Locked")}
                 className={cn(
-                  "group/step flex w-[104px] flex-col items-center gap-2.5 px-1 sm:w-[132px]",
-                  open ? "cursor-pointer" : "cursor-default",
+                  "group/step flex shrink-0 items-center gap-1.5 rounded-pill px-2 py-1 transition-colors",
+                  open ? "cursor-pointer hover:bg-canvas" : "cursor-default",
                 )}
               >
-                {/* The mark. A ring round the one you are on rather than a
-                    larger dot, so the line through them all stays straight. */}
                 <span
                   aria-hidden
                   className={cn(
-                    "flex size-3 items-center justify-center rounded-pill transition-all",
+                    "size-2 shrink-0 rounded-pill transition-all",
                     here
-                      ? "bg-ink ring-4 ring-ink/15"
+                      ? "bg-ink ring-[3px] ring-ink/15"
                       : done
                         ? "bg-mark"
                         : "bg-planned group-hover/step:bg-idx",
                   )}
                 />
 
-                <span className="flex min-w-0 flex-col items-center">
-                  <b
-                    className={cn(
-                      "block text-[13px] leading-[1.2] font-bold tracking-[-0.01em] transition-colors",
-                      here
-                        ? "text-ink"
-                        : open
-                          ? "text-quiet group-hover/step:text-ink"
-                          : "text-planned",
-                    )}
-                  >
-                    {label}
-                  </b>
-
-                  <span
-                    className={cn(
-                      "mt-1 block max-w-full truncate font-mono text-[9px] font-bold tracking-[0.1em] uppercase",
-                      done ? "text-mark" : "text-idx",
-                    )}
-                  >
-                    {said[n] || (open ? "Open" : "Locked")}
-                  </span>
+                <span
+                  className={cn(
+                    "text-[12px] leading-none font-bold tracking-[-0.01em] whitespace-nowrap transition-colors",
+                    here
+                      ? "text-ink"
+                      : open
+                        ? "text-quiet group-hover/step:text-ink"
+                        : "text-planned",
+                  )}
+                >
+                  {label}
                 </span>
               </button>
 
               {n < STEPS.length - 1 ? (
-                /* The line between two marks, and it is the line: it sits at
-                   the height of the marks rather than under the labels, so the
-                   four of them read as one run. */
+                /* The line between two marks, at the height of the marks
+                   rather than under the words, so the four read as one run. */
                 <span
                   aria-hidden
                   className={cn(
-                    "mt-[5px] -mx-6 h-0.5 w-12 rounded-pill transition-colors sm:w-16",
+                    "h-px w-4 shrink-0 rounded-pill transition-colors sm:w-6",
                     n < reached ? "bg-mark" : "bg-hair",
                   )}
                 />
@@ -188,17 +175,21 @@ export function BookStage({
   at,
   title,
   note,
+  rail,
   held,
   foot,
   canGoOn,
   last,
   onBack,
   onNext,
+  className,
   children,
 }: {
   at: number;
   title: string;
-  note?: string;
+  note?: React.ReactNode;
+  /** The four steps, which stand in the notch. */
+  rail?: React.ReactNode;
   /** What is settled so far, standing in the bite. */
   held?: React.ReactNode;
   /** The band along the very bottom, between the two cuts. */
@@ -207,32 +198,30 @@ export function BookStage({
   last: boolean;
   onBack: () => void;
   onNext: () => void;
+  className?: string;
   children: React.ReactNode;
 }) {
   return (
     <CutPanel
-      /* A floor, not a fixed height. The two cuts along the bottom need room
-         to be cuts, and a surface that shrinks to a short answer loses the
-         shape it is drawn from - but anything past this was empty. */
-      className="min-h-[340px] w-full"
+      /* White, like the landing card and like every other panel on the site.
+         It was the canvas grey, which is also the page - so the shape was
+         being drawn in one colour on the same colour, and the whole surface
+         was invisible. The notch, the bite and the flared corners were all
+         there and none of them could be seen.
+
+         And a real floor. The two cuts along the bottom need room to be cuts,
+         and a surface that shrinks to a short answer loses the shape it is
+         drawn from. */
+      tone="field"
+      className={cn("min-h-[clamp(400px,50vh,540px)] w-full", className)}
+      bar="wide"
       toolbar={
-        <div className="flex h-10 w-full items-center gap-0.5 rounded-pill px-1.5">
+        <div className="flex h-10 w-full items-center gap-1 px-1.5">
           <Disc label="Previous step" onClick={onBack} disabled={at === 0}>
             <ArrowLeft className="size-4" />
           </Disc>
 
-          <span className="flex min-w-0 flex-1 items-baseline justify-center gap-2.5 px-1">
-            <span className="flex-none font-mono text-[9.5px] font-bold tracking-[0.12em] text-label tabular-nums">
-              {String(at + 1).padStart(2, "0")}/{STEPS.length}
-            </span>
-            <span className="truncate text-[13.5px] leading-none font-bold text-ink">
-              {STEPS[at]}
-            </span>
-          </span>
-
-          <Disc label="Next step" onClick={onNext} disabled={last || !canGoOn}>
-            <ArrowRight className="size-4" />
-          </Disc>
+          <div className="flex min-w-0 flex-1 justify-center">{rail}</div>
         </div>
       }
       aside={

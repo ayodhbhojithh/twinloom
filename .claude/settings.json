@@ -22,7 +22,9 @@
       "Bash(rm -f ./gtest.mjs)",
       "Bash(cp \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/gbook.mjs\" ./gbook.mjs)",
       "Bash(node ./gbook.mjs)",
-      "Bash(rm -f ./gbook.mjs)"
+      "Bash(rm -f ./gbook.mjs)",
+      "Bash(grep -n \"BookStage$\\\\|<BookStage\" components/book/booking-flow.tsx)",
+      "Bash(grep -n \"<Finished\\\\|return \\(\\\\s*$\" components/book/booking-flow.tsx)"
     ]
   }
 }

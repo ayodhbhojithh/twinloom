@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 
 import { BookingFlow } from "@/components/book/booking-flow";
-import { PageShell } from "@/components/layout";
 import { frameworkMetadata } from "@/components/pages/framework-page";
 import { ROUTES } from "@/lib/site";
 
@@ -23,11 +22,15 @@ export default async function Page({
 }) {
   const wanted = Number((await searchParams).mins);
 
+  /* No `PageShell`. This screen is a tool rather than a document: it is the
+     landing page's own composition - a line across the top, and one cut
+     surface holding everything else for the rest of the window. A reading
+     column with a section index beside it is the wrong shell for that. */
   return (
-    <PageShell>
+    <section className="flex min-h-[var(--stage)] flex-col overflow-clip py-8">
       <Suspense>
         <BookingFlow wanted={Number.isFinite(wanted) ? wanted : undefined} />
       </Suspense>
-    </PageShell>
+    </section>
   );
 }

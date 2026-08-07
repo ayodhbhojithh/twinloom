@@ -44,6 +44,7 @@ export function CutPanel({
   corner,
   foot,
   footIn = "band",
+  bar = "auto",
   image,
   tone = "canvas",
   className,
@@ -69,6 +70,15 @@ export function CutPanel({
    * is, wrong for a paragraph.
    */
   footIn?: "band" | "notch";
+  /**
+   * How much of the top edge the notch takes.
+   *
+   * `auto` is a label or a few discs. `wide` is for a notch that has to hold
+   * a run of controls - a step rail, say - and it takes about half the edge
+   * rather than a fifth of it. Still bounded by what the surface can give: a
+   * cut wider than its own box folds the path inside out.
+   */
+  bar?: "auto" | "wide";
   /**
    * A picture for the whole surface, cut to the same outline.
    *
@@ -133,9 +143,14 @@ export function CutPanel({
     const barCurve = Math.min(flare, 22);
 
     const barDepth = toolbar ? barCurve * 2 : 0.01;
+    const want =
+      bar === "wide"
+        ? Math.min(Math.max(w * 0.46, 440), 700)
+        : Math.min(w * 0.22, 260);
+
     const barWidth = toolbar
       ? Math.min(
-          Math.max(barCurve * 2 + 120, Math.min(w * 0.22, 260)),
+          Math.max(barCurve * 2 + 120, want),
           Math.max(barCurve * 2 + 60, w - 2 * (radius + barCurve) - 8),
         )
       : 0.01;
