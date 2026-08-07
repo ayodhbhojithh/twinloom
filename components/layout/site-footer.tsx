@@ -59,16 +59,22 @@ export function SiteFooter() {
                   The two are a pair - who we are on one side, the documents
                   that say so on the other - and putting both against the same
                   edge made one long ragged column of small print rather than a
-                  band with something at each end. */}
+                  band with something at each end.
+
+                  At every width, not only from `lg`. Below that the row stacks
+                  and the set was falling back to the left, so the same links
+                  sat on a different edge depending on the size of the window.
+                  Wrapped onto two lines it still ends on the right, which is
+                  where the eye is now looking for it. */}
               <nav
                 aria-label="Legal"
-                className="order-1 min-w-0 lg:order-2 lg:text-right"
+                className="order-1 min-w-0 text-right lg:order-2"
               >
                 {/* Fourteen pixels tall is not a target, it is a line of type
                     that happens to be pressable. The padding gives each one the
                     height a thumb needs; the negative margin on the row keeps
                     the set sitting where it did on the line above. */}
-                <ul className="-my-1 flex flex-wrap gap-x-5 lg:justify-end">
+                <ul className="-my-1 flex flex-wrap justify-end gap-x-5">
                   {FOOTER_LEGAL.map((link) => (
                     <li key={link.href} className="flex">
                       <Link
@@ -123,16 +129,26 @@ export function SiteFooter() {
             </Link>
           </div>
 
-          {/* Left aligned, and not right.
+          {/* Left aligned, on the edge everything above them starts from.
 
               Right aligned they read down a ragged edge, which is the harder
               way round for a list of names - and it only ever worked by
               accident: the moment the rows became flex items to give the links
               a thumb-sized target, `text-align` stopped reaching them and the
-              headings sat right while their own links sat left. One edge is
-              simpler than two, and it is the edge everything else on the page
-              already starts from. */}
-          <div className="grid grid-cols-2 gap-x-10 gap-y-8 sm:grid-cols-3 lg:gap-x-14 xl:gap-x-20">
+              headings sat right while their own links sat left.
+
+              The legal row at the foot is the exception and stays right, but
+              that is one line of small print rather than three columns of
+              names to read down. */}
+          {/* A row of columns, not a three column grid.
+
+              A grid splits the whole width into three equal tracks, so the
+              columns stood a third of the footer apart however small the gap
+              between them was set - the space was in the tracks, not in the
+              gap. As flex items they are each as wide as their longest link
+              and sit next to one another, which is what a group of three short
+              lists should look like. */}
+          <div className="flex flex-wrap gap-x-12 gap-y-8 sm:gap-x-16">
             {FOOTER_COLUMNS.map((column) => (
               <nav
                 key={column.title}
