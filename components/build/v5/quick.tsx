@@ -87,10 +87,18 @@ export function QuickPane({
           </Sub>
         </div>
 
-        <div className="mt-7 grid items-start gap-6 lg:grid-cols-2 lg:gap-8">
-          {/* The writing. `flex-1` on the box rather than a row count, so on a
-              wide screen it grows to whatever the column beside it needs and
-              the two halves end level. */}
+        {/* `items-stretch`, not `items-start`.
+
+            The writing box was already told to grow into its column, but
+            `items-start` sized both columns to their own content, so the
+            column never grew and there was nothing to grow into. Every file
+            and note added to the right made the two halves finish further
+            apart. Stretched, the row is as tall as its tallest column and the
+            box takes the rest. */}
+        <div className="mt-7 grid items-stretch gap-6 lg:grid-cols-2 lg:gap-8">
+          {/* The writing. `flex-1` on the box rather than a row count, so it
+              grows to whatever the column beside it needs and the two halves
+              end level. */}
           <div className="flex min-w-0 flex-col">
             <textarea
               rows={12}
@@ -139,7 +147,11 @@ export function QuickPane({
                 of the column and the chips still sit directly above what they
                 switch. */}
             <div className="mt-3">
-              <div className="flex flex-wrap items-center gap-2">
+              {/* Centred over the field they switch. The drop zone above and
+                  the row below both take the whole column, so a pair of chips
+                  against the left edge was the one thing in it starting
+                  somewhere else. */}
+              <div className="flex flex-wrap items-center justify-center gap-2">
                 {SAYABLE.map((key) => (
                   <Chip
                     key={key}
@@ -174,14 +186,14 @@ export function QuickPane({
             </div>
 
             {answers.refs.length ? (
-              <ul className="mt-3 flex flex-col gap-2">
+              <ul className="mt-3 flex flex-col gap-1.5">
                 {answers.refs.map((ref) => (
                   <li
                     key={ref.n}
-                    className="flex flex-wrap items-center gap-x-3.5 gap-y-2 rounded-[12px] bg-canvas px-3.5 py-2.5"
+                    className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[10px] bg-canvas px-3 py-1.5"
                   >
-                    <Kicker className="w-[72px] flex-none">{ref.kind}</Kicker>
-                    <span className="min-w-[14ch] flex-1 text-[13.5px] leading-[1.4] text-ink">
+                    <Kicker className="w-[64px] flex-none">{ref.kind}</Kicker>
+                    <span className="min-w-[12ch] flex-1 text-[13px] leading-[1.35] text-ink">
                       <RefText text={ref.text} />
                     </span>
                     <input
@@ -189,7 +201,7 @@ export function QuickPane({
                       placeholder="What you like about it"
                       onChange={(event) => setLike(ref.n, event.target.value)}
                       className={cn(
-                        "h-8 w-full rounded-field border border-border bg-field px-3 text-[12.5px] text-ink outline-none transition-colors",
+                        "h-7 w-full rounded-field border border-border bg-field px-2.5 text-[12px] text-ink outline-none transition-colors",
                         "placeholder:text-label focus:border-ink sm:w-[200px]",
                       )}
                     />

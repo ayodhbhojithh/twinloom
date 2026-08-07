@@ -511,14 +511,14 @@ export function StageRefs({ at, answers, onGo }: StepProps) {
         </div>
 
         {answers.refs.length ? (
-          <ul className="mt-4 flex flex-col gap-2">
+          <ul className="mt-4 flex flex-col gap-1.5">
             {answers.refs.map((ref) => (
               <li
                 key={ref.n}
-                className="flex flex-wrap items-center gap-x-3.5 gap-y-2 rounded-[12px] bg-canvas px-3.5 py-2.5"
+                className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[10px] bg-canvas px-3 py-1.5"
               >
-                <Kicker className="w-[72px] flex-none">{ref.kind}</Kicker>
-                <span className="min-w-[16ch] flex-1 text-[13.5px] leading-[1.4] text-ink">
+                <Kicker className="w-[64px] flex-none">{ref.kind}</Kicker>
+                <span className="min-w-[12ch] flex-1 text-[13px] leading-[1.35] text-ink">
                   <RefText text={ref.text} />
                 </span>
                 <input
@@ -526,7 +526,7 @@ export function StageRefs({ at, answers, onGo }: StepProps) {
                   placeholder="What you like about it"
                   onChange={(event) => setLike(ref.n, event.target.value)}
                   className={cn(
-                    "h-8 w-full rounded-field border border-border bg-field px-3 text-[12.5px] text-ink outline-none transition-colors",
+                    "h-7 w-full rounded-field border border-border bg-field px-2.5 text-[12px] text-ink outline-none transition-colors",
                     "placeholder:text-label focus:border-ink sm:w-[220px]",
                   )}
                 />

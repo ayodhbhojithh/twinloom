@@ -11,7 +11,6 @@ import {
   subscribeAnswers,
   type Where,
 } from "@/lib/build/v5-store";
-import { cn } from "@/lib/utils";
 
 import { NotesDock } from "./notes";
 import { QuickPane } from "./quick";
@@ -108,62 +107,23 @@ export function BuildFlow() {
       className="relative"
       style={{ ["--color-mark" as string]: "var(--color-done)" }}
     >
-      {/* The head, arranged the way the landing page arranges its own: the
-          line on the left, the way in on the right, both on one baseline and
-          both reaching the edges. A control dropped under a headline with a
-          note floating off at the far margin is three things placed
-          separately; this is one row. */}
-      <div className="mb-7 flex flex-wrap items-end justify-between gap-x-12 gap-y-5">
-        <h1 className="section-head min-w-0 max-w-[26ch] text-ink">
+      {/* The head.
+
+          The Quick / Detailed switch is gone from it. Two tabs above a screen
+          that already opens on the quick way, with the way through to the
+          questions standing at the foot of that screen, was the same choice
+          offered twice - and the one at the top was offered before anybody had
+          read what either of them meant. "Carry on through the questions" is
+          the only place the choice needs to be, because it is the only place
+          somebody has the information to make it. */}
+      <div className="mb-8">
+        <h1 className="section-head max-w-[26ch] text-ink">
           Build your website.
           <span className="text-quiet">
             {" "}
             Answer what you like, we write it down.
           </span>
         </h1>
-
-        {/* `min-w-0` and allowed to shrink. `flex-none` held it at the width of
-            its longest line, which on a 320px screen was nine pixels wider than
-            the screen - so the narrowest phone there is got a sideways scroll
-            on the site's most important page. */}
-        <div className="flex min-w-0 flex-col items-start gap-2 sm:items-end">
-          <div
-            role="radiogroup"
-            aria-label="How you want to do this"
-            className="inline-flex rounded-pill bg-well p-1"
-          >
-            {(
-              [
-                /* The short way round first. It is the one most people want
-                   and the one that asks least of them; putting twelve steps in
-                   front of it made the quick route read as the fallback rather
-                   than as the offer. */
-                { key: "quick", label: "Quick submission" },
-                { key: "full", label: "Detailed scoping" },
-              ] as const
-            ).map((entry) => (
-              <button
-                key={entry.key}
-                type="button"
-                role="radio"
-                aria-checked={tab === entry.key}
-                onClick={() => setTab(entry.key)}
-                className={cn(
-                  "cursor-pointer rounded-pill px-4 py-1.5 text-[13.5px] font-semibold transition-colors",
-                  tab === entry.key
-                    ? "bg-ink text-white"
-                    : "text-quiet hover:text-ink",
-                )}
-              >
-                {entry.label}
-              </button>
-            ))}
-          </div>
-
-          <p className="text-[12px] text-quiet sm:text-right">
-            Moving between them keeps every answer you have given.
-          </p>
-        </div>
       </div>
 
       {tab === "quick" ? (
