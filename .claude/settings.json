@@ -24,7 +24,9 @@
       "Bash(node ./gbook.mjs)",
       "Bash(rm -f ./gbook.mjs)",
       "Bash(grep -n \"BookStage$\\\\|<BookStage\" components/book/booking-flow.tsx)",
-      "Bash(grep -n \"<Finished\\\\|return \\(\\\\s*$\" components/book/booking-flow.tsx)"
+      "Bash(grep -n \"<Finished\\\\|return \\(\\\\s*$\" components/book/booking-flow.tsx)",
+      "Bash(grep -o \"rounded-\\\\\\\\\\\\\\\\\\\\[[0-9]*px\\\\\\\\\\\\\\\\\\\\]\" \".next/dev/static/chunks/app_globals_css_1igg3k2._.single.css\")",
+      "Bash(grep -o \"rounded-\\\\\\\\\\\\\\\\\\\\[28px\\\\\\\\\\\\\\\\\\\\]\" \".next/dev/static/chunks/app_globals_css_1igg3k2._.single.css\")"
     ]
   }
 }

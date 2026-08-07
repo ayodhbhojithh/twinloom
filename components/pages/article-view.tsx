@@ -89,17 +89,27 @@ export function ArticleView({ article }: { article: Article }) {
         </div>
       </CutPanel>
 
-      {/* The article, across the whole page.
+      {/* The body, on a surface of its own and at a measure.
 
-          No measure on the column and none on the prose inside it: the line is
-          as long as the frame is wide. That is asked for and it is a real
-          trade - somewhere past about eighty characters the eye starts losing
-          which line it came from on the way back - so the page gutter and the
-          rail are the only things setting the width now, and on a wide monitor
-          the lines will be long. */}
-      <article className="mt-12 text-[16.5px] leading-[1.75]">
-        <ArticleBody slug={article.slug} />
-      </article>
+          It was running the full width of the window with the page showing
+          through behind it, which is two faults at once: a line of nearly two
+          hundred characters is a line nobody can find their way back along,
+          and prose on the page's own grey reads as something that has not been
+          set yet.
+
+          White, inset, and capped at the reading measure the rest of the site
+          uses. Centred, because the column is now narrower than the surface it
+          sits on and the alternative is a page of type against one edge.
+
+          The corner is 28, near the 34 that `CutPanel` settles on at this
+          width. The head panel is directly above this one, and a much smaller
+          radius under it does not read as a softer corner, it reads as a
+          square one. */}
+      <div className="mt-10 overflow-hidden rounded-[28px] bg-field px-5 py-10 sm:px-10 sm:py-14 lg:px-14">
+        <article className="mx-auto max-w-measure text-[16.5px] leading-[1.75] [&>*:first-child]:mt-0">
+          <ArticleBody slug={article.slug} />
+        </article>
+      </div>
 
       {/* What to read next. Two, named, rather than a wall of everything. */}
       <div className="mt-16">

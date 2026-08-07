@@ -747,54 +747,64 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
       {/* What is stopping it, or what went wrong, said above the button rather
           than after it is pressed. A control that refuses without saying why is
           a control somebody presses four times. */}
-      {missing.length ? (
-        <p className="mt-8 max-w-[62ch] text-[13px] leading-[1.6] text-quiet">
-          Before this can go we need {missing.join(", ").toLowerCase()}. They
-          are the four fields above.
-        </p>
-      ) : null}
+      {/* The end of it, on the centre line the rest of the run sits on.
 
-      {answers.problem ? (
-        <p
-          role="alert"
-          className="mt-8 max-w-[62ch] rounded-[12px] bg-blocked/[0.08] px-4 py-3 text-[13px] leading-[1.6] text-blocked"
-        >
-          {answers.problem}
-        </p>
-      ) : null}
+          It was three blocks against the left edge - a button, a paragraph
+          beside it, and a second paragraph under both - each a different width,
+          which read as three unrelated notes rather than as one way out. One
+          centred column, one measure, and the words under the control they are
+          about. */}
+      <div className="mx-auto mt-8 flex max-w-[52ch] flex-col items-center text-center">
+        {missing.length ? (
+          <p className="text-[13px] leading-[1.6] text-quiet">
+            Before this can go we need {missing.join(", ").toLowerCase()}. They
+            are the four fields above.
+          </p>
+        ) : null}
 
-      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+        {answers.problem ? (
+          <p
+            role="alert"
+            className="mt-4 w-full rounded-[12px] bg-blocked/[0.08] px-4 py-3 text-[13px] leading-[1.6] text-blocked"
+          >
+            {answers.problem}
+          </p>
+        ) : null}
+
         <Pill
           tone="ink"
           arrow
+          className="mt-5"
           disabled={answers.sending || missing.length > 0}
           onClick={send}
         >
           {answers.sending ? "Sending it" : "Send my scoping request"}
         </Pill>
-        <p className="max-w-[46ch] text-[12px] leading-[1.5] text-label">
+
+        <p className="mt-4 text-[12px] leading-[1.55] text-label">
           What you have made is a scope, not a quote - the price comes at step
           seven, against this document, in writing. And the document stays
           yours.
         </p>
+
+        {/* Beside the button that sends it, not only in the footer.
+
+            This screen collects a name, a company, an email, a phone number,
+            free text, uploaded files and answers about somebody's business. A
+            privacy notice seven links down the foot of the page is not a
+            notice given at the point of collection. */}
+        <p className="mt-2.5 text-[12px] leading-[1.55] text-label">
+          What happens to your details is set out in our{" "}
+          <Link
+            href={ROUTES.privacy}
+            className="font-semibold text-body underline decoration-hair underline-offset-2 transition-colors hover:text-mark hover:decoration-mark"
+          >
+            Privacy notice
+          </Link>
+          .
+        </p>
       </div>
 
-      {/* Beside the button that sends it, not only in the footer.
-
-          This screen collects a name, a company, an email, a phone number,
-          free text, uploaded files and answers about somebody's business. A
-          privacy notice seven links down the foot of the page is not a notice
-          given at the point of collection. */}
-      <p className="mt-5 max-w-[52ch] text-[12px] leading-[1.5] text-label">
-        What happens to your details is set out in our{" "}
-        <Link
-          href={ROUTES.privacy}
-          className="font-semibold text-body underline decoration-hair underline-offset-2 transition-colors hover:text-mark hover:decoration-mark"
-        >
-          Privacy notice
-        </Link>
-        .
-      </p>
     </StageStep>
   );
 }
