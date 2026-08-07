@@ -1,13 +1,17 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 import { CutPanel } from "@/components/layout/cut-panel";
+import { OFFER, SERVICES } from "@/lib/services";
 import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 /* ---------------------------------------------------------------------------
-   Our partners.
+   Our services.
 
    Built on the arrangement home v6 uses: everything on one axis down the
    middle, and a row of words drifting underneath it so a centred page has a
@@ -54,50 +58,15 @@ const FADE =
  */
 const PLATE = "/partners/minimal.png";
 
-const DISCIPLINES = [
-  {
-    n: "01",
-    name: "Brand and identity",
-    covers:
-      "A mark, its type, its colours and the rules for using them. We apply a brand you already have; where one has to be made, this is who makes it.",
-    when: "Where the brand cannot carry the site it is being asked to carry.",
-  },
-  {
-    n: "02",
-    name: "Photography and film",
-    covers:
-      "A shot list built from the page designs, the day itself, the selection and the licensing record afterwards.",
-    when: "Where pictures of the actual business would do more than anything from a library.",
-  },
-  {
-    n: "03",
-    name: "Copywriting",
-    covers:
-      "Interviews with the people who know the business, then drafts, revisions and copy prepared for approval.",
-    when: "Where the words have to be written rather than edited.",
-  },
-  {
-    n: "04",
-    name: "Accessibility audit",
-    covers:
-      "Testing beyond our own: assistive technology, and where the scope calls for it, testing with disabled people.",
-    when: "Where a written conformance position has to stand up to scrutiny.",
-  },
-  {
-    n: "05",
-    name: "Search and paid media",
-    covers:
-      "Demand research, campaign structure, measurement, and the ongoing work of it after launch.",
-    when: "Where search matters commercially and the opportunity justifies continued spend.",
-  },
-  {
-    n: "06",
-    name: "Regulated and legal review",
-    covers:
-      "Review of claims, terms and notices by somebody qualified to sign them off.",
-    when: "Where a claim on the page carries a legal weight we are not qualified to carry.",
-  },
-] as const;
+/**
+ * What the wall shows.
+ *
+ * The six things we do, not six partner disciplines. There are no partners to
+ * name, and a wall of specialisms on a page about services was answering a
+ * question nobody had asked yet - somebody arriving here wants the list of
+ * what can be bought, and this is that list.
+ */
+const SHOWN = [...OFFER, ...SERVICES];
 
 const RULES = [
   "One contract, and it is with us.",
@@ -120,7 +89,7 @@ const RULES = [
  * Its own component because the landing page carries it too. Two copies of six
  * disciplines would disagree the first week one of them changed.
  */
-export function PartnerWall({
+export function ServiceWall({
   className,
   bleed,
 }: {
@@ -128,110 +97,213 @@ export function PartnerWall({
   /**
    * Out to the edges of the window rather than the column.
    *
-   * Only where the page has no rail. `50% - 50vw` measures from the middle of a
-   * centred container to the middle of the window, and on a page with a sidebar
-   * the container is not centred - the wall would run underneath it. The
-   * landing page has no rail, so it is true there and asked for explicitly
-   * rather than guessed at.
+   * `50% - 50vw` measures from the middle of a centred container to the middle
+   * of the window, so it is only right where the container is centred. Asked
+   * for rather than guessed at.
    */
   bleed?: boolean;
 }) {
+  const track = useRef<HTMLDivElement>(null);
+  const held = useRef(false);
+  const over = useRef(false);
+  const [grabbing, setGrabbing] = useState(false);
+
+  /**
+   * The loop, and the hand on it.
+   *
+   * Both move the same number - `scrollLeft` - which is what lets them be the
+   * same control rather than two. A CSS animation could do the drift on its
+   * own, but nothing can then take hold of it: a transform and a scroll
+   * position are two positions, and dragging one leaves the other where it
+   * was.
+   *
+   * The list is rendered twice and the position wraps at half the width, so
+   * the seam falls where the copy repeats and there is nothing to see. It
+   * stops under the pointer and while a drag is in progress, because a row
+   * nobody can hold still is a row nobody can read.
+   */
+  useEffect(() => {
+    const node = track.current;
+    if (!node) return;
+
+    /* Somebody who has asked for less motion gets the row without the drift.
+       It is still draggable, which is the part that was theirs to control. */
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let frame = 0;
+    let last = 0;
+
+    const tick = (now: number) => {
+      const step = last ? Math.min(now - last, 64) : 16;
+      last = now;
+
+      if (!held.current && !over.current) {
+        node.scrollLeft += (step / 1000) * 26;
+      }
+
+      /* Wrap on the half, in both directions - a drag can run it backwards
+         past the start as easily as the drift runs it past the end. */
+      const half = node.scrollWidth / 2;
+      if (half > 0) {
+        if (node.scrollLeft >= half) node.scrollLeft -= half;
+        else if (node.scrollLeft < 0) node.scrollLeft += half;
+      }
+
+      frame = requestAnimationFrame(tick);
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  const from = useRef({ x: 0, left: 0 });
+
+  const grab = (event: React.PointerEvent) => {
+    const node = track.current;
+    if (!node) return;
+    held.current = true;
+    setGrabbing(true);
+    from.current = { x: event.clientX, left: node.scrollLeft };
+    node.setPointerCapture(event.pointerId);
+  };
+
+  const move = (event: React.PointerEvent) => {
+    const node = track.current;
+    if (!node || !held.current) return;
+    node.scrollLeft = from.current.left - (event.clientX - from.current.x);
+  };
+
+  const drop = (event: React.PointerEvent) => {
+    held.current = false;
+    setGrabbing(false);
+    track.current?.releasePointerCapture(event.pointerId);
+  };
+
   return (
     <div
       className={cn(
-        "group overflow-hidden py-3",
-        bleed ? "mx-[calc(50%-50vw)] w-screen" : "-mx-4 px-4 sm:-mx-6 sm:px-6",
+        "group",
+        bleed ? "mx-[calc(50%-50vw)] w-screen" : "",
         className,
       )}
-      /* Faded out at both ends rather than cut off. A wall that stops at a
-         straight edge is a row that has been trimmed; one that thins into the
-         page carries on past it, which is the whole point of it drifting. */
-      style={{
-        maskImage: EDGES,
-        WebkitMaskImage: EDGES,
+      onPointerEnter={() => {
+        over.current = true;
+      }}
+      onPointerLeave={() => {
+        over.current = false;
       }}
     >
-      <div className="drift drift-slow flex w-max gap-4 group-hover:[animation-play-state:paused] group-focus-within:[animation-play-state:paused]">
-        {[0, 1].map((copy) => (
-          <div
-            key={copy}
-            aria-hidden={copy === 1}
-            className="flex shrink-0 gap-4"
-          >
-            {DISCIPLINES.map((entry, index) => (
-              <article
-                key={`${copy}-${entry.n}`}
-                style={{ marginTop: HANG[index % HANG.length] }}
-                className="group/card flex w-[clamp(260px,24vw,330px)] shrink-0 flex-col overflow-hidden rounded-[20px] bg-field transition-transform duration-300 hover:-translate-y-1.5"
-              >
-                {/* The picture first, and faded out into the card rather than
-                    stopped by an edge. A photograph with a hard bottom line is
-                    a photograph stuck on a card; faded, the card is one thing
-                    that happens to begin as a picture. */}
-                <span className="relative block aspect-[16/10] w-full overflow-hidden">
-                  <Image
-                    src={PLATE}
-                    alt=""
-                    fill
-                    sizes="(max-width: 640px) 70vw, 330px"
-                    className="object-cover transition-transform duration-500 group-hover/card:scale-[1.05]"
-                    style={{
-                      maskImage: FADE,
-                      WebkitMaskImage: FADE,
-                    }}
-                  />
+      <div
+        ref={track}
+        onPointerDown={grab}
+        onPointerMove={move}
+        onPointerUp={drop}
+        onPointerCancel={drop}
+        /* Faded at both ends rather than cut off. A row that stops at a
+           straight edge is a row that has been trimmed; one that thins into
+           the page carries on past it, which is the point of it moving. */
+        style={{
+          maskImage: EDGES,
+          WebkitMaskImage: EDGES,
+          scrollbarWidth: "none",
+        }}
+        className={cn(
+          "flex gap-4 overflow-x-auto px-4 py-3 [&::-webkit-scrollbar]:hidden sm:px-6",
+          grabbing ? "cursor-grabbing select-none" : "cursor-grab",
+        )}
+      >
+        {[0, 1].map((copy) =>
+          SHOWN.map((entry, index) => (
+            <article
+              key={`${copy}-${entry.n}`}
+              aria-hidden={copy === 1}
+              style={{ marginTop: HANG[index % HANG.length] }}
+              className="group/card flex w-[clamp(260px,24vw,330px)] shrink-0 flex-col overflow-hidden rounded-[20px] bg-field transition-transform duration-300 hover:-translate-y-1.5"
+            >
+              {/* The picture first, and faded into the card rather than
+                  stopped by an edge. A photograph with a hard bottom line is a
+                  photograph stuck on a card; faded, the card is one thing that
+                  happens to begin as a picture. */}
+              <span className="relative block aspect-[16/10] w-full overflow-hidden">
+                <Image
+                  src={PLATE}
+                  alt=""
+                  fill
+                  draggable={false}
+                  sizes="(max-width: 640px) 70vw, 330px"
+                  className="object-cover transition-transform duration-500 group-hover/card:scale-[1.05]"
+                  style={{ maskImage: FADE, WebkitMaskImage: FADE }}
+                />
 
-                  <span className="absolute top-3 left-3 flex size-7 items-center justify-center rounded-pill bg-field/85 font-mono text-[10px] font-bold text-ink backdrop-blur-sm tabular-nums">
-                    {entry.n}
-                  </span>
+                <span className="absolute top-3 left-3 flex size-7 items-center justify-center rounded-pill bg-field/85 font-mono text-[10px] font-bold text-ink backdrop-blur-sm tabular-nums">
+                  {String(index + 1).padStart(2, "0")}
                 </span>
+              </span>
 
-                <h3 className="-mt-3 px-5 max-w-[18ch] text-[17px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink">
-                  {entry.name}
-                </h3>
+              <h3 className="-mt-3 max-w-[18ch] px-5 text-[17px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink">
+                {entry.n}
+              </h3>
 
-                <p className="mt-2.5 px-5 text-[13.5px] leading-[1.6] text-body">
-                  {entry.covers}
-                </p>
+              <p className="mt-2.5 px-5 text-[13.5px] leading-[1.6] text-body">
+                {entry.sub}
+              </p>
 
-                <p className="mt-auto flex gap-2.5 px-5 pt-4 pb-5 text-[12.5px] leading-[1.5] text-quiet">
-                  <span
-                    aria-hidden
-                    className="mt-[7px] size-1 flex-none rounded-pill bg-mark"
-                  />
-                  {entry.when}
-                </p>
-              </article>
-            ))}
-          </div>
-        ))}
+              <ul className="mt-auto flex flex-col gap-1.5 px-5 pt-4 pb-5">
+                {entry.covers.slice(0, 4).map((line) => (
+                  <li
+                    key={line}
+                    className="flex gap-2.5 text-[12.5px] leading-[1.5] text-quiet"
+                  >
+                    <span
+                      aria-hidden
+                      className="mt-[7px] size-1 flex-none rounded-pill bg-mark"
+                    />
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          )),
+        )}
       </div>
     </div>
   );
 }
 
-export function PartnersView() {
+/**
+ * Our services.
+ *
+ * The page this replaced was about partners. Partners are how some of the work
+ * gets done, which is a fact about delivery rather than a thing anybody comes
+ * to a website looking for - somebody arriving from the navigation wants to
+ * know what can be bought. So the services lead, and the specialists sit under
+ * them as the answer to "who actually does this one".
+ *
+ * The lists come from `lib/services.ts` rather than from this file, because
+ * the about page names the same things, and what a company sells is the worst
+ * thing on a website to be inconsistent about.
+ */
+export function ServicesView() {
   const drift = [
-    ...DISCIPLINES.map((entry) => entry.name),
+    ...SHOWN.map((entry) => entry.n),
     "One contract",
     "One invoice",
-    "Named in advance",
   ];
 
   return (
     <>
-      {/* One axis down the middle, as v6 has it. */}
+      {/* One axis down the middle, as the rest of the site sets a head. */}
       <section className="page-frame pt-4 pb-10 text-center">
         <h1 className="mx-auto max-w-[24ch] text-[clamp(32px,4.6vw,68px)] leading-[1.04] font-extrabold tracking-[-0.045em] text-balance text-ink">
-          Specialists are part of the build.
-          <span className="text-quiet"> Never an extra line on it.</span>
+          Everything we do,
+          <span className="text-quiet"> and who actually does it.</span>
         </h1>
 
-        <p className="mx-auto mt-6 max-w-[68ch] text-[16.5px] leading-[1.65] text-quiet sm:text-[18px]">
-          Some work is led by somebody who does that one thing all day. When a
-          project needs it, we say so in the proposal, brief them inside the
-          work and stay responsible for what comes back. You deal with us
-          throughout.
+        <p className="mx-auto mt-6 max-w-[92ch] text-[16.5px] leading-[1.65] text-quiet sm:text-[18px]">
+          Websites first, and the things that make one worth having: what it
+          should do, what runs alongside it once it is live, and the specialist
+          work a build sometimes reaches for. All of it on one contract, from
+          us.
         </p>
 
         <div className="mt-9 flex flex-wrap items-center justify-center gap-2.5">
@@ -258,9 +330,8 @@ export function PartnersView() {
         </div>
       </section>
 
-      {/* The disciplines, drifting. Full bleed, so they leave the page rather
-          than stopping at a margin - which is what lets the row have no edges
-          without anything faded over them. */}
+      {/* The names, drifting. Full bleed, so they leave the page rather than
+          stopping at a margin. */}
       <div aria-hidden className="overflow-hidden py-2">
         <div className="drift flex w-max">
           {[0, 1].map((copy) => (
@@ -279,40 +350,45 @@ export function PartnersView() {
         </div>
       </div>
 
+      {/* And the specialists, which is how some of the above gets delivered. */}
       <section className="page-frame pt-10 pb-16">
-        <PartnerWall />
+        <h2 className="mx-auto max-w-[34ch] text-center text-[clamp(21px,2.1vw,30px)] leading-[1.1] font-extrabold tracking-[-0.035em] text-ink">
+          What we do, in six.
+        </h2>
 
-        {/* How a partner is handled, on the surface the site uses for the thing
-            a page is about. */}
+        <p className="mx-auto mt-3 max-w-[110ch] text-center text-[15.5px] leading-[1.65] text-quiet">
+          Two things we build and four that run alongside them. Some are led by
+          a specialist who does that one thing all day - where a project needs
+          one we say so in the proposal, brief them inside the work, and stay
+          responsible for what comes back.
+        </p>
+
+        <p className="mx-auto mt-4 text-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
+          Drag it, or let it run
+        </p>
+
+        <ServiceWall className="mt-9" />
+
         <CutPanel
           tone="field"
           className="mt-4 w-full"
           toolbar={
             <span className="flex h-10 w-full items-center justify-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
-              What you are agreeing to
+              However it is delivered
             </span>
           }
           corner={
             <Link
               href={ROUTES.build}
               aria-label="Build your website"
+              title="Build your website"
               className="flex size-11 items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
             >
               <ArrowUpRight className="size-[18px]" strokeWidth={2.2} />
             </Link>
           }
         >
-          <h2 className="max-w-[min(20ch,var(--notch-free,62ch))] text-[clamp(21px,2.1vw,30px)] leading-[1.08] font-extrabold tracking-[-0.035em] text-ink">
-            You deal with us, whoever does the work.
-          </h2>
-
-          <p className="mt-3 max-w-[62ch] text-[14px] leading-[1.6] text-quiet">
-            A specialist joining a project changes who does a piece of it. It
-            does not change who you have an agreement with, who invoices you, or
-            who answers when something is wrong.
-          </p>
-
-          <ul className="mt-6 grid max-w-[76ch] gap-x-10 gap-y-2.5 sm:grid-cols-2">
+          <ul className="mx-auto mt-8 grid max-w-[92ch] gap-x-12 gap-y-3 sm:grid-cols-2">
             {RULES.map((rule) => (
               <li key={rule} className="flex gap-2.5">
                 <Check
@@ -327,9 +403,10 @@ export function PartnersView() {
             ))}
           </ul>
 
-          <p className="mt-7 max-w-[64ch] text-[12.5px] leading-[1.6] text-label">
-            Most projects need none of this. A specialist is added because the
-            work justifies one, not to make the team look larger than it is.
+          <p className="mx-auto mt-8 max-w-[80ch] text-center text-[12.5px] leading-[1.6] text-label">
+            Most projects need none of the specialist work. Where one is needed
+            it is named before the work starts, rather than added to an invoice
+            afterwards.
           </p>
         </CutPanel>
       </section>

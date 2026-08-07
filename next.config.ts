@@ -1,6 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  /* `/partners` became `/services`.
+
+     A permanent redirect rather than a deleted route: the old address is in
+     the sitemap Google already crawled, and a 404 throws away whatever the URL
+     had earned. */
+  async redirects() {
+    return [{ source: "/partners", destination: "/services", permanent: true }];
+  },
+
   images: {
     /**
      * Next 16 requires every quality used anywhere in the app to be listed here.

@@ -38,7 +38,7 @@ const MARKS: Record<string, LucideIcon> = {
   [ROUTES.build]: Hammer,
   [ROUTES.about]: Info,
   [ROUTES.how]: Route,
-  [ROUTES.partners]: Handshake,
+  [ROUTES.services]: Handshake,
   [ROUTES.contact]: Mail,
   [ROUTES.faq]: CircleHelp,
   [ROUTES.blog]: Newspaper,

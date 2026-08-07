@@ -54,7 +54,10 @@ export const ROUTES = {
   how: "/how-we-work",
 
   about: "/about",
-  partners: "/partners",
+  /* Was `/partners`. The page is about what we sell rather than about who
+     helps deliver it; the specialists are a section of it now. Old links are
+     redirected in `next.config.ts` rather than left to 404. */
+  services: "/services",
   contact: "/contact",
   book: "/book",
   faq: "/faqs",
@@ -108,7 +111,7 @@ export const HEADER_NAV: readonly NavLink[] = [
      other - and an item in an unexpected place costs a reader a whole pass. */
   { label: "Home", href: ROUTES.home },
   { label: "How we work", href: ROUTES.how },
-  { label: "Partners", href: ROUTES.partners },
+  { label: "Services", href: ROUTES.services },
   { label: "Articles", href: ROUTES.blog },
   { label: "FAQs", href: ROUTES.faq },
   { label: "Book a meeting", href: ROUTES.book },
@@ -160,7 +163,7 @@ export const RAIL_PAGES: readonly RailPage[] = [
   { label: "Build your website", href: ROUTES.build },
   { label: "About us", href: ROUTES.about },
   { label: "How we work", href: ROUTES.how },
-  { label: "Our partners", href: ROUTES.partners },
+  { label: "Our services", href: ROUTES.services },
   {
     label: "Contact us",
     href: ROUTES.contact,
@@ -187,7 +190,7 @@ export const FOOTER_COLUMNS: readonly {
     links: [
       { label: "About us", href: ROUTES.about },
       { label: "How we work", href: ROUTES.how },
-      { label: "Our partners", href: ROUTES.partners },
+      { label: "Our services", href: ROUTES.services },
       { label: "Contact us", href: ROUTES.contact },
     ],
   },

@@ -33,7 +33,7 @@ const PAGES: readonly {
   { path: ROUTES.build, priority: 1, changeFrequency: "monthly" },
   { path: ROUTES.blog, priority: 0.9, changeFrequency: "weekly" },
   { path: ROUTES.about, priority: 0.8, changeFrequency: "monthly" },
-  { path: ROUTES.partners, priority: 0.8, changeFrequency: "monthly" },
+  { path: ROUTES.services, priority: 0.9, changeFrequency: "monthly" },
   { path: ROUTES.contact, priority: 0.7, changeFrequency: "yearly" },
   { path: ROUTES.book, priority: 0.7, changeFrequency: "yearly" },
   { path: ROUTES.faq, priority: 0.6, changeFrequency: "monthly" },

@@ -17,7 +17,7 @@ import type { LucideIcon } from "lucide-react";
 
 import { PageShell } from "@/components/layout";
 import { CutPanel } from "@/components/layout/cut-panel";
-import { PartnerWall } from "@/components/pages/partners-view";
+import { ServiceWall } from "@/components/pages/services-view";
 import { STOPS } from "@/lib/journey";
 import { CONTACT_INFO, ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -384,7 +384,7 @@ export function AboutView() {
           }
           corner={
             <Link
-              href={ROUTES.partners}
+              href={ROUTES.services}
               aria-label="How partners work"
               title="How partners work"
               className="flex size-11 items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
@@ -504,7 +504,7 @@ export function AboutView() {
           />
 
           <Link
-            href={ROUTES.partners}
+            href={ROUTES.services}
             className="group/all inline-flex flex-none items-center gap-2 rounded-pill bg-canvas px-4.5 py-2 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair"
           >
             <Handshake aria-hidden className="size-4" strokeWidth={1.9} />
@@ -516,7 +516,7 @@ export function AboutView() {
           </Link>
         </div>
 
-        <PartnerWall className="mt-7" />
+        <ServiceWall className="mt-7" />
       </section>
 
       {/* The second and last time the three ways are offered: at the foot, to

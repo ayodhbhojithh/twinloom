@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
-import { PartnerWall } from "@/components/pages/partners-view";
+import { ServiceWall } from "@/components/pages/services-view";
 import { ROUTES } from "@/lib/site";
 
 /**
@@ -29,10 +29,10 @@ export function PartnersSection() {
         </h2>
 
         <Link
-          href={ROUTES.partners}
+          href={ROUTES.services}
           className="group/all reveal mt-6 inline-flex items-center gap-2 rounded-pill bg-field px-4.5 py-2 text-[13.5px] font-semibold text-ink transition-colors [--step:1] hover:bg-hair"
         >
-          How partners work
+          What we offer
           <ArrowUpRight
             aria-hidden
             className="size-4 transition-transform group-hover/all:translate-x-0.5 group-hover/all:-translate-y-0.5"
@@ -46,7 +46,7 @@ export function PartnersSection() {
           animations on one element would be one `transform` written twice, and
           the second would win. */}
       <div className="reveal mt-10 [--step:2] lg:mt-12">
-        <PartnerWall bleed />
+        <ServiceWall bleed />
       </div>
 
       <p className="reveal mx-auto mt-6 max-w-[68ch] text-center text-[14px] leading-[1.6] text-quiet [--step:3]">

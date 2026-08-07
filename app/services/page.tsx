@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 
-import { PartnersView } from "@/components/pages/partners-view";
-import { frameworkMetadata } from "@/components/pages/framework-page";
+import { ServicesView } from "@/components/pages/services-view";
+import { pageMeta } from "@/lib/seo";
 import { ROUTES } from "@/lib/site";
 
-export const metadata: Metadata = frameworkMetadata(ROUTES.partners);
+export const metadata: Metadata = pageMeta({
+  title: "Our services",
+  description:
+    "Websites and the custom software behind them, plus digital consultancy, ongoing services, brand identity and campaign management. All of it on one contract, from us.",
+  path: ROUTES.services,
+});
 
 export default function Page() {
-  return <PartnersView />;
+  return <ServicesView />;
 }

@@ -44,17 +44,17 @@ export const FRAMEWORK_PAGES: readonly FrameworkPage[] = [
     ],
   },
   {
-    href: ROUTES.partners,
-    tag: "Our partners",
-    title: "Our partners",
-    lead: "The people we bring in, and what they cover.",
+    href: ROUTES.services,
+    tag: "Our services",
+    title: "Our services",
+    lead: "Everything we do, and who actually does it.",
     description:
-      "The specialists we bring into a build, what each one covers, and who you deal with when a partner is involved.",
+      "Websites and the custom software behind them, plus digital consultancy, ongoing services, brand identity and campaign management.",
     belongs: [
-      "Each partner named, with the work they cover.",
-      "Where partner work sits in a build, which is inside it rather than beside it.",
-      "Who you deal with when a partner is involved, which is us.",
-      "What we ask of a partner before we put them in front of you.",
+      "What we build, and what TwinCoreTech builds behind it.",
+      "The services that run alongside a build, and what each covers.",
+      "Which are ours and which are led by a specialist.",
+      "Who you deal with when a specialist is involved, which is us.",
     ],
   },
   {

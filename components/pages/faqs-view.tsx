@@ -164,7 +164,7 @@ const RUNNING: readonly Ask[] = [
         The people doing the work. Where a specialist is needed - brand,
         photography, copy, accessibility testing, campaigns - they are named in
         the proposal before the work starts, on one contract and one invoice.{" "}
-        <A href={ROUTES.partners}>How partners work</A>.
+        <A href={ROUTES.services}>What we offer</A>.
       </>
     ),
   },
