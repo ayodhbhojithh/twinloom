@@ -8,7 +8,7 @@ import { Menu, UserRound, X } from "lucide-react";
 import { RailNav } from "./rail-nav";
 import { Wordmark } from "./wordmark";
 
-import { HEADER_CTA, HEADER_NAV, ROUTES } from "@/lib/site";
+import { HEADER_NAV, ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 /**
@@ -88,30 +88,16 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
-          {/* Not on the landing page. The hero already carries this exact button
-              one row below, and the same call to action twice in one eyeline
-              reads as a mistake rather than as emphasis. Every other route keeps
-              it, where it is the only standing way to the build page. */}
-          {landing ? null : (
-            <Link
-              href={HEADER_CTA.href}
-              className="hidden h-8 shrink-0 items-center rounded-field bg-mark px-3.5 text-[13.5px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90 sm:inline-flex"
-            >
-              {HEADER_CTA.label}
-            </Link>
-          )}
+          {/* No call to action here, and no contact disc.
 
-          {/* No border on it. The header carries none, and a ring drawn round a
-              20px icon is more line than the icon has. */}
-          <Link
-            href={ROUTES.contact}
-            aria-label="Contact us"
-            title="Contact us"
-            className="flex size-8 shrink-0 items-center justify-center rounded-pill bg-well text-ink transition-colors hover:bg-hair"
-          >
-            <UserRound className="size-[17px]" strokeWidth={1.9} />
-          </Link>
+              Both were removed on purpose. Every page of this site already
+              ends in the two ways in, the landing page carries them a row
+              below the headline, and `Book a meeting` and `Contact` are two of
+              the eight links in the bar - so the right hand end held a third
+              and fourth copy of things already on screen.
 
+              What is left is the name, the pages, and the way into the menu.
+              A bar that only navigates is a bar nobody has to read twice. */}
           <button
             type="button"
             onClick={() => setOpen(true)}

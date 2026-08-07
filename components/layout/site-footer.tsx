@@ -117,16 +117,35 @@ export function SiteFooter() {
               {SITE.tagline}
             </p>
 
-            <Link
-              href={ROUTES.build}
-              className="group/go mt-5 inline-flex items-center gap-2 rounded-pill bg-ink px-5 py-2.5 text-[14px] font-semibold text-white transition-opacity hover:opacity-85"
-            >
-              Build your website
-              <ArrowUpRight
-                aria-hidden
-                className="size-4 transition-transform group-hover/go:translate-x-0.5 group-hover/go:-translate-y-0.5"
-              />
-            </Link>
+            {/* Both ways in, now that the header carries neither.
+
+                One filled and one quiet, because they are not equal offers:
+                writing it down is the one that ends in something you can read,
+                and the call is for people who would rather not start that
+                way. */}
+            <div className="mt-5 flex flex-wrap items-center gap-2.5">
+              <Link
+                href={ROUTES.build}
+                className="group/go inline-flex items-center gap-2 rounded-pill bg-ink px-5 py-2.5 text-[14px] font-semibold text-white transition-opacity hover:opacity-85"
+              >
+                Build your website
+                <ArrowUpRight
+                  aria-hidden
+                  className="size-4 transition-transform group-hover/go:translate-x-0.5 group-hover/go:-translate-y-0.5"
+                />
+              </Link>
+
+              <Link
+                href={ROUTES.book}
+                className="group/talk inline-flex items-center gap-2 rounded-pill bg-field px-5 py-2.5 text-[14px] font-semibold text-ink transition-colors hover:bg-hair"
+              >
+                Book a meeting
+                <ArrowUpRight
+                  aria-hidden
+                  className="size-4 transition-transform group-hover/talk:translate-x-0.5 group-hover/talk:-translate-y-0.5"
+                />
+              </Link>
+            </div>
           </div>
 
           {/* Left aligned, on the edge everything above them starts from.
@@ -147,8 +166,15 @@ export function SiteFooter() {
               between them was set - the space was in the tracks, not in the
               gap. As flex items they are each as wide as their longest link
               and sit next to one another, which is what a group of three short
-              lists should look like. */}
-          <div className="flex flex-wrap gap-x-12 gap-y-8 sm:gap-x-16">
+              lists should look like.
+
+              Pushed to the right end of the surface, where the legal row and
+              the way back up already are. On the left they were three short
+              lists with two thirds of the footer empty beside them; on the
+              right the whole foot of the page ends on one edge. They wrap back
+              to the left on a narrow screen, where there is no room to be
+              anywhere else. */}
+          <div className="flex flex-wrap gap-x-12 gap-y-8 sm:justify-end sm:gap-x-16">
             {FOOTER_COLUMNS.map((column) => (
               <nav
                 key={column.title}
