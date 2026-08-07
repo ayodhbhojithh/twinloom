@@ -12,29 +12,27 @@
    rewrites class names in others, so anything that has to hold is written on
    the element.
 
-   And no `clip-path`. The site's cut corners - the flared notch, the bite, the
-   corner taken out for a control - are drawn with an SVG path, and no mail
-   client supports one. So the shapes are not faked with images: what carries
-   the house style here is what actually survives: the pill, the mono kicker,
-   the numbered marks, and one asymmetric corner. Outlook squares the corners
-   off and the message still reads.
+   And no `clip-path`. The site's cut corners are drawn with an SVG path and no
+   mail client supports one, so they are not faked with images either.
 
-   The palette is the site's own tokens, written out, because `var()` does not
-   resolve in mail either - and it is set light throughout. On the site a grey
-   ground with white cards standing on it is what makes the cards objects; in a
-   mail client the message is already an object in a list, so a second ground
-   was doing nothing but making the whole thing heavier. White, with one
-   hairline where a surface has to end.
+   What is left is a centred column on white with nothing drawn round it. No
+   card outline, no tinted ground, no rules between the parts - the only thing
+   separating one thing from the next is space, which every client on earth
+   renders identically. A border round a message is an edge that has to survive
+   Outlook, Gmail, Apple Mail and six webmail clients, and it buys nothing a
+   margin does not.
+
+   Centred throughout, because a column with no edge drawn round it has no left
+   edge for type to sit against either.
 --------------------------------------------------------------------------- */
 
 const INK = "#111827";
-const BODY = "#374151";
-const QUIET = "#5b6474";
-const LABEL = "#626b7c";
+const BODY = "#4b5563";
+const QUIET = "#6b7280";
+const LABEL = "#8a93a3";
 const MARK = "#2563eb";
 const CANVAS = "#f6f7f9";
 const FIELD = "#ffffff";
-const HAIR = "#d1d6df";
 
 /** What a mail client will actually have. No web fonts load here. */
 const SANS =
@@ -42,7 +40,7 @@ const SANS =
 const MONO =
   "ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace";
 
-export const palette = { INK, BODY, QUIET, LABEL, MARK, CANVAS, FIELD, HAIR };
+export const palette = { INK, BODY, QUIET, LABEL, MARK, CANVAS, FIELD };
 export const fonts = { SANS, MONO };
 
 /** Text a mail client is about to render, with the four that break it out. */
@@ -55,28 +53,34 @@ export function esc(value: string) {
 }
 
 /**
- * A mono label, in a tinted pill.
+ * The one mono label at the top.
  *
- * The site's kicker, and the one piece of its vocabulary that survives every
- * client: a background colour, a radius and letter-spacing are all any of them
- * need to understand.
+ * No pill round it. A tinted capsule is another shape to draw on a message
+ * whose whole idea is that nothing is drawn: letter-spacing and the accent are
+ * enough to say this is a label rather than a sentence.
  */
 export function kicker(text: string, tint = MARK) {
-  return `<span style="display:inline-block;padding:5px 10px;border-radius:999px;background:${tint}12;color:${tint};font-family:${MONO};font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;line-height:1">${esc(
+  return `<div style="font-family:${MONO};font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:${tint};line-height:1">${esc(
     text,
-  )}</span>`;
+  )}</div>`;
 }
 
-/** A fact set apart to be copied: a reference, an address, a time. */
+/**
+ * The one fact worth setting apart: a reference, a time.
+ *
+ * A very light fill rather than a border, because a fill has no edge to render
+ * wrongly. It is the only tinted thing in the message, which is what makes it
+ * the thing the eye lands on.
+ */
 export function plate(label: string, value: string) {
   return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:22px 0 0">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 0">
       <tr>
-        <td style="padding:13px 16px;background:${CANVAS};border-radius:14px 14px 14px 4px">
-          <div style="font-family:${MONO};font-size:8.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${LABEL};line-height:1">${esc(
+        <td align="center" style="padding:16px 18px;background:${CANVAS};border-radius:14px">
+          <div style="font-family:${MONO};font-size:8.5px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:${LABEL};line-height:1">${esc(
             label,
           )}</div>
-          <div style="margin-top:7px;font-family:${MONO};font-size:15px;font-weight:700;color:${INK};line-height:1.3;word-break:break-all">${esc(
+          <div style="margin-top:8px;font-family:${MONO};font-size:15px;font-weight:700;letter-spacing:0.01em;color:${INK};line-height:1.35;word-break:break-word">${esc(
             value,
           )}</div>
         </td>
@@ -84,35 +88,38 @@ export function plate(label: string, value: string) {
     </table>`;
 }
 
-/** One row of a short list, numbered, the way the site numbers its steps. */
+/**
+ * One of a short run of steps.
+ *
+ * Centred and stacked rather than a number in a left column with words beside
+ * it. Two columns need a left edge to hang from and there is not one here -
+ * and in a reading pane the words column ends up narrow enough to break every
+ * line it holds.
+ */
 export function step(n: number, title: string, sub: string) {
   return `
     <tr>
-      <td width="34" valign="top" style="padding:10px 14px 10px 0">
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-          <tr>
-            <td width="24" height="24" align="center" valign="middle" style="width:24px;height:24px;background:${CANVAS};border-radius:999px;font-family:${MONO};font-size:9.5px;font-weight:700;color:${QUIET};line-height:24px">${n}</td>
-          </tr>
-        </table>
-      </td>
-      <td valign="top" style="padding:10px 0">
-        <div style="font-family:${SANS};font-size:13.5px;font-weight:700;color:${INK};line-height:1.35">${esc(
+      <td align="center" style="padding:18px 0 0">
+        <div style="font-family:${MONO};font-size:8.5px;font-weight:700;letter-spacing:0.16em;color:${LABEL};line-height:1">${String(
+          n,
+        ).padStart(2, "0")}</div>
+        <div style="margin-top:7px;font-family:${SANS};font-size:13px;font-weight:700;color:${INK};line-height:1.35">${esc(
           title,
         )}</div>
-        <div style="margin-top:3px;font-family:${SANS};font-size:12.5px;color:${QUIET};line-height:1.55">${esc(
+        <div style="margin:4px auto 0;max-width:340px;font-family:${SANS};font-size:12px;color:${QUIET};line-height:1.6">${esc(
           sub,
         )}</div>
       </td>
     </tr>`;
 }
 
-/** The one thing we would like them to do, as a pill. */
+/** The one thing we would like them to do. */
 export function button(href: string, text: string) {
   return `
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:26px 0 0">
+    <table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0" style="margin:30px auto 0">
       <tr>
         <td align="center" style="background:${MARK};border-radius:999px">
-          <a href="${esc(href)}" style="display:inline-block;padding:11px 22px;font-family:${SANS};font-size:13px;font-weight:600;color:#ffffff;text-decoration:none;line-height:1">${esc(
+          <a href="${esc(href)}" style="display:inline-block;padding:11px 22px;font-family:${SANS};font-size:12.5px;font-weight:600;color:#ffffff;text-decoration:none;line-height:1">${esc(
             text,
           )}</a>
         </td>
@@ -120,16 +127,15 @@ export function button(href: string, text: string) {
     </table>`;
 }
 
-/** A hairline, where a break needs to be seen rather than felt. */
-export const rule = `<div style="height:1px;background:${HAIR};margin:24px 0"></div>`;
+/** A break, made of space rather than of a line. */
+export const rule = `<div style="height:26px;line-height:26px;font-size:0">&nbsp;</div>`;
 
 /**
  * The whole message.
  *
- * One column at 520, centred, with the name above the surface and the legal
- * line below it - the same arrangement as a page of the site, which is the
- * point: a message that looks like the website it came from is a message
- * somebody can place in a second.
+ * One centred column at 460 - narrower than a web measure on purpose, because
+ * a reading pane is a third of a screen, and a message that needs the full
+ * width of a laptop is a message read in a scrollbar.
  */
 export function shell({
   title,
@@ -151,7 +157,7 @@ export function shell({
 <meta name="supported-color-schemes" content="light">
 <title>${esc(title)}</title>
 </head>
-<body style="margin:0;padding:0;background:${FIELD};-webkit-text-size-adjust:100%">
+<body style="margin:0;padding:0;background:${FIELD};-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%">
 
 <!-- The preview line, and enough blank after it that the client does not
      borrow the first sentence of the message to finish the snippet. -->
@@ -161,40 +167,34 @@ export function shell({
 
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${FIELD}">
   <tr>
-    <td align="center" style="padding:28px 16px 36px">
+    <!-- Twenty pixels of gutter on a phone, which is the difference between a
+         centred column and type jammed against two edges. -->
+    <td align="center" style="padding:36px 20px 40px">
 
-      <table role="presentation" width="520" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:520px">
+      <table role="presentation" width="460" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:460px">
 
-        <!-- The name, on the ground rather than on the surface, exactly as the
-             site sets it above a card. -->
         <tr>
-          <td style="padding:0 4px 14px">
-            <span style="font-family:${SANS};font-size:15px;font-weight:700;letter-spacing:-0.03em;color:${INK}">TwinLoom</span>
+          <td align="center" style="padding:0 0 26px">
+            <span style="font-family:${SANS};font-size:14px;font-weight:700;letter-spacing:-0.02em;color:${INK}">TwinLoom</span>
           </td>
         </tr>
 
-        <!-- The surface. One corner is drawn tighter than the other three: the
-             site cuts a corner out of every working surface, and this is the
-             part of that idea a mail client can actually render. -->
         <tr>
-          <td style="padding:26px 24px 28px;background:${FIELD};border:1px solid ${HAIR};border-radius:22px 22px 5px 22px">
-            ${body}
-          </td>
+          <td align="center">${body}</td>
         </tr>
 
         <!-- Who sent it. Company law wants it findable, and a message with no
              entity on it is a message that reads as a mailshot. -->
         <tr>
-          <td style="padding:22px 6px 0">
-            <div style="font-family:${SANS};font-size:11px;line-height:1.7;color:${LABEL}">
+          <td align="center" style="padding:36px 0 0">
+            <div style="margin:0 auto;max-width:380px;font-family:${SANS};font-size:10.5px;line-height:1.7;color:${LABEL}">
               TwinLoom is a trading name of TwinCoreTech Ltd, registered in
-              England and Wales, company number 15997244. Registered office:
-              Bromley Old Town Hall, 30 Tweedy Road, Bromley BR1 3FE.
+              England and Wales, company number 15997244.
             </div>
-            <div style="margin-top:10px;font-family:${SANS};font-size:11px;line-height:1.7;color:${LABEL}">
-              <a href="https://twinloom.com/privacy" style="color:${QUIET};text-decoration:underline">Privacy notice</a>
-              &nbsp;·&nbsp;
-              <a href="https://twinloom.com/contact" style="color:${QUIET};text-decoration:underline">Contact us</a>
+            <div style="margin-top:10px;font-family:${SANS};font-size:10.5px;line-height:1.7;color:${LABEL}">
+              <a href="https://twinloom.com/privacy" style="color:${QUIET};text-decoration:none">Privacy notice</a>
+              &nbsp;&nbsp;·&nbsp;&nbsp;
+              <a href="https://twinloom.com/contact" style="color:${QUIET};text-decoration:none">Contact us</a>
             </div>
           </td>
         </tr>

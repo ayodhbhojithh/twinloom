@@ -24,7 +24,7 @@ import {
    is, and some people read mail as text on purpose.
 --------------------------------------------------------------------------- */
 
-const { INK, BODY, QUIET } = palette;
+const { INK, BODY, LABEL } = palette;
 const { SANS } = fonts;
 
 export interface Message {
@@ -34,12 +34,20 @@ export interface Message {
 }
 
 const h1 = (text: string) =>
-  `<h1 style="margin:14px 0 0;font-family:${SANS};font-size:21px;line-height:1.2;font-weight:800;letter-spacing:-0.028em;color:${INK}">${esc(
+  `<h1 style="margin:14px auto 0;max-width:16ch;font-family:${SANS};font-size:20px;line-height:1.25;font-weight:700;letter-spacing:-0.022em;color:${INK}">${esc(
     text,
   )}</h1>`;
 
-const p = (text: string, size = 13.5) =>
-  `<p style="margin:12px 0 0;font-family:${SANS};font-size:${size}px;line-height:1.65;color:${BODY}">${text}</p>`;
+/**
+ * A paragraph, centred and held to a short measure.
+ *
+ * `max-width` in a `div` rather than on the `p`, because Outlook ignores a
+ * max-width on a paragraph and would run the line the full width of the
+ * column. 380 is about sixty characters at this size, which is where a centred
+ * line stops being comfortable.
+ */
+const p = (text: string, size = 13) =>
+  `<div style="margin:12px auto 0;max-width:380px;font-family:${SANS};font-size:${size}px;line-height:1.65;color:${BODY}">${text}</div>`;
 
 /**
  * The receipt for a scoping request.
@@ -75,14 +83,14 @@ export function scopeReceipt({
             attachments === 1 ? "file" : "files"
           } you attached are filed under it.`
         : "Quote it in any reply, and anything you add later is filed under it.",
-      12.5,
+      12,
     )}
 
     ${rule}
 
-    <div style="font-family:${SANS};font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${QUIET};line-height:1">What happens next</div>
+    <div style="font-family:${SANS};font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:${LABEL};line-height:1">What happens next</div>
 
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:12px 0 0">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:2px 0 0">
       ${step(1, "We read it", "In full, and we work out what is missing rather than guessing at it.")}
       ${step(2, "A written scope comes back", "Your answers turned into a description of a website, with anything we assumed marked as an assumption.")}
       ${step(3, "You tell us what is wrong with it", "Nothing is priced until that document is right. It is a description, not a quote.")}
@@ -167,19 +175,19 @@ export function bookingConfirmation({
 
     ${plate(meeting, `${when} · ${zone}`)}
 
-    ${p(`${minutes} minutes. Nothing to prepare and nothing to bring.`, 13.5)}
+    ${p(`${minutes} minutes. Nothing to prepare and nothing to bring.`, 12)}
 
     ${
       meet
         ? `${rule}
-    <div style="font-family:${SANS};font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${QUIET};line-height:1">Joining</div>
+    <div style="font-family:${SANS};font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:${LABEL};line-height:1">Joining</div>
     ${p(
       `<a href="${esc(
         meet,
       )}" style="color:${INK};font-weight:600;word-break:break-all">${esc(
         meet.replace(/^https?:\/\//, ""),
       )}</a>`,
-      13,
+      12.5,
     )}`
         : ""
     }

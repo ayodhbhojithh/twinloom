@@ -116,8 +116,12 @@ export function BuildFlow() {
           read what either of them meant. "Carry on through the questions" is
           the only place the choice needs to be, because it is the only place
           somebody has the information to make it. */}
-      <div className="mb-8">
-        <h1 className="section-head max-w-[26ch] text-ink">
+      {/* Centred, like the booking page's head and like every step heading on
+          the surface below it. Left against the edge it was one short block in
+          the corner of a very wide screen, with the question it introduces
+          centred underneath. */}
+      <div className="mb-8 text-center">
+        <h1 className="section-head mx-auto max-w-[26ch] text-ink">
           Build your website.
           <span className="text-quiet">
             {" "}
