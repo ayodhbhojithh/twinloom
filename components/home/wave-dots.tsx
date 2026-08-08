@@ -38,8 +38,8 @@ import { cn } from "@/lib/utils";
    are fat, the hollow is where they shrink to almost nothing. The shape is in
    the weight, which is legible at any density and is what makes a printed
    halftone a picture rather than a screen. */
-const ROWS = 30;
-const COLUMNS = 122;
+const ROWS = 34;
+const COLUMNS = 136;
 
 /**
  * Where the spheres stand.
@@ -53,7 +53,7 @@ const COLUMNS = 122;
 const SPHERES = [
   { along: 0.17, depth: 0.58, size: 0.042, hue: 0.95 },
   { along: 0.33, depth: 0.34, size: 0.026, hue: 0.55 },
-  { along: 0.5, depth: 0.76, size: 0.07, hue: 0.12 },
+  { along: 0.48, depth: 0.64, size: 0.062, hue: 0.12 },
   { along: 0.7, depth: 0.3, size: 0.02, hue: 0.34 },
   { along: 0.86, depth: 0.52, size: 0.036, hue: 0.02 },
 ] as const;
@@ -237,8 +237,8 @@ export function WaveDots({
          the surface never repeats - and being a third, it bends the crest
          without ever competing to be it. */
       const roll =
-        Math.sin(along * Math.PI * 3 - depth * 0.8 + t * 0.5) * 0.74 +
-        Math.sin(along * Math.PI * 1.3 - depth * 1.9 - t * 0.28) * 0.26;
+        Math.sin(along * Math.PI * 3 - depth * 0.8 + t * 0.34) * 0.74 +
+        Math.sin(along * Math.PI * 1.3 - depth * 1.9 - t * 0.19) * 0.26;
 
       /* Not scaled by `near` alone. That flattened the far half to nothing, so
          the only rows carrying the wave were the ones running off the bottom.
@@ -310,9 +310,13 @@ export function WaveDots({
         y,
         r * 1.05,
       );
-      lit.addColorStop(0, css(mixRgb(colour, { r: 255, g: 255, b: 255 }, 0.82)));
-      lit.addColorStop(0.34, css(colour));
-      lit.addColorStop(1, css(shade(colour, 0.62)));
+      lit.addColorStop(0, css(mixRgb(colour, { r: 255, g: 255, b: 255 }, 0.85)));
+      lit.addColorStop(0.32, css(colour));
+      /* Not black at the rim. A ball on a white card is lit from the card as
+         well as from above - the underside picks up what is under it, and a rim
+         that goes to nothing reads as a hole rather than as a shadow. */
+      lit.addColorStop(0.86, css(shade(colour, 0.66)));
+      lit.addColorStop(1, css(mixRgb(shade(colour, 0.72), { r: 255, g: 255, b: 255 }, 0.22)));
 
       ink.beginPath();
       ink.arc(x, y, r, 0, Math.PI * 2);
@@ -322,18 +326,19 @@ export function WaveDots({
       /* One small highlight on top of the gradient. It is the difference between
          a shaded circle and something with a surface. */
       const spark = ink.createRadialGradient(
-        x - r * 0.36,
-        y - r * 0.44,
+        x - r * 0.34,
+        y - r * 0.42,
         0,
-        x - r * 0.36,
-        y - r * 0.44,
-        r * 0.42,
+        x - r * 0.34,
+        y - r * 0.42,
+        r * 0.46,
       );
-      spark.addColorStop(0, "rgba(255,255,255,0.9)");
+      spark.addColorStop(0, "rgba(255,255,255,0.92)");
+      spark.addColorStop(0.45, "rgba(255,255,255,0.28)");
       spark.addColorStop(1, "rgba(255,255,255,0)");
 
       ink.beginPath();
-      ink.arc(x - r * 0.36, y - r * 0.44, r * 0.42, 0, Math.PI * 2);
+      ink.arc(x - r * 0.34, y - r * 0.42, r * 0.46, 0, Math.PI * 2);
       ink.fillStyle = spark;
       ink.fill();
     };
@@ -355,7 +360,7 @@ export function WaveDots({
           const along = col / COLUMNS;
           const { x, y, near, roll } = place(along, depth, t);
 
-          if (x < -20 || x > width + 20) continue;
+          if (x < -24 || x > width + 24) continue;
 
           /* Near dots are larger and firmer, far ones smaller and fainter. That
              is the whole of the depth cue, and it is why the field can be one
@@ -369,12 +374,22 @@ export function WaveDots({
              Faded at both ends of every row, and again into the horizon, so the
              sheet dissolves into the card on three sides instead of stopping at
              an edge. */
-          /* Faded at both ends of every row, and at both edges of the band.
-             A ribbon that stops at a straight line is a rectangle of dots; one
-             that thins at all four edges is a piece of something larger, which
-             is what a surface is. */
-          const edge = Math.sin(along * Math.PI);
-          const across = Math.sin(depth * Math.PI) ** 0.45;
+          /* Faded against the canvas rather than against the row.
+
+             It used to fade on `along`, which is a dot's place in its own row -
+             and near rows are eleven times wider than far ones, so the same
+             `along` is at the middle of one row and off the side of another.
+             What that produced was a field fading in the middle of the card
+             while its widest rows were still being cut dead by the edge.
+
+             Measured in pixels from the sides and the foot, every row thins in
+             the same place: where the card ends. The far edge still fades on
+             depth, because there is no screen edge there - it is a horizon, and
+             a horizon is a thing dissolving rather than a thing being cut. */
+          const softX = Math.min(1, Math.min(x, width - x) / (width * 0.16));
+          const softY = Math.min(1, (height - y) / (height * 0.14));
+          const edge = Math.max(0, softX) * Math.max(0, softY);
+          const across = Math.sin(depth * Math.PI) ** 0.4;
 
           /* The wave, read as light. A crest faces up and a hollow faces away,
              and `roll` already is that reading - which is why it is used rather
@@ -416,7 +431,10 @@ export function WaveDots({
              thinning. */
           const alpha =
             (0.55 + 0.35 * near) *
-            (0.35 + 0.65 * edge) *
+            /* Squared, so the last stretch of the fade is gentle rather than a
+               ramp that arrives and stops. */
+            edge *
+            edge *
             across *
             (0.78 + 0.22 * grit);
 

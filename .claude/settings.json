@@ -55,7 +55,8 @@
       "Bash(npm uninstall *)",
       "Bash(node -e \"console.log\\('types field:', require\\('./node_modules/ogl/package.json'\\).types || require\\('./node_modules/ogl/package.json'\\).typings\\)\")",
       "Bash(node -e \"console.log\\(Object.keys\\(require\\('./package.json'\\).dependencies\\).join\\(', '\\)\\)\")",
-      "Bash(python -c \"print\\('dots per frame:', 18*133\\)\")"
+      "Bash(python -c \"print\\('dots per frame:', 18*133\\)\")",
+      "Bash(python -c \"print\\('dots per frame:', 34*137\\)\")"
     ]
   }
 }
