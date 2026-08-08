@@ -4,6 +4,7 @@ import { book, busyBetween, clashes, send, wiring } from "@/lib/booking/google";
 import { bookingConfirmation } from "@/lib/mail/templates";
 import { BUFFER_MINUTES } from "@/components/book/diary";
 import { MEETINGS } from "@/components/book/meetings";
+import { isReference } from "@/lib/build/reference";
 
 /* ---------------------------------------------------------------------------
    Where a booking actually lands.
@@ -52,6 +53,7 @@ export async function POST(request: Request) {
     name?: unknown;
     email?: unknown;
     notes?: unknown;
+    ref?: unknown;
   };
 
   try {
@@ -69,6 +71,15 @@ export async function POST(request: Request) {
   const name = String(body.name ?? "").trim();
   const email = String(body.email ?? "").trim();
   const notes = String(body.notes ?? "").trim();
+
+  /* The scoping request this meeting is about, where it came from one.
+
+     Checked against the shape rather than taken as read: it is written into the
+     event's own title, so a reference somebody could choose is a line of text
+     somebody could choose to put in front of whoever opens the invitation.
+     Anything that is not one is simply dropped - a booking is still a booking
+     without it. */
+  const ref = isReference(body.ref) ? body.ref : null;
 
   if (!meeting || !LENGTHS.has(minutes)) {
     return NextResponse.json(
@@ -172,6 +183,7 @@ export async function POST(request: Request) {
       when,
       zone: "Europe/London",
       meet: booked.meet,
+      ref,
     });
 
     await send(

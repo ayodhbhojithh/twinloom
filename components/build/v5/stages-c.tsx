@@ -7,6 +7,8 @@ import { ASK_PARTS, MIN_MAP, STATES } from "@/lib/build/v5";
 import { readiness } from "@/lib/build/v5-derive";
 import { OPTION_LISTS } from "@/lib/build/v5-options";
 import { HOW_WE_WORK } from "@/lib/build/v5-work";
+import { deskRef } from "@/lib/build/desk";
+import { carry } from "@/lib/build/handoff";
 import { sendScope, whatIsMissing } from "@/lib/build/submit";
 import {
   addRef,
@@ -428,16 +430,45 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
         ) : null}
 
         {isOn(answers, "talk", "book") ? (
-          <Link
-            href={`${ROUTES.book}?mins=${heldFor(answers)}`}
-            className="group/book mt-3 inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85"
-          >
-            Choose a time
-            <ArrowUpRight
-              aria-hidden
-              className="size-4 transition-transform group-hover/book:translate-x-0.5 group-hover/book:-translate-y-0.5"
-            />
-          </Link>
+          <>
+            <Link
+              href={`${ROUTES.book}?mins=${heldFor(answers)}`}
+              /* Everything the booking screen would otherwise ask twice, put
+                 down on the way out.
+
+                 The two were separate journeys before this: somebody answered
+                 ten questions, asked for a time, and landed on a flow that
+                 opened by asking what the meeting was about - which is the one
+                 thing it had just been told - and then asked for a name and an
+                 email address that were already on the desk. The reference goes
+                 with it so the meeting that comes out refers to the submission
+                 rather than to nothing. */
+              onClick={() =>
+                carry({
+                  ref: deskRef(),
+                  about: "scope",
+                  minutes: heldFor(answers),
+                  name: answers.ask.name?.trim() || undefined,
+                  email: answers.ask.email?.trim() || undefined,
+                  company: answers.ask.company?.trim() || undefined,
+                })
+              }
+              className="group/book mt-3 inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85"
+            >
+              Choose a time
+              <ArrowUpRight
+                aria-hidden
+                className="size-4 transition-transform group-hover/book:translate-x-0.5 group-hover/book:-translate-y-0.5"
+              />
+            </Link>
+
+            <p className="mt-2.5 max-w-[64ch] text-[12px] leading-[1.55] text-label">
+              It opens on the calendar, already set to go through this scope.
+              The meeting will be booked against{" "}
+              <b className="font-mono font-semibold text-quiet">{deskRef()}</b>,
+              which is the reference this submission comes back with.
+            </p>
+          </>
         ) : null}
 
         {isOn(answers, "talk", "times") ? (

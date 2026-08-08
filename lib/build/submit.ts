@@ -107,8 +107,16 @@ export function scopeDocument(answers: Answers) {
       : "- None added",
     /* Where the attachments are, said once rather than left to be worked out
        from a column of URLs. Everything from one desk is in one Cloudinary
-       folder, named after the reference this submission comes back with. */
-    ...(hasDeskRef() ? ["", "ATTACHMENTS", `- Folder: ${deskRef()}`] : []),
+       folder, named after the reference this submission comes back with.
+
+       On whether a file was actually taken, not on whether a reference exists.
+       The two used to be the same thing, because nothing but an upload ever
+       asked for one - and then the submit screen began showing the reference to
+       anybody booking a meeting against it, which minted one and made this
+       promise a folder with nothing in it. */
+    ...(answers.refs.some((ref) => ref.url)
+      ? ["", "ATTACHMENTS", `- Folder: ${deskRef()}`]
+      : []),
   ];
 
   return parts.filter((part) => part !== "").join("\n");

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import {
   CalendarDays,
   Check,
@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { CutPanel } from "@/components/layout/cut-panel";
+import { collect, drop } from "@/lib/build/handoff";
 import { cn } from "@/lib/utils";
 
 import { Calendar } from "./calendar";
@@ -70,22 +71,52 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
     getReaderOnServer,
   );
 
-  const [at, setAt] = useState(0);
-  const [meetingKey, setMeetingKey] = useState<string | null>(null);
-  /* The length is the visitor's to set. It arrives already chosen when they
-     came from the scoping run, where the same question was asked. */
-  const [minutes, setMinutes] = useState<number>(() =>
-    wanted && LENGTHS.includes(wanted) ? wanted : 30,
+  /* What the scoping run handed over, if this reader came from it.
+
+     Read during render rather than in an effect, and once. It is an opening
+     position for four pieces of state, and state that opens on a value has to
+     have that value before its first render - set afterwards, the flow would
+     draw its first question, then jump.
+
+     Reading `sessionStorage` here is safe for exactly one reason: this
+     component renders `Waiting` until the reader's own clock and zone have
+     arrived, so nothing that depends on this is in the markup being hydrated
+     and there is nothing for it to disagree with. */
+  const handoff = useMemo(
+    () => (typeof window === "undefined" ? null : collect()),
+    [],
   );
-  /* Opened on the first day that can actually be booked, so the times are
-     there to look at rather than behind a click. Not today: today is inside the
-     two clear days we ask for, and offering it would be offering something we
-     cannot give. */
+
+  /* Whether the handoff names a meeting we actually offer. Everything that
+     follows hangs off it, including whether the first question is worth
+     asking. */
+  const carried = handoff && findMeeting(handoff.about) ? handoff : null;
+
+  /* Straight to the calendar where the run has already said what this is
+     about. The first question is the one thing this reader has answered. */
+  const [at, setAt] = useState(() => (carried ? 1 : 0));
+  const [meetingKey, setMeetingKey] = useState<string | null>(
+    () => carried?.about ?? null,
+  );
+  /* The length is the visitor's to set. It arrives already chosen when they
+     came from the scoping run, where the same question was asked - by the
+     handoff where there is one, and by the address otherwise. */
+  const [minutes, setMinutes] = useState<number>(() => {
+    const want = carried?.minutes ?? wanted;
+    return want && LENGTHS.includes(want) ? want : 30;
+  });
   const [dayKeyChosen, setDayKey] = useState<string | null>(() =>
     dayKey(firstBookable()),
   );
   const [slotAt, setSlotAt] = useState<number | null>(null);
-  const [details, setDetails] = useState<Details>(EMPTY);
+  /* Their name and their email address, where the run already has them. Asking
+     twice for something somebody typed a minute ago is the clearest sign that
+     two screens are not talking to each other. */
+  const [details, setDetails] = useState<Details>(() =>
+    carried
+      ? { name: carried.name ?? "", email: carried.email ?? "", notes: "" }
+      : EMPTY,
+  );
   const [showErrors, setShowErrors] = useState(false);
   const [inOfficeZone, setInOfficeZone] = useState(false);
   const [done, setDone] = useState(false);
@@ -171,12 +202,19 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
     setAt((was) => Math.min(was + 1, STEPS.length - 1));
   }
 
+  /* Back to the beginning, and the beginning is where this flow opened rather
+     than an empty one. Somebody booking a second time about the same scoping
+     request should not have to tell us their name again to do it. */
   function restart() {
-    setAt(0);
-    setMeetingKey(null);
-    setDayKey(null);
+    setAt(carried ? 1 : 0);
+    setMeetingKey(carried?.about ?? null);
+    setDayKey(carried ? dayKey(firstBookable()) : null);
     setSlotAt(null);
-    setDetails(EMPTY);
+    setDetails(
+      carried
+        ? { name: carried.name ?? "", email: carried.email ?? "", notes: "" }
+        : EMPTY,
+    );
     setShowErrors(false);
     setDone(false);
     setProblem(null);
@@ -209,6 +247,10 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
           name: details.name.trim(),
           email: details.email.trim(),
           notes: details.notes.trim(),
+          /* What this meeting is about, where there is one. It goes on the
+             event and into the confirmation, so the invitation in somebody's
+             diary names the submission rather than standing on its own. */
+          ref: carried?.ref,
         }),
       });
 
@@ -234,6 +276,9 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
 
       setMeet(typeof body.meet === "string" ? body.meet : null);
       setDone(true);
+      /* The handover is spent. Left behind, the next booking made in this tab
+         would attach itself to a submission it has nothing to do with. */
+      drop();
       diary.again();
     } catch {
       setProblem(
@@ -282,9 +327,26 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
         </h1>
 
         <p className="mx-auto mt-4 max-w-[68ch] text-[15px] leading-[1.6] text-quiet">
-          Four questions, nothing to prepare, and real availability - so a time
-          you can pick is a time you can have.
+          {carried
+            ? "Set to go through the scope you have just sent us. Pick a time and the rest is already filled in."
+            : "Four questions, nothing to prepare, and real availability - so a time you can pick is a time you can have."}
         </p>
+
+        {/* Which submission this is about, said on every screen.
+
+            Somebody who came here from the scoping run has to be able to see
+            that the two are the same piece of work - otherwise this is a
+            booking page they happen to have been sent to, and the reference on
+            their receipt and the reference on their invitation appear to be
+            about different things. */}
+        {carried ? (
+          <p className="mx-auto mt-3 inline-flex items-center gap-2 rounded-pill bg-canvas px-3.5 py-1.5 text-[12px] text-quiet">
+            Against your scoping request
+            <b className="font-mono text-[11.5px] font-bold text-ink">
+              {carried.ref}
+            </b>
+          </p>
+        ) : null}
       </div>
 
       {/* The surface, filling what the head leaves - the landing page's own

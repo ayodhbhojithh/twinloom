@@ -155,6 +155,7 @@ export function bookingConfirmation({
   when,
   zone,
   meet,
+  ref,
 }: {
   name: string;
   meeting: string;
@@ -163,6 +164,14 @@ export function bookingConfirmation({
   when: string;
   zone: string;
   meet: string | null;
+  /**
+   * The scoping request this meeting is about, where it came from one.
+   *
+   * The same string the receipt for that request quoted, so the two messages
+   * are visibly about one piece of work rather than two things that happen to
+   * have arrived from the same company.
+   */
+  ref?: string | null;
 }): Message {
   const body = `
     ${kicker("Booked")}
@@ -176,6 +185,17 @@ export function bookingConfirmation({
     ${plate(meeting, `${when} · ${zone}`)}
 
     ${p(`${minutes} minutes. Nothing to prepare and nothing to bring.`, 12)}
+
+    ${
+      ref
+        ? p(
+            `This is about your scoping request <b style="color:${INK};font-weight:600">${esc(
+              ref,
+            )}</b>. We will have read it before we speak.`,
+            12,
+          )
+        : ""
+    }
 
     ${
       meet
