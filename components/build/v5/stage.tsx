@@ -32,6 +32,7 @@ export function Stage({
   foot,
   scrollKey,
   tone = "canvas",
+  fit,
   className,
   children,
 }: {
@@ -61,10 +62,21 @@ export function Stage({
    * from the canvas behind it.
    */
   tone?: "canvas" | "field";
+  /**
+   * Hold to what is left of the screen, and scroll the question inside.
+   *
+   * The surface stops growing past the window and the answers scroll within
+   * it, so the rail above and the way out below stay where they are put and
+   * the page itself does not move. The three cuts, the plate in the notch and
+   * the foot on the floor are all outside the scrolling part - what moves is
+   * the question and nothing else.
+   */
+  fit?: boolean;
   className?: string;
   children: React.ReactNode;
 }) {
   const box = useRef<HTMLDivElement>(null);
+  const roll = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
 
   useEffect(() => {
@@ -90,6 +102,11 @@ export function Stage({
   const landed = useRef(false);
 
   useEffect(() => {
+    /* Back to the top of the question, first. What the surface shows has
+       changed, and a scrolling surface left where the last step ended opens
+       the new one halfway down it. */
+    if (roll.current) roll.current.scrollTop = 0;
+
     if (!landed.current) {
       landed.current = true;
       return;
@@ -106,12 +123,16 @@ export function Stage({
         ),
       ) || 53;
 
-    /* And the rail, where there is one. It is sticky under the header, so it
-       is the second thing standing between the top of the window and the first
-       line of a step - scrolling to clear only the header put the question's
-       heading behind the cards. Measured rather than declared: the rail's
-       height is its cards plus its own label row, and all three have changed
-       more than once. */
+    /* And the rail, where there is one.
+
+       Not because it covers anything - it moves with the surface rather than
+       staying put - but because the two are one block and bringing the surface
+       to the top of the window would take the cards off it. Leaving room for
+       the rail lands the pair together, with the rail under the header and the
+       question under the rail.
+
+       Measured rather than declared: the rail's height is its cards plus its
+       own label row, and all three have changed size more than once. */
     const rail =
       document
         .querySelector<HTMLElement>("[data-step-rail]")
@@ -200,7 +221,22 @@ export function Stage({
     : "62ch";
 
   return (
-    <div ref={box} className={cn("relative flex flex-col", className)}>
+    <div
+      ref={box}
+      className={cn("relative flex flex-col", className)}
+      style={
+        fit
+          ? {
+              /* What the window has left once the header and the rail stuck
+                 under it are out of it. Worked out once, in the stylesheet,
+                 because the floor in `StageStep` has to be held to the same
+                 number - `min-height` beats `max-height`, so a floor written
+                 independently of this would quietly win on a short screen. */
+              maxHeight: "var(--stage-room)",
+            }
+          : undefined
+      }
+    >
       {/* The ground. Nothing but a shape: it carries no content, so clipping
           it costs nothing and the words above it stay whole. */}
       <div
@@ -251,7 +287,11 @@ export function Stage({
           empty room is shared above and below instead of all falling to the
           bottom, and the question sits where the eye already is. */}
       <div
-        className="relative z-10 flex flex-1 flex-col justify-center"
+        /* `min-h-0` is what makes the scroll happen at all. A flex item's
+           floor is its content, so without it the column refuses to shrink
+           below the height of the question, the surface grows past its own
+           maximum, and the overflow inside never has anything to overflow. */
+        className="relative z-10 flex min-h-0 flex-1 flex-col justify-center"
         style={{
           /* Under the notch, not a whole band under it. The bar is only as
              deep as its own arcs, and on a wide surface it leaves most of the
@@ -303,11 +343,32 @@ export function Stage({
       >
         {foot ? (
           <>
-            {/* `my-auto` rather than the column's `justify-center`: with two
+            {/* The question, and the only thing on the surface that moves.
+
+                `my-auto` rather than the column's `justify-center`: with two
                 things in the column, centring the column centres the pair and
                 the foot comes up with it. This shares the leftover room above
-                and below the question alone. */}
-            <div className="my-auto w-full">{children}</div>
+                and below the question alone.
+
+                Scrolling, the inner wrapper carries `min-h-full` and centres:
+                a short question still sits in the middle of the surface rather
+                than against the top of a box it does not fill, and a long one
+                simply runs past it. */}
+            <div
+              ref={roll}
+              className={cn(
+                "my-auto w-full",
+                fit && "quiet-scroll min-h-0 flex-1 overflow-y-auto",
+              )}
+            >
+              {fit ? (
+                <div className="flex min-h-full flex-col justify-center">
+                  {children}
+                </div>
+              ) : (
+                children
+              )}
+            </div>
 
             {/* Held to the span between the cuts. A foot wider than that runs
                 under one of them at the width where the cut is largest, and a
@@ -330,6 +391,15 @@ export function Stage({
               {foot}
             </div>
           </>
+        ) : fit ? (
+          <div
+            ref={roll}
+            className="quiet-scroll min-h-0 w-full flex-1 overflow-y-auto"
+          >
+            <div className="flex min-h-full flex-col justify-center">
+              {children}
+            </div>
+          </div>
         ) : (
           children
         )}

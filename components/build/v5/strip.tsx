@@ -75,6 +75,7 @@ export function StepStrip({
   answers: Answers;
   onGo: (at: number) => void;
 }) {
+  const rail = useRef<HTMLElement>(null);
   const wrap = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const cards = useRef<(HTMLDivElement | null)[]>([]);
@@ -125,6 +126,35 @@ export function StepStrip({
     };
   }, [step]);
 
+  /* How tall the rail is, published to the page.
+
+     The working surface holds itself to what is left of the screen once the
+     header and this are out of it, and this is the only thing that knows how
+     tall it is: the cards, the label row above them and the padding round both
+     have all changed size more than once. Written to the root element rather
+     than passed down, because the surface is not a descendant of the rail and
+     a number that travels through four components is a number that goes
+     stale in one of them. */
+  useEffect(() => {
+    const node = rail.current;
+    if (!node) return;
+
+    const publish = () =>
+      document.documentElement.style.setProperty(
+        "--rail-height",
+        `${Math.round(node.getBoundingClientRect().height)}px`,
+      );
+
+    publish();
+    const watcher = new ResizeObserver(publish);
+    watcher.observe(node);
+
+    return () => {
+      watcher.disconnect();
+      document.documentElement.style.removeProperty("--rail-height");
+    };
+  }, []);
+
   /* Nothing slides on arrival. Being taken somewhere is a response to having
      done something, and landing on the page is not that. */
   useEffect(() => {
@@ -136,27 +166,22 @@ export function StepStrip({
     PHASES.find(([key]) => key === phase)?.[1] ?? "";
 
   return (
-    /* Stuck under the header while the step scrolls past it.
+    /* Not sticky, and that is the point.
 
-       A step can be far longer than a screen - the industry list alone is
-       fifty-five rows - and the rail scrolled away with the top of it, so from
-       halfway down a long question there was no way to see which step you were
-       on or to leave for another one without scrolling back up for the
-       switcher. It is the switcher: it has to be where the switching happens.
+       It was, for a while: a step could be far longer than a screen and the
+       rail scrolled away with the top of it, so from halfway down a long
+       question there was no way to see which step you were on. But sticking it
+       split the pair - the rail held still while the surface underneath slid
+       up behind it, and the first line of every question was cut off by the
+       bottom edge of the cards.
 
-       `bg-canvas`, not white. The page is the tinted one and the surfaces are
-       white, so a white band here would read as a second header rather than as
-       the page holding still.
-
-       `z-30` puts it over the working surface and under the site header, which
-       is `z-40`. The surface's own slots are `z-20` in the same stacking
-       context and come later in the document, so anything less would let a
-       step's toolbar paint straight through the cards. */
-    <section
-      aria-label="Steps"
-      data-step-rail
-      className="sticky top-(--nav-height) z-30 mb-7 bg-canvas pt-3"
-    >
+       The surface holds itself to the screen now and scrolls its own contents,
+       so the rail and the surface together are one screenful and there is
+       nothing for either to scroll behind. They move as one block or not at
+       all, which is what they always were: a switcher and the thing it
+       switches. `--stage-room` takes this rail's height out of the surface's
+       ceiling, so the two are sized to sit together. */
+    <section ref={rail} aria-label="Steps" data-step-rail className="mb-7">
       <div className="mb-3 flex items-center justify-between gap-4">
         <p className="font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase">
           {STEPS.length} steps · leave any of them alone · the one you are on
