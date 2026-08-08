@@ -46,12 +46,10 @@ export function StageStep({
   return (
     <Stage
       scrollKey={`${step.k}:${scrollKey ?? ""}`}
-      /* The surface holds to the screen and the question scrolls inside it,
-         so the rail above it and the way out below it never leave. */
-      fit
-      /* The floor the cuts need, held under the ceiling the fit sets. Both
-         numbers and the reason they are one rule are in `.stage-floor`. */
-      className="stage-floor w-full"
+      /* A floor the cuts need, sized to the screen. 540 is most of a phone
+         before anything has been asked, which put the first question below the
+         fold on the page the whole site points at. */
+      className="min-h-[420px] w-full sm:min-h-[540px]"
       toolbar={
         <Plate>
           <Disc label="Previous step" onClick={() => onGo(at - 1)} disabled={first}>

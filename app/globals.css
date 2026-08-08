@@ -158,26 +158,6 @@
 --------------------------------------------------------------------------- */
 :root {
   --stage: calc(100svh - var(--nav-height));
-
-  /* The same thing for the run-through's working surface, which has one more
-     thing standing above it: the step rail.
-
-     Taking the rail out of the surface's ceiling is what lets the two sit on
-     one screen together. That is why neither of them is sticky - they are one
-     block the height of the window, so there is nothing for either to scroll
-     behind and no way for the cards to cut the top off a question.
-
-     `--rail-height` is written to the root by the rail itself, because it is
-     the only thing that knows how tall it is - the cards, the label row above
-     them and the padding round both have all changed size. It falls back to
-     nothing, so a surface using this outside the run-through simply gets the
-     screen less the header.
-
-     One definition, because two things read it and they have to agree: the
-     surface's ceiling, and the floor it is not allowed to push past. */
-  --stage-room: calc(
-    100svh - var(--nav-height) - var(--rail-height, 0px) - 30px
-  );
 }
 
 /* ---------------------------------------------------------------------------
@@ -494,34 +474,6 @@
     width: 0;
     height: 0;
     display: none;
-  }
-
-  /* The working surface's floor, held under its own ceiling.
-
-     A floor the cuts need: three of them are taken out of the edges, and a
-     surface shorter than about four hundred is more cut than card. 540 from
-     `sm` up is most of a phone before anything has been asked, which is what
-     keeps the first question above the fold on the page the whole site points
-     at.
-
-     Both are held under `--stage-room` with `min()`, because `min-height`
-     beats `max-height` in CSS: on a short window - a laptop with a lot of
-     chrome, a phone turned sideways - a fixed floor would push the surface
-     back past the screen and set the page scrolling again, which is the one
-     thing the surface holding to the screen is for.
-
-     Written here rather than as two arbitrary classes. A responsive floor
-     needs a breakpoint so it cannot be an inline style, and `min()` inside an
-     arbitrary value is exactly the shape that has failed to reach the
-     stylesheet on this project before. */
-  .stage-floor {
-    min-height: min(420px, var(--stage-room));
-  }
-
-  @media (min-width: 40rem) {
-    .stage-floor {
-      min-height: min(540px, var(--stage-room));
-    }
   }
 
   /* ---------------------------------------------------------------------------

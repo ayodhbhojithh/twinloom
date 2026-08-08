@@ -144,7 +144,7 @@ export function BuildFlow() {
         <>
           <StepStrip step={step} answers={answers} onGo={goStep} />
 
-          {/* One column. The running answer is a drawer off the left edge now
+          {/* One column. The running answer is a drawer off the edge now
               rather than a column beside the question, so a step has the whole
               surface and the site is still one press away from every one of
               them. */}
