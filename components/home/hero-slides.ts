@@ -13,14 +13,14 @@ import type { Project } from "./projects";
    fields. Only the list is separate - one type, two lists, and the type is the
    thing that keeps them interchangeable if a slide ever is a project.
 
-   Three, and each has artwork of its own. There were five and one of them was a
-   film; the film has gone, and so have the two slides that were pointing at
-   `/work-shop.png` and `/work-trade.png` - pictures made for another part of the
-   site and borrowed to make the run longer. A front door padded with the wrong
-   pictures is worse than a short one.
+   Three slides, one of which has a picture. The other two carry an empty
+   `image` on purpose: they are waiting for artwork made for this card, and a
+   slide borrowing a picture from elsewhere on the site looks finished when it is
+   not. Empty, the card shows the slide's tone and nothing else, so which two are
+   still to come is obvious at a glance rather than something to remember.
 
-   They are here to be replaced: swap an `image`, `alt` and `tone` and nothing
-   outside this file has to know.
+   To fill one: put a file in `image`, describe it in `alt`, and read `tone` off
+   that file. Nothing outside this list has to know.
 --------------------------------------------------------------------------- */
 
 export const HERO_SLIDES: readonly Project[] = [
@@ -36,40 +36,53 @@ export const HERO_SLIDES: readonly Project[] = [
       { term: "Built in", value: "6 weeks" },
       { term: "Visitors", value: "Shoppers and stockists" },
     ],
-    image: "/projects/clotting.png",
-    alt: "A clothing shop page open on a product.",
+    image: "/work-shop.png",
+    alt: "A laptop open on a shop page, among floating shapes.",
+    /* Read off the artwork rather than matched by eye: the average of the file,
+       sampled every eighth pixel. */
+    tone: "#5a798f",
+  },
+
+  /* Two waiting for their artwork.
+
+     `image` is empty rather than pointing at something that will do. A slide
+     borrowing a picture from elsewhere on the site looks finished and is not,
+     and the one made for this card would then have to be found among four that
+     already look like they belong. Empty, the card shows the tone and nothing
+     else, and it is obvious at a glance which two are still to come.
+
+     Everything but the picture is real, because the panel that opens from the
+     corner reads these fields and an empty panel is a broken one. */
+  {
+    id: "hero-2",
+    name: "The second piece",
+    kind: "To come",
+    year: "2026",
+    summary:
+      "This slide is waiting for its artwork. Everything else about it is in place: put a picture in `image`, describe it in `alt`, and read the tone off the file.",
+    facts: [
+      { term: "Artwork", value: "Awaited" },
+      { term: "Copy", value: "Placeholder" },
+      { term: "Shows", value: "Its tone only" },
+    ],
+    image: "",
+    alt: "",
     tone: "#e9ecf1",
   },
   {
     id: "hero-3",
-    name: "A clinic people trust before they call",
-    kind: "Healthcare",
-    year: "2025",
-    summary:
-      "Written for somebody worried and reading at eleven at night: what is treated, who by, what it costs and what happens at an appointment - said plainly, with the regulated claims reviewed rather than guessed.",
-    facts: [
-      { term: "Pages", value: "22" },
-      { term: "Built in", value: "8 weeks" },
-      { term: "Visitors", value: "Patients and referrers" },
-    ],
-    image: "/projects/healthcare.png",
-    alt: "A clinic page open on a treatment.",
-    tone: "#e8ebf0",
-  },
-  {
-    id: "hero-4",
-    name: "A delivery and pickup app",
-    kind: "Ordering",
+    name: "The third piece",
+    kind: "To come",
     year: "2026",
     summary:
-      "One order journey that knows which it is. Delivery asks for an address and a window; pickup asks for a time and a name - and the kitchen sees the same order either way, in the order it has to be made.",
+      "This slide is waiting for its artwork. Everything else about it is in place: put a picture in `image`, describe it in `alt`, and read the tone off the file.",
     facts: [
-      { term: "Screens", value: "18" },
-      { term: "Built in", value: "9 weeks" },
-      { term: "Visitors", value: "Customers and kitchen" },
+      { term: "Artwork", value: "Awaited" },
+      { term: "Copy", value: "Placeholder" },
+      { term: "Shows", value: "Its tone only" },
     ],
-    image: "/projects/delivery.png",
-    alt: "An ordering app on a phone, mid checkout.",
-    tone: "#eaedf1",
+    image: "",
+    alt: "",
+    tone: "#e2e6ec",
   },
 ];

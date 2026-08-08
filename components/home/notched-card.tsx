@@ -337,11 +337,11 @@ export function NotchedCard({ className }: { className?: string }) {
           dissolve, and at nearly a second it reads as the card turning rather
           than as a slide changing.
 
-          Where the project has a film, the film is what plays. The still stays
-          as its poster, so the card is never empty while the file arrives, and
-          `muted`, `loop` and `playsInline` are all load-bearing: a browser will
-          not autoplay anything that can make a noise, and without `playsInline`
-          a phone throws it into the system fullscreen player. */}
+          A slide with no picture draws its tone and nothing else. Two of the
+          three are waiting for artwork, and `image` is empty on them rather than
+          borrowed from elsewhere on the site - so the card has to be able to be
+          a colour. Guarded rather than left to `next/image`, which is handed an
+          empty `src` otherwise and throws. */}
       <AnimatePresence initial={false}>
         <motion.div
           key={shown.id}
@@ -360,15 +360,17 @@ export function NotchedCard({ className }: { className?: string }) {
             clipPath: path ? `path("${path}")` : undefined,
           }}
         >
-          <Image
-            src={shown.image}
-            alt={shown.alt}
-            fill
-            quality={100}
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
+          {shown.image ? (
+            <Image
+              src={shown.image}
+              alt={shown.alt}
+              fill
+              quality={100}
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
+          ) : null}
         </motion.div>
       </AnimatePresence>
 
@@ -415,14 +417,18 @@ export function NotchedCard({ className }: { className?: string }) {
           className="artwork block size-full overflow-hidden rounded-[18px] transition-transform duration-300 group-hover:-translate-y-1"
           style={{ backgroundColor: next.tone }}
         >
-          <Image
-            src={next.image}
-            alt=""
-            fill
-            quality={100}
-            sizes="200px"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-          />
+          {/* The same for the thumbnail in the bite: a slide with no artwork
+              shows the colour it will arrive on. */}
+          {next.image ? (
+            <Image
+              src={next.image}
+              alt=""
+              fill
+              quality={100}
+              sizes="200px"
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+            />
+          ) : null}
         </span>
       </button>
 

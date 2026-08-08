@@ -103,15 +103,23 @@ export function ProjectPanel({
                 {/* `fill` because the panel's half is sized by the grid, not by
                     the picture, and `cover` because a scope illustration reads
                     from its middle. `sizes` keeps a 3360px master from being
-                    fetched to fill a phone. */}
-                <Image
-                  src={project.image}
-                  alt={project.alt}
-                  fill
-                  quality={100}
-                  sizes="(max-width: 1024px) 100vw, 55vw"
-                  className="object-cover"
-                />
+                    fetched to fill a phone.
+
+                    Guarded, because this panel opens from the landing card as
+                    well as from the work, and two of that card's three slides
+                    are waiting for artwork. Their `image` is empty on purpose;
+                    handed an empty `src`, `next/image` throws rather than
+                    drawing nothing. The tone behind it is what shows. */}
+                {project.image ? (
+                  <Image
+                    src={project.image}
+                    alt={project.alt}
+                    fill
+                    quality={100}
+                    sizes="(max-width: 1024px) 100vw, 55vw"
+                    className="object-cover"
+                  />
+                ) : null}
               </motion.div>
 
               <div className="quiet-scroll flex min-h-0 flex-col overflow-y-auto p-6 sm:p-9 lg:p-12">
