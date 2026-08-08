@@ -420,13 +420,23 @@ export function NotchedCard({ className }: { className?: string }) {
           />
         ) : null}
 
+        {shown.view === "balls" ? (
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(260deg, var(--color-field) 0%, var(--color-field) 17%, color-mix(in oklab, var(--color-field) 62%, transparent) 32%, transparent 47%)",
+            }}
+          />
+        ) : null}
+
         {/* The second screen: the water, full bleed and nothing over it.
 
-            No claim, no buttons and no white gradient taking the left back. This
-            screen is a picture rather than a page with a picture behind it, and
-            a sentence set across the middle of it would make it a background.
-            What the card is asking for is already said on the first screen and
-            again in the header. */}
+            No claim, no buttons, and no white gradient taking part of the card
+            back. This screen is a picture rather than a page with a picture
+            behind it, and a sentence set across the middle of it would make it a
+            background. What the card is asking for is said on the first screen
+            and again in the header. */}
         {shown.view === "waves" ? (
           <GradientWaves
             className="absolute inset-0"

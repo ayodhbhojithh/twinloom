@@ -21,14 +21,17 @@ import type { Project } from "./projects";
    The first is the wave: a horizon of dots with a claim set over it and the two
    ways in underneath.
 
-   The second is water: a raymarched swell that fills the card, with not a word
-   on it. The screens either side of it are made of type, which is exactly why
-   this one is not - a card that says something on all three of its faces is a
-   card nobody turns twice.
+   The second is water: a raymarched swell filling the card. The third is a
+   field of glass beads that drift and get shoved around by the cursor. Neither
+   carries a word.
 
-   The third is a pit of glass beads that fall, pile up and get shoved around by
-   the cursor. Also wordless, and the one screen of the three that answers back:
-   the first is read, the second is watched, and this one is played with.
+   That is the arrangement rather than an omission. The first screen makes the
+   offer and carries both ways in; a card that says something on all three of its
+   faces is a card nobody turns twice, and the two that follow are there to be
+   looked at. They still carry the fields a `Project` needs, because the panel
+   that opens from the corner disc reads those and an empty panel is a broken one
+   - what they do not carry is a `claim` or a `lead`, so the card sets type
+   nowhere.
 --------------------------------------------------------------------------- */
 
 /**
@@ -98,31 +101,33 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
   {
     id: "hero-2",
     view: "waves",
-    name: "The swell",
-    kind: "The card",
+    name: "Two threads, woven",
+    kind: "What we are",
     year: "2026",
     summary:
-      "A surface with nothing written on it. The screen before it makes the offer and the one after it is still being designed; this one is here to be looked at.",
+      "The site people see and the software behind it are one build, not two suppliers who blame each other. One contract, one invoice, and the same people to ask either way.",
     facts: [
-      { term: "Words on it", value: "None" },
-      { term: "Drawn", value: "Every frame, on the card" },
+      { term: "Threads", value: "Two" },
+      { term: "Contracts", value: "One" },
+      { term: "People to ask", value: "The same ones" },
     ],
     image: "",
     alt: "",
     tone: "#ffffff",
   },
-  /* The third: the pit. No words on this one either. */
+  /* The third: how the work is agreed, over the pit. */
   {
     id: "hero-3",
     view: "balls",
-    name: "The pit",
-    kind: "The card",
+    name: "Written down first",
+    kind: "How we work",
     year: "2026",
     summary:
-      "A box of glass beads that fall, pile up and get shoved out of the way by the cursor. The one screen of the three that answers back.",
+      "You get the scope in your own words, with every assumption named, before anything is agreed. If it is not in there, it is not in the price.",
     facts: [
-      { term: "Words on it", value: "None" },
-      { term: "Answers back", value: "To the cursor" },
+      { term: "Written first", value: "Always" },
+      { term: "Assumptions", value: "Named, not buried" },
+      { term: "Not in the scope", value: "Not in the price" },
     ],
     image: "",
     alt: "",
