@@ -430,26 +430,26 @@ export function NotchedCard({ className }: { className?: string }) {
         {shown.view === "waves" ? (
           <GradientWaves
             className="absolute inset-0"
-            horizonColor="#ffffff"
-            waveColor="#2a98fe"
-            crestColor="#06dbaf"
-            speed={0.34}
-            amplitude={2.5}
-            waveScale={0.6}
+            horizonColor="#00b4e3"
+            waveColor="#0087ff"
+            crestColor="#0098ff"
+            speed={0.5}
+            amplitude={2.05}
+            waveScale={0.85}
             waveRatio={0.9}
             swell={35}
-            turbulence={20}
+            turbulence={20.5}
             tilt={1.11}
             zoom={1}
             height={5.5}
             fogDepth={15}
             detail="medium"
-            brightness={1}
+            brightness={0.5}
             opacity={1}
             mouseInteraction
             parallaxStrength={0.5}
             grain
-            grainIntensity={0.04}
+            grainIntensity={0.05}
           />
         ) : null}
 
