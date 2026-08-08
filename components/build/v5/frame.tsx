@@ -143,7 +143,7 @@ export function StageStep({
             <button
               type="button"
               onClick={() => onGo(STEPS.length - 1)}
-              className="group flex cursor-pointer items-center gap-2 rounded-pill bg-canvas px-4 py-2 text-[13px] font-semibold text-body transition-colors hover:bg-hair hover:text-ink"
+              className="group flex cursor-pointer items-center gap-2 rounded-pill bg-ink px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-85"
             >
               Send what you have so far
               <ArrowUpRight
