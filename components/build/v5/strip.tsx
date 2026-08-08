@@ -136,7 +136,27 @@ export function StepStrip({
     PHASES.find(([key]) => key === phase)?.[1] ?? "";
 
   return (
-    <section aria-label="Steps" className="mb-7">
+    /* Stuck under the header while the step scrolls past it.
+
+       A step can be far longer than a screen - the industry list alone is
+       fifty-five rows - and the rail scrolled away with the top of it, so from
+       halfway down a long question there was no way to see which step you were
+       on or to leave for another one without scrolling back up for the
+       switcher. It is the switcher: it has to be where the switching happens.
+
+       `bg-canvas`, not white. The page is the tinted one and the surfaces are
+       white, so a white band here would read as a second header rather than as
+       the page holding still.
+
+       `z-30` puts it over the working surface and under the site header, which
+       is `z-40`. The surface's own slots are `z-20` in the same stacking
+       context and come later in the document, so anything less would let a
+       step's toolbar paint straight through the cards. */
+    <section
+      aria-label="Steps"
+      data-step-rail
+      className="sticky top-(--nav-height) z-30 mb-7 bg-canvas pt-3"
+    >
       <div className="mb-3 flex items-center justify-between gap-4">
         <p className="font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase">
           {STEPS.length} steps · leave any of them alone · the one you are on

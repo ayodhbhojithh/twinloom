@@ -106,10 +106,23 @@ export function Stage({
         ),
       ) || 53;
 
-    if (window.scrollY <= top - header - 24) return;
+    /* And the rail, where there is one. It is sticky under the header, so it
+       is the second thing standing between the top of the window and the first
+       line of a step - scrolling to clear only the header put the question's
+       heading behind the cards. Measured rather than declared: the rail's
+       height is its cards plus its own label row, and all three have changed
+       more than once. */
+    const rail =
+      document
+        .querySelector<HTMLElement>("[data-step-rail]")
+        ?.getBoundingClientRect().height ?? 0;
+
+    const clear = header + rail;
+
+    if (window.scrollY <= top - clear - 24) return;
 
     window.scrollTo({
-      top: Math.max(0, top - header - 16),
+      top: Math.max(0, top - clear - 16),
       behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
         ? "auto"
         : "smooth",
