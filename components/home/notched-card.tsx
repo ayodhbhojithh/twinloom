@@ -15,6 +15,7 @@ import {
 import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
+import { LoomMark } from "./loom-mark";
 import { ProjectPanel } from "./project-panel";
 import { WaveDots } from "./wave-dots";
 import { HERO_SLIDES } from "./hero-slides";
@@ -416,6 +417,18 @@ export function NotchedCard({ className }: { className?: string }) {
                 "linear-gradient(100deg, var(--color-field) 0%, var(--color-field) 17%, color-mix(in oklab, var(--color-field) 62%, transparent) 32%, transparent 47%)",
             }}
           />
+        ) : null}
+
+        {/* The second screen: the mark, and nothing else on it.
+
+            No claim, no buttons, no gradient taking the left back. This screen
+            is a picture rather than a page with a picture behind it, and a
+            sentence set across the middle of it would make it a background.
+            What the card is asking for is already said on the first screen and
+            said again in the header, and a front door that asks three times is
+            a door somebody stops reading. */}
+        {shown.view === "mark" ? (
+          <LoomMark className="absolute inset-0" />
         ) : null}
       </div>
 

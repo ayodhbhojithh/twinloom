@@ -21,12 +21,17 @@ import type { Project } from "./projects";
    The first is the wave: a horizon of dots with a claim set over it and the two
    ways in underneath.
 
-   The other two are white and empty, and deliberately so. Both have had a design
-   in them - a drawing of the mark on one, the list of services on the other -
-   and both came out as the first screen wearing something else. They are left
-   clear until there is a reason for each to be its own screen, because a card
-   that turns to show a weaker version of what it has just shown is worse than a
-   card that turns to show nothing.
+   The second is the mark, and only the mark: a figure of eight in a glossy
+   thread with two balls carried round it and dotted haloes standing off each
+   lobe. Not a word on it. The screens before it and after it are made of type,
+   which is exactly why this one is not - a card that says something on all three
+   of its faces is a card nobody turns twice.
+
+   The third is white and empty, and deliberately so. It has had a design in it -
+   the list of services - and what that came out as was the first screen wearing
+   something else. It is left clear until there is a reason for it to be its own
+   screen, because a card that turns to show a weaker version of what it has just
+   shown is worse than a card that turns to show nothing.
 --------------------------------------------------------------------------- */
 
 /**
@@ -38,11 +43,12 @@ import type { Project } from "./projects";
  * here and a case there.
  *
  * `wave` is a claim over the dotted surface with the two ways in beneath it.
- * `blank` is a white card and nothing else - not a placeholder graphic and not a
- * greyed panel, because either of those is a design decision made in advance of
- * the design.
+ * `mark` is the figure of eight drawn large, with no type on it at all. `blank`
+ * is a white card and nothing else - not a placeholder graphic and not a greyed
+ * panel, because either of those is a design decision made in advance of the
+ * design.
  */
-export type SlideView = "wave" | "blank";
+export type SlideView = "wave" | "mark" | "blank";
 
 /**
  * A slide, which is a `Project` and a few more things.
@@ -86,21 +92,25 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     tone: "#ffffff",
   },
 
-  /* The second and third: white, and nothing in them yet.
+  /* The second: the mark, and no words on it.
 
-     They carry the fields a `Project` needs, because the panel that opens from
-     the corner disc reads those and an empty panel is a broken one. What they do
-     not carry is a `claim` or a `lead` - so there is nothing for the card to set
-     over them, and nothing written here that a design would have to be built
-     around later. */
+     No `claim` and no `lead`, which is not an omission - the card branches on
+     the view and this one draws type nowhere. What it still carries is what a
+     `Project` needs, because the panel that opens from the corner disc reads
+     those fields and an empty panel is a broken one. */
   {
     id: "hero-2",
-    view: "blank",
-    name: "The second screen",
-    kind: "In progress",
+    view: "mark",
+    name: "Two threads, woven",
+    kind: "The name",
     year: "2026",
-    summary: "This screen is being designed.",
-    facts: [],
+    summary:
+      "TwinLoom is two threads and what they make together: the site people see, and the software it stands on. One company, one contract, one invoice.",
+    facts: [
+      { term: "Threads", value: "Two" },
+      { term: "Contracts", value: "One" },
+      { term: "People to ask", value: "The same ones" },
+    ],
     image: "",
     alt: "",
     tone: "#ffffff",
