@@ -47,7 +47,8 @@
       "Bash(awk 'NR>=440 && NR<=500 && /@layer|@utility|^}/' app/globals.css)",
       "Bash(cd \"c:/Users/prave/Desktop/PROJECTS/very-good-websites\" && grep -c \"\" .next/dev/static/chunks/app_globals_css_1igg3k2._.single.css && grep -n \"stage-floor\\\\|stage-room\\\\|\\\\.sticky\" .next/dev/static/chunks/app_globals_css_1igg3k2._.single.css | head -10 && stat -c '%y' .next/dev/static/chunks/app_globals_css_1igg3k2._.single.css)",
       "Read(//c/Users/prave/Desktop/PROJECTS/very-good-websites/**)",
-      "Bash(grep -n \"{carried$\" -B 2 -A 4 components/book/booking-flow.tsx)"
+      "Bash(grep -n \"{carried$\" -B 2 -A 4 components/book/booking-flow.tsx)",
+      "Bash(grep -B 1 -A 4 'py-\\\\\\\\\\(--page-gutter\\\\\\\\\\)' .next/dev/static/chunks/*.css)"
     ]
   }
 }
