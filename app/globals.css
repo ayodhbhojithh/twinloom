@@ -549,6 +549,26 @@
   }
 
 
+  /* The same gradient as a fill, for something you press rather than read.
+
+     White on it. The colour is set here beside the fill rather than left to a
+     utility, so the two cannot be used apart: a gradient with no colour stated
+     inherits whatever it landed in, and on this ramp that is a coin toss.
+
+     Worth knowing where it stands: these are the mark's own two colours read off
+     the logo, and the teal end is light. White over the blue end is about 3.1 to
+     1 and over the teal end about 1.9, where 4.5 is the line for type this size.
+     If it ever needs to hold up rather than look right, the fix is one token -
+     end the ramp on a darker teal - and not a change to this rule. */
+  .thread-fill {
+    background-image: linear-gradient(
+      100deg,
+      var(--color-thread-blue),
+      var(--color-thread-teal)
+    );
+    color: #ffffff;
+  }
+
   .thread-text {
     background-image: linear-gradient(
       100deg,

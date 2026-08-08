@@ -499,7 +499,10 @@ export function NotchedCard({ className }: { className?: string }) {
       >
         <Link
           href={ROUTES.book}
-          className="group/way inline-flex flex-none items-center gap-1.5 rounded-pill bg-well px-3.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:bg-hair sm:gap-2 sm:px-4 sm:text-[13.5px]"
+          /* Opacity on hover, not a second background. A `background-color`
+             cannot show through a `background-image`, so the colour swap the
+             other quiet pills use would do nothing here at all. */
+          className="group/way thread-fill inline-flex flex-none items-center gap-1.5 rounded-pill px-3.5 text-[13px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 sm:gap-2 sm:px-4 sm:text-[13.5px]"
           style={{ height: CTA }}
         >
           Book a meeting
