@@ -522,15 +522,17 @@
      The moment anything is scrolled there is content under it instead, and white
      over whatever is passing is not a soft edge, it is a smear.
 
-     Switched by `--header-fade`, set inline on the header from the one piece of
-     state that knows. An attribute and a selector would do the same thing, but
-     a variable cannot be lost to specificity, to layer order, or to a rule that
-     failed to reach the stylesheet - and the whole point of this pass is that
-     there is nothing left to wonder about.
+     `--header-fade` is written straight onto the header by the scroll, and it is
+     a position rather than a state: one at the top, nought once twenty pixels
+     have gone by, and every value in between on the way. That is the whole fix
+     for the flick. It was a switch at four pixels with a transition trying to
+     smooth it over, which is two things fighting - the switch fires late, the
+     transition starts from wherever the last one was interrupted, and a scroll
+     that crosses the threshold repeatedly restarts it every time.
 
-     Faded rather than cut, because the thing it is doing is being soft, and a
-     soft edge that vanishes on the first pixel of scroll is a flicker at the top
-     of every page. */
+     Which is also why there is no transition here now. A property that already
+     changes every frame does not want one: it would only ever be chasing a value
+     that had already moved. */
   .header-fade::after {
     content: "";
     position: absolute;
@@ -539,7 +541,6 @@
     height: 8px;
     pointer-events: none;
     opacity: var(--header-fade, 1);
-    transition: opacity 180ms ease-out;
     background-image: linear-gradient(
       to bottom,
       var(--color-field),
@@ -547,11 +548,6 @@
     );
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .header-fade::after {
-      transition: none;
-    }
-  }
 
   .thread-text {
     background-image: linear-gradient(

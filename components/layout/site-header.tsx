@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -38,28 +38,49 @@ import { cn } from "@/lib/utils";
  * above it. There is no rail now, so the two have to meet exactly: one of them
  * is on at every width, and between them every page is always one press away.
  */
+/**
+ * How far the page travels while the fade goes out, in pixels.
+ *
+ * Long enough that the change is a fade rather than an event, short enough that
+ * it is over before anybody has read anything. Twenty is about one notch of a
+ * wheel.
+ */
+const FADE_OVER = 20;
+
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  /* Whether the page has moved at all.
+  /* The fade under the bar, tied to how far the page has gone.
 
-     The fade under the bar is only right while it is not covering anything. At
-     the top of a page there is nothing under the header but the ground, and the
-     fade softens white meeting grey; a pixel of scroll later there is content
-     under it, and a white wash over whatever is passing is a smear rather than a
-     soft edge.
+     It is only right while it is covering nothing. At the top of a page there is
+     nothing under the header but the ground, and the fade softens white meeting
+     grey; once anything is scrolled there is content under it, and white over
+     whatever is passing is a smear rather than a soft edge.
 
-     Four pixels rather than nought, so a page that rests a hair off the top -
-     which browsers do when they restore a position - does not open without it. */
-  const [scrolled, setScrolled] = useState(false);
+     A position, not a state. This was a boolean flipped at four pixels with a
+     CSS transition trying to smooth the flip, and the two fought: the switch
+     fires a frame late, the transition restarts from wherever it was
+     interrupted, and a scroll that crosses four pixels more than once restarts
+     it each time. What you see is a flick. Read as `1` at the top falling to
+     `0` by twenty pixels, there is no threshold to cross and nothing to animate:
+     the fade simply is wherever the page is.
+
+     Written onto the element rather than through state. It changes every frame
+     while the wheel is moving, and re-rendering a header sixty times a second to
+     carry one number is the wrong way to carry one number. */
+  const bar = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    const node = bar.current;
+    if (!node) return;
+
     let frame = 0;
 
     const settle = () => {
       frame = 0;
-      setScrolled(window.scrollY > 4);
+      const gone = Math.min(Math.max(window.scrollY, 0) / FADE_OVER, 1);
+      node.style.setProperty("--header-fade", String(1 - gone));
     };
 
     const again = () => {
@@ -68,9 +89,11 @@ export function SiteHeader() {
 
     settle();
     window.addEventListener("scroll", again, { passive: true });
+    window.addEventListener("resize", again);
 
     return () => {
       window.removeEventListener("scroll", again);
+      window.removeEventListener("resize", again);
       if (frame) cancelAnimationFrame(frame);
     };
   }, []);
@@ -86,10 +109,7 @@ export function SiteHeader() {
      rule by accident on a header that deliberately has none. A fade is that
      edge given to the page rather than drawn on it. */
   return (
-    <header
-      style={{ ["--header-fade" as string]: scrolled ? "0" : "1" }}
-      className="header-fade sticky top-0 z-40 bg-field"
-    >
+    <header ref={bar} className="header-fade sticky top-0 z-40 bg-field">
       <div className="page-frame flex items-center gap-4 py-2.5">
         <div className="flex min-w-0 flex-1 items-center">
           <Wordmark />
