@@ -446,7 +446,7 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
               onClick={() =>
                 carry({
                   ref: deskRef(),
-                  about: "scope",
+                  about: "requirements",
                   minutes: heldFor(answers),
                   name: answers.ask.name?.trim() || undefined,
                   email: answers.ask.email?.trim() || undefined,

@@ -328,7 +328,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
 
         <p className="mx-auto mt-4 max-w-[68ch] text-[15px] leading-[1.6] text-quiet">
           {carried
-            ? "Set to go through the scope you have just sent us. Pick a time and the rest is already filled in."
+            ? "Set to go through the requirements you have just sent us. Pick a time and the rest is already filled in."
             : "Four questions, nothing to prepare, and real availability - so a time you can pick is a time you can have."}
         </p>
 

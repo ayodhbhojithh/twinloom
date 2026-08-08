@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Check, Copy } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  Copy,
+  FileText,
+  ListOrdered,
+} from "lucide-react";
 
 import { ASK_PARTS, REF_KINDS } from "@/lib/build/v5";
 import { carry } from "@/lib/build/handoff";
@@ -77,6 +85,17 @@ export function QuickPane({
   answers: Answers;
   onCarryOn: () => void;
 }) {
+  /* Which way in, or neither yet.
+
+     The pane opened with both routes on it: a form, and under the form a band
+     offering the other way of filling the same form in. So somebody arriving was
+     shown the answer to a question they had not been asked, and had to scroll
+     past a screenful of the wrong route to find the right one.
+
+     There is no `full` here. Choosing the structured journey leaves this pane
+     for the run-through, which the flow above owns - so this only has to know
+     whether the choice has been made and whether it fell this way. */
+  const [route, setRoute] = useState<"choose" | "quick">("choose");
   const [kind, setKind] = useState<string>("note");
   const [files, setFiles] = useState<Attached[]>([]);
   /* Opened by pressing send with something still missing, and never closed
@@ -146,7 +165,15 @@ export function QuickPane({
        the reader back to the top of the surface rather than leaving them at
        the foot of a form looking at a button that has changed its label. */
     <Stage
-      scrollKey={answers.sent ? "sent" : asking ? "asking" : "quick"}
+      scrollKey={
+        answers.sent
+          ? "sent"
+          : route === "choose"
+            ? "choose"
+            : asking
+              ? "asking"
+              : "quick"
+      }
       className="min-h-[380px] w-full"
     >
       {/* The same column every step of the run-through gets.
@@ -172,15 +199,55 @@ export function QuickPane({
             onCarryOn();
           }}
         />
+      ) : route === "choose" ? (
+        <Choose onQuick={() => setRoute("quick")} onFull={onCarryOn} />
       ) : (
       <div className="mx-auto w-full max-w-[1320px]">
-        <div className="min-w-0">
-          <H>Say it in your own words.</H>
-          <Sub>
-            No questions, no order, no structure. Who you are, what you offer,
-            and how to get hold of you - it goes exactly as you typed it.
-          </Sub>
+        {/* Back to the two ways in. A route somebody can only leave by sending
+            is a route they were pushed down rather than chose. */}
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={() => setRoute("choose")}
+            className="inline-flex cursor-pointer items-center gap-2 font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase transition-colors hover:text-ink"
+          >
+            <ArrowLeft aria-hidden className="size-3.5" />
+            Both ways in
+          </button>
         </div>
+
+        {/* The first of the two, marked rather than titled.
+
+            Both routes used to be two buttons at the foot of one screen - "Send
+            it as a quick submission" and "Carry on through the questions" - so
+            the page was the quick one and the other was an afterthought beside
+            it. They are two ways of doing the same thing, and which is right
+            depends on how much prework somebody has done. That is a thing to
+            say, not a button to guess at.
+
+            A numbered pill rather than a second heading. The surface already
+            carries one heading centred over it, and a route that opens with a
+            heading of its own is a page inside a page. */}
+        <div className="mt-9 flex justify-center">
+          <span className="inline-flex items-center gap-2.5 rounded-pill bg-canvas py-1.5 pr-4 pl-1.5">
+            <span
+              aria-hidden
+              className="flex size-6 items-center justify-center rounded-pill bg-ink font-mono text-[10px] font-bold text-white tabular-nums"
+            >
+              01
+            </span>
+            <Kicker className="text-body">Quick submission</Kicker>
+          </span>
+        </div>
+
+        <p className="mx-auto mt-3.5 max-w-[54ch] text-center text-[15px] leading-[1.5] font-semibold text-ink">
+          Use this if you already know roughly what you want.
+        </p>
+
+        <p className="mx-auto mt-1.5 max-w-[62ch] text-center text-[13px] leading-[1.6] text-quiet">
+          No questions, no order, no structure. It goes exactly as you typed it,
+          with anything you want to show us attached to it.
+        </p>
 
         {/* `items-stretch`, not `items-start`.
 
@@ -384,17 +451,15 @@ export function QuickPane({
           </div>
         ) : null}
 
-        {/* The way out, under both columns and on their centre line.
+        {/* The send, under both columns and on their centre line.
 
             It sat under the left column because it is the next thing in the
-            flow after it, which put a pair of buttons and two lines of small
-            print against one edge of a surface whose heading is centred over
-            the whole of it. */}
+            flow after it, which put it against one edge of a surface whose
+            heading is centred over the whole of it. */}
         <div className="mt-8 min-w-0 text-center">
-          {/* What went wrong, or what is still needed, above the control
-              rather than after it has been pressed again. A button that
-              refuses without saying why is a button somebody presses four
-              times. */}
+          {/* What went wrong, or what is still needed, above the control rather
+              than after it has been pressed again. A button that refuses without
+              saying why is a button somebody presses four times. */}
           {answers.problem ? (
             <p
               role="alert"
@@ -404,36 +469,31 @@ export function QuickPane({
             </p>
           ) : asking && missing.length ? (
             <p className="mx-auto mb-5 max-w-[62ch] text-[13px] leading-[1.6] text-quiet">
-              Before this can go we need{" "}
-              {missing.join(", ").toLowerCase()}.
+              Before this can go we need {missing.join(", ").toLowerCase()}.
             </p>
           ) : null}
 
-          <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
+          {/* "Send", and nothing else on the line.
+
+              It read "Send it as a quick submission", which is the name of the
+              section it now stands in - so the button was repeating its own
+              heading, and the other route was sitting beside it as though it
+              were an equal way of pressing the same thing. */}
+          <div className="flex justify-center">
             <Pill
               tone="ink"
               arrow
-              className="justify-center sm:justify-start"
+              className="justify-center"
               disabled={answers.sending}
               onClick={send}
             >
-              {answers.sent
-                ? "Sent"
-                : answers.sending
-                  ? "Sending it"
-                  : "Send it as a quick submission"}
-            </Pill>
-            <Pill
-              className="justify-center sm:justify-start"
-              onClick={onCarryOn}
-            >
-              Carry on through the questions
+              {answers.sending ? "Sending it" : "Send"}
             </Pill>
           </div>
 
           <p className="mx-auto mt-4 max-w-[62ch] text-[12.5px] leading-[1.55] text-quiet">
-            Nothing is thrown away and nothing is final. It comes back as the
-            same written scope, and you can answer the rest at any point.
+            Nothing is thrown away and nothing is final. Once it has gone you can
+            still add to it, or book a time to talk it through.
           </p>
 
           {/* At the point of collection, not seven links down the footer. This
@@ -451,6 +511,7 @@ export function QuickPane({
             .
           </p>
         </div>
+
       </div>
       )}
     </Stage>
@@ -579,7 +640,7 @@ function Delivered({
             onClick={() =>
               carry({
                 ref: reference,
-                about: "scope",
+                about: "requirements",
                 minutes: 30,
                 name: answers.ask.name?.trim() || undefined,
                 email: answers.ask.email?.trim() || undefined,
@@ -601,8 +662,9 @@ function Delivered({
             Want to add more to your submission?
           </b>
           <p className="mt-2 flex-1 text-[12.5px] leading-[1.6] text-quiet">
-            Our detailed scoping guide adds to the same submission rather than
-            starting a second one. Nothing you have said is lost.
+            The structured scoping journey asks the ten questions and adds the
+            answers to this same submission rather than starting a second one.
+            Nothing you have said is lost.
           </p>
 
           <div className="mt-4 self-start">
@@ -613,5 +675,208 @@ function Delivered({
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * The two ways in, and nothing else.
+ *
+ * What opened here before was one of them with the other underneath it: a form,
+ * and below the form a band offering the other way of filling the same form in.
+ * Somebody arriving was given the answer to a question nobody had asked them,
+ * and had to scroll a screenful of the wrong route to reach the right one.
+ *
+ * So the choice comes first and it is the whole screen. Two doors, the same
+ * shape, and the only thing that separates them is which of the two it makes
+ * sense for you to walk through: one is for somebody who already knows what they
+ * want, the other for somebody who would rather be asked.
+ *
+ * The whole card presses. A card with a button in the corner of it is two
+ * targets for one decision, and the smaller of them is the one people aim at.
+ */
+function Choose({
+  onQuick,
+  onFull,
+}: {
+  onQuick: () => void;
+  onFull: () => void;
+}) {
+  return (
+    <div className="mx-auto w-full max-w-[1080px]">
+      <div className="min-w-0">
+        <H>Send us your requirements.</H>
+        <Sub>
+          Two ways in, and they end in the same place. Write it out yourself, or
+          let us ask the questions.
+        </Sub>
+      </div>
+
+      <div className="mt-9 grid gap-4 lg:grid-cols-2">
+        <Door
+          n="01"
+          kicker="Quick submission"
+          icon={FileText}
+          title="Write it out yourself."
+          note="Use this if you already know roughly what you want. One box, no questions and no order - it goes exactly as you typed it, with anything you want to show us attached."
+          facts={["One box", "Attach anything", "About two minutes"]}
+          go="Write it out"
+          onClick={onQuick}
+        />
+
+        <Door
+          ink
+          n="02"
+          kicker="Structured scoping journey"
+          icon={ListOrdered}
+          title="Let us ask the questions."
+          note="Use this if you would rather be asked. It starts with your organisation and industry, and the panel beside it shows the site your answers describe while you answer them."
+          facts={["10 steps", "Nothing compulsory", "Stop and send at any point"]}
+          go="Start with your organisation and industry"
+          onClick={onFull}
+        />
+      </div>
+
+      <p className="mx-auto mt-6 max-w-[64ch] text-center text-[12px] leading-[1.6] text-label">
+        Neither is the better answer and neither commits you to anything. Send
+        the quick one and the questions are still there afterwards, under the
+        same reference.
+      </p>
+    </div>
+  );
+}
+
+/**
+ * One of the two doors.
+ *
+ * One shape, two tones, and the tone is the design rather than decoration: the
+ * quick route is a blank sheet of paper and the structured one is the tool, so
+ * one is white and open and the other dark and led. Nobody has to be told which
+ * is which.
+ *
+ * The numeral is set large and faint behind the words, clipped by the corner it
+ * stands in, so it reads as a figure printed on the card rather than a label
+ * stuck to it. It says nothing the pill does not, which is why it can be that
+ * quiet.
+ */
+function Door({
+  n,
+  kicker,
+  icon: Icon,
+  title,
+  note,
+  facts,
+  go,
+  onClick,
+  ink,
+}: {
+  n: string;
+  kicker: string;
+  icon: typeof FileText;
+  title: string;
+  note: string;
+  facts: readonly string[];
+  go: string;
+  onClick: () => void;
+  ink?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "group/door relative flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-[24px] px-6 py-8 text-center transition-colors sm:px-8",
+        ink ? "bg-ink" : "bg-canvas hover:bg-canvas-firm",
+      )}
+    >
+      <span
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute -top-8 -left-3 font-mono text-[148px] leading-none font-bold tabular-nums select-none",
+          ink ? "text-white/6" : "text-ink/4",
+        )}
+      >
+        {n}
+      </span>
+
+      <span className="relative flex flex-col items-center">
+        <span
+          aria-hidden
+          className={cn(
+            "flex size-11 items-center justify-center rounded-pill",
+            ink ? "bg-white/10 text-white" : "bg-field text-ink",
+          )}
+        >
+          <Icon className="size-5" strokeWidth={2} />
+        </span>
+
+        <span
+          className={cn(
+            "mt-4 inline-flex items-center gap-2.5 rounded-pill py-1.5 pr-4 pl-1.5",
+            ink ? "bg-white/10" : "bg-field",
+          )}
+        >
+          <span
+            aria-hidden
+            className={cn(
+              "flex size-6 items-center justify-center rounded-pill font-mono text-[10px] font-bold tabular-nums",
+              ink ? "bg-white text-ink" : "bg-ink text-white",
+            )}
+          >
+            {n}
+          </span>
+          <Kicker className={ink ? "text-white/70" : "text-body"}>
+            {kicker}
+          </Kicker>
+        </span>
+
+        <b
+          className={cn(
+            "mt-5 block text-[clamp(20px,2.2vw,28px)] leading-[1.12] font-extrabold tracking-[-0.03em]",
+            ink ? "text-white" : "text-ink",
+          )}
+        >
+          {title}
+        </b>
+
+        <span
+          className={cn(
+            "mx-auto mt-3.5 block max-w-[46ch] text-[13px] leading-[1.65]",
+            ink ? "text-white/65" : "text-quiet",
+          )}
+        >
+          {note}
+        </span>
+
+        <span className="mt-6 flex flex-wrap justify-center gap-2">
+          {facts.map((fact) => (
+            <span
+              key={fact}
+              className={cn(
+                "rounded-pill px-3.5 py-1.5 text-[12px] font-semibold",
+                ink ? "bg-white/8 text-white/75" : "bg-field text-body",
+              )}
+            >
+              {fact}
+            </span>
+          ))}
+        </span>
+
+        {/* Drawn as a control, but it is not one: the card is the button, and a
+            real button inside it would be a second target for one decision. */}
+        <span
+          className={cn(
+            "mt-7 inline-flex items-center gap-2.5 rounded-pill px-5 py-2.5 text-[13.5px] font-semibold transition-opacity group-hover/door:opacity-90",
+            ink ? "bg-white text-ink" : "bg-ink text-white",
+          )}
+        >
+          {go}
+          <ArrowRight
+            aria-hidden
+            className="size-4 transition-transform group-hover/door:translate-x-0.5"
+            strokeWidth={2.4}
+          />
+        </span>
+      </span>
+    </button>
   );
 }

@@ -28,11 +28,17 @@ export const MEETINGS: readonly Meeting[] = [
     icon: Phone,
     tone: "bg-active/10 text-active",
   },
+  /* What both ways of sending a submission default to.
+
+     It was "Scope review - go through the scope we wrote for you", which is a
+     meeting that can only happen after we have written one. Every route that
+     lands here from the site arrives the other way round: they have just sent us
+     what they want, and the meeting is about that. */
   {
-    key: "scope",
-    name: "Scope review",
+    key: "requirements",
+    name: "Your requirements",
     minutes: 30,
-    note: "Go through the scope we wrote for you, line by line.",
+    note: "Go through what you have sent us, line by line.",
     icon: FileSearch,
     tone: "bg-amber/10 text-amber",
   },
