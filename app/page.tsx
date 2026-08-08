@@ -57,11 +57,18 @@ export default function LandingPage() {
       <section
         style={{
           ["--page-gutter" as string]: "clamp(16px, 2.2vw, 40px)",
-          /* Kept at or above the header's own fade, which is eight pixels of
-             white running out below the bar. Any tighter and the fade would be
-             lying over the top edge of the picture instead of over the ground,
-             which is the one thing it must not do. */
-          paddingTop: "clamp(8px, 0.55vw, 11px)",
+          /* Under the sides and the foot, but not by much.
+
+             It was taken down to eleven, which is the floor the header's own
+             fade sets - eight pixels of white running out below the bar, and any
+             tighter and the fade lies over the top edge of the card instead of
+             over the ground. Eleven cleared the fade and nothing else: the card
+             read as hung off the header rather than as standing in the window.
+
+             Around two thirds of the sides is where it sits. The top is the one
+             edge with something above it rather than the window, so it wants
+             less than the other three - but it wants some. */
+          paddingTop: "clamp(14px, 1.5vw, 28px)",
           /* A shade under the sides rather than exactly them.
 
              On paper this was already the gutter and so already equal to the
