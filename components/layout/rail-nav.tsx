@@ -148,6 +148,7 @@ function Row({
 }) {
   const here = pathname === page.href;
   const strip = size === "strip";
+  const menu = size === "menu";
   const Mark = MARKS[page.href];
 
   /* In the strip the words are gone, so the link is labelled for a screen
@@ -193,32 +194,52 @@ function Row({
       aria-current={here ? "page" : undefined}
       {...named}
       {...tipping}
+      /* The sheet indents with padding of its own, so a sub page only has to
+         step past the mark's column. The rail still hangs its marker in the
+         gutter and measures from there. */
       style={
-        strip ? undefined : { paddingInlineStart: HANG - 2 + (nested ? NEST : 0) }
+        strip
+          ? undefined
+          : menu
+            ? { paddingInlineStart: (nested ? NEST : 0) + 14 }
+            : { paddingInlineStart: HANG - 2 + (nested ? NEST : 0) }
       }
       className={cn(
         "flex items-center transition-colors",
-        strip
-          ? /* Centred in the strip, and the whole width of it, so the target is
-               the strip rather than the 20px drawing in the middle of it. */
-            "justify-center rounded-field py-2.5"
-          : "border-s-2 leading-[1.4]",
-        !strip && (size === "menu" ? "gap-2.5 py-2.5" : "gap-2.5 py-[7px]"),
+
+        /* Centred in the strip, and the whole width of it, so the target is the
+           strip rather than the 20px drawing in the middle of it. */
+        strip && "justify-center rounded-field py-2.5",
+
+        /* The sheet marks the page you are on by filling the row, not by a rule
+           down its leading edge. A two pixel bar beside a list is the house
+           style of every dashboard template there is, and it says the same thing
+           a filled row says while looking like it was chosen from a menu. Filled,
+           the row is also the target - the whole width of it presses, which is
+           what a thumb is aiming at. */
+        menu &&
+          cn(
+            "gap-3 rounded-[12px] pe-3 leading-[1.35]",
+            nested ? "py-2 text-[14.5px]" : "py-2.5 text-[15.5px]",
+            here
+              ? "bg-well font-semibold text-ink"
+              : "text-body hover:bg-canvas hover:text-ink",
+          ),
+
         !strip &&
-          (nested
-            ? size === "menu"
-              ? "text-[14.5px]"
-              : "text-[14px]"
-            : size === "menu"
-              ? "text-[15.5px]"
-              : "text-[15px]"),
-        here
-          ? strip
+          !menu &&
+          cn(
+            "gap-2.5 border-s-2 py-[7px] leading-[1.4]",
+            nested ? "text-[14px]" : "text-[15px]",
+            here
+              ? "border-ink font-semibold text-ink"
+              : "border-transparent text-body hover:text-ink",
+          ),
+
+        strip &&
+          (here
             ? "bg-well text-ink"
-            : "border-ink font-semibold text-ink"
-          : strip
-            ? "text-quiet hover:bg-well hover:text-ink"
-            : "border-transparent text-body hover:text-ink",
+            : "text-quiet hover:bg-well hover:text-ink"),
       )}
     >
       {/* The mark holds its column whether it has a drawing in it or not, so a
@@ -230,7 +251,12 @@ function Row({
           className="flex flex-none items-center justify-center"
           style={{ width: MARK, height: MARK }}
         >
-          {Mark ? <Mark className="size-[17px]" strokeWidth={1.9} /> : null}
+          {Mark ? (
+            <Mark
+              className={cn(menu ? "size-[18px]" : "size-[17px]")}
+              strokeWidth={here && menu ? 2.2 : 1.9}
+            />
+          ) : null}
         </span>
       )}
 

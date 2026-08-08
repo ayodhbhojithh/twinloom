@@ -3,12 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { ArrowUpRight, Mail, Menu, Phone, X } from "lucide-react";
 
 import { RailNav } from "./rail-nav";
 import { Wordmark } from "./wordmark";
 
-import { HEADER_CTA, HEADER_NAV, ROUTES } from "@/lib/site";
+import { CONTACT_INFO, HEADER_CTA, HEADER_NAV, ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 /**
@@ -187,14 +187,17 @@ export function SiteHeader() {
             </button>
           </div>
 
-          {/* Inset by the sheet's own gutter less the marker's hang, so the
-              labels land on the same left edge as the name above them and the
-              button below them while the 2px bar sits out in the gutter. The
-              rail hangs its markers off the panel edge for the same reason; a
-              sheet has a gutter to hang them into, so they hang into that. */}
+          {/* One gutter, both sides.
+
+              It used to be inset on the leading edge only, so the 2px marker
+              could hang out into the sheet's own padding and the labels still
+              lined up with the name above them. There is no marker now - the
+              current row is filled instead - so there is nothing to hang, and
+              a list whose rows are the target wants its rows to reach both
+              edges of the sheet. */}
           <nav
             aria-label="All pages, mobile"
-            className="flex-1 overflow-x-hidden overflow-y-auto pb-8 pe-5 ps-2 sm:pe-8 sm:ps-5"
+            className="flex-1 overflow-x-hidden overflow-y-auto px-3 pt-3 pb-8 sm:px-6"
           >
             <RailNav
               size="menu"
@@ -203,14 +206,63 @@ export function SiteHeader() {
             />
           </nav>
 
+          {/* The foot: both ways in, and how to reach a person.
+
+              It was one flat blue rectangle across the width of the sheet, which
+              is the shape of an app's primary button and the one shape this site
+              does not draw - everything else here is a pill. And it offered one
+              of the two things somebody opens this menu to do; the other,
+              booking a time, was a row in the list above with no more weight
+              than `FAQs`.
+
+              Two pills, then, the loud one carrying the mark's own gradient. And
+              under them the phone number and the address, because a menu open on
+              a phone is the one place on this site where the fastest thing to do
+              is press a number. */}
           <div className="border-t border-border px-5 py-4 sm:px-8">
-            <Link
-              href={HEADER_CTA.href}
-              onClick={() => setOpen(false)}
-              className="block rounded-field bg-mark px-3.5 py-2.5 text-center text-[15px] font-semibold text-white"
-            >
-              {HEADER_CTA.label}
-            </Link>
+            <div className="flex gap-2.5">
+              <Link
+                href={ROUTES.book}
+                onClick={() => setOpen(false)}
+                className="group/way inline-flex flex-1 items-center justify-center gap-2 rounded-pill bg-canvas px-4 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:bg-hair"
+              >
+                Book a meeting
+                <ArrowUpRight
+                  aria-hidden
+                  className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                />
+              </Link>
+
+              <Link
+                href={HEADER_CTA.href}
+                onClick={() => setOpen(false)}
+                className="group/way thread-fill inline-flex flex-1 items-center justify-center gap-2 rounded-pill px-4 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+              >
+                {HEADER_CTA.label}
+                <ArrowUpRight
+                  aria-hidden
+                  className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                />
+              </Link>
+            </div>
+
+            <div className="mt-3.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5">
+              <a
+                href={CONTACT_INFO.phoneHref}
+                className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-body transition-colors hover:text-ink"
+              >
+                <Phone aria-hidden className="size-3.5 text-label" />
+                {CONTACT_INFO.phone}
+              </a>
+
+              <a
+                href={`mailto:${CONTACT_INFO.primaryEmail}`}
+                className="inline-flex items-center gap-1.5 text-[13px] text-quiet transition-colors hover:text-ink"
+              >
+                <Mail aria-hidden className="size-3.5 text-label" />
+                {CONTACT_INFO.primaryEmail}
+              </a>
+            </div>
           </div>
         </div>
       ) : null}
