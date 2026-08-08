@@ -29,12 +29,17 @@ import { Disc } from "./stage";
 --------------------------------------------------------------------------- */
 
 /**
- * Two sizes, one shape.
+ * Two widths, one height, one shape.
  *
- * The card you are standing on is bigger than the rest, and grows into it
- * rather than snapping. Every other way of marking the current step - a border,
- * a rule, a colour - is a thing added to the card; size is the card itself, and
+ * The card you are standing on is wider than the rest, and grows into it rather
+ * than snapping. Every other way of marking the current step - a border, a
+ * rule, a colour - is a thing added to the card; size is the card itself, and
  * it survives being glanced at from the corner of the eye.
+ *
+ * It used to be taller as well, and that is what made the rail look broken:
+ * the cards sit on one baseline, so the current one grew upward and stood a
+ * head above a row that was otherwise level. One height for all ten, and the
+ * width alone says which one you are on.
  *
  * The cut, the radius and the flare are the same at both sizes, so the two
  * paths carry the same commands in the same order. That is what lets the
@@ -42,14 +47,14 @@ import { Disc } from "./stage";
  * one built the same way.
  */
 const CARD = {
-  w: 222,
-  h: 136,
-  onW: 246,
-  onH: 152,
-  cut: 52,
-  mark: 40,
-  radius: 17,
-  flare: 17,
+  w: 228,
+  h: 116,
+  onW: 252,
+  onH: 116,
+  cut: 46,
+  mark: 36,
+  radius: 16,
+  flare: 16,
 };
 
 const CARD_PATH = cutCardPath(CARD.w, CARD.h, CARD.cut, CARD.radius, CARD.flare);
@@ -211,7 +216,7 @@ export function StepStrip({
                   role="tab"
                   aria-selected={on}
                   onClick={() => onGo(n)}
-                  className="relative flex size-full cursor-pointer flex-col px-4 pt-3 pb-3.5 text-left"
+                  className="relative flex size-full cursor-pointer flex-col px-3.5 pt-2.5 pb-3 text-left"
                 >
                   <span
                     className={cn(
@@ -225,7 +230,7 @@ export function StepStrip({
                   <b
                     className={cn(
                       "mt-1.5 block leading-[1.18] font-bold tracking-[-0.02em] transition-[font-size] duration-300",
-                      on ? "text-[16px] text-white" : "text-[15px] text-ink",
+                      on ? "text-[15px] text-white" : "text-[14.5px] text-ink",
                     )}
                   >
                     {entry.n}
@@ -233,7 +238,7 @@ export function StepStrip({
 
                   <span
                     className={cn(
-                      "mt-auto block max-w-[16ch] truncate text-[11.5px] font-semibold",
+                      "mt-auto block max-w-[16ch] truncate text-[11px] font-semibold",
                       on ? "text-white/65" : done ? "text-mark" : "text-quiet",
                     )}
                   >
@@ -274,7 +279,7 @@ export function StepStrip({
                 >
                   <span
                     className={cn(
-                      "flex items-center justify-center rounded-pill font-mono text-[11.5px] font-bold tabular-nums transition-colors",
+                      "flex items-center justify-center rounded-pill font-mono text-[11px] font-bold tabular-nums transition-colors",
                       done
                         ? "bg-mark text-white"
                         : on
@@ -284,7 +289,7 @@ export function StepStrip({
                     style={{ width: CARD.mark, height: CARD.mark }}
                   >
                     {done ? (
-                      <Check className="size-[17px]" strokeWidth={3} />
+                      <Check className="size-[15px]" strokeWidth={3} />
                     ) : (
                       String(n + 1).padStart(2, "0")
                     )}
