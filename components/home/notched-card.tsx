@@ -440,7 +440,7 @@ export function NotchedCard({ className }: { className?: string }) {
                 className="absolute inset-0"
                 style={{
                   backgroundImage:
-                    "linear-gradient(100deg, var(--color-field) 0%, var(--color-field) 17%, color-mix(in oklab, var(--color-field) 60%, transparent) 33%, transparent 50%)",
+                    "linear-gradient(100deg, var(--color-field) 0%, var(--color-field) 13%, color-mix(in oklab, var(--color-field) 62%, transparent) 27%, transparent 42%)",
                 }}
               />
             </>

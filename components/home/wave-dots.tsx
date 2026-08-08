@@ -29,19 +29,17 @@ import { cn } from "@/lib/utils";
    pair of values.
 --------------------------------------------------------------------------- */
 
-/* Few rows, many dots in each. The ratio is the picture.
+/* A halftone lattice: regular grid, and the dot sizes carry the picture.
 
-   Fifty-two rows was a dense sheet, and a dense sheet is a wash: the wave was in
-   it and nothing drew it, because no single row could be followed. A wave is
-   read by tracing one line of it and finding the next one doing the same thing a
-   moment later. So the rows are separated until each is legible on its own, and
-   the dots within a row are packed until a row reads as a line.
-
-   That is also why this is a ribbon rather than a plane. A plane fills the card
-   and its far half is a grey haze; a band has two edges, and the edges are what
-   carry the shape. */
-const ROWS = 18;
-const COLUMNS = 132;
+   This can be dense because size is doing the drawing. Eighteen rows was the
+   answer while the wave was carried by where the dots were - each row had to be
+   separately traceable, so the field had to be sparse. A halftone works the
+   other way: the grid stays regular and the crest of a swell is where the dots
+   are fat, the hollow is where they shrink to almost nothing. The shape is in
+   the weight, which is legible at any density and is what makes a printed
+   halftone a picture rather than a screen. */
+const ROWS = 30;
+const COLUMNS = 122;
 
 /**
  * Where the spheres stand.
@@ -208,7 +206,13 @@ export function WaveDots({
       /* Rows widen as they come forward, and the whole sheet slides with the
          pointer, so the far edge moves less than the near one. That difference
          is what makes it read as depth rather than as a picture being dragged. */
-      const spread = 0.34 + 1.15 * near;
+      /* Far rows are narrow and near rows are wide, and it is the same count of
+         dots either way - so the gaps close with distance. That is what
+         perspective actually does to evenly spaced things, and the gap between
+         `0.16` and `1.76` is how hard it does it here. It was `0.34` to `1.49`,
+         which is a four-fold difference; this is eleven-fold, and eleven is what
+         it takes to read as distance rather than as a slightly narrower row. */
+      const spread = 0.16 + 1.6 * near;
       const slide = (held.x - 0.5) * width * 0.16 * near * lean;
       const x = width / 2 + (along - 0.5) * width * spread + slide;
 
@@ -242,7 +246,24 @@ export function WaveDots({
       const y =
         groundY + roll * height * 0.26 * now.amplitude * (0.45 + 0.55 * near);
 
-      return { x, y, near };
+      /* The roll goes back with the point, because the light on this surface
+         depends on where the point sits in the wave - and only the wave knows
+         that. */
+      return { x, y, near, roll };
+    };
+
+    /**
+     * A number between nought and one that is always the same for the same dot.
+     *
+     * Not random. Random would differ between the server's render and the
+     * browser's, and would differ again on every frame - the field would boil.
+     * This is the usual trick for the job: take something irrational, multiply,
+     * and keep the fraction. The same two indices always give the same answer,
+     * and neighbouring ones give unrelated answers, which is all that is wanted.
+     */
+    const speck = (col: number, row: number) => {
+      const n = Math.sin(col * 12.9898 + row * 78.233) * 43758.5453;
+      return n - Math.floor(n);
     };
 
     const drawSphere = (
@@ -332,7 +353,7 @@ export function WaveDots({
 
         for (let col = 0; col <= COLUMNS; col += 1) {
           const along = col / COLUMNS;
-          const { x, y, near } = place(along, depth, t);
+          const { x, y, near, roll } = place(along, depth, t);
 
           if (x < -20 || x > width + 20) continue;
 
@@ -355,8 +376,49 @@ export function WaveDots({
           const edge = Math.sin(along * Math.PI);
           const across = Math.sin(depth * Math.PI) ** 0.45;
 
-          const r = 0.55 + 1.85 * near;
-          const alpha = (0.1 + 0.45 * near) * (0.18 + 0.82 * edge) * across;
+          /* The wave, read as light. A crest faces up and a hollow faces away,
+             and `roll` already is that reading - which is why it is used rather
+             than a light source being invented for it. Nought at the bottom of a
+             swell, one at the top. */
+          const lit = 0.5 + 0.5 * roll;
+
+          /* A little grit, fixed per dot. Without it a lattice this regular
+             reads as a printed screen rather than as something made. */
+          const grit = speck(col, row);
+
+          /* And here is the whole halftone.
+
+             The size swing is enormous and deliberately so: raised to a power,
+             a dot on a crest comes out several times the area of one in a
+             hollow, and troughs nearly disappear. That ratio is what a halftone
+             is - the shape is in the weight of the marks and not in where they
+             are, which is why the lattice underneath can stay perfectly
+             regular and dense and the picture still reads.
+
+             It was the other way round before: opacity carried the shape and
+             size barely moved, which is a shaded grid. A shaded grid at this
+             density is a grey wash, which is why the field had to be sparse to
+             say anything at all.
+
+             The numbers matter as much as the idea. The first pass at this had
+             the base at `0.32 + 3.1` and the power at `1.7`, which put a dot at
+             mid-height on a mid row at 0.42 of a pixel - a quarter of the field
+             was rounding to nothing and the rest was thin. The floor is what
+             fixes it: a dot in a hollow should be small, not absent, and the
+             swing has to happen between something and something else. */
+          const weight = Math.pow(0.3 + 0.7 * lit, 1.3);
+
+          const r = (1.0 + 3.3 * near) * weight * (0.85 + 0.3 * grit);
+
+          /* Alpha does almost nothing now, and that is the point: it only says
+             where the field ends. Left carrying the wave as well, the two would
+             be saying the same thing twice and the dots would fade instead of
+             thinning. */
+          const alpha =
+            (0.55 + 0.35 * near) *
+            (0.35 + 0.65 * edge) *
+            across *
+            (0.78 + 0.22 * grit);
 
           ink.globalAlpha = Math.min(alpha, 1);
           ink.fillStyle = columnInk[col];
