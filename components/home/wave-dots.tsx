@@ -38,8 +38,8 @@ import { cn } from "@/lib/utils";
    are fat, the hollow is where they shrink to almost nothing. The shape is in
    the weight, which is legible at any density and is what makes a printed
    halftone a picture rather than a screen. */
-const ROWS = 34;
-const COLUMNS = 136;
+const ROWS = 38;
+const COLUMNS = 154;
 
 /**
  * Where the spheres stand.
@@ -209,23 +209,28 @@ export function WaveDots({
 
       /* The horizon sits above the middle, and the pointer tips it a little -
          which reads as leaning over the sheet rather than as the sheet moving. */
-      /* A band across the middle rather than a floor. Its far edge is a third
-         of the way down and its near edge just past the foot, so the whole of it
-         is on the card - a wave running off the bottom edge is a wave nobody can
-         see the bottom of. */
-      const horizon = height * (0.3 - (held.y - 0.5) * 0.07 * lean);
-      const groundY = horizon + height * 0.62 * near;
+      /* A band across the card rather than a floor at the bottom of it. Its far
+         edge is a fifth of the way down and its near edge runs to the foot, so
+         it covers the height rather than sitting in the lower half with white
+         above it. */
+      const horizon = height * (0.2 - (held.y - 0.5) * 0.07 * lean);
+      const groundY = horizon + height * 0.82 * near;
 
       /* Rows widen as they come forward, and the whole sheet slides with the
          pointer, so the far edge moves less than the near one. That difference
          is what makes it read as depth rather than as a picture being dragged. */
       /* Far rows are narrow and near rows are wide, and it is the same count of
          dots either way - so the gaps close with distance. That is what
-         perspective actually does to evenly spaced things, and the gap between
-         `0.16` and `1.76` is how hard it does it here. It was `0.34` to `1.49`,
-         which is a four-fold difference; this is eleven-fold, and eleven is what
-         it takes to read as distance rather than as a slightly narrower row. */
-      const spread = 0.16 + 1.6 * near;
+         perspective does to evenly spaced things, and the ratio between the two
+         ends is how hard it does it. Four-fold read as a slightly narrower row;
+         this is over ten-fold, which reads as distance.
+
+         Both ends are up a little, because the field was sitting inside the card
+         with white in the corners around it. Widened, the near rows run past the
+         sides and the far ones cover more of the top - so the surface is a piece
+         of something larger that the card is a window onto, rather than an
+         object placed in the middle of it. */
+      const spread = 0.22 + 2.05 * near;
       const slide = (held.x - 0.5) * width * 0.16 * near * lean;
       const x =
         width * (0.5 + SHIFT) + (along - 0.5) * width * spread + slide;
@@ -258,7 +263,7 @@ export function WaveDots({
          the only rows carrying the wave were the ones running off the bottom.
          Every row shows it; the near ones just show more. */
       const y =
-        groundY + roll * height * 0.26 * now.amplitude * (0.45 + 0.55 * near);
+        groundY + roll * height * 0.2 * now.amplitude * (0.45 + 0.55 * near);
 
       /* The roll goes back with the point, because the light on this surface
          depends on where the point sits in the wave - and only the wave knows
