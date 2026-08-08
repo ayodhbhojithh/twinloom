@@ -3,7 +3,6 @@ import { BuildSection } from "@/components/home/build-section";
 import { NotchedCard } from "@/components/home/notched-card";
 import { PartnersSection } from "@/components/home/partners-section";
 import { ReadingSection } from "@/components/home/reading-section";
-import { SandboxSection } from "@/components/home/sandbox-section";
 import { pageMeta } from "@/lib/seo";
 import { ROUTES, SITE } from "@/lib/site";
 
@@ -46,10 +45,10 @@ export const metadata: Metadata = {
  * takes the window and leaves only the page gutter at each side.
  *
  * The card holds exactly one screenful, the tool follows it, what we have
- * written follows that, then what we have built, then who does the work. Describing what
- * this company does takes a paragraph nobody reads, so the second screen asks
- * the first question instead, and whatever is answered there is already answered
- * on the build page.
+ * written follows that, then who does the work. Describing what this company
+ * does takes a paragraph nobody reads, so the second section asks the first
+ * question instead, and whatever is answered there is already answered on the
+ * build page.
  */
 export default function LandingPage() {
   return (
@@ -97,12 +96,17 @@ export default function LandingPage() {
           is the answer to the second. */}
       <ReadingSection />
 
-      {/* Fourth: the sandbox. Everything above it is a claim about what we can
-          build; this is the part where two of the claims run in front of you. */}
-      <SandboxSection />
+      {/* The sandbox stood here and is off the page for now.
 
-      {/* Fifth: who actually does the work. The question that follows all four
-          of the sections above it. */}
+          Not deleted: `components/home/sandbox-section` and everything it opens
+          are untouched, and putting it back is this line uncommented. What it
+          showed was two things we have built, running live in the page - which
+          is the strongest thing on the page when there are enough of them and
+          the thinnest when there are two. It comes back when there is a shelf
+          rather than a pair. */}
+      {/* <SandboxSection /> */}
+
+      {/* Who actually does the work. The question that follows the rest. */}
       <PartnersSection />
     </>
   );
