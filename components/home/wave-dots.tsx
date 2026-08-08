@@ -42,20 +42,30 @@ const ROWS = 38;
 const COLUMNS = 154;
 
 /**
- * Where the spheres stand.
+ * Where the spheres stand, and what colour each one is.
  *
  * `along` is across the sheet and `depth` is how near, both nought to one; `size`
  * is a share of the box's height, so the group keeps its proportions whatever
- * shape the card is. `hue` is where each one sits on the mark's own ramp, so
- * every sphere is the same two colours at a different mix rather than a new
- * colour introduced for decoration.
+ * shape the card is.
+ *
+ * `ink` is the colour, written out rather than mixed from the mark's two.
+ *
+ * They were all a point on that ramp, which meant five balls in five shades of
+ * the same blue-green: correct, and dull. The sheet under them is the ramp -
+ * every one of five and a half thousand dots is a mix of exactly those two
+ * colours - so the balls standing on it are the one place where another colour
+ * can appear without the drawing becoming a colour chart. Two of them still hold
+ * the mark's own blue and green, and the rest are the accents the second screen
+ * uses, so the two screens are lit from the same box of paint.
  */
 const SPHERES = [
-  { along: 0.17, depth: 0.58, size: 0.042, hue: 0.95 },
-  { along: 0.33, depth: 0.34, size: 0.026, hue: 0.55 },
-  { along: 0.48, depth: 0.64, size: 0.062, hue: 0.12 },
-  { along: 0.7, depth: 0.3, size: 0.02, hue: 0.34 },
-  { along: 0.72, depth: 0.52, size: 0.036, hue: 0.02 },
+  { along: 0.14, depth: 0.62, size: 0.03, ink: "#ff7a1a" },
+  { along: 0.19, depth: 0.4, size: 0.044, ink: "#06dbaf" },
+  { along: 0.34, depth: 0.33, size: 0.024, ink: "#7c4dff" },
+  { along: 0.48, depth: 0.64, size: 0.062, ink: "#2a98fe" },
+  { along: 0.62, depth: 0.46, size: 0.028, ink: "#ff4d5e" },
+  { along: 0.7, depth: 0.3, size: 0.019, ink: "#22bde8" },
+  { along: 0.76, depth: 0.55, size: 0.036, ink: "#2e7cff" },
 ] as const;
 
 /**
@@ -520,7 +530,7 @@ export function WaveDots({
            sinks into the surface by its own radius; placed by the foot, it
            stands on it - and it rides the wave, because the point it stands on
            is a point on the wave. */
-        drawSphere(at, y - r, r, mixRgb(from, to, sphere.hue), near);
+        drawSphere(at, y - r, r, readRgb(sphere.ink, FALLBACK.from), near);
       }
     };
 
