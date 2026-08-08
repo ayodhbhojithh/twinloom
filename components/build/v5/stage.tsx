@@ -29,6 +29,7 @@ export function Stage({
   toolbar,
   corner,
   aside,
+  foot,
   scrollKey,
   tone = "canvas",
   className,
@@ -40,6 +41,15 @@ export function Stage({
   corner?: React.ReactNode;
   /** Stands in the bite at the bottom left: what the answers add up to. */
   aside?: React.ReactNode;
+  /**
+   * Stands on the bottom edge, in the span between the two bottom cuts.
+   *
+   * Not another slot in a cut - the free middle of the edge the bite and the
+   * drop leave between them. The content above it keeps the room it has and
+   * shares whatever is left over, so a short step is still centred and this is
+   * still on the floor.
+   */
+  foot?: React.ReactNode;
   /**
    * What is on the surface. When it changes, the surface takes the reader to
    * its own top.
@@ -263,17 +273,53 @@ export function Stage({
              The content only has to miss the cut to be legal, and a last line
              that stops exactly where a corner starts reads as though it were
              trimmed by it. */
-          paddingBottom:
-            Math.max(
-              aside ? cut.biteHeight : 0,
-              corner ? cut.dropHeight : 0,
-              26,
-            ) + 34,
+          /* With a foot there is nothing to clear. The foot is centred in the
+             span the two bottom cuts leave between them, so it is already past
+             them sideways at every height - and the band of empty reserved for
+             clearing them was exactly what was holding it off the floor. */
+          paddingBottom: foot
+            ? 30
+            : Math.max(
+                aside ? cut.biteHeight : 0,
+                corner ? cut.dropHeight : 0,
+                26,
+              ) + 34,
           paddingLeft: pad,
           paddingRight: pad,
         }}
       >
-        {children}
+        {foot ? (
+          <>
+            {/* `my-auto` rather than the column's `justify-center`: with two
+                things in the column, centring the column centres the pair and
+                the foot comes up with it. This shares the leftover room above
+                and below the question alone. */}
+            <div className="my-auto w-full">{children}</div>
+
+            {/* Held to the span between the cuts. A foot wider than that runs
+                under one of them at the width where the cut is largest, and a
+                control half inside a bite is a control nobody can press.
+
+                `mt-14` is a floor, not the gap. Where the question is short,
+                `my-auto` above has already opened far more than this and the
+                margin does nothing; where it is tall enough to fill the
+                surface, `my-auto` collapses to nothing and this is the only
+                thing keeping the foot off the last line of the answers. */}
+            <div
+              className="mx-auto mt-14 w-full"
+              style={{
+                maxWidth: Math.max(
+                  200,
+                  size.w - 2 * Math.max(cut.biteWidth, cut.dropWidth) - 16,
+                ),
+              }}
+            >
+              {foot}
+            </div>
+          </>
+        ) : (
+          children
+        )}
       </div>
     </div>
   );

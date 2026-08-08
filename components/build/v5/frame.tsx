@@ -110,46 +110,32 @@ export function StageStep({
           </Disc>
         ) : null
       }
-    >
-      {/* One measure, centred, for every step.
+      foot={
+        last ? undefined : (
+          /* The way out, on the floor of every step.
 
-          The surface is as wide as the window and a question is not. Left
-          against the edge, a heading and a drop zone sat in the first third of
-          a very wide card with two thirds of nothing beside them - and each
-          step chose its own width, so no two of the ten lined up.
+             The tool's whole promise is "answer what you like", and the only
+             send button in the run used to be on the last card - so the
+             promise was kept on the screen people leave and broken on the nine
+             they walk through. Somebody who has said enough at step three
+             should not have to walk past six more questions to say so.
 
-          The words inside stay left. Centring the block is what stops a step
-          drifting; centring the sentences would make every line start
-          somewhere different, which is the opposite. */}
-      {/* A column that fills the surface, so the way out can sit on its floor.
+             Centred on the bottom edge rather than in the corner cut. The
+             corner holds the way on, and a second disc beside it was two round
+             arrows with no words between them: neither could be told from the
+             other without stopping to read a tooltip, which is the opposite of
+             what a way out is for. Here it is written down, and it is where
+             somebody who has finished with a step is already looking.
 
-          The question keeps its own centring - `my-auto` shares whatever room
-          is left above and below it, which is what `justify-center` did before
-          there was anything under it. The send block takes the bottom edge and
-          stays there whether the step is four options or forty. */}
-      <div className="mx-auto flex w-full max-w-[1320px] flex-1 flex-col">
-        <div className="my-auto">{children}</div>
-
-        {/* The way out, on the floor of every step.
-
-            The tool's whole promise is "answer what you like", and the only
-            send button in the run used to be on the last card - so the promise
-            was kept on the screen people leave and broken on the nine they
-            walk through. Somebody who has said enough at step three should not
-            have to walk past six more questions to say so.
-
-            Centred on the bottom edge rather than in the corner cut. The
-            corner holds the way on, and a second disc beside it was two round
-            arrows with no words between them: neither could be told from the
-            other without stopping to read a tooltip, which is the opposite of
-            what a way out is for. Here it is written down, and it is where
-            somebody who has finished with a step is already looking.
-
-            No rule above it. The surface already ends a few pixels below, and
-            a line drawn to say so is a second edge inside the first one. */}
-        {last ? null : (
-          <div className="mt-12 flex flex-col items-center gap-2.5">
-            <p className="text-center text-[12.5px] leading-[1.55] text-label">
+             No rule above it. The surface already ends a few pixels below, and
+             a line drawn to say so is a second edge inside the first one. */
+          <div className="flex flex-col items-center gap-3.5">
+            {/* Off on a phone. The foot is held to the span between the two
+                bottom cuts, and on a narrow surface that span is barely wider
+                than the button - a sentence set in it wraps to five lines and
+                the floor eats the question above it. The button says what it
+                does on its own. */}
+            <p className="text-center text-[12.5px] leading-[1.55] text-label max-sm:hidden">
               Every question after this one can be left alone. What is missing
               is written down as an assumption, not as a gap.
             </p>
@@ -167,8 +153,20 @@ export function StageStep({
               />
             </button>
           </div>
-        )}
-      </div>
+        )
+      }
+    >
+      {/* One measure, centred, for every step.
+
+          The surface is as wide as the window and a question is not. Left
+          against the edge, a heading and a drop zone sat in the first third of
+          a very wide card with two thirds of nothing beside them - and each
+          step chose its own width, so no two of the ten lined up.
+
+          The words inside stay left. Centring the block is what stops a step
+          drifting; centring the sentences would make every line start
+          somewhere different, which is the opposite. */}
+      <div className="mx-auto w-full max-w-[1320px]">{children}</div>
     </Stage>
   );
 }

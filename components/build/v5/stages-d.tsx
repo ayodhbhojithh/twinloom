@@ -135,7 +135,7 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
       <SubTitle className="justify-center" count={chosen.length || undefined}>
         The field you work in
       </SubTitle>
-      <p className="mt-0.5 mx-auto max-w-[62ch] text-center text-[12.5px] leading-[1.45] text-label">
+      <p className="mx-auto mt-2 max-w-[74ch] text-center text-[13px] leading-[1.6] text-label">
         Not a category for a form. It is what tells us the stock is perishable,
         or the goods are oversized, or that somebody is checking, before anybody
         has to explain it.
@@ -144,13 +144,13 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
       {/* A search over fifty-five rows, because thirteen headings still take
           scrolling and somebody who knows their trade should be able to type
           it. */}
-      <label className="mt-3 flex mx-auto max-w-[420px] items-center gap-2.5 rounded-field bg-canvas px-3.5 py-2.5">
-        <Search aria-hidden className="size-4 flex-none text-idx" />
+      <label className="mx-auto mt-5 flex w-full max-w-[620px] items-center gap-3 rounded-field bg-canvas px-4.5 py-3">
+        <Search aria-hidden className="size-4.5 flex-none text-idx" />
         <input
           value={find}
           onChange={(event) => setFind(event.target.value)}
           placeholder={`Search ${Object.keys(SECTORS).length} industries`}
-          className="min-w-0 flex-1 bg-transparent text-[14px] text-ink outline-none placeholder:text-label"
+          className="min-w-0 flex-1 bg-transparent text-[14.5px] text-ink outline-none placeholder:text-label"
         />
       </label>
 
