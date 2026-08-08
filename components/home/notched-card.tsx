@@ -1,10 +1,18 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowDown, ArrowLeft, ArrowRight, Maximize2 } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  Maximize2,
+} from "lucide-react";
 
+import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 import { ProjectPanel } from "./project-panel";
@@ -199,8 +207,22 @@ export function outline(w: number, h: number, cut: Cuts): string {
 const TOOL = 36;
 const BAR = TOOL * 3 + 2 * 2 + 6 * 2;
 
+/** The height of a way in, standing in the bite. The cut is cut around it. */
+const CTA = 40;
+
 export function NotchedCard({ className }: { className?: string }) {
   const box = useRef<HTMLDivElement>(null);
+
+  /* The two ways in, measured.
+
+     The bite is cut to hold them, and how wide they are is a question about the
+     reader's font, their language and their text size - none of which is known
+     here. So the row is measured and the cut follows it, exactly as the notch
+     above is sized from the bar standing in it rather than from a fraction of
+     the card. Guessed at, the cut is either short of the buttons on one machine
+     or hanging open beside them on another. */
+  const ways = useRef<HTMLDivElement>(null);
+  const [waysWidth, setWaysWidth] = useState(0);
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [at, setAt] = useState(0);
   const [open, setOpen] = useState<Project | null>(null);
@@ -216,6 +238,22 @@ export function NotchedCard({ className }: { className?: string }) {
 
     const measure = () =>
       setSize({ w: node.clientWidth, h: node.clientHeight });
+
+    const watcher = new ResizeObserver(measure);
+    watcher.observe(node);
+    measure();
+
+    return () => watcher.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const node = ways.current;
+    if (!node) return;
+
+    /* The border box, not `scrollWidth`: the row carries a hair of padding so
+       the first button clears the card's left edge, and the cut has to be cut
+       around that too. */
+    const measure = () => setWaysWidth(node.getBoundingClientRect().width);
 
     const watcher = new ResizeObserver(measure);
     watcher.observe(node);
@@ -259,6 +297,11 @@ export function NotchedCard({ className }: { className?: string }) {
 
     const radius = Math.max(22, Math.min(w * 0.03 + 20, 48));
 
+    /* Whether the two ways in go one above the other. Read from the card rather
+       than from a media query: this is about how much bottom edge the card has,
+       and the card is not always the window. */
+    const stacked = w > 40 && w < 560;
+
     /* The one curve every cut on this card is made of. */
     const flare = Math.max(22, Math.min(h * 0.04, 34));
 
@@ -291,15 +334,36 @@ export function NotchedCard({ className }: { className?: string }) {
       Math.max(flare * 2 + 60, w - 2 * (radius + flare) - 24),
     );
 
-    /* The bite, sized to the thumbnail standing in it, with the same flare and
-       the same corner as the notch above. */
-    const bite = Math.max(96, Math.min(Math.min(w * 0.13, h * 0.26), 196));
-
     /* The corner for the way on. Square, like the bite, and only as large as
        the control standing in it needs: `flare * 2` is the smallest a cut can
        be before its two arcs overlap, and the sixteen on top of it is the air
        around a 44px target. */
     const drop = Math.max(flare * 2 + 16, Math.min(w * 0.075, 96));
+
+    /* The bite, and it is no longer a square.
+
+       It held a thumbnail of the next slide, which is a square thing; it holds
+       the two ways into the site now, which is a wide one. So it is cut wide and
+       shallow: as deep as its own arcs need and no deeper, and as wide as the
+       row standing in it plus its air.
+
+       Both ends are held. The floor keeps it a cut rather than a nick while the
+       row is still being measured, and the ceiling stops it eating the bottom
+       edge - it has to leave the corner cut at the other end, and enough card
+       between the two that they read as two cuts rather than one long one. */
+    const biteFlare = Math.min(flare, (CTA + 20) / 2);
+
+    /* Side by side where the bottom edge can hold them, stacked where it
+       cannot. A narrow card leaves about a hundred and seventy pixels between
+       its left corner and the cut at the other end, and the two of them in a row
+       want twice that - so on a phone the bite is tall instead of wide and they
+       sit one above the other. The shape does not care which: the two arcs meet
+       as long as each side is at least twice the flare, and both are. */
+    const biteHeight = stacked ? CTA * 2 + 30 : biteFlare * 2;
+    const biteWidth = Math.min(
+      Math.max(120, waysWidth + 22),
+      Math.max(120, w - drop - 2 * (radius + biteFlare) - 24),
+    );
 
     return {
       radius,
@@ -307,10 +371,10 @@ export function NotchedCard({ className }: { className?: string }) {
       barDepth,
       barRadius: barFlare,
       barFlare: barFlare,
-      biteWidth: bite,
-      biteHeight: bite,
-      biteRadius: flare,
-      biteFlare: flare,
+      biteWidth,
+      biteHeight,
+      biteRadius: biteFlare,
+      biteFlare: biteFlare,
       dropWidth: drop,
       dropHeight: drop,
       dropRadius: flare,
@@ -320,8 +384,11 @@ export function NotchedCard({ className }: { className?: string }) {
 
   const path = size.w > 40 ? outline(size.w, size.h, cut) : "";
 
+  /* The same test the cut was made from, so the row and the shape cut for it can
+     never disagree about which way round they are. */
+  const stackedWays = size.w > 40 && size.w < 560;
+
   const shown = HERO_SLIDES[at];
-  const next = HERO_SLIDES[(at + 1) % HERO_SLIDES.length];
 
   /* The measurement that placed the name on the picture went with the name. It
      worked out whether the bottom edge had room for it beside the thumbnail, and
@@ -402,35 +469,58 @@ export function NotchedCard({ className }: { className?: string }) {
         </div>
       </div>
 
-      {/* The next project, standing in the bite. */}
-      <button
-        type="button"
-        onClick={() => setAt((was) => (was + 1) % HERO_SLIDES.length)}
-        aria-label={`Next: ${next.name}`}
-        className="group absolute bottom-0 left-0 z-10 cursor-pointer rounded-[20px] p-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-active"
-        style={{ width: cut.biteWidth - 14, height: cut.biteHeight - 14 }}
+      {/* The two ways into the site, standing in the bite.
+
+          A thumbnail of the next slide stood here. It was a preview of something
+          the two arrows in the notch already reach, on a card whose whole job is
+          to be the front door - so the one cut with room for something to press
+          was spending it on a picture of the same card.
+
+          They are in the cut rather than on the picture, which is the rule the
+          rest of this card follows: nothing floats over the artwork, and
+          anything you can press has a piece taken out of the surface to stand
+          in. The cut is measured around this row, so it fits whatever these
+          words come out as.
+
+          `whitespace-nowrap` on both. The bite is one line deep by construction,
+          and a label that wrapped would sit half outside the shape cut for it. */}
+      <div
+        ref={ways}
+        className={cn(
+          "absolute bottom-0 left-0 z-10 flex justify-center gap-2",
+          stackedWays ? "flex-col items-start" : "flex-row items-center",
+        )}
+        /* No width. It shrink-wraps its buttons, and the cut is then made from
+           what it measures - the two cannot both be sized from each other. They
+           were: the row was given the cut's width, so it measured the cut, so
+           the cut grew to the ceiling and stayed there with the buttons sitting
+           in the left third of a hole running most of the card. */
+        style={{ height: cut.biteHeight, paddingLeft: 2, paddingRight: 2 }}
       >
-        <span
-          /* No border. The bite around it is already the outline, and a second
-             one a few pixels inside reads as a sticker on the card rather than
-             as the thing the card was cut back for. */
-          className="artwork block size-full overflow-hidden rounded-[18px] transition-transform duration-300 group-hover:-translate-y-1"
-          style={{ backgroundColor: next.tone }}
+        <Link
+          href={ROUTES.book}
+          className="group/way inline-flex flex-none items-center gap-1.5 rounded-pill bg-well px-3.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:bg-hair sm:gap-2 sm:px-4 sm:text-[13.5px]"
+          style={{ height: CTA }}
         >
-          {/* The same for the thumbnail in the bite: a slide with no artwork
-              shows the colour it will arrive on. */}
-          {next.image ? (
-            <Image
-              src={next.image}
-              alt=""
-              fill
-              quality={100}
-              sizes="200px"
-              className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-            />
-          ) : null}
-        </span>
-      </button>
+          Book a meeting
+          <ArrowUpRight
+            aria-hidden
+            className="size-3.5 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+          />
+        </Link>
+
+        <Link
+          href={ROUTES.build}
+          className="group/way inline-flex flex-none items-center gap-1.5 rounded-pill bg-ink px-3.5 text-[13px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-85 sm:gap-2 sm:px-4 sm:text-[13.5px]"
+          style={{ height: CTA }}
+        >
+          Build your website
+          <ArrowUpRight
+            aria-hidden
+            className="size-3.5 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+          />
+        </Link>
+      </div>
 
       {/* No caption on the picture.
 
