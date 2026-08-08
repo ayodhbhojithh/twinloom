@@ -15,6 +15,7 @@ import {
 import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
+import { Ballpit } from "./ballpit";
 import { GradientWaves } from "./gradient-waves";
 import { ProjectPanel } from "./project-panel";
 import { WaveDots } from "./wave-dots";
@@ -449,6 +450,31 @@ export function NotchedCard({ className }: { className?: string }) {
             parallaxStrength={0.5}
             grain
             grainIntensity={0.04}
+          />
+        ) : null}
+
+        {/* The third screen: the pit, and nothing over it either.
+
+            The colours run blue to green to violet across the balls rather than
+            one colour each, so the pile reads as one object catching the light
+            in different places instead of as a bag of sweets. Sphere zero is the
+            cursor and carries the light, which is why the first colour is the
+            mark's blue: it is the one the whole box is lit by. */}
+        {shown.view === "balls" ? (
+          <Ballpit
+            className="absolute inset-0"
+            count={140}
+            gravity={0.5}
+            friction={0.9975}
+            wallBounce={0.95}
+            followCursor
+            colors={[0x2a98fe, 0x06dbaf, 0x7c4dff]}
+            ambientColor={0xffffff}
+            ambientIntensity={1}
+            lightIntensity={190}
+            minSize={0.5}
+            maxSize={1}
+            maxVelocity={0.15}
           />
         ) : null}
       </div>

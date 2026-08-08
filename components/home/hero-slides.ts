@@ -26,10 +26,9 @@ import type { Project } from "./projects";
    this one is not - a card that says something on all three of its faces is a
    card nobody turns twice.
 
-   The third is white and empty, and deliberately so. It stays clear until there
-   is a reason for it to be its own screen, because a card that turns to show a
-   weaker version of what it has just shown is worse than one that turns to show
-   nothing.
+   The third is a pit of glass beads that fall, pile up and get shoved around by
+   the cursor. Also wordless, and the one screen of the three that answers back:
+   the first is read, the second is watched, and this one is played with.
 --------------------------------------------------------------------------- */
 
 /**
@@ -41,12 +40,12 @@ import type { Project } from "./projects";
  * here and a case there.
  *
  * `wave` is a claim over the dotted surface with the two ways in beneath it.
- * `waves` is the raymarched water, and nothing set over it. `blank` is a white
- * card and nothing else - not a placeholder graphic and not a
+ * `waves` is the raymarched water and `balls` is the pit, both with nothing set
+ * over them. `blank` is a white card and nothing else - not a placeholder graphic and not a
  * greyed panel, because either of those is a design decision made in advance of
  * the design.
  */
-export type SlideView = "wave" | "waves" | "blank";
+export type SlideView = "wave" | "waves" | "balls" | "blank";
 
 /**
  * A slide, which is a `Project` and a few more things.
@@ -112,14 +111,19 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     alt: "",
     tone: "#ffffff",
   },
+  /* The third: the pit. No words on this one either. */
   {
     id: "hero-3",
-    view: "blank",
-    name: "The third screen",
-    kind: "In progress",
+    view: "balls",
+    name: "The pit",
+    kind: "The card",
     year: "2026",
-    summary: "This screen is being designed.",
-    facts: [],
+    summary:
+      "A box of glass beads that fall, pile up and get shoved out of the way by the cursor. The one screen of the three that answers back.",
+    facts: [
+      { term: "Words on it", value: "None" },
+      { term: "Answers back", value: "To the cursor" },
+    ],
     image: "",
     alt: "",
     tone: "#ffffff",
