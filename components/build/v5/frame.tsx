@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 
 import { STEPS } from "@/lib/build/v5";
 import { pagesFrom } from "@/lib/build/v5-derive";
@@ -121,7 +121,54 @@ export function StageStep({
           The words inside stay left. Centring the block is what stops a step
           drifting; centring the sentences would make every line start
           somewhere different, which is the opposite. */}
-      <div className="mx-auto w-full max-w-[1320px]">{children}</div>
+      {/* A column that fills the surface, so the way out can sit on its floor.
+
+          The question keeps its own centring - `my-auto` shares whatever room
+          is left above and below it, which is what `justify-center` did before
+          there was anything under it. The send block takes the bottom edge and
+          stays there whether the step is four options or forty. */}
+      <div className="mx-auto flex w-full max-w-[1320px] flex-1 flex-col">
+        <div className="my-auto">{children}</div>
+
+        {/* The way out, on the floor of every step.
+
+            The tool's whole promise is "answer what you like", and the only
+            send button in the run used to be on the last card - so the promise
+            was kept on the screen people leave and broken on the nine they
+            walk through. Somebody who has said enough at step three should not
+            have to walk past six more questions to say so.
+
+            Centred on the bottom edge rather than in the corner cut. The
+            corner holds the way on, and a second disc beside it was two round
+            arrows with no words between them: neither could be told from the
+            other without stopping to read a tooltip, which is the opposite of
+            what a way out is for. Here it is written down, and it is where
+            somebody who has finished with a step is already looking.
+
+            No rule above it. The surface already ends a few pixels below, and
+            a line drawn to say so is a second edge inside the first one. */}
+        {last ? null : (
+          <div className="mt-12 flex flex-col items-center gap-2.5">
+            <p className="text-center text-[12.5px] leading-[1.55] text-label">
+              Every question after this one can be left alone. What is missing
+              is written down as an assumption, not as a gap.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => onGo(STEPS.length - 1)}
+              className="group flex cursor-pointer items-center gap-2 rounded-pill bg-canvas px-4 py-2 text-[13px] font-semibold text-body transition-colors hover:bg-hair hover:text-ink"
+            >
+              Send what you have so far
+              <ArrowUpRight
+                aria-hidden
+                className="size-4 transition-transform group-hover:-translate-y-px group-hover:translate-x-px"
+                strokeWidth={2.4}
+              />
+            </button>
+          </div>
+        )}
+      </div>
     </Stage>
   );
 }

@@ -4,7 +4,7 @@ import { ArrowUpRight, Check, Send } from "lucide-react";
 import Link from "next/link";
 
 import { ASK_PARTS, MIN_MAP, STATES } from "@/lib/build/v5";
-import { assumed, pagesFrom, readiness, told } from "@/lib/build/v5-derive";
+import { readiness } from "@/lib/build/v5-derive";
 import { OPTION_LISTS } from "@/lib/build/v5-options";
 import { HOW_WE_WORK } from "@/lib/build/v5-work";
 import { sendScope, whatIsMissing } from "@/lib/build/submit";
@@ -12,7 +12,6 @@ import {
   addRef,
   chipOn,
   isOn,
-  picked,
   setAsk,
   setPick,
   setDelivered,
@@ -41,9 +40,16 @@ import {
 import { Disc } from "./stage";
 
 /* ---------------------------------------------------------------------------
-   The last four steps: the read-back, the four fields, the way back in, and
-   the send. The only compulsory part of the whole run lives here, and it is
-   four fields and a button.
+   The end of the run: four fields and a button.
+
+   There was a read-back before it - the whole scope as a document, with a
+   front, a numbered contents and three statistics. It is gone. A report handed
+   over at the finish tells somebody what they have already done, at the one
+   moment they have stopped wanting to know; the running panel says the same
+   thing on every screen, while there is still something to be done about it.
+
+   So this is the only compulsory part of the whole run, and it is four fields
+   and a button. Every step before it can send straight here.
 --------------------------------------------------------------------------- */
 
 type StepProps = {
@@ -52,260 +58,6 @@ type StepProps = {
   onGo: (at: number) => void;
   onGoKey: (key: string) => void;
 };
-
-/* ----------------------------------------------------------------- 09 read */
-
-/**
- * Read it back: the scoping request as a document.
- *
- * Not a page of ticks. This is the one screen where somebody checks our account
- * of their business before it goes anywhere, and the only form that can be
- * checked is the form it will arrive in - a report, with a front, a contents,
- * numbered sections, and the things we will assume stated as sentences rather
- * than left as gaps.
- *
- * Every section carries the way back to the question that wrote it, because a
- * document you cannot correct is not a draft, it is a claim.
- */
-export function StageRead({ at, answers, onGo, onGoKey }: StepProps) {
-  const lines = told(answers);
-  const takenAsRead = assumed(answers);
-  const pages = pagesFrom(answers);
-  /* Held with the section that used it: `const zones = zonesFrom(pages);` */
-  const { state } = readiness(answers);
-  const [stateName] = STATES[state];
-
-  /* The sections, in the order they will be read, with what each one holds. A
-     section with nothing in it still appears: that it is empty is a fact about
-     the scope, and hiding it would leave the reader counting. */
-  const parts = [
-    {
-      key: "who",
-      title: "Who the site is for",
-      count: picked(answers, "who").length,
-    },
-    {
-      key: "do",
-      title: "What people can do",
-      count: picked(answers, "do").length,
-    },
-    {
-      key: "sell",
-      title: "What you sell",
-      count: picked(answers, "sell").length,
-    },
-    {
-      key: "style",
-      title: "How it should feel",
-      count: picked(answers, "feel").length,
-    },
-    {
-      key: "have",
-      title: "What you already have",
-      count: picked(answers, "have").length,
-    },
-    { key: "refs", title: "Reference points", count: answers.refs.length },
-  ];
-
-  const facts = [
-    { n: String(pages.length), label: "Pages described" },
-    { n: String(lines.length), label: "Things you told us" },
-    { n: String(takenAsRead.length), label: "Taken as read" },
-  ];
-
-  return (
-    <StageStep at={at} answers={answers} onGo={onGo}>
-      <H>Read it back.</H>
-      <Sub>
-        Your scoping request, in the shape it will arrive in. Change anything
-        from the section it sits in.
-      </Sub>
-
-      {/* The front of the document: whose it is, and what it adds up to. */}
-      <div className="mt-6 mx-auto max-w-[1100px] rounded-[18px] bg-canvas p-6 sm:p-7">
-        <div className="flex flex-wrap items-start justify-between gap-x-10 gap-y-5">
-          <div className="min-w-0">
-            <Kicker className="block">Scoping request</Kicker>
-            <b className="mt-2 block max-w-[24ch] text-[clamp(19px,1.7vw,25px)] leading-[1.1] font-extrabold tracking-[-0.03em] text-ink">
-              {answers.ask.company?.trim() || "Your website"}
-            </b>
-            <p className="mt-1.5 text-[12.5px] text-quiet">
-              {answers.ask.name?.trim()
-                ? `Prepared with ${answers.ask.name.trim()}`
-                : "Prepared from your answers"}
-            </p>
-          </div>
-
-          <div className="flex flex-none flex-wrap gap-x-9 gap-y-4">
-            {facts.map((fact) => (
-              <div key={fact.label}>
-                <b className="block font-mono text-[24px] leading-none font-bold text-ink tabular-nums">
-                  {fact.n}
-                </b>
-                <span className="mt-1.5 block font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase">
-                  {fact.label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <p className="mt-5 border-t border-hair pt-4 max-w-[76ch] text-[13px] leading-[1.6] text-body">
-          <b className="font-semibold text-ink">{stateName}.</b> Nothing here is
-          priced, scored or graded. What is written down is what you said, and
-          what you left alone is written down as an assumption you can correct.
-        </p>
-      </div>
-
-      {/* Contents. Numbered, and each line the way back to the question that
-          writes that section. */}
-      <section className="mt-8 mx-auto max-w-[1100px]">
-        <SubTitle className="mt-0">Contents</SubTitle>
-
-        <ol className="mt-2.5 grid gap-x-10 sm:grid-cols-2">
-          {parts.map((part, n) => (
-            <li key={part.key}>
-              <button
-                type="button"
-                onClick={() => onGoKey(part.key)}
-                className="group/sec flex w-full cursor-pointer items-baseline gap-4 border-b border-hair py-3 text-left transition-colors hover:border-ink"
-              >
-                <span className="w-5 flex-none font-mono text-[10px] font-bold text-idx tabular-nums">
-                  {String(n + 1).padStart(2, "0")}
-                </span>
-
-                <span className="min-w-0 flex-1 text-[14px] font-semibold text-ink">
-                  {part.title}
-                </span>
-
-                <span
-                  className={cn(
-                    "flex-none font-mono text-[9px] font-bold tracking-[0.1em] uppercase tabular-nums",
-                    part.count ? "text-mark" : "text-idx",
-                  )}
-                >
-                  {part.count ? `${part.count} said` : "Assumed"}
-                </span>
-              </button>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      {/* The site your answers describe, held.
-
-          It listed every page the answers add up to, grouped by zone. Out for
-          now: it said the same thing the panel beside the run was already
-          saying, and a document that repeats its own margin twice is longer
-          without being fuller. Commented rather than deleted, because it is the
-          part of the read-back a reader is most likely to ask for back.
-
-      |* The site itself, since it is the thing being scoped. *|
-      <section className="mt-9 mx-auto max-w-[1100px]">
-        <SubTitle className="mt-0" count={pages.length}>
-          The site your answers describe
-        </SubTitle>
-
-        <div className="mt-3 grid gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
-          {zones.map((zone) => (
-            <div key={zone.key} className="min-w-0">
-              <Kicker className="block text-ink">{zone.title}</Kicker>
-
-              <ul className="mt-2 flex flex-col">
-                {zone.pages.map((page) => (
-                  <li
-                    key={page.name}
-                    className="flex items-baseline gap-2.5 py-[3px]"
-                  >
-                    <span className="w-[18px] flex-none font-mono text-[9.5px] text-idx tabular-nums">
-                      {page.index}
-                    </span>
-                    <span className="min-w-0 flex-1 text-[13.5px] leading-[1.35] font-medium text-ink">
-                      {page.name}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      */}
-
-      {/* What was said, and what will be assumed. Side by side, because the
-          second is only readable against the first. */}
-      <div className="mt-9 grid mx-auto max-w-[1100px] gap-x-10 gap-y-8 lg:grid-cols-2">
-        <section className="min-w-0">
-          <SubTitle count={lines.length} className="mt-0">
-            What you told us
-          </SubTitle>
-
-          {lines.length ? (
-            <ul className="mt-2.5 flex flex-col gap-2">
-              {lines.map((line, n) => (
-                <li key={n} className="flex items-start gap-2.5">
-                  <Check
-                    aria-hidden
-                    className="mt-0.5 size-3.5 flex-none text-mark"
-                    strokeWidth={3}
-                  />
-                  <span className="text-[13.5px] leading-[1.55] text-body">
-                    {line.line}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="mt-2.5 text-[13px] text-quiet">
-              Nothing yet. Everything you tick turns up here.
-            </p>
-          )}
-        </section>
-
-        <section className="min-w-0">
-          <SubTitle count={takenAsRead.length} className="mt-0">
-            What we will take as read
-          </SubTitle>
-
-          {takenAsRead.length ? (
-            <>
-              <ul className="mt-2.5 flex flex-col gap-2">
-                {takenAsRead.map((sentence) => (
-                  <li
-                    key={sentence}
-                    className="flex items-start gap-2.5 text-[13.5px] leading-[1.55] text-quiet"
-                  >
-                    <span
-                      aria-hidden
-                      className="mt-[7px] size-1 flex-none rounded-pill bg-planned"
-                    />
-                    {sentence}
-                  </li>
-                ))}
-              </ul>
-
-              <p className="mt-3 text-[12px] leading-[1.5] text-label">
-                A sentence in your document, not a gap. Answer the step and it
-                stops being an assumption.
-              </p>
-            </>
-          ) : (
-            <p className="mt-2.5 text-[13px] text-quiet">
-              Nothing assumed - every step so far has been answered.
-            </p>
-          )}
-        </section>
-      </div>
-
-      {/* The foot of it: what this is, and what happens to it. */}
-      <p className="mt-9 max-w-[64ch] border-t border-hair pt-5 text-[12.5px] leading-[1.6] text-label">
-        A draft of what we will read, not a proposal and not a quotation. A
-        person reads it and replies in writing within two working days.
-      </p>
-    </StageStep>
-  );
-}
 
 /* --------------------------------------------------------------- 10 asking */
 

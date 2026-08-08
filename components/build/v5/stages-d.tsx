@@ -128,10 +128,14 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
         </div>
       </section>
 
-      <SubTitle count={chosen.length || undefined}>
+      {/* Centred, like the question above it and like the search below it.
+          Left against the edge, a heading and its line sat in the first sixth
+          of a 1320px card with a centred question over them and a centred
+          search under them - three alignments on one screen. */}
+      <SubTitle className="justify-center" count={chosen.length || undefined}>
         The field you work in
       </SubTitle>
-      <p className="mt-0.5 max-w-[62ch] text-[12.5px] leading-[1.45] text-label">
+      <p className="mt-0.5 mx-auto max-w-[62ch] text-center text-[12.5px] leading-[1.45] text-label">
         Not a category for a form. It is what tells us the stock is perishable,
         or the goods are oversized, or that somebody is checking, before anybody
         has to explain it.
@@ -203,8 +207,13 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
         ))}
       </div>
 
-      {shown.length === 0 ? (
-        <p className="mt-4 text-[13.5px] text-quiet">
+      {/* Only when something was actually searched for.
+
+          The test was `shown.length === 0`, which is also true on arrival: no
+          family opened and nothing typed means no rows, so the screen opened
+          by reporting that a search had failed before anybody had made one. */}
+      {hunted && shown.length === 0 ? (
+        <p className="mt-4 text-center text-[13.5px] text-quiet">
           Nothing matches that. Leave it and tell us in your own words below.
         </p>
       ) : null}

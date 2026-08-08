@@ -25,7 +25,21 @@ import { Kicker } from "./kit";
    answers describe was only ever half visible.
 --------------------------------------------------------------------------- */
 
-export function Panel({ answers }: { answers: Answers }) {
+export function Panel({
+  answers,
+  bare,
+}: {
+  answers: Answers;
+  /**
+   * Without a ground and without its own heading.
+   *
+   * Inside the drawer this is the whole of what the drawer is for, and the
+   * drawer already carries the name and the surface. Drawn with its own as
+   * well it was a panel inside a panel, which is the one thing the shape
+   * language on this site does not do.
+   */
+  bare?: boolean;
+}) {
   const pages = pagesFrom(answers);
   const zones = zonesFrom(pages);
   const { state } = readiness(answers);
@@ -34,11 +48,16 @@ export function Panel({ answers }: { answers: Answers }) {
   const takenAsRead = assumed(answers);
 
   return (
-    <aside className="glass-pane min-w-0 rounded-[18px] p-5">
-      <Kicker className="block">Your site, so far</Kicker>
+    <aside
+      className={cn(
+        "min-w-0",
+        bare ? "" : "glass-pane rounded-[18px] p-5",
+      )}
+    >
+      {bare ? null : <Kicker className="block">Your site, so far</Kicker>}
 
       {/* Where it stands: a dot and a name, never a percentage. */}
-      <div className="mt-3.5 flex items-center gap-2.5">
+      <div className={cn("flex items-center gap-2.5", bare ? "" : "mt-3.5")}>
         <span
           aria-hidden
           className={cn(
@@ -54,14 +73,17 @@ export function Panel({ answers }: { answers: Answers }) {
       </div>
       <p className="mt-1 text-[12px] leading-[1.5] text-quiet">{stateNote}</p>
 
-      <div className="mt-4 flex items-baseline gap-2.5 border-t border-hair pt-4">
-        <b className="font-mono text-[30px] leading-none font-bold text-ink tabular-nums">
-          {pages.length}
-        </b>
-        <Kicker>pages, as it stands</Kicker>
-      </div>
+      {/* The count, where the drawer has not already said it. */}
+      {bare ? null : (
+        <div className="mt-4 flex items-baseline gap-2.5 border-t border-hair pt-4">
+          <b className="font-mono text-[30px] leading-none font-bold text-ink tabular-nums">
+            {pages.length}
+          </b>
+          <Kicker>pages, as it stands</Kicker>
+        </div>
+      )}
 
-      <div className="mt-3.5 flex flex-col gap-3">
+      <div className={cn("flex flex-col gap-3", bare ? "mt-5" : "mt-3.5")}>
         {zones.map((zone) => (
           <div key={zone.key} className="min-w-0">
             <div className="flex items-baseline justify-between gap-3">

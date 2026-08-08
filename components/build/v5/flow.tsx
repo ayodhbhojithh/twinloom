@@ -12,11 +12,11 @@ import {
   type Where,
 } from "@/lib/build/v5-store";
 
-import { NotesDock } from "./notes";
+import { Dock } from "./dock";
 import { QuickPane } from "./quick";
 import { StageDo, StageWho } from "./stages-a";
 import { StageHave, StageRefs, StageSell, StageStyle } from "./stages-b";
-import { StageRead, StageSubmit } from "./stages-c";
+import { StageSubmit } from "./stages-c";
 import { StageOrg, StageSystems, StageWidgets } from "./stages-d";
 import { StepStrip } from "./strip";
 
@@ -86,8 +86,6 @@ export function BuildFlow() {
         return <StageWidgets at={step} {...props} />;
       case "systems":
         return <StageSystems at={step} {...props} />;
-      case "read":
-        return <StageRead at={step} {...props} />;
       default:
         return <StageSubmit at={step} {...props} />;
     }
@@ -146,28 +144,31 @@ export function BuildFlow() {
         <>
           <StepStrip step={step} answers={answers} onGo={goStep} />
 
-          {/* One column while the panel is out. Two columns with nothing in
-              the second is a step held to two thirds of its own surface. */}
-          <div className="grid items-start gap-7">
-            <div className="min-w-0">{stage}</div>
-
-            {/* The panel, held.
-
-                It ran beside every step listing the pages the answers add up
-                to. Out for now, so a step has the whole surface and the
-                read-back is the one place the site is described.
-
-                Commented rather than deleted: it is the running answer, and it
-                is the first thing to want back.
-
-                <div className="quiet-scroll min-w-0 xl:sticky xl:top-[calc(var(--nav-height)+20px)] xl:max-h-[calc(100svh-var(--nav-height)-40px)] xl:overflow-y-auto">
-                  <Panel answers={answers} />
-                </div> */}
-          </div>
+          {/* One column. The running answer is a drawer off the left edge now
+              rather than a column beside the question, so a step has the whole
+              surface and the site is still one press away from every one of
+              them. */}
+          <div className="min-w-0">{stage}</div>
         </>
       )}
 
-      <NotesDock answers={answers} where={where} onGoStep={goKey} />
+      {/* The dock: the site the answers describe, and the desk they were
+          written on, behind one tab against one edge.
+
+          On both ways through, because the desk is on both - the quick pane
+          writes its notes and its files to the same one, and somebody who has
+          attached four things there has to be able to see the four. Only the
+          site half is held back: the quick submission derives no pages, and a
+          tab reading zero on every screen it appears on has nothing to say. */}
+      <Dock
+        answers={answers}
+        /* Nowhere, on the quick pane. There is no step being stood on there,
+           and filing a note under step 01 because step 01 is what the run
+           would have opened at is a place the reader never was. */
+        where={tab === "full" ? where : null}
+        onGoStep={goKey}
+        withSite={tab === "full"}
+      />
     </div>
   );
 }

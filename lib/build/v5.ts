@@ -104,20 +104,13 @@ export const STEPS: readonly Step[] = [
   "n": "Connecting to back end systems",
   "can": true
  },
- /* The site your answers describe, held.
+ /* No read-back step, and none coming back.
 
-    A step of its own that read the whole thing back before sending it. Out for
-    now: `StageRead` and its case in the flow are left where they are, so
-    putting the step back is uncommenting this entry and nothing else - the
-    stage it maps to has not moved.
-
- {
-  "k": "read",
-  "ph": "send",
-  "n": "The site your answers describe",
-  "can": true
- },
- */
+    There was one: the whole scope as a document, read before it was sent. It
+    is gone with the stage that drew it, because the site your answers describe
+    is now a drawer off the left edge of every step - so it is readable at the
+    point where reading it can still change something, rather than once at the
+    end when it cannot. */
  {
   "k": "submit",
   "ph": "send",
@@ -141,7 +134,7 @@ export const PHASES: readonly (readonly [PhaseKey, string, string])[] = [
  [
   "send",
   "Sending it",
-  "Read it back, then send it."
+  "Four fields, and it goes."
  ]
 ] as const;
 
@@ -573,41 +566,7 @@ export const PAY_WAYS: readonly SellKind[] = [
  }
 ] as const;
 
-/** The read-back, in order: `[step key, heading]`. */
-export const REPORT: readonly (readonly [string, string])[] = [
- [
-  "org",
-  "Your organisation"
- ],
- [
-  "who",
-  "Who the site is for"
- ],
- [
-  "do",
-  "What people can do"
- ],
- [
-  "sell",
-  "What you sell"
- ],
- [
-  "style",
-  "How it should feel"
- ],
- [
-  "have",
-  "Your branding and identity"
- ],
- [
-  "widgets",
-  "Widgets and applications"
- ],
- [
-  "systems",
-  "Back end systems"
- ]
-] as const;
+/* The read-back's running order stood here. It went with the read-back. */
 
 /** The pages every site has, whatever the answers say. */
 export const ALWAYS_PAGES: readonly string[] = [
