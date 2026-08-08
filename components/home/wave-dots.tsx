@@ -55,7 +55,7 @@ const SPHERES = [
   { along: 0.33, depth: 0.34, size: 0.026, hue: 0.55 },
   { along: 0.48, depth: 0.64, size: 0.062, hue: 0.12 },
   { along: 0.7, depth: 0.3, size: 0.02, hue: 0.34 },
-  { along: 0.86, depth: 0.52, size: 0.036, hue: 0.02 },
+  { along: 0.72, depth: 0.52, size: 0.036, hue: 0.02 },
 ] as const;
 
 /**
@@ -476,11 +476,25 @@ export function WaveDots({
         const { x, y, near } = place(sphere.along, sphere.depth, t);
         const r = height * sphere.size * (0.55 + 0.75 * near);
 
+        /* Never against a side.
+
+           `along` is a place on the sheet and the sheet is far wider than the
+           card - a near row runs to more than twice the width - so the same
+           `along` that sat comfortably inside before the field was widened ends
+           up beyond the edge afterwards. A ball cut in half by the card's own
+           border is the one thing in this drawing that reads as a mistake rather
+           than as a composition, so the whole of every one of them is kept
+           inside with its own radius to spare. Held rather than dropped: a ball
+           that vanishes at a window size is worse than one that has been moved
+           a little. */
+        const room = r * 1.25;
+        const at = Math.min(Math.max(x, room), width - room);
+
         /* Its foot on the sheet, not its middle. Placed by the centre, a ball
            sinks into the surface by its own radius; placed by the foot, it
            stands on it - and it rides the wave, because the point it stands on
            is a point on the wave. */
-        drawSphere(x, y - r, r, mixRgb(from, to, sphere.hue), near);
+        drawSphere(at, y - r, r, mixRgb(from, to, sphere.hue), near);
       }
     };
 
