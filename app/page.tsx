@@ -108,7 +108,16 @@ export default function LandingPage() {
         style={{
           ["--page-gutter" as string]: "clamp(16px, 2.2vw, 40px)",
           paddingTop: "clamp(8px, 1vw, 18px)",
-          paddingBottom: "var(--page-gutter)",
+          /* A shade under the sides rather than exactly them.
+
+             On paper this was already the gutter and so already equal to the
+             left and right. On the screen it was not reading that way, and the
+             reason is that a gap between an object and the bottom of the window
+             is bounded on one side only: the sides are read against the page
+             either side of the card, and this is read against nothing. The eye
+             adds the rest, so four equal numbers do not give four equal gaps. A
+             fifth under the sides is where it settles. */
+          paddingBottom: "clamp(12px, 1.8vw, 32px)",
         }}
         className="flex h-[var(--stage)] flex-col overflow-clip"
       >
