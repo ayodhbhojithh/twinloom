@@ -58,6 +58,19 @@ const SPHERES = [
   { along: 0.86, depth: 0.52, size: 0.036, hue: 0.02 },
 ] as const;
 
+/**
+ * How far the whole field sits to the right of centre, as a share of the width.
+ *
+ * The card is not a symmetrical thing: its left is a headline, a paragraph and
+ * two buttons, and its right is this. Centred, the field spends its densest
+ * rows under the type - where they are painted out again by the fade - and runs
+ * out of card on the side where it is actually being looked at.
+ *
+ * Applied inside `place`, so the spheres move with the surface they are standing
+ * on. Applied to the dots alone they would slide off it.
+ */
+const SHIFT = 0.15;
+
 /** Where the mark's colours come from, and what to use before CSS has loaded. */
 const FALLBACK = { from: "#2a98fe", to: "#06dbaf" };
 
@@ -214,7 +227,8 @@ export function WaveDots({
          it takes to read as distance rather than as a slightly narrower row. */
       const spread = 0.16 + 1.6 * near;
       const slide = (held.x - 0.5) * width * 0.16 * near * lean;
-      const x = width / 2 + (along - 0.5) * width * spread + slide;
+      const x =
+        width * (0.5 + SHIFT) + (along - 0.5) * width * spread + slide;
 
       /* And the roll, which is the whole thing.
 

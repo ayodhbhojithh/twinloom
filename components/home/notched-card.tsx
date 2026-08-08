@@ -431,16 +431,17 @@ export function NotchedCard({ className }: { className?: string }) {
                   drawn round the words, and the whole point is that there is no
                   box.
 
-                  And it stops halfway rather than two thirds across. It reached
-                  far enough to wash out most of the sheet, which left the dots
-                  looking sparse when what was actually happening was that they
-                  were being painted over. */}
+                  Its reach follows the words. It reached two thirds across once
+                  and washed out most of the sheet, which left the dots looking
+                  sparse when what was really happening was that they were being
+                  painted over; it now covers the measure the type is set in and
+                  a little more, which is all it was ever for. */}
               <div
                 aria-hidden
                 className="absolute inset-0"
                 style={{
                   backgroundImage:
-                    "linear-gradient(100deg, var(--color-field) 0%, var(--color-field) 13%, color-mix(in oklab, var(--color-field) 62%, transparent) 27%, transparent 42%)",
+                    "linear-gradient(100deg, var(--color-field) 0%, var(--color-field) 17%, color-mix(in oklab, var(--color-field) 62%, transparent) 32%, transparent 47%)",
                 }}
               />
             </>
@@ -501,24 +502,35 @@ export function NotchedCard({ className }: { className?: string }) {
           paddingRight: pad,
         }}
       >
-        {/* Half the card at the widest, all of it on a phone. The field runs
-            under the whole surface either way; this only decides how much of it
-            the words are allowed to cross. */}
-        <div className="w-full max-w-[46ch] lg:max-w-[52%]">
+        {/* Three fifths of the card at the widest, all of it on a phone.
+
+            The field runs under the whole surface either way; this only decides
+            how much of it the words are allowed to cross - and now that the
+            field itself sits right of centre, the words can have more of the
+            card without ever being set over its dense part. */}
+        <div className="w-full max-w-[55ch] lg:max-w-[57%]">
           <div className="pointer-events-auto min-w-0">
             {/* The claim, and the half of it that is the offer set in the
                 mark's own gradient. The same device the name in the header
                 uses, for the same reason: it is one sentence, and the colour
                 marks which part of it is the promise rather than adding a
                 second idea. */}
-            <h1 className="max-w-[15ch] text-[clamp(30px,4vw,58px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
+            {/* Seventeen characters.
+
+                Fifteen was set for a card whose right half was a picture, and it
+                was the thing breaking this into four lines rather than the
+                column it sits in - a four line claim reads as a paragraph
+                somebody has emboldened. Nineteen went the other way and left the
+                type running most of the card. Seventeen is where it holds three
+                lines without reaching for the field beside it. */}
+            <h1 className="max-w-[17ch] text-[clamp(30px,4vw,56px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
               Tell us who your website is for.
               <span className="thread-text block">
                 We write the rest down.
               </span>
             </h1>
 
-            <p className="mt-5 max-w-[46ch] text-[14.5px] leading-[1.65] text-quiet sm:text-[15.5px]">
+            <p className="mt-5 max-w-[50ch] text-[14.5px] leading-[1.65] text-quiet sm:text-[15.5px]">
               {SITE.description}
             </p>
 
