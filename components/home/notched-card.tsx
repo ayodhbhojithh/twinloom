@@ -12,7 +12,7 @@ import {
   Maximize2,
 } from "lucide-react";
 
-import { ROUTES, SITE } from "@/lib/site";
+import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 import { ProjectPanel } from "./project-panel";
@@ -370,6 +370,50 @@ export function NotchedCard({ className }: { className?: string }) {
           borrowed from elsewhere on the site - so the card has to be able to be
           a colour. Guarded rather than left to `next/image`, which is handed an
           empty `src` otherwise and throws. */}
+      {/* The first screen: the wave.
+
+          Drawn outside the slides rather than inside them.
+
+          It was inside the layer keyed on the slide's id, so every press of an
+          arrow unmounted the canvas and built another one: a WebGL-free redraw,
+          but still a fresh context, a fresh lattice and a restarted clock. What
+          that looked like was a flash and then the same picture - which is most
+          of why pressing an arrow appeared to do nothing.
+
+          Out here it persists, and the slide moves it instead. Each slide stands
+          at a different place in the same swell, and the loop eases to it, so an
+          arrow rolls the surface rather than swapping it. */}
+      <div
+        aria-hidden
+        className="absolute inset-0 overflow-hidden bg-field"
+        style={{ clipPath: path ? `path("${path}")` : undefined }}
+      >
+        {shown.view === "wave" ? (
+          <WaveDots className="absolute inset-0" phase={at * 1.9} />
+        ) : null}
+
+        {/* And the left of it taken back for the type. Only where there is type
+            and a field to take it back from.
+
+            The field runs across the whole card, and a headline set over moving
+            dots is a headline read twice. This is the card's own white returning
+            across the half the words sit in - so the drawing is full width and
+            the sentence is still on paper.
+
+            A gradient rather than a panel: an edge here would be a box drawn
+            round the words, and the whole point is that there is no box. Its
+            reach follows the words, which is all it was ever for. */}
+        {shown.view === "wave" ? (
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(100deg, var(--color-field) 0%, var(--color-field) 17%, color-mix(in oklab, var(--color-field) 62%, transparent) 32%, transparent 47%)",
+            }}
+          />
+        ) : null}
+      </div>
+
       <AnimatePresence initial={false}>
         <motion.div
           key={shown.id}
@@ -394,7 +438,19 @@ export function NotchedCard({ className }: { className?: string }) {
             shown.image && "artwork",
           )}
           style={{
-            backgroundColor: shown.tone,
+            /* Only where there is a picture to hold up.
+
+               This layer is the crossfade: two of it exist while one slide
+               replaces another, and its `tone` is the colour a picture arrives
+               on. With no picture, that tone is white and it was an opaque sheet
+               laid over the drawing - which is why the field vanished, and why
+               pressing an arrow flashed it: the incoming sheet starts at nought
+               opacity and rises, so for half a second the drawing showed through
+               its own cover.
+
+               The card's white now belongs to the layer underneath, which is
+               where a card's ground belongs. */
+            backgroundColor: shown.image ? shown.tone : undefined,
             clipPath: path ? `path("${path}")` : undefined,
           }}
         >
@@ -408,44 +464,7 @@ export function NotchedCard({ className }: { className?: string }) {
               sizes="100vw"
               className="object-cover"
             />
-          ) : (
-            <>
-              {/* No picture, so the card draws itself.
-
-                  Six threads of dots crossing one band, in the mark's own two
-                  colours. It was a shader drawing bands of light before this,
-                  and bands were the thing that was wrong with it: the mark is
-                  threads, and a thread drawn as a solid stroke is a path. Drawn
-                  as separate marks it is a thread, and six of them at different
-                  wavelengths cross constantly - which is the picture. */}
-              <WaveDots className="absolute inset-0" />
-
-              {/* And the left of it taken back for the type.
-
-                  The field runs across the whole card, and a headline set over
-                  moving dots is a headline read twice. This is the card's own
-                  white returning across the half the words sit in - so the
-                  drawing is full width and the sentence is still on paper.
-
-                  A gradient rather than a panel: an edge here would be a box
-                  drawn round the words, and the whole point is that there is no
-                  box.
-
-                  Its reach follows the words. It reached two thirds across once
-                  and washed out most of the sheet, which left the dots looking
-                  sparse when what was really happening was that they were being
-                  painted over; it now covers the measure the type is set in and
-                  a little more, which is all it was ever for. */}
-              <div
-                aria-hidden
-                className="absolute inset-0"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(100deg, var(--color-field) 0%, var(--color-field) 17%, color-mix(in oklab, var(--color-field) 62%, transparent) 32%, transparent 47%)",
-                }}
-              />
-            </>
-          )}
+          ) : null}
         </motion.div>
       </AnimatePresence>
 
@@ -460,7 +479,9 @@ export function NotchedCard({ className }: { className?: string }) {
           <Tool
             label="Previous project"
             onClick={() =>
-              setAt((was) => (was - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)
+              setAt(
+                (was) => (was - 1 + HERO_SLIDES.length) % HERO_SLIDES.length,
+              )
             }
           >
             <ArrowLeft className="size-4" />
@@ -477,6 +498,13 @@ export function NotchedCard({ className }: { className?: string }) {
         </div>
       </div>
 
+      {/* Each screen is its own arrangement, not one arrangement with the
+          contents changed. There is one so far - the wave, below - and the other
+          two are white cards waiting for designs of their own.
+
+          A switch rather than a chain of conditions, so adding the next screen
+          is a case here and a `view` in the list, and neither of them can be
+          added without the other being noticed. */}
       {/* What the card is for, inside the card.
 
           The words and the two ways in were a band above this, and the band is
@@ -493,29 +521,41 @@ export function NotchedCard({ className }: { className?: string }) {
           top inset clears the bar and the bottom one clears whichever of the two
           is deeper - measured rather than picked, or a change to any cut leaves
           a line of type sitting in it. */}
-      <div
-        className="pointer-events-none absolute inset-0 z-10 flex items-center"
-        style={{
-          paddingTop: cut.barDepth + 12,
-          paddingBottom: Math.max(cut.biteHeight, cut.dropHeight) + 12,
-          paddingLeft: pad,
-          paddingRight: pad,
-        }}
-      >
-        {/* Three fifths of the card at the widest, all of it on a phone.
+      {shown.view === "wave" ? (
+        <div
+          className="pointer-events-none absolute inset-0 z-10 flex items-center"
+          style={{
+            paddingTop: cut.barDepth + 12,
+            paddingBottom: Math.max(cut.biteHeight, cut.dropHeight) + 12,
+            paddingLeft: pad,
+            paddingRight: pad,
+          }}
+        >
+          {/* Three fifths of the card at the widest, all of it on a phone.
 
             The field runs under the whole surface either way; this only decides
             how much of it the words are allowed to cross - and now that the
             field itself sits right of centre, the words can have more of the
             card without ever being set over its dense part. */}
-        <div className="w-full max-w-[55ch] lg:max-w-[57%]">
-          <div className="pointer-events-auto min-w-0">
-            {/* The claim, and the half of it that is the offer set in the
+          <div className="w-full max-w-[55ch] lg:max-w-[57%]">
+            <div className="pointer-events-auto min-w-0">
+              {/* The claim, and the half of it that is the offer set in the
                 mark's own gradient. The same device the name in the header
                 uses, for the same reason: it is one sentence, and the colour
                 marks which part of it is the promise rather than adding a
                 second idea. */}
-            {/* Seventeen characters.
+              {/* The slide's own claim, not the card's.
+
+                It was one sentence written into the markup, so the arrows moved
+                the drawing and nothing else - the page said the same thing on
+                all four screens, which is the fault. Each slide carries its own
+                now, and each is a different way in to the same offer: a front
+                door that argues four different things is four front doors.
+
+                Keyed on the slide, so React replaces the words rather than
+                editing them, and they arrive with the fade below.
+
+                Seventeen characters.
 
                 Fifteen was set for a card whose right half was a picture, and it
                 was the thing breaking this into four lines rather than the
@@ -523,49 +563,59 @@ export function NotchedCard({ className }: { className?: string }) {
                 somebody has emboldened. Nineteen went the other way and left the
                 type running most of the card. Seventeen is where it holds three
                 lines without reaching for the field beside it. */}
-            <h1 className="max-w-[17ch] text-[clamp(30px,4vw,56px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
-              Tell us who your website is for.
-              <span className="thread-text block">
-                We write the rest down.
-              </span>
-            </h1>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={shown.id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  <h1 className="max-w-[17ch] text-[clamp(30px,4vw,56px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
+                    {shown.claim?.[0]}
+                    <span className="thread-text block">
+                      {shown.claim?.[1]}
+                    </span>
+                  </h1>
 
-            <p className="mt-5 max-w-[50ch] text-[14.5px] leading-[1.65] text-quiet sm:text-[15.5px]">
-              {SITE.description}
-            </p>
+                  <p className="mt-5 max-w-[50ch] text-[14.5px] leading-[1.65] text-quiet sm:text-[15.5px]">
+                    {shown.lead}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
 
-            {/* Two ways in, and they are the only two. The loud one carries the
+              {/* Two ways in, and they are the only two. The loud one carries the
                 gradient; the quiet one is drawn as an outline rather than a
                 second fill, so the pair reads as one choice with a default
                 rather than as two buttons of equal weight. */}
-            <div className="mt-7 flex flex-wrap items-center gap-2.5">
-              <Link
-                href={ROUTES.build}
-                className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
-              >
-                Build your website
-                <ArrowRight
-                  aria-hidden
-                  className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
-                  strokeWidth={2.4}
-                />
-              </Link>
+              <div className="mt-7 flex flex-wrap items-center gap-2.5">
+                <Link
+                  href={ROUTES.build}
+                  className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+                >
+                  Build your website
+                  <ArrowRight
+                    aria-hidden
+                    className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
+                    strokeWidth={2.4}
+                  />
+                </Link>
 
-              <Link
-                href={ROUTES.book}
-                className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field/70 px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink backdrop-blur-sm transition-colors hover:border-ink"
-              >
-                Book a meeting
-                <ArrowUpRight
-                  aria-hidden
-                  className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
-                />
-              </Link>
+                <Link
+                  href={ROUTES.book}
+                  className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field/70 px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink backdrop-blur-sm transition-colors hover:border-ink"
+                >
+                  Book a meeting
+                  <ArrowUpRight
+                    aria-hidden
+                    className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                  />
+                </Link>
+              </div>
             </div>
           </div>
-
         </div>
-      </div>
+      ) : null}
 
       {/* The next slide, standing in the bite.
 

@@ -117,11 +117,22 @@ export function WaveDots({
   speed = 1,
   /** Whether the sheet tilts towards the pointer. */
   interactive = true,
+  /**
+   * Where in the wave to stand.
+   *
+   * Changing it moves the surface to a different part of the same swell, and it
+   * glides rather than cuts - the loop eases towards whatever it is given. That
+   * is what makes it worth having: the card's arrows change this, so pressing
+   * one visibly rolls the wave instead of swapping one identical white slide for
+   * another.
+   */
+  phase = 0,
 }: {
   className?: string;
   amplitude?: number;
   speed?: number;
   interactive?: boolean;
+  phase?: number;
 }) {
   const surface = useRef<HTMLCanvasElement>(null);
 
@@ -129,10 +140,10 @@ export function WaveDots({
      during render, because assigning to a ref while rendering is a side effect
      in render - and read from the loop, so changing one sets a number rather
      than restarting the whole field. */
-  const live = useRef({ amplitude, speed, interactive });
+  const live = useRef({ amplitude, speed, interactive, phase });
 
   useEffect(() => {
-    live.current = { amplitude, speed, interactive };
+    live.current = { amplitude, speed, interactive, phase };
   });
 
   useEffect(() => {
@@ -185,6 +196,16 @@ export function WaveDots({
 
     const wanted = { x: 0.5, y: 0.5, pull: 0 };
     const held = { x: 0.5, y: 0.5, pull: 0 };
+
+    /* The phase, followed rather than set. Given straight to the wave it would
+       jump, and a wave that jumps is a picture being swapped. Eased, the surface
+       rolls to the new shape, which is the same information arriving as motion
+       rather than as a cut.
+
+       Started from the ref rather than from the prop, so this effect does not
+       have to list the prop and be torn down whenever it changes - which would
+       rebuild the whole canvas to move a number, and defeat the point. */
+    let heldPhase = live.current.phase;
 
     /**
      * Where a point on the sheet lands on the screen.
@@ -256,8 +277,12 @@ export function WaveDots({
          the surface never repeats - and being a third, it bends the crest
          without ever competing to be it. */
       const roll =
-        Math.sin(along * Math.PI * 3 - depth * 0.8 + t * 0.34) * 0.74 +
-        Math.sin(along * Math.PI * 1.3 - depth * 1.9 - t * 0.19) * 0.26;
+        Math.sin(along * Math.PI * 3 - depth * 0.8 + t * 0.34 + heldPhase) *
+          0.74 +
+        Math.sin(
+          along * Math.PI * 1.3 - depth * 1.9 - t * 0.19 - heldPhase * 0.6,
+        ) *
+          0.26;
 
       /* Not scaled by `near` alone. That flattened the far half to nothing, so
          the only rows carrying the wave were the ones running off the bottom.
@@ -371,6 +396,7 @@ export function WaveDots({
       held.x += (wanted.x - held.x) * 0.05;
       held.y += (wanted.y - held.y) * 0.05;
       held.pull += (wanted.pull - held.pull) * 0.05;
+      heldPhase += (now.phase - heldPhase) * 0.045;
 
       for (let row = 0; row < ROWS; row += 1) {
         const depth = (row + 0.5) / ROWS;

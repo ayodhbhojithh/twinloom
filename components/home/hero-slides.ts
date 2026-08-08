@@ -13,61 +13,96 @@ import type { Project } from "./projects";
    fields. Only the list is separate - one type, two lists, and the type is the
    thing that keeps them interchangeable if a slide ever is a project.
 
-   Three slides, none of which has a picture yet. Every `image` is empty on
-   purpose, and where there is no picture the card draws the two threads of the
-   mark across itself instead - on white, so `tone` is white: it is the ground
-   the drawing tints, and the colour the card shows for the frame before the
-   drawing has started.
+   Three screens, and they are meant to be three different screens rather than
+   one screen with its contents swapped. Each carries a `view`, and the card
+   branches on it - so an arrow does not change a picture, it changes what the
+   card is.
 
-   Empty rather than borrowed. There are pictures elsewhere in `public` that
-   would fill the space, and any of them would make the card look finished when
-   it is not.
-
-   To fill one: put a file in `image`, describe it in `alt`, and read `tone` off
-   that file - it is the colour the card sits on while the picture loads, so it
-   should be the picture's own average rather than white. Nothing outside this
-   list has to know.
+   One of them exists. It is the wave: the dotted surface with the claim set over
+   it and the two ways in underneath. The other two are white cards waiting for
+   designs of their own, and they are deliberately empty rather than holding a
+   placeholder - a grey panel or a borrowed arrangement is a design decision made
+   before the design.
 --------------------------------------------------------------------------- */
 
-export const HERO_SLIDES: readonly Project[] = [
+/**
+ * Which screen a slide is.
+ *
+ * Not which picture it shows - which arrangement it is. The three are meant to
+ * be three different things rather than one layout with the contents swapped,
+ * so this is the switch the card branches on, and adding the next one is a name
+ * here and a case there.
+ *
+ * `blank` is a white card and nothing else. It is not a placeholder graphic or a
+ * greyed panel, because either of those is a design decision made in advance of
+ * the design.
+ */
+export type SlideView = "wave" | "blank";
+
+/**
+ * A slide, which is a `Project` and a few more things.
+ *
+ * It carries everything a `Project` needs, because the panel that opens from the
+ * corner disc reads those fields and an empty panel is a broken one. What it
+ * adds is what the card itself sets: which screen this is, and the words that
+ * screen puts in type.
+ *
+ * The words are optional because only the first screen has any. A screen waiting
+ * for its own design should not be carrying copy written for somebody else's.
+ *
+ * `claim` is in halves because the card sets the second in the mark's own
+ * gradient. Split at the full stop in the view instead, and every claim would
+ * have to be one sentence with exactly one stop in it.
+ */
+export interface HeroSlide extends Project {
+  view: SlideView;
+  claim?: [string, string];
+  lead?: string;
+}
+
+export const HERO_SLIDES: readonly HeroSlide[] = [
   {
     id: "hero-1",
-    name: "A clothing brand that sells its own way",
-    kind: "Retail",
+    view: "wave",
+    name: "Tell us who your website is for",
+    kind: "The offer",
     year: "2026",
     summary:
-      "Sizes that admit what they run like, photographs a customer can judge a fit from, and returns explained before the basket rather than after it. The shop reads as the brand rather than as a platform wearing it.",
+      "You answer one question. We send back a written scope in your own words, within two working days. It costs nothing and commits you to nothing.",
     facts: [
-      { term: "Pages", value: "16" },
-      { term: "Built in", value: "6 weeks" },
-      { term: "Visitors", value: "Shoppers and stockists" },
+      { term: "Questions", value: "One, to start" },
+      { term: "Comes back", value: "Within two working days" },
+      { term: "Costs", value: "Nothing" },
     ],
+    claim: ["Tell us who your website is for.", "We write the rest down."],
+    lead: "You answer one question. We send back a written scope in your own words, within two working days. It costs nothing and commits you to nothing.",
     image: "",
     alt: "",
     tone: "#ffffff",
   },
 
-  /* Two waiting for their artwork.
+  /* Two white cards, waiting for their own screens.
 
-     `image` is empty rather than pointing at something that will do. A slide
-     borrowing a picture from elsewhere on the site looks finished and is not,
-     and the one made for this card would then have to be found among four that
-     already look like they belong. Empty, the card shows the tone and nothing
-     else, and it is obvious at a glance which two are still to come.
+     Empty rather than filled with something that will do. A screen borrowing the
+     first one's arrangement looks finished and is not, and the design made for
+     it would then have to be found among two that already look like they belong.
 
-     Everything but the picture is real, because the panel that opens from the
-     corner reads these fields and an empty panel is a broken one. */
+     Everything a `Project` needs is still here, because the panel behind the
+     card reads those fields whatever the card is showing.
+
+     To build one: give it a `view` of its own, and add the case to the card. */
   {
     id: "hero-2",
-    name: "The second piece",
+    view: "blank",
+    name: "The second screen",
     kind: "To come",
     year: "2026",
     summary:
-      "This slide is waiting for its artwork. Everything else about it is in place: put a picture in `image`, describe it in `alt`, and read the tone off the file.",
+      "This screen is waiting for its own design. It is a white card until it has one.",
     facts: [
-      { term: "Artwork", value: "Awaited" },
-      { term: "Copy", value: "Placeholder" },
-      { term: "Shows", value: "Its tone only" },
+      { term: "Design", value: "Awaited" },
+      { term: "Shows", value: "A white card" },
+      { term: "Needs", value: "A view of its own" },
     ],
     image: "",
     alt: "",
@@ -75,15 +110,16 @@ export const HERO_SLIDES: readonly Project[] = [
   },
   {
     id: "hero-3",
-    name: "The third piece",
+    view: "blank",
+    name: "The third screen",
     kind: "To come",
     year: "2026",
     summary:
-      "This slide is waiting for its artwork. Everything else about it is in place: put a picture in `image`, describe it in `alt`, and read the tone off the file.",
+      "This screen is waiting for its own design. It is a white card until it has one.",
     facts: [
-      { term: "Artwork", value: "Awaited" },
-      { term: "Copy", value: "Placeholder" },
-      { term: "Shows", value: "Its tone only" },
+      { term: "Design", value: "Awaited" },
+      { term: "Shows", value: "A white card" },
+      { term: "Needs", value: "A view of its own" },
     ],
     image: "",
     alt: "",
