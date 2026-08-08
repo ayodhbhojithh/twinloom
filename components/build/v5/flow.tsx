@@ -18,7 +18,7 @@ import {
   type Where,
 } from "@/lib/build/v5-store";
 
-import { Dock } from "./dock";
+import { DockPanel, DockTab, type Face } from "./dock";
 import { QuickPane } from "./quick";
 import { StageDo, StageWho } from "./stages-a";
 import { StageHave, StageRefs, StageSell, StageStyle } from "./stages-b";
@@ -71,6 +71,14 @@ export function BuildFlow() {
   };
 
   const props = { answers, onGo: goStep, onGoKey: goKey };
+
+  /* Which panel of the dock is open, or none.
+
+     It lives here rather than inside the dock because opening it changes the
+     layout of the whole tool: the panel is a surface beside the question, not a
+     drawer over it, so the thing that lays the two of them out has to be the
+     thing that knows. */
+  const [face, setFace] = useState<Face | null>(null);
 
   /* Back to the top of the tool when the step changes.
 
@@ -187,42 +195,72 @@ export function BuildFlow() {
         </h1>
       </div>
 
-      {tab === "quick" ? (
-        <QuickPane
-          answers={answers}
-          onCarryOn={() => {
-            setShort(false);
-            setTab("full");
-          }}
-        />
-      ) : (
-        <div ref={run}>
-          <StepStrip step={step} answers={answers} onGo={goStep} />
+      {/* The tool and the panel, side by side.
 
-          {/* One column. The running answer is a drawer off the edge now
-              rather than a column beside the question, so a step has the whole
-              surface and the site is still one press away from every one of
-              them. */}
-          <div className="min-w-0">{stage}</div>
+          Opening the dock moves this column left and gives the room to the
+          panel. It used to slide over the top on a scrim, which covered the
+          question somebody had opened it to compare against - and a rectangle
+          floating over the page is the one thing the shape language on this site
+          does not do.
+
+          Stacked below `xl`, and above the tool rather than under it: there is
+          no room to shift left on a narrow window, and a panel that opens below
+          the fold has not opened. */}
+      <div
+        ref={run}
+        className="flex flex-col gap-6 xl:flex-row xl:items-start xl:gap-7"
+      >
+        <div className="min-w-0 flex-1">
+          {tab === "quick" ? (
+            <QuickPane
+              answers={answers}
+              onCarryOn={() => {
+                setShort(false);
+                setTab("full");
+              }}
+            />
+          ) : (
+            <>
+              <StepStrip step={step} answers={answers} onGo={goStep} />
+
+              {/* One column. The running answer is the panel beside this now
+                  rather than a column inside it, so a step has the whole width
+                  it is given. */}
+              <div className="min-w-0">{stage}</div>
+            </>
+          )}
         </div>
-      )}
 
-      {/* The dock: the site the answers describe, and the desk they were
-          written on, behind one tab against one edge.
+        {face ? (
+          <div className="order-first w-full shrink-0 xl:order-last xl:sticky xl:top-[calc(var(--nav-height)+16px)] xl:w-[400px] 2xl:w-[440px]">
+            <DockPanel
+              answers={answers}
+              /* Nowhere, on the quick pane. There is no step being stood on
+                 there, and filing a note under step 01 because step 01 is what
+                 the run would have opened at is a place the reader never was. */
+              where={tab === "full" ? where : null}
+              onGoStep={goKey}
+              face={face}
+              onFace={setFace}
+              onClose={() => setFace(null)}
+              withSite={tab === "full"}
+            />
+          </div>
+        ) : null}
+      </div>
+
+      {/* The way into the dock, hanging off the edge of the tool.
 
           On both ways through, because the desk is on both - the quick pane
           writes its notes and its files to the same one, and somebody who has
           attached four things there has to be able to see the four. Only the
           site half is held back: the quick submission derives no pages, and a
           tab reading zero on every screen it appears on has nothing to say. */}
-      <Dock
+      <DockTab
         answers={answers}
-        /* Nowhere, on the quick pane. There is no step being stood on there,
-           and filing a note under step 01 because step 01 is what the run
-           would have opened at is a place the reader never was. */
-        where={tab === "full" ? where : null}
-        onGoStep={goKey}
         withSite={tab === "full"}
+        open={Boolean(face)}
+        onOpen={setFace}
       />
     </div>
   );
