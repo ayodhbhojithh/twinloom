@@ -5,32 +5,61 @@ import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 /* ---------------------------------------------------------------------------
-   A field of dots, woven.
+   A plane of dots, seen at an angle, with weight sitting on it.
 
-   Six waves crossing through one band, each drawn as separate marks rather than
-   as a stroke. That is the mark's own idea at the size of a card: a line says "a
-   path", and a line made of separate marks says "a thread", which is the word
-   this company is named for. Six of them at different phases cross constantly,
-   and at a crossing the dots simply interleave - no thread has to be cut for
-   another to pass.
+   Two things, and the second is the point of the first. The field is a surface
+   drawn in perspective - rows of dots receding towards a horizon, the whole
+   sheet rolling in a slow wave. The spheres sit on that surface and are the only
+   solid things in the picture, each one reflected in the sheet it is standing
+   on.
 
-   Painted on a 2D canvas rather than in a fragment shader, and that is a
-   downgrade in nothing that matters here. A shader's cost is per pixel and it
-   needs a WebGL context, a compile step and a library; this is about seven
-   hundred filled circles a frame, which is a rounding error, and it needs
-   nothing. It is also the only one of the two that can be told to draw a dot -
-   the shader drew bands, and bands were the thing that was wrong with it.
+   Dots rather than a line or a mesh, for the reason the mark is drawn rather
+   than loaded: a stroke says "a path" and a sheet of separate marks says "a
+   woven thing", which is the word this company is named for. A grid of dots also
+   does what no stroke can - it shows a surface bending without drawing a single
+   edge, because the spacing does all the telling.
 
-   The colours are read off the stylesheet rather than repeated here, so the
-   field, the name in the header and the gradient on the buttons are painted from
-   one pair of values.
+   Painted on a 2D canvas rather than in a fragment shader. A shader's cost is
+   per pixel and it needs a WebGL context, a compile step and a library; this is
+   a few thousand filled circles a frame, which a phone does without noticing,
+   and it needs nothing.
+
+   The colours are read off the stylesheet rather than repeated here, so this,
+   the name in the header and the gradient on the buttons are painted from one
+   pair of values.
 --------------------------------------------------------------------------- */
 
-/** How many threads cross the band. */
-const THREADS = 6;
+/* How many dots, and it is a lot of them.
 
-/** Roughly how far apart the dots sit along a thread, in CSS pixels. */
-const STEP = 21;
+   The gaps were the complaint and the arithmetic says why: sixty-eight dots
+   spread across a row a full screen and a half wide is one every twenty pixels,
+   which is a grid somebody counts rather than a surface. These numbers put them
+   at roughly a third of that, which is close enough that a run of them reads as
+   a line without ever quite being one.
+
+   Five and a half thousand circles a frame sounds like a lot and is not: the
+   cost that would have mattered is building a colour string per dot, and the
+   colour of a dot depends only on which column it is in, so those are worked out
+   once and the alpha is carried on the context instead. */
+const ROWS = 52;
+const COLUMNS = 108;
+
+/**
+ * Where the spheres stand.
+ *
+ * `along` is across the sheet and `depth` is how near, both nought to one; `size`
+ * is a share of the box's height, so the group keeps its proportions whatever
+ * shape the card is. `hue` is where each one sits on the mark's own ramp, so
+ * every sphere is the same two colours at a different mix rather than a new
+ * colour introduced for decoration.
+ */
+const SPHERES = [
+  { along: 0.2, depth: 0.66, size: 0.05, hue: 0.95 },
+  { along: 0.36, depth: 0.44, size: 0.03, hue: 0.55 },
+  { along: 0.55, depth: 0.8, size: 0.075, hue: 0.12 },
+  { along: 0.73, depth: 0.38, size: 0.024, hue: 0.34 },
+  { along: 0.87, depth: 0.6, size: 0.042, hue: 0.02 },
+] as const;
 
 /** Where the mark's colours come from, and what to use before CSS has loaded. */
 const FALLBACK = { from: "#2a98fe", to: "#06dbaf" };
@@ -55,13 +84,28 @@ function readRgb(value: string, fallback: string): Rgb {
   };
 }
 
+const mixRgb = (a: Rgb, b: Rgb, t: number): Rgb => ({
+  r: Math.round(a.r + (b.r - a.r) * t),
+  g: Math.round(a.g + (b.g - a.g) * t),
+  b: Math.round(a.b + (b.b - a.b) * t),
+});
+
+const shade = (c: Rgb, t: number): Rgb => ({
+  r: Math.round(c.r * t),
+  g: Math.round(c.g * t),
+  b: Math.round(c.b * t),
+});
+
+const css = (c: Rgb, alpha = 1) =>
+  `rgba(${c.r}, ${c.g}, ${c.b}, ${Math.max(0, Math.min(alpha, 1))})`;
+
 export function WaveDots({
   className,
-  /** How far the threads swing, as a share of the band's own height. */
+  /** How far the sheet rolls. */
   amplitude = 1,
-  /** How fast the waves travel. */
+  /** How fast the wave travels across it. */
   speed = 1,
-  /** Whether the field answers the pointer. */
+  /** Whether the sheet tilts towards the pointer. */
   interactive = true,
 }: {
   className?: string;
@@ -96,6 +140,18 @@ export function WaveDots({
       FALLBACK.to,
     );
 
+    /* Every dot's colour, worked out once.
+
+       A dot's colour depends only on how far across the sheet it is, and there
+       are a hundred and eight of those - so a hundred and nine strings, built at
+       mount, replace five and a half thousand built every frame. Its alpha is
+       carried on the context instead, which is a number rather than a string to
+       parse. That is the whole reason this many dots is affordable. */
+    const columnInk = Array.from({ length: COLUMNS + 1 }, (_unused, col) => {
+      const c = mixRgb(from, to, col / COLUMNS);
+      return `rgb(${c.r}, ${c.g}, ${c.b})`;
+    });
+
     /* Asked for less motion, and this is nothing but motion. One frame is drawn
        so the card is not blank, and the loop never starts. */
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -117,10 +173,118 @@ export function WaveDots({
       ink.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    /* The pointer, and how far it has been let in. Both held rather than used
-       raw, so the field follows rather than snaps. */
-    const wanted = { x: -1e4, y: -1e4, pull: 0 };
-    const held = { x: -1e4, y: -1e4, pull: 0 };
+    const wanted = { x: 0.5, y: 0.5, pull: 0 };
+    const held = { x: 0.5, y: 0.5, pull: 0 };
+
+    /**
+     * Where a point on the sheet lands on the screen.
+     *
+     * The sheet is flat and level; what makes it a surface rather than a grid is
+     * that near rows are further apart than far ones and wider than them. Both
+     * come from raising the depth to a power, which is the whole of the
+     * perspective here - there is no camera and no matrix, because a sheet seen
+     * from one fixed place needs neither.
+     */
+    const place = (along: number, depth: number, t: number) => {
+      const now = live.current;
+      /* Nought where the pointer is not wanted, so the two lines below can be
+         written once rather than twice with a branch between them. */
+      const lean = now.interactive ? held.pull : 0;
+
+      /* Rows crowd towards the horizon. */
+      const near = Math.pow(depth, 2.1);
+
+      /* The horizon sits above the middle, and the pointer tips it a little -
+         which reads as leaning over the sheet rather than as the sheet moving. */
+      const horizon = height * (0.18 - (held.y - 0.5) * 0.06 * lean);
+      const groundY = horizon + (height * 1.02 - horizon) * near;
+
+      /* Rows widen as they come forward, and the whole sheet slides with the
+         pointer, so the far edge moves less than the near one. That difference
+         is what makes it read as depth rather than as a picture being dragged. */
+      const spread = 0.34 + 1.15 * near;
+      const slide = (held.x - 0.5) * width * 0.16 * near * lean;
+      const x = width / 2 + (along - 0.5) * width * spread + slide;
+
+      /* And the roll, which is the whole thing.
+
+         One wave dominates and it runs across the sheet rather than into it -
+         `along` carries almost all of the weight and `depth` only a little. That
+         ratio is the difference between a wave and a texture: when every row
+         crests in nearly the same place, the eye joins them into one surface
+         lifting; when each row crests somewhere else, it reads as noise.
+
+         The second wave is long, slow and turning the other way. It is there so
+         the first never repeats exactly - two waves at unrelated rates do not
+         come back into step - and it is a third of the height, so it bends the
+         crest without ever competing to be it. */
+      const roll =
+        Math.sin(along * 2.35 - depth * 0.55 + t * 0.42) * 0.78 +
+        Math.sin(along * 1.05 - depth * 1.5 - t * 0.23) * 0.3;
+
+      const y = groundY + roll * height * 0.115 * now.amplitude * near;
+
+      return { x, y, near };
+    };
+
+    const drawSphere = (
+      x: number,
+      y: number,
+      r: number,
+      colour: Rgb,
+      depth: number,
+    ) => {
+      /* The reflection first, so the ball sits on top of its own. It starts at
+         the ball's foot rather than below it - a gap between a thing and its
+         reflection is the thing hovering - and it fades out fast, because a
+         sheet is a surface with a sheen and not a mirror. */
+      const pool = ink.createLinearGradient(x, y + r * 0.7, x, y + r * 2.4);
+      pool.addColorStop(0, css(colour, 0.26 * depth));
+      pool.addColorStop(1, css(colour, 0));
+
+      ink.beginPath();
+      ink.ellipse(x, y + r * 1.45, r * 0.7, r * 0.85, 0, 0, Math.PI * 2);
+      ink.fillStyle = pool;
+      ink.fill();
+
+      /* The ball. Lit from up and to the left, every one of them from the same
+         place - five balls each lit from its own direction is five balls in five
+         different rooms. */
+      const lit = ink.createRadialGradient(
+        x - r * 0.34,
+        y - r * 0.38,
+        r * 0.04,
+        x,
+        y,
+        r * 1.05,
+      );
+      lit.addColorStop(0, css(mixRgb(colour, { r: 255, g: 255, b: 255 }, 0.82)));
+      lit.addColorStop(0.34, css(colour));
+      lit.addColorStop(1, css(shade(colour, 0.62)));
+
+      ink.beginPath();
+      ink.arc(x, y, r, 0, Math.PI * 2);
+      ink.fillStyle = lit;
+      ink.fill();
+
+      /* One small highlight on top of the gradient. It is the difference between
+         a shaded circle and something with a surface. */
+      const spark = ink.createRadialGradient(
+        x - r * 0.36,
+        y - r * 0.44,
+        0,
+        x - r * 0.36,
+        y - r * 0.44,
+        r * 0.42,
+      );
+      spark.addColorStop(0, "rgba(255,255,255,0.9)");
+      spark.addColorStop(1, "rgba(255,255,255,0)");
+
+      ink.beginPath();
+      ink.arc(x - r * 0.36, y - r * 0.44, r * 0.42, 0, Math.PI * 2);
+      ink.fillStyle = spark;
+      ink.fill();
+    };
 
     const draw = (ms: number) => {
       const now = live.current;
@@ -128,75 +292,62 @@ export function WaveDots({
 
       ink.clearRect(0, 0, width, height);
 
-      held.x += (wanted.x - held.x) * 0.08;
-      held.y += (wanted.y - held.y) * 0.08;
-      held.pull += (wanted.pull - held.pull) * 0.06;
+      held.x += (wanted.x - held.x) * 0.05;
+      held.y += (wanted.y - held.y) * 0.05;
+      held.pull += (wanted.pull - held.pull) * 0.05;
 
-      const middle = height / 2;
-      /* The band is a share of the box rather than a number of pixels, so the
-         field fills a short card and a tall one the same way. */
-      const swing = height * 0.17 * now.amplitude;
-      const across = Math.max(Math.ceil(width / STEP), 2);
+      for (let row = 0; row < ROWS; row += 1) {
+        const depth = (row + 0.5) / ROWS;
 
-      for (let thread = 0; thread < THREADS; thread += 1) {
-        /* Each thread is the same wave at its own phase and its own slightly
-           different wavelength. Equal wavelengths would run them in parallel
-           forever; unequal ones make them cross, which is the whole picture. */
-        const phase = (thread / THREADS) * Math.PI * 2;
-        const length = 2.1 + thread * 0.28;
-        const drift = t * (0.22 + thread * 0.03);
-        const lean = (thread - (THREADS - 1) / 2) * (height * 0.028);
+        for (let col = 0; col <= COLUMNS; col += 1) {
+          const along = col / COLUMNS;
+          const { x, y, near } = place(along, depth, t);
 
-        for (let n = 0; n <= across; n += 1) {
-          const along = n / across;
-          const x = along * width;
+          if (x < -20 || x > width + 20) continue;
 
-          /* Tallest in the middle of the run and settling at both ends, so the
-             band opens out of a point and closes back into one rather than
-             running off the edges at full height. */
-          const taper = Math.sin(along * Math.PI);
+          /* Near dots are larger and firmer, far ones smaller and fainter. That
+             is the whole of the depth cue, and it is why the field can be one
+             flat colour and still read as a surface.
 
-          const y =
-            middle +
-            lean +
-            Math.sin(along * length * Math.PI * 2 + phase + drift) *
-              swing *
-              (0.3 + 0.7 * taper);
+             Finer than they were, and there are more of them. A wave is read
+             from the shape a run of marks makes, not from the marks - so the
+             smaller each one is, the more clearly the run is a curve rather than
+             a row of dots that happens to bend.
 
-          /* What the pointer does. A dot near it lifts towards it and grows,
-             falling off smoothly with distance - so the field bulges under the
-             cursor rather than a circle of it changing at once. */
-          let cx = x;
-          let cy = y;
-          let bulge = 0;
+             Faded at both ends of every row, and again into the horizon, so the
+             sheet dissolves into the card on three sides instead of stopping at
+             an edge. */
+          const edge = Math.sin(along * Math.PI);
+          const r = 0.42 + 1.6 * near;
+          const alpha =
+            (0.04 + 0.34 * near) *
+            (0.2 + 0.8 * edge) *
+            Math.min(1, 0.25 + depth * 2.2);
 
-          if (now.interactive && held.pull > 0.01) {
-            const dx = x - held.x;
-            const dy = y - held.y;
-            const reach = Math.max(width, height) * 0.22;
-            const near = Math.exp(-(dx * dx + dy * dy) / (2 * reach * reach));
-
-            bulge = near * held.pull;
-            cx -= dx * 0.06 * bulge;
-            cy -= dy * 0.16 * bulge;
-          }
-
-          const r = (1.1 + 2.4 * taper) * (1 + bulge * 0.9);
-          const alpha = (0.2 + 0.6 * taper) * (1 + bulge * 0.5);
-
-          /* The gradient across the width, worked out per dot rather than as a
-             canvas gradient: each dot is one flat colour, which is what keeps
-             them reading as beads rather than as a shaded ribbon. */
-          const mix = along;
-          const red = Math.round(from.r + (to.r - from.r) * mix);
-          const green = Math.round(from.g + (to.g - from.g) * mix);
-          const blue = Math.round(from.b + (to.b - from.b) * mix);
-
+          ink.globalAlpha = Math.min(alpha, 1);
+          ink.fillStyle = columnInk[col];
           ink.beginPath();
-          ink.arc(cx, cy, r, 0, Math.PI * 2);
-          ink.fillStyle = `rgba(${red}, ${green}, ${blue}, ${Math.min(alpha, 1)})`;
+          ink.arc(x, y, r, 0, Math.PI * 2);
           ink.fill();
         }
+      }
+
+      /* Back to solid before the spheres, which carry their own alpha in their
+         gradients. Left at whatever the last dot set, every ball would be as
+         faint as the corner of the sheet. */
+      ink.globalAlpha = 1;
+
+      /* Far to near, so a nearer ball covers a further one rather than the order
+         they happen to be written in deciding it. */
+      for (const sphere of [...SPHERES].sort((a, b) => a.depth - b.depth)) {
+        const { x, y, near } = place(sphere.along, sphere.depth, t);
+        const r = height * sphere.size * (0.55 + 0.75 * near);
+
+        /* Its foot on the sheet, not its middle. Placed by the centre, a ball
+           sinks into the surface by its own radius; placed by the foot, it
+           stands on it - and it rides the wave, because the point it stands on
+           is a point on the wave. */
+        drawSphere(x, y - r, r, mixRgb(from, to, sphere.hue), near);
       }
     };
 
@@ -233,12 +384,14 @@ export function WaveDots({
 
     const onMove = (event: PointerEvent) => {
       const box = canvas.getBoundingClientRect();
-      wanted.x = event.clientX - box.left;
-      wanted.y = event.clientY - box.top;
+      wanted.x = (event.clientX - box.left) / box.width;
+      wanted.y = (event.clientY - box.top) / box.height;
       wanted.pull = 1;
     };
 
     const onLeave = () => {
+      wanted.x = 0.5;
+      wanted.y = 0.5;
       wanted.pull = 0;
     };
 

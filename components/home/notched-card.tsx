@@ -429,13 +429,18 @@ export function NotchedCard({ className }: { className?: string }) {
 
                   A gradient rather than a panel: an edge here would be a box
                   drawn round the words, and the whole point is that there is no
-                  box. */}
+                  box.
+
+                  And it stops halfway rather than two thirds across. It reached
+                  far enough to wash out most of the sheet, which left the dots
+                  looking sparse when what was actually happening was that they
+                  were being painted over. */}
               <div
                 aria-hidden
                 className="absolute inset-0"
                 style={{
                   backgroundImage:
-                    "linear-gradient(100deg, var(--color-field) 0%, var(--color-field) 24%, color-mix(in oklab, var(--color-field) 55%, transparent) 44%, transparent 64%)",
+                    "linear-gradient(100deg, var(--color-field) 0%, var(--color-field) 17%, color-mix(in oklab, var(--color-field) 60%, transparent) 33%, transparent 50%)",
                 }}
               />
             </>
