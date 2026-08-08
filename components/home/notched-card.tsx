@@ -420,16 +420,6 @@ export function NotchedCard({ className }: { className?: string }) {
           />
         ) : null}
 
-        {shown.view === "balls" ? (
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(260deg, var(--color-field) 0%, var(--color-field) 17%, color-mix(in oklab, var(--color-field) 62%, transparent) 32%, transparent 47%)",
-            }}
-          />
-        ) : null}
-
         {/* The second screen: the water, full bleed and nothing over it.
 
             No claim, no buttons, and no white gradient taking part of the card
@@ -484,25 +474,15 @@ export function NotchedCard({ className }: { className?: string }) {
             field brightens where the cursor is. What goes is the ball stuck to
             the pointer, which reads as a cursor somebody has decorated.
 
-            The colours are a ramp across the balls rather than one each:
-            `setColors` walks the list by index, so every ball between two stops
-            is a mix of them. That is why they are in spectrum order - blue,
-            green, yellow, orange, red. Any other order puts a blend nobody asked
-            for in the middle of the field, and blue beside orange comes out
-            grey.
+            Two colours, and both of them on every ball. `setColors` paints
+            the list down the sphere the balls share - the first at the foot, the
+            last at the crown - so each one carries the mark's blue running into
+            its green rather than being flatly one or the other. A field of flat
+            colours is a bag of sweets; a field of one gradient is a material.
 
-            Nine stops for five colours, because a stop is a share of the field
-            and not just a colour. They are spaced evenly whatever you write, so
-            the only way to give blue and green more of the pit is to give them
-            more stops - blue twice, then a lighter blue, then the mark's green,
-            then green twice. That is five of the eight bands cool and the warm
-            end of the spectrum arriving as the accent it is meant to be, rather
-            than a fifth of the balls being red.
-
-            Blue first for a second reason. Sphere zero takes the first colour
-            and sphere zero carries the point light, so whatever is at the head of
-            this list is what the whole box is lit by. Blue is the mark's; red at
-            the head would wash the field pink wherever the cursor went. */}
+                        The point light takes the middle of the ramp, so the colour the
+            cursor drags around the field is the one between the two rather than
+            either end of them. */}
         {shown.view === "balls" ? (
           <Ballpit
             className="absolute inset-0"
@@ -511,10 +491,7 @@ export function NotchedCard({ className }: { className?: string }) {
             friction={1}
             wallBounce={0.95}
             followCursor={false}
-            colors={[
-              0x2a98fe, 0x2a98fe, 0x22b8f0, 0x06dbaf, 0x22c55e, 0x22c55e,
-              0xf5c518, 0xff7a1a, 0xff4d4d,
-            ]}
+            colors={[0x2a98fe, 0x06dbaf]}
             ambientColor={0xffffff}
             ambientIntensity={1}
             lightIntensity={190}

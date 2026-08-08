@@ -68,7 +68,10 @@
       "Bash(python mark4.py 0.0 0.315 0.78 n2.png)",
       "Bash(node -e \"const t=require\\('three'\\); console.log\\('Timer:', typeof t.Timer, '| ver:', require\\('three/package.json'\\).version\\)\")",
       "Bash(awk '/^export const fragment/,0' node_modules/three/src/renderers/shaders/ShaderLib/meshphysical.glsl.js)",
-      "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/strip.py\")"
+      "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/strip.py\")",
+      "Bash(cp \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/t.mjs\" ./__t.mjs)",
+      "Bash(node ./__t.mjs)",
+      "Bash(rm -f ./__t.mjs)"
     ]
   }
 }

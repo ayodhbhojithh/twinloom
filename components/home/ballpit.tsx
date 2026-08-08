@@ -4,8 +4,10 @@ import { useEffect, useRef } from "react";
 import {
   ACESFilmicToneMapping,
   AmbientLight,
-  Color,
+  ClampToEdgeWrapping,
+  DataTexture,
   InstancedMesh,
+  LinearFilter,
   MathUtils,
   MeshPhysicalMaterial,
   Object3D,
@@ -14,10 +16,12 @@ import {
   PMREMGenerator,
   PointLight,
   Raycaster,
+  RGBAFormat,
   Scene,
   SphereGeometry,
   SRGBColorSpace,
   Timer,
+  UnsignedByteType,
   Vector2,
   Vector3,
   WebGLRenderer,
@@ -542,6 +546,57 @@ const DEFAULTS: PitConfig = {
   followCursor: true,
 };
 
+/* How many steps the gradient is cut into. Sixty-four is past the point where
+   another one is visible on a ball forty pixels across, and it is four bytes
+   each. */
+const BANDS = 64;
+
+/**
+ * The colours, as a strip one pixel wide.
+ *
+ * This is the gradient every ball carries. It is a texture rather than a colour
+ * attribute on the geometry, and that is the second attempt: an attribute added
+ * to the sphere after the mesh was built never reached the shader, and a shader
+ * reading an unbound attribute gets nought - which is a field of black balls
+ * with the lights still on them.
+ *
+ * A map has no such question. The sphere's own `uv.y` runs from nought at the
+ * foot to one at the crown, so a strip one pixel wide and sixty-four tall is
+ * read straight up the ball, and the first colour in the list is the foot.
+ *
+ * Bytes in sRGB, which is the space the numbers were written in. Passing linear
+ * floats through a texture declared sRGB converts them twice.
+ */
+function ribbon(colors: number[]) {
+  const stops = colors.map((value) => [
+    (value >> 16) & 255,
+    (value >> 8) & 255,
+    value & 255,
+  ]);
+
+  const data = new Uint8Array(BANDS * 4);
+  for (let i = 0; i < BANDS; i += 1) {
+    const scaled = (i / (BANDS - 1)) * (stops.length - 1);
+    const at = Math.min(stops.length - 2, Math.floor(scaled));
+    const step = scaled - at;
+    const from = stops[at];
+    const to = stops[at + 1];
+    data[i * 4] = from[0] + step * (to[0] - from[0]);
+    data[i * 4 + 1] = from[1] + step * (to[1] - from[1]);
+    data[i * 4 + 2] = from[2] + step * (to[2] - from[2]);
+    data[i * 4 + 3] = 255;
+  }
+
+  const strip = new DataTexture(data, 1, BANDS, RGBAFormat, UnsignedByteType);
+  strip.colorSpace = SRGBColorSpace;
+  strip.magFilter = LinearFilter;
+  strip.minFilter = LinearFilter;
+  strip.wrapS = ClampToEdgeWrapping;
+  strip.wrapT = ClampToEdgeWrapping;
+  strip.needsUpdate = true;
+  return { strip, data };
+}
+
 const placing = new Object3D();
 
 /** Every ball, as one instanced mesh, with the cursor's own light inside it. */
@@ -555,49 +610,40 @@ class Beads extends InstancedMesh {
       new RoomEnvironment(),
       0.04,
     ).texture;
+
+    const paint = ribbon(
+      config.colors.length > 1 ? config.colors : [0xffffff, 0xffffff],
+    );
+
     const material = new MeshPhysicalMaterial({
       envMap: room,
+      /* The gradient. `color` stays white and this multiplies into it, so the
+         list is the only thing deciding what a ball looks like. */
+      map: paint.strip,
       ...config.materialParams,
     });
     material.envMapRotation.x = -Math.PI / 2;
 
-    super(new SphereGeometry(), material, config.count);
+    /* Enough bands to carry a gradient. The default sphere has sixteen from
+       pole to pole, and a ramp laid over sixteen is a ramp you can count. */
+    super(new SphereGeometry(1, 32, 28), material, config.count);
 
     this.config = config;
     this.physics = new Physics(config);
 
     this.add(new AmbientLight(config.ambientColor, config.ambientIntensity));
-    this.glow = new PointLight(config.colors[0], config.lightIntensity);
+
+    /* The light takes the middle of the ramp rather than one end, because it is
+       what the whole field is lit by and neither end is the field. */
+    const mid = (BANDS >> 1) * 4;
+    this.glow = new PointLight(0xffffff, config.lightIntensity);
+    this.glow.color.setRGB(
+      paint.data[mid] / 255,
+      paint.data[mid + 1] / 255,
+      paint.data[mid + 2] / 255,
+      SRGBColorSpace,
+    );
     this.add(this.glow);
-
-    this.setColors(config.colors);
-  }
-
-  /** The colours as a ramp across the balls, not one colour each. */
-  setColors(colors: number[]) {
-    if (!Array.isArray(colors) || colors.length < 2) return;
-
-    const stops = colors.map((value) => new Color(value));
-    const held = new Color();
-    const pick = (ratio: number) => {
-      const scaled = Math.max(0, Math.min(1, ratio)) * (stops.length - 1);
-      const at = Math.floor(scaled);
-      const from = stops[at];
-      if (at >= stops.length - 1) return from.clone();
-      const to = stops[at + 1];
-      const step = scaled - at;
-      held.r = from.r + step * (to.r - from.r);
-      held.g = from.g + step * (to.g - from.g);
-      held.b = from.b + step * (to.b - from.b);
-      return held;
-    };
-
-    for (let i = 0; i < this.count; i += 1) {
-      const tint = pick(i / this.count);
-      this.setColorAt(i, tint);
-      if (i === 0) this.glow.color.copy(tint);
-    }
-    if (this.instanceColor) this.instanceColor.needsUpdate = true;
   }
 
   update(beat: Beat) {
