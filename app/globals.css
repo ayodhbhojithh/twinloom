@@ -499,6 +499,36 @@
      transparent colour paints the type in whatever it inherited and hides the
      gradient behind it, which fails to nothing rather than to something odd -
      but it fails silently, so both are set together and stay together. */
+  /* The header's bottom edge, given to the page instead of drawn on it.
+
+     The bar is white and the page is the tinted ground, so where they met there
+     was a hard line across the whole window - a rule by accident, on a header
+     that deliberately has none. This is the same edge handed over as a fade: the
+     bar's own colour running out below it, so the page arrives rather than
+     starts.
+
+     It hangs below the header rather than inside it. Inside, the last few pixels
+     of the bar would be see-through and the nav would be sitting on them; below,
+     the bar stays opaque, which is what keeps the links legible and keeps the
+     browser from recompositing a blurred strip on every scroll frame.
+
+     Short on purpose. The landing card's own top air is eight pixels on a phone,
+     so a long tail would lie a white wash over the top edge of a dark picture.
+     Fourteen fades the join without reaching what is under it. */
+  .header-fade::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    height: 14px;
+    pointer-events: none;
+    background-image: linear-gradient(
+      to bottom,
+      var(--color-field),
+      transparent
+    );
+  }
+
   .thread-text {
     background-image: linear-gradient(
       100deg,

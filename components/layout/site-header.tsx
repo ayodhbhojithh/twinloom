@@ -45,9 +45,15 @@ export function SiteHeader() {
   /* No rule under it, and opaque. The two go together: a translucent bar shows the
      page sliding through it, and without a rule there is nothing left to mark where
      the header stops. Opaque also removes the shimmer, since a blurred backdrop has
-     to recomposite the whole strip on every scroll frame. */
+     to recomposite the whole strip on every scroll frame.
+
+     What marks where it stops is `.header-fade`: the bar's own white running out
+     over the fourteen pixels below it. The bar is white and the page is the
+     tinted ground, so the two met in a hard line across the whole window - a
+     rule by accident on a header that deliberately has none. A fade is that
+     edge given to the page rather than drawn on it. */
   return (
-    <header className="sticky top-0 z-40 bg-field">
+    <header className="header-fade sticky top-0 z-40 bg-field">
       <div className="page-frame flex items-center gap-4 py-2.5">
         <div className="flex min-w-0 flex-1 items-center">
           <Wordmark />
