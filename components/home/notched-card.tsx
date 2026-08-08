@@ -263,7 +263,20 @@ export function NotchedCard({ className }: { className?: string }) {
     /* The one curve every cut on this card is made of. */
     const flare = Math.max(22, Math.min(h * 0.04, 34));
 
-    const barDepth = flare * 2;
+    /* Except the notch, which takes its curve from what stands in it.
+
+       A notch cannot be shallower than twice its own flare: that is where its
+       two arcs meet, and any less leaves a straight wall between them. So depth
+       and curve are one number, and taking the card's flare gave a notch
+       sixty-eight deep on a tall screen to hold a bar forty high - twenty-eight
+       pixels of nothing, cut out of the top of the picture.
+
+       This is the same argument the width below already makes. The floor is the
+       thing standing in it, measured, not a fraction of the card. Held under the
+       card's own flare as well, so on a short screen where the two agree the
+       notch is drawn with the same curve as the bite and the corner. */
+    const barFlare = Math.min(flare, (TOOL + 12) / 2);
+    const barDepth = barFlare * 2;
 
     /* Only as wide as the bar it holds, plus a little air. Wider and the notch
        stops being a place for something and becomes a shape in its own right.
@@ -293,8 +306,8 @@ export function NotchedCard({ className }: { className?: string }) {
       radius,
       barWidth,
       barDepth,
-      barRadius: flare,
-      barFlare: flare,
+      barRadius: barFlare,
+      barFlare: barFlare,
       biteWidth: bite,
       biteHeight: bite,
       biteRadius: flare,

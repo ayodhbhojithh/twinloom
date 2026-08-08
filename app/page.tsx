@@ -1,7 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-
 import { BuildSection } from "@/components/home/build-section";
 import { NotchedCard } from "@/components/home/notched-card";
 import { PartnersSection } from "@/components/home/partners-section";
@@ -77,70 +74,22 @@ export default function LandingPage() {
       />
 
       <section className="flex h-[var(--stage)] flex-col overflow-clip py-8">
-        <div className="page-frame flex w-full shrink-0 flex-wrap items-end justify-between gap-x-12 gap-y-6">
-          <div className="min-w-0">
-            {/* One run of words, broken by the measure rather than by the
-                sentences, and not evened up.
+        {/* The heading, kept for the document and taken off the screen.
 
-                `text-wrap: balance` is off here: it makes both lines the same
-                length, which turns a headline into a block. Filling the first
-                line and letting the second run short gives the shape a top edge
-                and a diagonal, which is the thing that reads as a headline
-                rather than as a paragraph.
+            The services line and the two ways in were a band above the card and
+            they are gone from it: the card is the page, and a headline and a
+            pair of buttons competing with it left two things half read. Both
+            ways in are already on this page - in the header, at the foot of the
+            card, and in the footer - so nothing has been lost but the third and
+            fourth copy of them.
 
-                Thirty-four characters, which is where this line falls in two.
-                Twenty-five was set for a shorter headline and takes this one to
-                three, and the third line comes off the card below it. */}
-            <h1 className="rise section-head max-w-[34ch] text-ink [text-wrap:pretty]">
-              {SITE.services.ink}
-              {/* The second half a grade quieter, which is the same split the
-                  footer makes: the thing we are known for in ink, everything
-                  else behind it. Tone says what a gradient would have said, and
-                  says it in the one palette the page has. */}
-              <span className="text-quiet"> {SITE.services.quiet}</span>
-            </h1>
-          </div>
+            The heading itself is not gone, only unseen. A page with no `h1` has
+            no name in its own outline, and this is the one page whose title has
+            to say what the company does. It is the same string the metadata is
+            built from. */}
+        <h1 className="sr-only">{SERVICES}</h1>
 
-          {/* Two of the same shape on a phone, side by side rather than one
-              under the other.
-
-              Stacked and each as wide as its own words, they were two different
-              lengths on two lines, left aligned against a headline three lines
-              deep - which reads as a list somebody has not finished laying out.
-              A row of two equal halves is one object with a middle, and it costs
-              the fold a line of height rather than two.
-
-              From `sm` they go back to their own widths, because there the row
-              sits beside the headline instead of under it and equal halves of
-              nothing would only stretch them. */}
-          <div
-            style={{ "--in": "120ms" } as React.CSSProperties}
-            className="rise grid w-full grid-cols-2 gap-2.5 sm:flex sm:w-auto sm:flex-wrap sm:items-center"
-          >
-            <Link
-              href={ROUTES.book}
-              className="group inline-flex items-center justify-center gap-2 rounded-pill bg-well px-4 py-2.5 text-[14px] font-semibold whitespace-nowrap text-ink transition-colors hover:bg-hair sm:justify-start sm:px-5 sm:text-[14.5px]"
-            >
-              Book a meeting
-              <ArrowUpRight
-                aria-hidden
-                className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              />
-            </Link>
-            <Link
-              href={ROUTES.build}
-              className="group inline-flex items-center justify-center gap-2 rounded-pill bg-ink px-4 py-2.5 text-[14px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-85 sm:justify-start sm:px-5 sm:text-[14.5px]"
-            >
-              Build your website
-              <ArrowUpRight
-                aria-hidden
-                className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              />
-            </Link>
-          </div>
-        </div>
-
-        <div className="page-frame mt-7 min-h-0 w-full flex-1">
+        <div className="page-frame min-h-0 w-full flex-1">
           <NotchedCard className="h-full w-full" />
         </div>
       </section>
