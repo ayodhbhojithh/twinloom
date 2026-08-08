@@ -13,6 +13,18 @@
 
 export const SITE = {
   name: "TwinLoom",
+  /**
+   * The name in its two halves, for the lockup.
+   *
+   * The mark runs blue into teal and the second half of the name runs with it,
+   * so the two are one drawing rather than a picture with a caption. Held here
+   * rather than sliced in the header, because a `slice(0, 4)` in a component is
+   * a number nobody can read the meaning of, and it would silently colour the
+   * wrong letters the day the name changes.
+   *
+   * These two must always join back into `name`.
+   */
+  halves: ["Twin", "Loom"] as const,
   /** For the header, where a longer name crowds everything beside it. */
   short: "TwinLoom",
   /**

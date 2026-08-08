@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 
 export function Stage({
   toolbar,
+  stickyBar,
   corner,
   aside,
   foot,
@@ -37,6 +38,22 @@ export function Stage({
 }: {
   /** Stands in the notch at the top: the way between steps. */
   toolbar?: React.ReactNode;
+  /**
+   * The bar lifts out of the notch and holds under the header.
+   *
+   * A step can be far taller than a screen - the industry list alone is
+   * fifty-five rows - and the bar is the only thing on the surface saying which
+   * of ten steps this is and the only way to leave for another. Read a long one
+   * and it goes with the top of the card.
+   *
+   * So where a surface asks for it, the bar is in the flow at the top edge
+   * rather than pinned to it, and sticks as the card scrolls past. The top edge
+   * closes behind it: a notch with nothing standing in it is not a quieter
+   * toolbar, it is a bite taken out of the edge for no reason. And it only ever
+   * happens where there is something to scroll, because a surface that fits the
+   * screen never reaches the line that lifts it.
+   */
+  stickyBar?: boolean;
   /** Stands in the corner cut at the bottom right: the way on. */
   corner?: React.ReactNode;
   /** Stands in the bite at the bottom left: what the answers add up to. */
@@ -116,6 +133,49 @@ export function Stage({
     });
   }, [scrollKey]);
 
+  /* Whether the bar has left the notch.
+
+     Measured off the surface's own top edge against the header, because that is
+     the line the bar stops at. A listener rather than an observer: the answer is
+     a comparison between two numbers that both change on scroll, and an
+     `IntersectionObserver` would need a sentinel and a root margin to say the
+     same thing less directly. */
+  const [lifted, setLifted] = useState(false);
+
+  useEffect(() => {
+    const node = box.current;
+    if (!stickyBar || !node) return;
+
+    let frame = 0;
+
+    const settle = () => {
+      frame = 0;
+
+      const head =
+        Number.parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue(
+            "--nav-height",
+          ),
+        ) || 53;
+
+      setLifted(node.getBoundingClientRect().top < head - 1);
+    };
+
+    const again = () => {
+      if (!frame) frame = requestAnimationFrame(settle);
+    };
+
+    settle();
+    window.addEventListener("scroll", again, { passive: true });
+    window.addEventListener("resize", again);
+
+    return () => {
+      window.removeEventListener("scroll", again);
+      window.removeEventListener("resize", again);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [stickyBar]);
+
   /* One flare and one radius, and every cut is built from them, exactly as on
      the landing card. The notch is as deep as the flare plus the corner
      because that is where the two arcs meet; any other number leaves a
@@ -124,7 +184,14 @@ export function Stage({
      Everything is then held inside what the surface can actually give: on a
      narrow screen a bar plus two flares can want more room than the top edge
      has, and a path that overruns its own box folds inside out. */
-  const cut: Cuts = ((): Cuts => {
+  /* The notch is cut while the bar is standing in it, and closed once it has
+     lifted out. The bar's own numbers are kept either way, because the room it
+     occupies in the flow must not change when the edge closes - a card that
+     shuffles its content up by forty pixels at the moment of sticking is worse
+     than one that never stuck. */
+  const inNotch = Boolean(toolbar) && !lifted;
+
+  const geo = (() => {
     const w = Math.max(size.w, 1);
     const h = Math.max(size.h, 1);
 
@@ -155,11 +222,13 @@ export function Stage({
     const drop = cut;
 
     return {
+      /** The bar's own size, whether or not the edge is cut for it. */
+      barRoom: { width: barWidth, depth: barDepth },
       radius,
-      barWidth,
-      barDepth,
-      barRadius: toolbar ? flare : 0.01,
-      barFlare: toolbar ? flare : 0.01,
+      barWidth: inNotch ? barWidth : 0.01,
+      barDepth: inNotch ? barDepth : 0.01,
+      barRadius: inNotch ? flare : 0.01,
+      barFlare: inNotch ? flare : 0.01,
       biteWidth: aside ? bite : 0.01,
       biteHeight: aside ? bite : 0.01,
       biteRadius: aside ? flare : 0.01,
@@ -171,6 +240,9 @@ export function Stage({
     };
   })();
 
+  const { barRoom, ...cut }: { barRoom: { width: number; depth: number } } & Cuts =
+    geo;
+
   const path = size.w > 40 ? outline(size.w, size.h, cut) : "";
 
   /* The room to the left of the notch.
@@ -181,9 +253,9 @@ export function Stage({
      between the two is width. Below the floor there is not enough of it to
      hold a heading, and the content goes back under the bar instead. */
   const pad = Math.max(20, Math.min(size.w * 0.032, 34));
-  const beside = Boolean(toolbar) && (size.w - cut.barWidth) / 2 - pad >= 240;
+  const beside = Boolean(toolbar) && (size.w - barRoom.width) / 2 - pad >= 240;
   const headRoom = beside
-    ? `${Math.round((size.w - cut.barWidth) / 2 - pad - 16)}px`
+    ? `${Math.round((size.w - barRoom.width) / 2 - pad - 16)}px`
     : "62ch";
 
   return (
@@ -202,14 +274,46 @@ export function Stage({
       {/* The three slots sit above the content, not behind it. They are
           absolute and the content is in normal flow after them, so without a
           stacking order of their own the content painted over the cuts and
-          swallowed every press meant for the controls standing in them. */}
+          swallowed every press meant for the controls standing in them.
+
+          The bar is the exception where the surface asks for it. Pinned to the
+          top edge it goes with the top edge, so on a step three screens long
+          there is nothing left saying which step it is. In the flow it can be
+          sticky, which means it stands in the notch until the notch reaches the
+          header and holds there afterwards - and because it occupies its own
+          room either way, the content below it does not move when it lifts. */}
       {toolbar ? (
-        <div
-          className="absolute top-0 left-1/2 z-20 flex -translate-x-1/2 items-start justify-center"
-          style={{ width: cut.barWidth, height: cut.barDepth, paddingTop: 2 }}
-        >
-          {toolbar}
-        </div>
+        stickyBar ? (
+          <div
+            className="sticky top-(--nav-height) z-20 mx-auto flex items-start justify-center"
+            style={{
+              width: barRoom.width,
+              height: barRoom.depth,
+              paddingTop: 2,
+            }}
+          >
+            {/* A ground of its own, and only once it has left the notch. In the
+                notch it needs none - the notch is already a shape cut out of the
+                surface - but travelling down over the answers it has to be read
+                against them, and a pill with no fill over a list of options is
+                two things in the same place. */}
+            <div
+              className={cn(
+                "flex max-w-full items-center rounded-pill transition-colors duration-200",
+                lifted ? "bg-field" : "bg-transparent",
+              )}
+            >
+              {toolbar}
+            </div>
+          </div>
+        ) : (
+          <div
+            className="absolute top-0 left-1/2 z-20 flex -translate-x-1/2 items-start justify-center"
+            style={{ width: cut.barWidth, height: cut.barDepth, paddingTop: 2 }}
+          >
+            {toolbar}
+          </div>
+        )
       ) : null}
 
       {aside ? (
@@ -263,7 +367,10 @@ export function Stage({
              are centred now, so they are always under the notch - and taking
              the `beside` branch put the first line of type hard against the
              floor of the cut. */
-          paddingTop: toolbar ? cut.barDepth + 20 : pad,
+          /* Under the notch, not a whole band under it, and nothing at all
+             where the bar is in the flow: there it has already taken its own
+             room above this. */
+          paddingTop: stickyBar && toolbar ? 20 : toolbar ? barRoom.depth + 20 : pad,
           /* What the heading may take before it would run under the bar. */
           ["--notch-free" as string]: headRoom,
           /* Clear of the bite and then some. The content only has to miss the

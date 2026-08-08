@@ -1,41 +1,50 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { ROUTES, SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 /**
- * The mark: two threads, linked.
+ * The mark.
  *
- * Twin, and woven, in one shape. Each ring is a single arc carrying a gap where
- * the other passes over it, so the two genuinely interlock rather than merely
- * overlap: the left thread goes over at the top crossing and under at the
- * bottom. Take either gap away and it collapses into two circles touching, which
- * is a diagram of nothing.
+ * The real one now, from `public/assets/logo.png`, in place of the two
+ * interlocking rings this drew for itself while there was none.
  *
- * The geometry is worked out rather than eyeballed. Radius 6 on centres six
- * apart puts the crossings at y 6.8 and 17.2, and each gap is twelve degrees of
- * arc either side of its crossing, which is the smallest break that still reads
- * as a break at sixteen pixels.
+ * Two things about the file decide how it is used. It has a genuinely
+ * transparent background - the corners are `rgba(0,0,0,0)`, not white - so it
+ * sits on any surface without a plate behind it. And the mark is a long way in
+ * from the edges of its own canvas: 1336 by 1004 inside 1920 by 1916, which is
+ * 70% of the width and 52% of the height. Rendered at the size the lockup wants,
+ * that empty canvas would leave the mark at half the height of the name beside
+ * it.
  *
- * Drawn, not loaded. Two paths, inheriting `currentColor`, sharp at any size.
+ * So the box is the shape of the mark rather than of the file, and the file is
+ * scaled inside it until the mark fills it. `object-contain` fits the square
+ * image by the box's height; 1 / 0.696 then takes the mark out to the box's
+ * width, and its own 1.33 aspect brings the height with it. The transparent
+ * remainder overflows on all four sides and shows as nothing.
+ *
+ * If the file is ever replaced, this is the one number to recheck: it is the
+ * reciprocal of how much of the canvas width the mark occupies.
  */
-function Threads({ className }: { className?: string }) {
+const CANVAS_TRIM = 1.437;
+
+function Mark({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden
-      focusable="false"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.9}
-      strokeLinecap="round"
-      className={className}
-    >
-      {/* Left thread: broken at the lower crossing, where the right passes over. */}
-      <path d="M10.85 17.71A6 6 0 1 1 13.01 16.46" />
-      {/* Right thread: broken at the upper crossing, where the left passes over. */}
-      <path d="M13.15 6.29A6 6 0 1 1 10.99 7.54" />
-    </svg>
+    <span className={cn("relative block", className)}>
+      <Image
+        src="/assets/logo.png"
+        alt=""
+        aria-hidden
+        fill
+        /* Told the size it is actually drawn at, or the optimiser has no way to
+           know it is not serving a 1920px original into a 40px box. */
+        sizes="48px"
+        priority
+        className="object-contain"
+        style={{ transform: `scale(${CANVAS_TRIM})` }}
+      />
+    </span>
   );
 }
 
@@ -62,17 +71,34 @@ export function Wordmark({
 }) {
   const inner = (
     <>
+      {/* Landscape, because the mark is. A square box round a 1.33 mark is a
+          column of nothing either side of it, and the name would sit that much
+          further from what it names. */}
       <span
         className={cn(
-          "shrink-0 text-ink transition-opacity",
+          "shrink-0 transition-opacity",
           as === "link" && "group-hover/mark:opacity-70",
         )}
       >
-        <Threads className="size-[27px]" />
+        <Mark className="h-[26px] w-[34.6px]" />
       </span>
 
+      {/* One word, in two colours, and it is still one word.
+
+          The old note here said two colours inside `TwinLoom` would split a
+          single word into two. That was right while the mark was a pair of drawn
+          rings in ink: the colour would have been decoration, and decoration is
+          what splits a word. It is not right now. The mark runs blue into teal,
+          and the half of the name that runs with it is the half the mark is
+          named for - so the colour is the same fact stated twice rather than a
+          second idea.
+
+          One `span`, so the two halves are one line box: set as two blocks they
+          could be broken between, and a name that wraps in the middle of itself
+          is not a lockup. */}
       <span className="truncate text-[18px] leading-none font-extrabold tracking-[-0.03em] text-ink">
-        {SITE.name}
+        {SITE.halves[0]}
+        <span className="thread-text">{SITE.halves[1]}</span>
       </span>
 
     </>

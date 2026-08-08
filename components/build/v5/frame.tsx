@@ -46,6 +46,11 @@ export function StageStep({
   return (
     <Stage
       scrollKey={`${step.k}:${scrollKey ?? ""}`}
+      /* The bar lifts out of the notch and holds under the header once this
+         surface scrolls past it. A step can be three screens long and the bar is
+         the only thing on the card that says which of the ten it is, and the
+         only way to leave for another. */
+      stickyBar
       /* A floor the cuts need, sized to the screen. 540 is most of a phone
          before anything has been asked, which put the first question below the
          fold on the page the whole site points at. */

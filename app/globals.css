@@ -81,6 +81,14 @@
   /* The mono index grey, for numbers that are labels rather than data. */
   --color-idx: #6f7889;
 
+  /* The two ends of the mark's own gradient, read off the logo rather than
+     matched by eye: the blue at the left of the loop and the teal at the right.
+     They are here so the name in the lockup can be set in the same two colours
+     the mark beside it is drawn in. Not part of the accent system - nothing is
+     marked, set or completed in these; they are the brand's own. */
+  --color-thread-blue: #2a98fe;
+  --color-thread-teal: #06dbaf;
+
   --radius-card: 10px;
   --radius-field: 8px;
   --radius-pill: 999px;
@@ -474,6 +482,32 @@
     width: 0;
     height: 0;
     display: none;
+  }
+
+  /* The second half of the name, in the mark's own gradient.
+
+     Written here rather than as `bg-linear-to-r from-… to-…`. Nothing else on
+     this site uses those utilities, so there is nothing to confirm they reach
+     the stylesheet - and every gradient already on the page is written as real
+     CSS, in this file or inline. One way of doing it.
+
+     `100deg` rather than `to right`. The mark's gradient rises slightly as it
+     crosses, and a flat horizontal ramp under a rising one reads as two
+     different gradients that happen to share their colours.
+
+     The colour is declared as well as the clip. `background-clip: text` with no
+     transparent colour paints the type in whatever it inherited and hides the
+     gradient behind it, which fails to nothing rather than to something odd -
+     but it fails silently, so both are set together and stay together. */
+  .thread-text {
+    background-image: linear-gradient(
+      100deg,
+      var(--color-thread-blue),
+      var(--color-thread-teal)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
   /* ---------------------------------------------------------------------------
