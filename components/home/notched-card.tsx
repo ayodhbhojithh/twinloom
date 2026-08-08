@@ -1,13 +1,22 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowDown, ArrowLeft, ArrowRight, Maximize2 } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  Maximize2,
+} from "lucide-react";
 
+import { ROUTES, SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 import { ProjectPanel } from "./project-panel";
+import { WaveDots } from "./wave-dots";
 import { HERO_SLIDES } from "./hero-slides";
 import { type Project } from "./projects";
 
@@ -334,6 +343,11 @@ export function NotchedCard({ className }: { className?: string }) {
 
   const path = size.w > 40 ? outline(size.w, size.h, cut) : "";
 
+  /* The card's own side inset, from its width rather than a breakpoint: this is
+     a surface that fills the window, so what it can afford at the sides is a
+     question about the surface and not about the class of device. */
+  const pad = Math.max(22, Math.min(size.w * 0.045, 72));
+
   const shown = HERO_SLIDES[at];
   const next = HERO_SLIDES[(at + 1) % HERO_SLIDES.length];
 
@@ -368,7 +382,17 @@ export function NotchedCard({ className }: { className?: string }) {
           role="button"
           tabIndex={-1}
           aria-hidden
-          className="artwork absolute inset-0 cursor-pointer overflow-hidden"
+          /* `artwork` only where there is artwork.
+
+             That class lays two things over whatever is inside it: an ink
+             gradient graded from a third to nearly nine tenths, and a layer of
+             grain. Both exist to hold a photograph down so type can sit on it.
+             Over a white surface with no picture in it they do not soften
+             anything - they simply paint the card dark grey and dust it. */
+          className={cn(
+            "absolute inset-0 cursor-pointer overflow-hidden",
+            shown.image && "artwork",
+          )}
           style={{
             backgroundColor: shown.tone,
             clipPath: path ? `path("${path}")` : undefined,
@@ -384,7 +408,38 @@ export function NotchedCard({ className }: { className?: string }) {
               sizes="100vw"
               className="object-cover"
             />
-          ) : null}
+          ) : (
+            <>
+              {/* No picture, so the card draws itself.
+
+                  Six threads of dots crossing one band, in the mark's own two
+                  colours. It was a shader drawing bands of light before this,
+                  and bands were the thing that was wrong with it: the mark is
+                  threads, and a thread drawn as a solid stroke is a path. Drawn
+                  as separate marks it is a thread, and six of them at different
+                  wavelengths cross constantly - which is the picture. */}
+              <WaveDots className="absolute inset-0" />
+
+              {/* And the left of it taken back for the type.
+
+                  The field runs across the whole card, and a headline set over
+                  moving dots is a headline read twice. This is the card's own
+                  white returning across the half the words sit in - so the
+                  drawing is full width and the sentence is still on paper.
+
+                  A gradient rather than a panel: an edge here would be a box
+                  drawn round the words, and the whole point is that there is no
+                  box. */}
+              <div
+                aria-hidden
+                className="absolute inset-0"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(100deg, var(--color-field) 0%, var(--color-field) 24%, color-mix(in oklab, var(--color-field) 55%, transparent) 44%, transparent 64%)",
+                }}
+              />
+            </>
+          )}
         </motion.div>
       </AnimatePresence>
 
@@ -416,6 +471,85 @@ export function NotchedCard({ className }: { className?: string }) {
         </div>
       </div>
 
+      {/* What the card is for, inside the card.
+
+          The words and the two ways in were a band above this, and the band is
+          gone: a headline over a full height picture leaves two things half
+          read, and the card is the page.
+
+          Left, and only left. The field is the whole card rather than a panel
+          beside them, so what the measure is doing is leaving the right of it
+          clear - a sentence set across a moving surface is a sentence read
+          twice.
+
+          Held clear of all three cuts by the numbers that made them. The notch
+          is in the top edge and the two cuts are in the bottom corners, so the
+          top inset clears the bar and the bottom one clears whichever of the two
+          is deeper - measured rather than picked, or a change to any cut leaves
+          a line of type sitting in it. */}
+      <div
+        className="pointer-events-none absolute inset-0 z-10 flex items-center"
+        style={{
+          paddingTop: cut.barDepth + 12,
+          paddingBottom: Math.max(cut.biteHeight, cut.dropHeight) + 12,
+          paddingLeft: pad,
+          paddingRight: pad,
+        }}
+      >
+        {/* Half the card at the widest, all of it on a phone. The field runs
+            under the whole surface either way; this only decides how much of it
+            the words are allowed to cross. */}
+        <div className="w-full max-w-[46ch] lg:max-w-[52%]">
+          <div className="pointer-events-auto min-w-0">
+            {/* The claim, and the half of it that is the offer set in the
+                mark's own gradient. The same device the name in the header
+                uses, for the same reason: it is one sentence, and the colour
+                marks which part of it is the promise rather than adding a
+                second idea. */}
+            <h1 className="max-w-[15ch] text-[clamp(30px,4vw,58px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
+              Tell us who your website is for.
+              <span className="thread-text block">
+                We write the rest down.
+              </span>
+            </h1>
+
+            <p className="mt-5 max-w-[46ch] text-[14.5px] leading-[1.65] text-quiet sm:text-[15.5px]">
+              {SITE.description}
+            </p>
+
+            {/* Two ways in, and they are the only two. The loud one carries the
+                gradient; the quiet one is drawn as an outline rather than a
+                second fill, so the pair reads as one choice with a default
+                rather than as two buttons of equal weight. */}
+            <div className="mt-7 flex flex-wrap items-center gap-2.5">
+              <Link
+                href={ROUTES.build}
+                className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+              >
+                Build your website
+                <ArrowRight
+                  aria-hidden
+                  className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
+                  strokeWidth={2.4}
+                />
+              </Link>
+
+              <Link
+                href={ROUTES.book}
+                className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field/70 px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink backdrop-blur-sm transition-colors hover:border-ink"
+              >
+                Book a meeting
+                <ArrowUpRight
+                  aria-hidden
+                  className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                />
+              </Link>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
       {/* The next slide, standing in the bite.
 
           A pair of buttons stood here for a moment and they are gone again: the
@@ -434,7 +568,10 @@ export function NotchedCard({ className }: { className?: string }) {
           /* No border. The bite around it is already the outline, and a second
              one a few pixels inside reads as a sticker on the card rather than
              as the thing the card was cut back for. */
-          className="artwork block size-full overflow-hidden rounded-[18px] transition-transform duration-300 group-hover:-translate-y-1"
+          className={cn(
+            "block size-full overflow-hidden rounded-[18px] transition-transform duration-300 group-hover:-translate-y-1",
+            next.image && "artwork",
+          )}
           style={{ backgroundColor: next.tone }}
         >
           {/* A slide with no artwork shows the colour it will arrive on. */}

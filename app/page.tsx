@@ -75,21 +75,9 @@ export default function LandingPage() {
         }}
         className="flex h-[var(--stage)] flex-col overflow-clip"
       >
-        {/* The heading, kept for the document and taken off the screen.
-
-            The services line and the two ways in were a band above the card and
-            they are gone from it: the card is the page, and a headline and a
-            pair of buttons competing with it left two things half read. Both
-            ways in are already on this page - in the header, at the foot of the
-            card, and in the footer - so nothing has been lost but the third and
-            fourth copy of them.
-
-            The heading itself is not gone, only unseen. A page with no `h1` has
-            no name in its own outline, and this is the one page whose title has
-            to say what the company does. It is the same string the metadata is
-            built from. */}
-        <h1 className="sr-only">{SERVICES}</h1>
-
+        {/* No heading here. The card carries the `h1` now - it says the same
+            claim, on the screen, where the words and the two ways in sit inside
+            the surface rather than in a band above it. Two would be two. */}
         <div className="page-frame min-h-0 w-full flex-1">
           <NotchedCard className="h-full w-full" />
         </div>

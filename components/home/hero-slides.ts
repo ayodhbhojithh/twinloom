@@ -13,14 +13,20 @@ import type { Project } from "./projects";
    fields. Only the list is separate - one type, two lists, and the type is the
    thing that keeps them interchangeable if a slide ever is a project.
 
-   Three slides, one of which has a picture. The other two carry an empty
-   `image` on purpose: they are waiting for artwork made for this card, and a
-   slide borrowing a picture from elsewhere on the site looks finished when it is
-   not. Empty, the card shows the slide's tone and nothing else, so which two are
-   still to come is obvious at a glance rather than something to remember.
+   Three slides, none of which has a picture yet. Every `image` is empty on
+   purpose, and where there is no picture the card draws the two threads of the
+   mark across itself instead - on white, so `tone` is white: it is the ground
+   the drawing tints, and the colour the card shows for the frame before the
+   drawing has started.
+
+   Empty rather than borrowed. There are pictures elsewhere in `public` that
+   would fill the space, and any of them would make the card look finished when
+   it is not.
 
    To fill one: put a file in `image`, describe it in `alt`, and read `tone` off
-   that file. Nothing outside this list has to know.
+   that file - it is the colour the card sits on while the picture loads, so it
+   should be the picture's own average rather than white. Nothing outside this
+   list has to know.
 --------------------------------------------------------------------------- */
 
 export const HERO_SLIDES: readonly Project[] = [
@@ -36,11 +42,9 @@ export const HERO_SLIDES: readonly Project[] = [
       { term: "Built in", value: "6 weeks" },
       { term: "Visitors", value: "Shoppers and stockists" },
     ],
-    image: "/work-shop.png",
-    alt: "A laptop open on a shop page, among floating shapes.",
-    /* Read off the artwork rather than matched by eye: the average of the file,
-       sampled every eighth pixel. */
-    tone: "#5a798f",
+    image: "",
+    alt: "",
+    tone: "#ffffff",
   },
 
   /* Two waiting for their artwork.
@@ -67,7 +71,7 @@ export const HERO_SLIDES: readonly Project[] = [
     ],
     image: "",
     alt: "",
-    tone: "#e9ecf1",
+    tone: "#ffffff",
   },
   {
     id: "hero-3",
@@ -83,6 +87,6 @@ export const HERO_SLIDES: readonly Project[] = [
     ],
     image: "",
     alt: "",
-    tone: "#e2e6ec",
+    tone: "#ffffff",
   },
 ];
