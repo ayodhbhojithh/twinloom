@@ -1,6 +1,12 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 
 import { STEPS } from "@/lib/build/v5";
 import { STEP_ORDER } from "@/lib/build/v5-derive";
@@ -65,6 +71,55 @@ export function BuildFlow() {
   };
 
   const props = { answers, onGo: goStep, onGoKey: goKey };
+
+  /* Back to the top of the tool when the step changes.
+
+     This has to live here rather than on the surface, because the surface is
+     not the same element from one step to the next: each step is its own
+     component, so React unmounts one and mounts another, and anything the
+     surface remembers about having already arrived is forgotten with it. Its
+     own "skip the first run" guard was therefore skipping every run.
+
+     What that left was this. Somebody presses the way on from the foot of a
+     long step - the industry list is fifty-five rows - the next step is short,
+     the document loses a screen or two of height in one frame, and the window
+     keeps the scroll position it had. That position is now somewhere in the
+     section below the tool, so finishing a step appeared to throw the reader
+     into the articles. Nothing scrolled them there; the page shrank out from
+     under them. */
+  const run = useRef<HTMLDivElement>(null);
+  const landed = useRef(false);
+
+  useEffect(() => {
+    if (!landed.current) {
+      landed.current = true;
+      return;
+    }
+
+    const box = run.current;
+    if (!box) return;
+
+    const head =
+      Number.parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue(
+          "--nav-height",
+        ),
+      ) || 53;
+
+    const rect = box.getBoundingClientRect();
+
+    /* Only where the tool has been left behind. If its top is still on screen
+       the reader can see the new step already, and moving the page under
+       somebody who has not asked to be moved is its own fault. */
+    if (rect.top >= head - 4) return;
+
+    window.scrollTo({
+      top: Math.max(0, rect.top + window.scrollY - head - 12),
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    });
+  }, [step, tab]);
 
   const stage = (() => {
     switch (STEPS[step].k) {
@@ -141,7 +196,7 @@ export function BuildFlow() {
           }}
         />
       ) : (
-        <>
+        <div ref={run}>
           <StepStrip step={step} answers={answers} onGo={goStep} />
 
           {/* One column. The running answer is a drawer off the edge now
@@ -149,7 +204,7 @@ export function BuildFlow() {
               surface and the site is still one press away from every one of
               them. */}
           <div className="min-w-0">{stage}</div>
-        </>
+        </div>
       )}
 
       {/* The dock: the site the answers describe, and the desk they were
