@@ -26,6 +26,7 @@ const LOOKS_LIKE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 export async function POST(request: Request) {
   let body: {
     desk?: unknown;
+    follow?: unknown;
     document?: string;
     ask?: Record<string, string>;
     answers?: { refs?: { url?: unknown }[] };
@@ -73,13 +74,22 @@ export async function POST(request: Request) {
      could point at any of them. */
   const ref = isReference(body.desk) ? body.desk : makeReference();
 
+  /* A second send about the same submission rather than a new one.
+
+     Somebody can send the quick version and then answer the questions, which
+     is exactly what the sent screen invites them to do. That arrives here as a
+     whole document again under the reference the first one had, and the subject
+     line has to distinguish the two - otherwise the inbox holds two identical
+     subjects and no way to tell which is the fuller one. */
+  const follow = body.follow === true;
+
   /* The log first, and always.
 
      It survives whether or not the mail goes, it is timestamped, and on any
      host worth using it is searchable. A scope that arrived and could not be
      forwarded is still a scope that arrived. */
   console.info(
-    `[scope ${ref}] from ${ask.name} at ${ask.company} <${ask.email}>
+    `[scope ${ref}${follow ? " follow-up" : ""}] from ${ask.name} at ${ask.company} <${ask.email}>
 ${body.document}`,
   );
 
@@ -96,8 +106,16 @@ ${body.document}`,
     await send(
       w,
       w.notify,
-      `Scoping request ${ref}: ${ask.company}`,
+      follow
+        ? `More detail on ${ref}: ${ask.company}`
+        : `Scoping request ${ref}: ${ask.company}`,
       [
+        /* Said at the top, before the document. Whoever opens this needs to
+           know it supersedes an earlier one before they start reading it, not
+           after. */
+        follow
+          ? "A fuller answer to a request already sent under this reference. This is the version to read."
+          : "",
         `From: ${ask.name} at ${ask.company} <${ask.email}>`,
         ask.phone ? `Phone: ${ask.phone}` : "",
         `Reference: ${ref}`,
@@ -129,6 +147,7 @@ ${body.document}`,
       name: ask.name!.trim(),
       ref,
       attachments: files,
+      follow,
     });
 
     await send(

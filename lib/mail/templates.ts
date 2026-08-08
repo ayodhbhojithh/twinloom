@@ -60,19 +60,37 @@ export function scopeReceipt({
   name,
   ref,
   attachments,
+  follow,
 }: {
   name: string;
   ref: string;
   /** How many files came with it, so the message can say where they went. */
   attachments: number;
+  /**
+   * A fuller answer to a request already sent, rather than a new one.
+   *
+   * Somebody can send the quick version and then answer the questions, which is
+   * what the sent screen invites them to do. Both arrive here under one
+   * reference, so this message has to say which of the two it is confirming or
+   * it reads as the same email twice.
+   */
+  follow?: boolean;
 }): Message {
   const body = `
-    ${kicker("Received")}
-    ${h1("We have your scoping request.")}
+    ${kicker(follow ? "More received" : "Received")}
+    ${h1(
+      follow
+        ? "We have the rest of it."
+        : "We have your scoping request.",
+    )}
     ${p(
-      `Thank you, ${esc(
-        name,
-      )}. A person reads every one of these - what comes back is a written scope in your own words, within two working days.`,
+      follow
+        ? `Thank you, ${esc(
+            name,
+          )}. This is the fuller answer to the request you sent earlier, under the same reference - it is the version we will read.`
+        : `Thank you, ${esc(
+            name,
+          )}. A person reads every one of these - what comes back is a written scope in your own words, within two working days.`,
     )}
 
     ${plate("Your reference", ref)}
@@ -106,8 +124,16 @@ export function scopeReceipt({
   const text = [
     `Hello ${name},`,
     "",
-    "We have your scoping request. A person reads every one of these - what",
-    "comes back is a written scope in your own words, within two working days.",
+    ...(follow
+      ? [
+          "We have the rest of it. This is the fuller answer to the request you",
+          "sent earlier, under the same reference, and it is the version we will",
+          "read.",
+        ]
+      : [
+          "We have your scoping request. A person reads every one of these - what",
+          "comes back is a written scope in your own words, within two working days.",
+        ]),
     "",
     `Your reference is ${ref}.`,
     attachments > 0
@@ -131,11 +157,19 @@ export function scopeReceipt({
   ].join("\n");
 
   return {
-    subject: `We have your scoping request - ${ref}`,
+    /* Two receipts with one subject line would sit on top of each other in a
+       thread and read as the same message sent twice. A follow-up says so. */
+    subject: follow
+      ? `We have the rest of your scoping request - ${ref}`
+      : `We have your scoping request - ${ref}`,
     text,
     html: shell({
-      title: "We have your scoping request",
-      preview: `Your reference is ${ref}. A written scope comes back within two working days.`,
+      title: follow
+        ? "We have the rest of your scoping request"
+        : "We have your scoping request",
+      preview: follow
+        ? `The rest of ${ref}. A written scope comes back within two working days.`
+        : `Your reference is ${ref}. A written scope comes back within two working days.`,
       body,
     }),
   };

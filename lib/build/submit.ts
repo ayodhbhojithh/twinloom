@@ -6,7 +6,7 @@ import {
   SECTORS,
   SYS_LINKS,
 } from "./v5";
-import { deskRef, hasDeskRef, newDesk } from "./desk";
+import { deskRef } from "./desk";
 import { assumed, askDone, pagesFrom, told, zonesFrom } from "./v5-derive";
 import { chipsIn, type Answers } from "./v5-store";
 
@@ -148,11 +148,19 @@ export async function sendScope(answers: Answers): Promise<SendResult> {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        /* The reference the attachments were filed under, so what comes back
-           on the sent screen and the folder they are in are one string. It is
-           only sent where a file was actually taken; otherwise the route makes
-           its own. */
-        desk: hasDeskRef() ? deskRef() : undefined,
+        /* Always this desk's reference, never a fresh one.
+
+           It used to be sent only where a file had been taken, on the grounds
+           that the folder was the only thing that needed it. But a quick
+           submission can be followed by the full run-through - that is what the
+           sent screen offers - and the second one has to arrive under the same
+           reference as the first, or one piece of work turns up in the inbox
+           twice under two numbers with nothing joining them. */
+        desk: deskRef(),
+        /* Whether this desk has already been sent once. The follow-up is a
+           second email about the same submission rather than a second
+           submission, and the subject line has to say which. */
+        follow: Boolean(answers.ref),
         document: scopeDocument(answers),
         ask: answers.ask,
         /* The raw answers, for anything that wants to read them by machine
@@ -171,10 +179,18 @@ export async function sendScope(answers: Answers): Promise<SendResult> {
       };
     }
 
-    /* A new desk from here on. Somebody who carries straight into a second
-       submission gets a folder of their own rather than adding to the one that
-       has already been sent and read. */
-    newDesk();
+    /* The desk is kept, not reset.
+
+       It used to be cleared here, so that anybody carrying straight on into a
+       second submission got a folder of their own. That was the wrong reading of
+       what carrying on means: the sent screen offers the questions as a way to
+       add to what has just gone, so the second send is a fuller answer to the
+       same request and has to arrive under the same reference. Cleared, it would
+       turn one piece of work into two numbers with nothing joining them, and the
+       reference we had just printed on the screen would be stale.
+
+       A genuinely new submission is a new visit. The desk and the answers are
+       both held in module state, so loading the page again is what starts one. */
 
     return body;
   } catch {

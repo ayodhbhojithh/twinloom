@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { ArrowUpRight, Check, Copy } from "lucide-react";
 
 import { ASK_PARTS, REF_KINDS } from "@/lib/build/v5";
+import { carry } from "@/lib/build/handoff";
 import { sendScope, whatIsMissing } from "@/lib/build/submit";
 import { askDone } from "@/lib/build/v5-derive";
 import { ROUTES } from "@/lib/site";
@@ -16,6 +18,7 @@ import {
   setLike,
   setProblem,
   setSending,
+  setSent,
   setShort,
   setText,
   toggleChip,
@@ -153,6 +156,23 @@ export function QuickPane({
           ten steps - it ran edge to edge of the surface while every screen
           beside it was held to 1100 and centred. Two ways in should not be two
           different widths. */}
+      {answers.sent && answers.ref ? (
+        <Delivered
+          answers={answers}
+          /* `sent` comes off on the way through.
+
+             It is what makes both this pane and the submit step show their
+             confirmation instead of their form, so leaving it on would take
+             somebody who asked to add detail to a screen telling them they had
+             already finished, with no way to send the fuller version. The
+             reference stays, which is what marks the next send as a follow-up
+             rather than a second request. */
+          onCarryOn={() => {
+            setSent(false);
+            onCarryOn();
+          }}
+        />
+      ) : (
       <div className="mx-auto w-full max-w-[1320px]">
         <div className="min-w-0">
           <H>Say it in your own words.</H>
@@ -411,39 +431,187 @@ export function QuickPane({
             </Pill>
           </div>
 
-          {answers.sent && answers.ref ? (
-            <p className="mx-auto mt-4 max-w-[62ch] text-[13px] leading-[1.6] text-body">
-              It is with us. Your reference is{" "}
-              <b className="font-mono font-bold text-ink">{answers.ref}</b> -
-              quote it in any reply and everything you attached is filed under
-              it.
-            </p>
-          ) : (
-            <>
-              <p className="mx-auto mt-4 max-w-[62ch] text-[12.5px] leading-[1.55] text-quiet">
-                Nothing is thrown away and nothing is final. It comes back as
-                the same written scope, and you can answer the rest at any
-                point.
-              </p>
+          <p className="mx-auto mt-4 max-w-[62ch] text-[12.5px] leading-[1.55] text-quiet">
+            Nothing is thrown away and nothing is final. It comes back as the
+            same written scope, and you can answer the rest at any point.
+          </p>
 
-              {/* At the point of collection, not seven links down the footer.
-                  This pane takes free text, files and contact details, and a
-                  privacy notice somebody has to go looking for is not one that
-                  was given. */}
-              <p className="mx-auto mt-2 max-w-[62ch] text-[12px] leading-[1.55] text-label">
-                What happens to your details is set out in our{" "}
-                <Link
-                  href={ROUTES.privacy}
-                  className="font-semibold text-body underline decoration-hair underline-offset-2 transition-colors hover:text-mark hover:decoration-mark"
-                >
-                  Privacy notice
-                </Link>
-                .
-              </p>
-            </>
-          )}
+          {/* At the point of collection, not seven links down the footer. This
+              pane takes free text, files and contact details, and a privacy
+              notice somebody has to go looking for is not one that was
+              given. */}
+          <p className="mx-auto mt-2 max-w-[62ch] text-[12px] leading-[1.55] text-label">
+            What happens to your details is set out in our{" "}
+            <Link
+              href={ROUTES.privacy}
+              className="font-semibold text-body underline decoration-hair underline-offset-2 transition-colors hover:text-mark hover:decoration-mark"
+            >
+              Privacy notice
+            </Link>
+            .
+          </p>
         </div>
       </div>
+      )}
     </Stage>
+  );
+}
+
+/**
+ * It has gone.
+ *
+ * The whole surface, not a line under a button. What was there was the form with
+ * its send turned into the word "Sent" and a sentence added below it - which
+ * leaves somebody looking at twelve rows of a thing they have finished, hunting
+ * for confirmation in the small print. Sending is the end of a piece of work and
+ * it should look like one: the surface clears, and what is left is what they now
+ * need.
+ *
+ * Three things, in the order they matter. That it arrived and what happens next.
+ * The reference, which is the one string from this screen that has to survive
+ * being closed, and which can be copied because the only reason to show somebody
+ * a reference is so they can quote it back. Then the two ways on, side by side
+ * and equal, because which one is right depends on how much of a hurry they are
+ * in and that is not ours to decide.
+ */
+function Delivered({
+  answers,
+  onCarryOn,
+}: {
+  answers: Answers;
+  onCarryOn: () => void;
+}) {
+  const reference = answers.ref ?? "";
+  const [copied, setCopied] = useState(false);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(reference);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* No clipboard permission, or an insecure origin. The reference is on the
+         screen in full and selectable, which is what it is there for. */
+    }
+  };
+
+  return (
+    <div className="mx-auto flex w-full max-w-[1000px] flex-col items-center py-6 text-center">
+      {/* The mark, and the only green thing on the screen. Inside this tool the
+          accent means "an answer has been given", and this is the last and
+          largest of those. */}
+      <span
+        aria-hidden
+        className="flex size-14 items-center justify-center rounded-pill bg-mark text-white"
+      >
+        <Check className="size-7" strokeWidth={2.6} />
+      </span>
+
+      <Kicker className="mt-5 block">Submitted</Kicker>
+
+      <h2 className="mt-2.5 max-w-[24ch] text-[clamp(25px,3vw,40px)] leading-[1.06] font-extrabold tracking-[-0.035em] text-ink">
+        That is with us.
+      </h2>
+
+      <p className="mt-4 max-w-[60ch] text-[15.5px] leading-[1.6] text-quiet">
+        We will review this and come back to you within two working days.
+      </p>
+
+      <p className="mt-2 max-w-[60ch] text-[13px] leading-[1.6] text-label">
+        A copy has been sent to your email.
+      </p>
+
+      {/* The reference, given the room it is worth. Everything attached is filed
+          under it and every reply will carry it. */}
+      <div className="mt-7 flex w-full max-w-[34rem] flex-col items-center rounded-[18px] bg-canvas px-6 py-6">
+        <Kicker className="block">Your reference</Kicker>
+
+        <div className="mt-2.5 flex items-center gap-3">
+          <b className="font-mono text-[clamp(17px,2vw,22px)] leading-none font-bold tracking-[0.02em] text-ink tabular-nums select-all">
+            {reference}
+          </b>
+
+          <button
+            type="button"
+            onClick={copy}
+            aria-label={`Copy the reference ${reference}`}
+            className="flex size-8 flex-none cursor-pointer items-center justify-center rounded-pill bg-field text-quiet transition-colors hover:text-ink"
+          >
+            {copied ? (
+              <Check className="size-4" strokeWidth={3} />
+            ) : (
+              <Copy className="size-4" />
+            )}
+          </button>
+        </div>
+
+        <p
+          /* Reserved either way, so the line appearing does not move what is
+             under it. */
+          aria-live="polite"
+          className="mt-2 h-4 text-[11.5px] leading-none text-label"
+        >
+          {copied ? "Copied." : "Quote it in any reply."}
+        </p>
+      </div>
+
+      {/* The two ways on.
+
+          Side by side and the same weight. One is for somebody who does not want
+          to wait two days and one is for somebody who would rather we knew more
+          before we came back, and neither of those is the better answer - so
+          neither gets the louder button. */}
+      <div className="mt-8 grid w-full gap-4 text-left sm:grid-cols-2">
+        <div className="flex min-w-0 flex-col rounded-[18px] bg-canvas p-6">
+          <b className="block text-[14.5px] leading-[1.3] font-bold text-ink">
+            Cannot wait?
+          </b>
+          <p className="mt-2 flex-1 text-[12.5px] leading-[1.6] text-quiet">
+            Book a meeting with us. It opens on the calendar, already set to go
+            through this submission.
+          </p>
+
+          <Link
+            href={`${ROUTES.book}?mins=30`}
+            /* The same handover the submit step makes, so the booking screen
+               knows which submission this is about and does not open by asking
+               a question it has just been told the answer to. */
+            onClick={() =>
+              carry({
+                ref: reference,
+                about: "scope",
+                minutes: 30,
+                name: answers.ask.name?.trim() || undefined,
+                email: answers.ask.email?.trim() || undefined,
+                company: answers.ask.company?.trim() || undefined,
+              })
+            }
+            className="group/book mt-4 inline-flex items-center gap-2 self-start rounded-pill bg-ink px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-85"
+          >
+            Book a meeting
+            <ArrowUpRight
+              aria-hidden
+              className="size-4 transition-transform group-hover/book:translate-x-0.5 group-hover/book:-translate-y-0.5"
+            />
+          </Link>
+        </div>
+
+        <div className="flex min-w-0 flex-col rounded-[18px] bg-canvas p-6">
+          <b className="block text-[14.5px] leading-[1.3] font-bold text-ink">
+            Want to add more to your submission?
+          </b>
+          <p className="mt-2 flex-1 text-[12.5px] leading-[1.6] text-quiet">
+            Our detailed scoping guide adds to the same submission rather than
+            starting a second one. Nothing you have said is lost.
+          </p>
+
+          <div className="mt-4 self-start">
+            <Pill tone="ink" arrow onClick={onCarryOn}>
+              Add more detail
+            </Pill>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
