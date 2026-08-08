@@ -15,7 +15,9 @@ import { Disc } from "./stage";
    The twelve steps, as cut cards on a rail.
 
    The switcher: what you press here decides what the surface below shows, so
-   nothing is reached by scrolling past something else.
+   nothing is reached by scrolling past something else. The rail can be dragged
+   to look further along it without choosing anything, and comes back to the
+   card you are on the moment you do choose.
 
    Each card is cut the way everything else on this site is cut - a corner
    taken out for the mark that stands in it, drawn with the landing card's own
@@ -57,7 +59,13 @@ const CARD = {
   flare: 16,
 };
 
-const CARD_PATH = cutCardPath(CARD.w, CARD.h, CARD.cut, CARD.radius, CARD.flare);
+const CARD_PATH = cutCardPath(
+  CARD.w,
+  CARD.h,
+  CARD.cut,
+  CARD.radius,
+  CARD.flare,
+);
 const CARD_PATH_ON = cutCardPath(
   CARD.onW,
   CARD.onH,
@@ -80,6 +88,9 @@ export function StepStrip({
   const cards = useRef<(HTMLDivElement | null)[]>([]);
   const [shift, setShift] = useState(0);
   const [landed, setLanded] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const grab = useRef<{ x: number; from: number } | null>(null);
+  const swiped = useRef(false);
   const clip = useMemo(() => `path("${CARD_PATH}")`, []);
   const clipOn = useMemo(() => `path("${CARD_PATH_ON}")`, []);
 
@@ -132,6 +143,61 @@ export function StepStrip({
     return () => cancelAnimationFrame(settle);
   }, []);
 
+  /* How far the rail may slide: never right of where it started, and never
+     further left than the point where its last card meets the right edge. The
+     same two limits the centring above works to, asked at the moment of the
+     drag rather than kept in step with it. */
+  const room = () => {
+    const box = wrap.current;
+    const rail = track.current;
+    if (!box || !rail) return 0;
+    return Math.min(0, box.clientWidth - rail.scrollWidth);
+  };
+
+  const held = (from: number, x: number) =>
+    Math.max(room(), Math.min(0, from + x));
+
+  /* Dragging the rail.
+
+     The arrows and the cards move the step and the rail follows; this moves the
+     rail on its own, which is what you want when you are looking rather than
+     choosing. It survives exactly until the next step change, because the rail
+     always comes back to the card you are on - and that is the right behaviour,
+     not a limitation: having looked ahead and then picked something, where you
+     left the rail is not where you want it.
+
+     Pointer capture rather than window listeners, so a drag that leaves the rail
+     - or the window - still ends properly. */
+  const take = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    grab.current = { x: event.clientX, from: shift };
+    swiped.current = false;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setDragging(true);
+  };
+
+  const pull = (event: React.PointerEvent<HTMLDivElement>) => {
+    const grabbed = grab.current;
+    const rail = track.current;
+    if (!grabbed || !rail) return;
+    const moved = event.clientX - grabbed.x;
+    /* Four pixels of slack before it counts as a drag, so a click with an
+       unsteady hand is still a click. */
+    if (Math.abs(moved) > 4) swiped.current = true;
+    /* Written straight to the element rather than through state. Twelve cards
+       re-rendering on every pointer move is a rail that stutters under the
+       finger doing the dragging. */
+    rail.style.transform = `translateX(${held(grabbed.from, moved)}px)`;
+  };
+
+  const drop = (event: React.PointerEvent<HTMLDivElement>) => {
+    const grabbed = grab.current;
+    grab.current = null;
+    setDragging(false);
+    if (!grabbed) return;
+    setShift(held(grabbed.from, event.clientX - grabbed.x));
+  };
+
   const zoneOf = (phase: string) =>
     PHASES.find(([key]) => key === phase)?.[1] ?? "";
 
@@ -139,8 +205,8 @@ export function StepStrip({
     <section aria-label="Steps" className="mb-7">
       <div className="mb-3 flex items-center justify-between gap-4">
         <p className="font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase">
-          {STEPS.length} steps · leave any of them alone · the one you are on
-          comes to the middle
+          {STEPS.length} steps · leave any of them alone · drag the rail to look
+          ahead · the one you are on comes to the middle
         </p>
 
         <div className="flex flex-none items-center gap-0.5">
@@ -168,17 +234,32 @@ export function StepStrip({
         ref={wrap}
         role="tablist"
         aria-label="Steps"
-        className="-mx-1 overflow-hidden px-1 pt-2 pb-3"
+        className={cn(
+          "-mx-1 touch-pan-y overflow-hidden px-1 pt-2 pb-3 select-none",
+          dragging ? "cursor-grabbing" : "cursor-grab",
+        )}
         onKeyDown={(event) => {
           if (event.key === "ArrowRight") onGo(step + 1);
           if (event.key === "ArrowLeft") onGo(step - 1);
+        }}
+        onPointerDown={take}
+        onPointerMove={pull}
+        onPointerUp={drop}
+        onPointerCancel={drop}
+        /* A drag that ends on a card is not a press of that card. Caught on the
+           way down rather than left to each button, so there is one place this
+           is decided and not twelve. */
+        onClickCapture={(event) => {
+          if (!swiped.current) return;
+          event.preventDefault();
+          event.stopPropagation();
         }}
       >
         <div
           ref={track}
           className={cn(
             "relative flex w-max items-end gap-3",
-            landed && "transition-transform duration-400 ease-out",
+            landed && !dragging && "transition-transform duration-400 ease-out",
           )}
           style={{ transform: `translateX(${shift}px)` }}
         >
