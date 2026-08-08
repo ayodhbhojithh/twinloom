@@ -18,11 +18,15 @@ import type { Project } from "./projects";
    branches on it - so an arrow does not change a picture, it changes what the
    card is.
 
-   One of them exists. It is the wave: the dotted surface with the claim set over
-   it and the two ways in underneath. The other two are white cards waiting for
-   designs of their own, and they are deliberately empty rather than holding a
-   placeholder - a grey panel or a borrowed arrangement is a design decision made
-   before the design.
+   The first is the wave: a horizon of dots with a claim set over it and the two
+   ways in underneath.
+
+   The other two are white and empty, and deliberately so. Both have had a design
+   in them - a drawing of the mark on one, the list of services on the other -
+   and both came out as the first screen wearing something else. They are left
+   clear until there is a reason for each to be its own screen, because a card
+   that turns to show a weaker version of what it has just shown is worse than a
+   card that turns to show nothing.
 --------------------------------------------------------------------------- */
 
 /**
@@ -33,7 +37,8 @@ import type { Project } from "./projects";
  * so this is the switch the card branches on, and adding the next one is a name
  * here and a case there.
  *
- * `blank` is a white card and nothing else. It is not a placeholder graphic or a
+ * `wave` is a claim over the dotted surface with the two ways in beneath it.
+ * `blank` is a white card and nothing else - not a placeholder graphic and not a
  * greyed panel, because either of those is a design decision made in advance of
  * the design.
  */
@@ -81,29 +86,21 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     tone: "#ffffff",
   },
 
-  /* Two white cards, waiting for their own screens.
+  /* The second and third: white, and nothing in them yet.
 
-     Empty rather than filled with something that will do. A screen borrowing the
-     first one's arrangement looks finished and is not, and the design made for
-     it would then have to be found among two that already look like they belong.
-
-     Everything a `Project` needs is still here, because the panel behind the
-     card reads those fields whatever the card is showing.
-
-     To build one: give it a `view` of its own, and add the case to the card. */
+     They carry the fields a `Project` needs, because the panel that opens from
+     the corner disc reads those and an empty panel is a broken one. What they do
+     not carry is a `claim` or a `lead` - so there is nothing for the card to set
+     over them, and nothing written here that a design would have to be built
+     around later. */
   {
     id: "hero-2",
     view: "blank",
     name: "The second screen",
-    kind: "To come",
+    kind: "In progress",
     year: "2026",
-    summary:
-      "This screen is waiting for its own design. It is a white card until it has one.",
-    facts: [
-      { term: "Design", value: "Awaited" },
-      { term: "Shows", value: "A white card" },
-      { term: "Needs", value: "A view of its own" },
-    ],
+    summary: "This screen is being designed.",
+    facts: [],
     image: "",
     alt: "",
     tone: "#ffffff",
@@ -112,15 +109,10 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     id: "hero-3",
     view: "blank",
     name: "The third screen",
-    kind: "To come",
+    kind: "In progress",
     year: "2026",
-    summary:
-      "This screen is waiting for its own design. It is a white card until it has one.",
-    facts: [
-      { term: "Design", value: "Awaited" },
-      { term: "Shows", value: "A white card" },
-      { term: "Needs", value: "A view of its own" },
-    ],
+    summary: "This screen is being designed.",
+    facts: [],
     image: "",
     alt: "",
     tone: "#ffffff",

@@ -349,6 +349,11 @@ export function NotchedCard({ className }: { className?: string }) {
   const pad = Math.max(22, Math.min(size.w * 0.045, 72));
 
   const shown = HERO_SLIDES[at];
+
+  /* Which screens stand on the dotted surface. One of the three does, and it is
+     asked once rather than the view name being repeated at each of the places
+     that need to know it. */
+  const onField = shown.view === "wave";
   const next = HERO_SLIDES[(at + 1) % HERO_SLIDES.length];
 
   /* The measurement that placed the name on the picture went with the name. It
@@ -388,7 +393,7 @@ export function NotchedCard({ className }: { className?: string }) {
         className="absolute inset-0 overflow-hidden bg-field"
         style={{ clipPath: path ? `path("${path}")` : undefined }}
       >
-        {shown.view === "wave" ? (
+        {onField ? (
           <WaveDots className="absolute inset-0" phase={at * 1.9} />
         ) : null}
 
@@ -403,7 +408,7 @@ export function NotchedCard({ className }: { className?: string }) {
             A gradient rather than a panel: an edge here would be a box drawn
             round the words, and the whole point is that there is no box. Its
             reach follows the words, which is all it was ever for. */}
-        {shown.view === "wave" ? (
+        {onField ? (
           <div
             className="absolute inset-0"
             style={{
@@ -500,11 +505,7 @@ export function NotchedCard({ className }: { className?: string }) {
 
       {/* Each screen is its own arrangement, not one arrangement with the
           contents changed. There is one so far - the wave, below - and the other
-          two are white cards waiting for designs of their own.
-
-          A switch rather than a chain of conditions, so adding the next screen
-          is a case here and a `view` in the list, and neither of them can be
-          added without the other being noticed. */}
+          two are white cards waiting for designs of their own. */}
       {/* What the card is for, inside the card.
 
           The words and the two ways in were a band above this, and the band is
@@ -521,7 +522,7 @@ export function NotchedCard({ className }: { className?: string }) {
           top inset clears the bar and the bottom one clears whichever of the two
           is deeper - measured rather than picked, or a change to any cut leaves
           a line of type sitting in it. */}
-      {shown.view === "wave" ? (
+      {onField ? (
         <div
           className="pointer-events-none absolute inset-0 z-10 flex items-center"
           style={{
