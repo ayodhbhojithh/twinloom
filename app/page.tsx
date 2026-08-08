@@ -57,7 +57,11 @@ export default function LandingPage() {
       <section
         style={{
           ["--page-gutter" as string]: "clamp(16px, 2.2vw, 40px)",
-          paddingTop: "clamp(8px, 1vw, 18px)",
+          /* Kept at or above the header's own fade, which is eight pixels of
+             white running out below the bar. Any tighter and the fade would be
+             lying over the top edge of the picture instead of over the ground,
+             which is the one thing it must not do. */
+          paddingTop: "clamp(8px, 0.55vw, 11px)",
           /* A shade under the sides rather than exactly them.
 
              On paper this was already the gutter and so already equal to the
