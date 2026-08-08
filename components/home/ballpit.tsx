@@ -6,6 +6,7 @@ import {
   AmbientLight,
   ClampToEdgeWrapping,
   DataTexture,
+  Group,
   InstancedMesh,
   LinearFilter,
   MathUtils,
@@ -348,7 +349,12 @@ function watch(
 
 interface PitConfig {
   count: number;
+  /** The gradient every ball carries, foot to crown. */
   colors: number[];
+  /** The gradients the odd ball carries instead, taken in turn. */
+  accents: number[][];
+  /** How many balls are odd ones, nought to one, shared between the lot. */
+  accentShare: number;
   ambientColor: number;
   ambientIntensity: number;
   lightIntensity: number;
@@ -523,6 +529,8 @@ class Physics {
 const DEFAULTS: PitConfig = {
   count: 200,
   colors: [0, 0, 0],
+  accents: [],
+  accentShare: 0,
   ambientColor: 0xffffff,
   ambientIntensity: 1,
   lightIntensity: 200,
@@ -600,47 +608,123 @@ function ribbon(colors: number[]) {
 const placing = new Object3D();
 
 /** Every ball, as one instanced mesh, with the cursor's own light inside it. */
-class Beads extends InstancedMesh {
+/**
+ * Every ball, as two instanced meshes rather than one.
+ *
+ * One mesh is one material and one material is one gradient, so a field where
+ * most balls run blue into green and a few run yellow into red is two draws. It
+ * is still one physics: the balls do not know which mesh they are in, they know
+ * where they are, and `lane` and `seat` say which row of which mesh gets each
+ * one's matrix. Two draw calls for two hundred spheres is not a cost worth
+ * avoiding; a shader that picks a gradient per instance would be.
+ *
+ * A `Group`, because neither mesh is the other's parent and the lights belong to
+ * both.
+ */
+class Beads extends Group {
   config: PitConfig;
   physics: Physics;
   glow: PointLight;
 
+  /** The field, and the odd one out. */
+  private shells: InstancedMesh[];
+  /** Which shell each ball is in, and which row of it. */
+  private lane: Uint8Array;
+  private seat: Int32Array;
+
   constructor(renderer: WebGLRenderer, config: PitConfig) {
+    super();
+
     const room = new PMREMGenerator(renderer).fromScene(
       new RoomEnvironment(),
       0.04,
     ).texture;
 
-    const paint = ribbon(
-      config.colors.length > 1 ? config.colors : [0xffffff, 0xffffff],
-    );
-
-    const material = new MeshPhysicalMaterial({
-      envMap: room,
-      /* The gradient. `color` stays white and this multiplies into it, so the
-         list is the only thing deciding what a ball looks like. */
-      map: paint.strip,
-      ...config.materialParams,
-    });
-    material.envMapRotation.x = -Math.PI / 2;
-
     /* Enough bands to carry a gradient. The default sphere has sixteen from
-       pole to pole, and a ramp laid over sixteen is a ramp you can count. */
-    super(new SphereGeometry(1, 32, 28), material, config.count);
+       pole to pole, and a ramp laid over sixteen is a ramp you can count. One
+       geometry for both meshes, because it is the same ball. */
+    const geometry = new SphereGeometry(1, 32, 28);
+
+    const skin = (colors: number[]) => {
+      const material = new MeshPhysicalMaterial({
+        envMap: room,
+        /* The gradient. `color` stays white and this multiplies into it, so the
+           list is the only thing deciding what a ball looks like. */
+        map: ribbon(colors.length > 1 ? colors : [0xffffff, 0xffffff]).strip,
+        ...config.materialParams,
+      });
+      material.envMapRotation.x = -Math.PI / 2;
+      return material;
+    };
+
+    const field = skin(config.colors);
+
+    /* Which balls are the odd ones, and which gradient each of them gets.
+
+       Every nth, worked out from the share asked for, and the accents taken in
+       turn - so the shares come out even without anything having to count them.
+       Spaced rather than scattered, for two reasons: a tenth picked at random is
+       a tenth on average and eight on this load, and random inside a component
+       is a component that renders differently on the server and the client. By
+       the time they have bounced around for a second nobody can tell they were
+       spaced. */
+    const gap =
+      config.accentShare > 0 && config.accents.length > 0
+        ? Math.max(2, Math.round(1 / config.accentShare))
+        : 0;
+
+    this.lane = new Uint8Array(config.count);
+    this.seat = new Int32Array(config.count);
+    const rows = new Array<number>(1 + config.accents.length).fill(0);
+
+    let turn = 0;
+    for (let i = 0; i < config.count; i += 1) {
+      /* Never ball zero. That one is the cursor. */
+      const odd = gap > 0 && i > 0 && i % gap === gap >> 1;
+      const lane = odd ? 1 + (turn++ % config.accents.length) : 0;
+      this.lane[i] = lane;
+      this.seat[i] = rows[lane];
+      rows[lane] += 1;
+    }
+
+    this.shells = [field, ...config.accents.map(skin)].map((material, lane) => {
+      /* At least one row even where a lane came out empty, so the lane numbers
+         above stay the lane numbers here. The spare is scaled to nothing, or it
+         would sit at the origin as a ball nobody put there. */
+      const shell = new InstancedMesh(
+        geometry,
+        material,
+        Math.max(1, rows[lane]),
+      );
+      placing.position.set(0, 0, 0);
+      placing.scale.setScalar(0);
+      placing.updateMatrix();
+      for (let spare = rows[lane]; spare < shell.count; spare += 1) {
+        shell.setMatrixAt(spare, placing.matrix);
+      }
+      /* The instances move every frame and the box they move in is the card, so
+         a bounding sphere worked out once is a bounding sphere that lies. */
+      shell.frustumCulled = false;
+      this.add(shell);
+      return shell;
+    });
 
     this.config = config;
     this.physics = new Physics(config);
 
     this.add(new AmbientLight(config.ambientColor, config.ambientIntensity));
 
-    /* The light takes the middle of the ramp rather than one end, because it is
-       what the whole field is lit by and neither end is the field. */
+    /* The light takes the middle of the field's ramp rather than one end,
+       because it is what the whole box is lit by and neither end is the box. */
     const mid = (BANDS >> 1) * 4;
+    const lit = ribbon(
+      config.colors.length > 1 ? config.colors : [0xffffff, 0xffffff],
+    ).data;
     this.glow = new PointLight(0xffffff, config.lightIntensity);
     this.glow.color.setRGB(
-      paint.data[mid] / 255,
-      paint.data[mid + 1] / 255,
-      paint.data[mid + 2] / 255,
+      lit[mid] / 255,
+      lit[mid + 1] / 255,
+      lit[mid + 2] / 255,
       SRGBColorSpace,
     );
     this.add(this.glow);
@@ -648,15 +732,15 @@ class Beads extends InstancedMesh {
 
   update(beat: Beat) {
     this.physics.update(beat);
-    for (let i = 0; i < this.count; i += 1) {
+    for (let i = 0; i < this.config.count; i += 1) {
       placing.position.fromArray(this.physics.positionData, 3 * i);
       const hidden = i === 0 && !this.config.followCursor;
       placing.scale.setScalar(hidden ? 0 : this.physics.sizeData[i]);
       placing.updateMatrix();
-      this.setMatrixAt(i, placing.matrix);
+      this.shells[this.lane[i]].setMatrixAt(this.seat[i], placing.matrix);
       if (i === 0) this.glow.position.copy(placing.position);
     }
-    this.instanceMatrix.needsUpdate = true;
+    for (const shell of this.shells) shell.instanceMatrix.needsUpdate = true;
   }
 }
 

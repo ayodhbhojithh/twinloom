@@ -474,11 +474,23 @@ export function NotchedCard({ className }: { className?: string }) {
             field brightens where the cursor is. What goes is the ball stuck to
             the pointer, which reads as a cursor somebody has decorated.
 
-            Two colours, and both of them on every ball. `setColors` paints
-            the list down the sphere the balls share - the first at the foot, the
-            last at the crown - so each one carries the mark's blue running into
-            its green rather than being flatly one or the other. A field of flat
-            colours is a bag of sweets; a field of one gradient is a material.
+            Two colours, and both of them on every ball: the list is painted
+            down the sphere the balls share - first at the foot, last at the
+            crown - so each one carries the mark's blue running into its green
+            rather than being flatly one or the other. A field of flat colours is
+            a bag of sweets; a field of one gradient is a material.
+
+            Then under a fifth of them on five gradients of their own - yellow,
+            orange, red, a green that is not the mark's and a blue that is not
+            either - taken in turn, so each is about a twenty-fifth of the field.
+            The last two are the point of the other three: a red beside a field
+            of blue-green is a warning light, and a red beside a red-orange-
+            yellow-green-blue scattering is one of the colours. Gradients rather than flat
+            colours, because a flat ball beside a graded one reads as a ball that
+            has not finished loading. Few of them, because the point of an
+            exception is to be one: enough to stop the field being a swatch, and
+            not so many that the two colours that are ours stop being what the
+            card is made of.
 
                         The point light takes the middle of the ramp, so the colour the
             cursor drags around the field is the one between the two rather than
@@ -492,6 +504,14 @@ export function NotchedCard({ className }: { className?: string }) {
             wallBounce={0.95}
             followCursor={false}
             colors={[0x2a98fe, 0x06dbaf]}
+            accents={[
+              [0xf5c518, 0xffa41a],
+              [0xff8a1a, 0xff4d1a],
+              [0xff5a5a, 0xe11d38],
+              [0x3ddc84, 0x0f9d58],
+              [0x4aa8ff, 0x1663d6],
+            ]}
+            accentShare={0.18}
             ambientColor={0xffffff}
             ambientIntensity={1}
             lightIntensity={190}
