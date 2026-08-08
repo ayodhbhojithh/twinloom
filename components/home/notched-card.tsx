@@ -299,8 +299,21 @@ export function NotchedCard({ className }: { className?: string }) {
     const drop = Math.max(flare * 2 + 16, Math.min(w * 0.075, 96));
 
     /* The bite, sized to the thumbnail standing in it, with the same flare and
-       the same corner as the notch above. */
+       the same corner as the notch above.
+
+       Wider than it is tall, by a quarter. The height is what the card can give
+       up out of its bottom edge, and that is the number to be careful with; the
+       width has the whole run to the corner cut to play with, and every picture
+       it holds is landscape. Square, the thumbnail was cropping a 16:9 frame to
+       a 1:1 hole and throwing away the sides of the very thing it is previewing.
+
+       Capped so it still leaves the corner cut at the other end and enough card
+       between the two that they read as two cuts rather than one long one. */
     const bite = Math.max(96, Math.min(Math.min(w * 0.13, h * 0.26), 196));
+    const biteWidth = Math.min(
+      bite * 1.25,
+      Math.max(bite, w - drop - 2 * (radius + flare) - 24),
+    );
 
     return {
       radius,
@@ -308,7 +321,7 @@ export function NotchedCard({ className }: { className?: string }) {
       barDepth,
       barRadius: barFlare,
       barFlare: barFlare,
-      biteWidth: bite,
+      biteWidth,
       biteHeight: bite,
       biteRadius: flare,
       biteFlare: flare,
