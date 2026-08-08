@@ -455,26 +455,41 @@ export function NotchedCard({ className }: { className?: string }) {
 
         {/* The third screen: the pit, and nothing over it either.
 
-            The colours run blue to green to violet across the balls rather than
-            one colour each, so the pile reads as one object catching the light
-            in different places instead of as a bag of sweets. Sphere zero is the
-            cursor and carries the light, which is why the first colour is the
-            mark's blue: it is the one the whole box is lit by. */}
+            No gravity. With it, every ball ends up in a heap along the bottom
+            edge within two seconds and the top two thirds of the card is white -
+            which is a picture of a pile, and this is meant to be a picture of a
+            field. At nought they bounce off all four walls instead and fill the
+            card, and the cursor cuts a hole through them.
+
+            Friction at one for the same reason: anything less and the whole
+            field slows to a stop after half a minute, which is a screen that
+            looks broken to the second person who arrives. It cannot run away
+            either, because `maxVelocity` is a hard clamp and the walls take five
+            per cent at every bounce.
+
+            Small, and a lot of them. The colours run blue to green to violet
+            across the balls rather than one colour each, so the field reads as
+            one thing catching the light in different places instead of as a bag
+            of sweets. Sphere zero is the cursor and carries the light, which is
+            why the first colour is the mark's blue: it is what the whole box is
+            lit by. */}
         {shown.view === "balls" ? (
           <Ballpit
             className="absolute inset-0"
-            count={140}
-            gravity={0.5}
-            friction={0.9975}
+            count={220}
+            gravity={0}
+            friction={1}
             wallBounce={0.95}
             followCursor
             colors={[0x2a98fe, 0x06dbaf, 0x7c4dff]}
             ambientColor={0xffffff}
             ambientIntensity={1}
             lightIntensity={190}
-            minSize={0.5}
-            maxSize={1}
-            maxVelocity={0.15}
+            minSize={0.3}
+            maxSize={0.7}
+            size0={1.1}
+            maxVelocity={0.05}
+            maxZ={1.6}
           />
         ) : null}
       </div>

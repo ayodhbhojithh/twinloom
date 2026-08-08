@@ -57,6 +57,15 @@ import { cn } from "@/lib/utils";
 
 const { randFloat, randFloatSpread } = MathUtils;
 
+/* How fast the balls are already going when they arrive.
+
+   Added to the published physics, and needed the moment gravity is nought.
+   Velocities start at zero there, so with nothing pulling on them the balls
+   simply hang where they were scattered and the pit is a still photograph until
+   somebody moves the cursor. A shove each, in a random direction, and the field
+   drifts from the first frame. */
+const NUDGE = 0.03;
+
 /** Scratch, module-wide, so the physics step allocates nothing. */
 const cursorAt = new Vector3();
 const here = new Vector3();
@@ -380,6 +389,9 @@ class Physics {
       this.positionData[at] = randFloatSpread(2 * config.maxX);
       this.positionData[at + 1] = randFloatSpread(2 * config.maxY);
       this.positionData[at + 2] = randFloatSpread(2 * config.maxZ);
+      this.velocityData[at] = randFloatSpread(NUDGE);
+      this.velocityData[at + 1] = randFloatSpread(NUDGE);
+      this.velocityData[at + 2] = randFloatSpread(NUDGE * 0.4);
     }
     this.setSizes();
   }
