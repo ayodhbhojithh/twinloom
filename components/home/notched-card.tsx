@@ -467,12 +467,18 @@ export function NotchedCard({ className }: { className?: string }) {
             either, because `maxVelocity` is a hard clamp and the walls take five
             per cent at every bounce.
 
+            `followCursor` off, which does not mean the cursor does nothing. It
+            only stops sphere zero being drawn. That sphere is still there in the
+            physics, still pulled to wherever the pointer is, and still shoving
+            everything out of its way - and it still carries the light, so the
+            field brightens where the cursor is. What goes is the ball stuck to
+            the pointer, which reads as a cursor somebody has decorated.
+
             Small, and a lot of them. The colours run blue to green to violet
             across the balls rather than one colour each, so the field reads as
             one thing catching the light in different places instead of as a bag
-            of sweets. Sphere zero is the cursor and carries the light, which is
-            why the first colour is the mark's blue: it is what the whole box is
-            lit by. */}
+            of sweets. The first colour is the mark's blue because sphere zero
+            takes it, and sphere zero is what the whole box is lit by. */}
         {shown.view === "balls" ? (
           <Ballpit
             className="absolute inset-0"
@@ -480,7 +486,7 @@ export function NotchedCard({ className }: { className?: string }) {
             gravity={0}
             friction={1}
             wallBounce={0.95}
-            followCursor
+            followCursor={false}
             colors={[0x2a98fe, 0x06dbaf, 0x7c4dff]}
             ambientColor={0xffffff}
             ambientIntensity={1}
