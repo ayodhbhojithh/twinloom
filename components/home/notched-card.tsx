@@ -484,11 +484,25 @@ export function NotchedCard({ className }: { className?: string }) {
             field brightens where the cursor is. What goes is the ball stuck to
             the pointer, which reads as a cursor somebody has decorated.
 
-            Small, and a lot of them. The colours run blue to green to violet
-            across the balls rather than one colour each, so the field reads as
-            one thing catching the light in different places instead of as a bag
-            of sweets. The first colour is the mark's blue because sphere zero
-            takes it, and sphere zero is what the whole box is lit by. */}
+            The colours are a ramp across the balls rather than one each:
+            `setColors` walks the list by index, so every ball between two stops
+            is a mix of them. That is why they are in spectrum order - blue,
+            green, yellow, orange, red. Any other order puts a blend nobody asked
+            for in the middle of the field, and blue beside orange comes out
+            grey.
+
+            Nine stops for five colours, because a stop is a share of the field
+            and not just a colour. They are spaced evenly whatever you write, so
+            the only way to give blue and green more of the pit is to give them
+            more stops - blue twice, then a lighter blue, then the mark's green,
+            then green twice. That is five of the eight bands cool and the warm
+            end of the spectrum arriving as the accent it is meant to be, rather
+            than a fifth of the balls being red.
+
+            Blue first for a second reason. Sphere zero takes the first colour
+            and sphere zero carries the point light, so whatever is at the head of
+            this list is what the whole box is lit by. Blue is the mark's; red at
+            the head would wash the field pink wherever the cursor went. */}
         {shown.view === "balls" ? (
           <Ballpit
             className="absolute inset-0"
@@ -497,7 +511,10 @@ export function NotchedCard({ className }: { className?: string }) {
             friction={1}
             wallBounce={0.95}
             followCursor={false}
-            colors={[0x2a98fe, 0x06dbaf, 0x7c4dff]}
+            colors={[
+              0x2a98fe, 0x2a98fe, 0x22b8f0, 0x06dbaf, 0x22c55e, 0x22c55e,
+              0xf5c518, 0xff7a1a, 0xff4d4d,
+            ]}
             ambientColor={0xffffff}
             ambientIntensity={1}
             lightIntensity={190}
