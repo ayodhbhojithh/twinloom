@@ -29,20 +29,19 @@ import { cn } from "@/lib/utils";
    pair of values.
 --------------------------------------------------------------------------- */
 
-/* How many dots, and it is a lot of them.
+/* Few rows, many dots in each. The ratio is the picture.
 
-   The gaps were the complaint and the arithmetic says why: sixty-eight dots
-   spread across a row a full screen and a half wide is one every twenty pixels,
-   which is a grid somebody counts rather than a surface. These numbers put them
-   at roughly a third of that, which is close enough that a run of them reads as
-   a line without ever quite being one.
+   Fifty-two rows was a dense sheet, and a dense sheet is a wash: the wave was in
+   it and nothing drew it, because no single row could be followed. A wave is
+   read by tracing one line of it and finding the next one doing the same thing a
+   moment later. So the rows are separated until each is legible on its own, and
+   the dots within a row are packed until a row reads as a line.
 
-   Five and a half thousand circles a frame sounds like a lot and is not: the
-   cost that would have mattered is building a colour string per dot, and the
-   colour of a dot depends only on which column it is in, so those are worked out
-   once and the alpha is carried on the context instead. */
-const ROWS = 52;
-const COLUMNS = 108;
+   That is also why this is a ribbon rather than a plane. A plane fills the card
+   and its far half is a grey haze; a band has two edges, and the edges are what
+   carry the shape. */
+const ROWS = 18;
+const COLUMNS = 132;
 
 /**
  * Where the spheres stand.
@@ -54,11 +53,11 @@ const COLUMNS = 108;
  * colour introduced for decoration.
  */
 const SPHERES = [
-  { along: 0.2, depth: 0.66, size: 0.05, hue: 0.95 },
-  { along: 0.36, depth: 0.44, size: 0.03, hue: 0.55 },
-  { along: 0.55, depth: 0.8, size: 0.075, hue: 0.12 },
-  { along: 0.73, depth: 0.38, size: 0.024, hue: 0.34 },
-  { along: 0.87, depth: 0.6, size: 0.042, hue: 0.02 },
+  { along: 0.17, depth: 0.58, size: 0.042, hue: 0.95 },
+  { along: 0.33, depth: 0.34, size: 0.026, hue: 0.55 },
+  { along: 0.5, depth: 0.76, size: 0.07, hue: 0.12 },
+  { along: 0.7, depth: 0.3, size: 0.02, hue: 0.34 },
+  { along: 0.86, depth: 0.52, size: 0.036, hue: 0.02 },
 ] as const;
 
 /** Where the mark's colours come from, and what to use before CSS has loaded. */
@@ -191,13 +190,20 @@ export function WaveDots({
          written once rather than twice with a branch between them. */
       const lean = now.interactive ? held.pull : 0;
 
-      /* Rows crowd towards the horizon. */
-      const near = Math.pow(depth, 2.1);
+      /* Rows crowd towards the far edge, but not nearly as hard as they did.
+         At 2.1 the far half of the band collapsed into two or three lines and
+         the near half ran off the bottom; 1.55 keeps every row separate enough
+         to be followed, which is the whole requirement. */
+      const near = Math.pow(depth, 1.55);
 
       /* The horizon sits above the middle, and the pointer tips it a little -
          which reads as leaning over the sheet rather than as the sheet moving. */
-      const horizon = height * (0.18 - (held.y - 0.5) * 0.06 * lean);
-      const groundY = horizon + (height * 1.02 - horizon) * near;
+      /* A band across the middle rather than a floor. Its far edge is a third
+         of the way down and its near edge just past the foot, so the whole of it
+         is on the card - a wave running off the bottom edge is a wave nobody can
+         see the bottom of. */
+      const horizon = height * (0.3 - (held.y - 0.5) * 0.07 * lean);
+      const groundY = horizon + height * 0.62 * near;
 
       /* Rows widen as they come forward, and the whole sheet slides with the
          pointer, so the far edge moves less than the near one. That difference
@@ -208,21 +214,33 @@ export function WaveDots({
 
       /* And the roll, which is the whole thing.
 
+         Written in cycles rather than radians, and that is the fix rather than a
+         tidy-up. It was `sin(along * 2.35)`, and `along` runs nought to one - so
+         the argument covered 2.35 radians across the entire width, which is a
+         third of one cycle. A third of a sine is not a wave, it is a slope, and
+         that is exactly what was on the screen. `PI * 3` is a cycle and a half:
+         two crests and a trough, which is enough to be read as a wave and few
+         enough to be read at a glance.
+
          One wave dominates and it runs across the sheet rather than into it -
-         `along` carries almost all of the weight and `depth` only a little. That
-         ratio is the difference between a wave and a texture: when every row
-         crests in nearly the same place, the eye joins them into one surface
-         lifting; when each row crests somewhere else, it reads as noise.
+         `along` carries the weight and `depth` only tilts the crest, so it
+         arrives at the near rows a moment after the far ones. That ratio is what
+         makes it one surface: when every row crests in nearly the same place the
+         eye joins them, and when each crests somewhere else it reads as noise.
 
-         The second wave is long, slow and turning the other way. It is there so
-         the first never repeats exactly - two waves at unrelated rates do not
-         come back into step - and it is a third of the height, so it bends the
-         crest without ever competing to be it. */
+         The second is longer, slower and turning the other way, at a third of
+         the height. Two waves at unrelated rates never come back into step, so
+         the surface never repeats - and being a third, it bends the crest
+         without ever competing to be it. */
       const roll =
-        Math.sin(along * 2.35 - depth * 0.55 + t * 0.42) * 0.78 +
-        Math.sin(along * 1.05 - depth * 1.5 - t * 0.23) * 0.3;
+        Math.sin(along * Math.PI * 3 - depth * 0.8 + t * 0.5) * 0.74 +
+        Math.sin(along * Math.PI * 1.3 - depth * 1.9 - t * 0.28) * 0.26;
 
-      const y = groundY + roll * height * 0.115 * now.amplitude * near;
+      /* Not scaled by `near` alone. That flattened the far half to nothing, so
+         the only rows carrying the wave were the ones running off the bottom.
+         Every row shows it; the near ones just show more. */
+      const y =
+        groundY + roll * height * 0.26 * now.amplitude * (0.45 + 0.55 * near);
 
       return { x, y, near };
     };
@@ -238,13 +256,26 @@ export function WaveDots({
          the ball's foot rather than below it - a gap between a thing and its
          reflection is the thing hovering - and it fades out fast, because a
          sheet is a surface with a sheen and not a mirror. */
-      const pool = ink.createLinearGradient(x, y + r * 0.7, x, y + r * 2.4);
-      pool.addColorStop(0, css(colour, 0.26 * depth));
+      const pool = ink.createLinearGradient(x, y + r, x, y + r * 2.2);
+      pool.addColorStop(0, css(colour, 0.34 * depth));
       pool.addColorStop(1, css(colour, 0));
 
       ink.beginPath();
-      ink.ellipse(x, y + r * 1.45, r * 0.7, r * 0.85, 0, 0, Math.PI * 2);
+      ink.ellipse(x, y + r * 1.32, r * 0.66, r * 0.62, 0, 0, Math.PI * 2);
       ink.fillStyle = pool;
+      ink.fill();
+
+      /* And the contact: a small, tight shadow exactly where the ball meets the
+         sheet. The reflection alone leaves a ball hovering a few pixels above
+         its own image, because a reflection is soft everywhere and a thing
+         touching a surface is dark at precisely one point. */
+      const foot = ink.createRadialGradient(x, y + r, 0, x, y + r, r * 0.75);
+      foot.addColorStop(0, css(shade(colour, 0.5), 0.3 * depth));
+      foot.addColorStop(1, css(shade(colour, 0.5), 0));
+
+      ink.beginPath();
+      ink.ellipse(x, y + r, r * 0.75, r * 0.2, 0, 0, Math.PI * 2);
+      ink.fillStyle = foot;
       ink.fill();
 
       /* The ball. Lit from up and to the left, every one of them from the same
@@ -317,12 +348,15 @@ export function WaveDots({
              Faded at both ends of every row, and again into the horizon, so the
              sheet dissolves into the card on three sides instead of stopping at
              an edge. */
+          /* Faded at both ends of every row, and at both edges of the band.
+             A ribbon that stops at a straight line is a rectangle of dots; one
+             that thins at all four edges is a piece of something larger, which
+             is what a surface is. */
           const edge = Math.sin(along * Math.PI);
-          const r = 0.42 + 1.6 * near;
-          const alpha =
-            (0.04 + 0.34 * near) *
-            (0.2 + 0.8 * edge) *
-            Math.min(1, 0.25 + depth * 2.2);
+          const across = Math.sin(depth * Math.PI) ** 0.45;
+
+          const r = 0.55 + 1.85 * near;
+          const alpha = (0.1 + 0.45 * near) * (0.18 + 0.82 * edge) * across;
 
           ink.globalAlpha = Math.min(alpha, 1);
           ink.fillStyle = columnInk[col];
