@@ -201,7 +201,6 @@ const BAR = TOOL * 3 + 2 * 2 + 6 * 2;
 
 export function NotchedCard({ className }: { className?: string }) {
   const box = useRef<HTMLDivElement>(null);
-  const film = useRef<HTMLVideoElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [at, setAt] = useState(0);
   const [open, setOpen] = useState<Project | null>(null);
@@ -324,9 +323,9 @@ export function NotchedCard({ className }: { className?: string }) {
   const shown = HERO_SLIDES[at];
   const next = HERO_SLIDES[(at + 1) % HERO_SLIDES.length];
 
-  /* Where the name goes. Beside the thumbnail where there is room for it, and
-     above the bottom edge where there is not. */
-  const tight = size.w > 40 && size.w - cut.biteWidth - cut.dropWidth < 210;
+  /* The measurement that placed the name on the picture went with the name. It
+     worked out whether the bottom edge had room for it beside the thumbnail, and
+     with nothing set over the artwork there is nothing left to place. */
 
   return (
     <div ref={box} className={cn("relative", className)}>
@@ -361,30 +360,15 @@ export function NotchedCard({ className }: { className?: string }) {
             clipPath: path ? `path("${path}")` : undefined,
           }}
         >
-          {shown.video ? (
-            <video
-              ref={film}
-              key={shown.video}
-              src={shown.video}
-              poster={shown.image}
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              className="size-full object-cover"
-            />
-          ) : (
-            <Image
-              src={shown.image}
-              alt={shown.alt}
-              fill
-              quality={100}
-              preload
-              sizes="100vw"
-              className="object-cover"
-            />
-          )}
+          <Image
+            src={shown.image}
+            alt={shown.alt}
+            fill
+            quality={100}
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
         </motion.div>
       </AnimatePresence>
 
@@ -442,30 +426,14 @@ export function NotchedCard({ className }: { className?: string }) {
         </span>
       </button>
 
-      <p
-        className="absolute z-10"
-        style={
-          tight
-            ? {
-                left: 14,
-                right: cut.dropWidth + 12,
-                bottom: cut.biteHeight + 10,
-              }
-            : {
-                left: cut.biteWidth + 14,
-                right: cut.dropWidth + 14,
-                bottom: 26,
-                textAlign: "right",
-              }
-        }
-      >
-        <span className="block text-[15px] font-bold text-white sm:text-[18px]">
-          {shown.name}
-        </span>
-        <span className="mt-1 block font-mono text-[9.5px] font-bold tracking-[0.16em] text-white/65 uppercase">
-          {shown.kind} / {shown.year}
-        </span>
-      </p>
+      {/* No caption on the picture.
+
+          The project's name and its trade were set over the bottom right of the
+          artwork, and they are gone from it. What they were doing was labelling
+          a photograph that is already the whole page - and the panel that opens
+          from the corner says the same two things properly, with the rest of the
+          project under them. A line of type over an image is a caption; the same
+          line inside the thing it describes is a title. */}
 
       <ProjectPanel project={open} onClose={() => setOpen(null)} />
 

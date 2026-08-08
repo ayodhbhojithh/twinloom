@@ -54,56 +54,6 @@ export const metadata: Metadata = {
 export default function LandingPage() {
   return (
     <>
-      {/* The film on the card, asked for before the card exists.
-
-          `preload="auto"` on the element only starts once the browser has
-          parsed its way down to it, and by then it is queued behind the fonts,
-          the stylesheet and the bundle. This is in the head - React hoists it -
-          so the fetch is opened while the rest of the document is still being
-          read, which is most of the delay before it plays.
-
-          Here rather than in the layout: it is 2.7MB and it is on this page
-          only. Preloading it from the layout would spend that on every route on
-          the site to save it on one. */}
-      <link
-        rel="preload"
-        as="video"
-        type="video/mp4"
-        href="/videos/1.mp4"
-        fetchPriority="high"
-      />
-
-      {/* The same air on all four sides, and less of it than the page's own.
-
-          Two things were wrong. The sides came from `--page-gutter`, which steps
-          20 / 32 / 48 / 64 / 80 with the window, while the top and bottom were a
-          flat 32 - so on a laptop the frame round the one thing on this page was
-          eighty at the sides and thirty-two at the ends, which is not a frame.
-          And matched at eighty it was simply too much: the card is the page, and
-          a page whose subject is held a hundred and sixty pixels short of its
-          own height is a page with a margin where its content should be.
-
-          So the gutter is overridden here rather than read. Every `.page-frame`
-          inside this section picks the new value up, and the vertical padding
-          reads the same variable, so one declaration sets all four sides and
-          they cannot come apart again.
-
-          `clamp` rather than the stepped scale, because this is one card sized
-          to the window rather than a column of text that needs to settle at
-          particular widths - and a step in the frame of something that is
-          already fluid reads as a jump.
-
-          The top is the one side that is not the gutter, and it is not an
-          exception to the rule so much as the rule applied honestly. What sits
-          above the card is not the edge of the window: it is the header, which
-          carries its own padding and ends in white. Measured from the window the
-          four sides were equal; measured from what a reader can actually see,
-          the top was the gutter plus the whole of the header's own air. Roughly
-          half of it puts the visible gap back in line with the other three.
-
-          Written as styles rather than classes because both are `clamp`, and a
-          `clamp` inside an arbitrary Tailwind value is the exact shape that has
-          silently failed to reach the stylesheet on this project before. */}
       <section
         style={{
           ["--page-gutter" as string]: "clamp(16px, 2.2vw, 40px)",

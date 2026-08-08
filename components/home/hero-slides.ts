@@ -13,9 +13,14 @@ import type { Project } from "./projects";
    fields. Only the list is separate - one type, two lists, and the type is the
    thing that keeps them interchangeable if a slide ever is a project.
 
-   These are the pictures the card carried while it was reading the work list.
-   They are here to be replaced: swap a `image`, `video`, `alt` and `tone` and
-   nothing outside this file has to know.
+   Three, and each has artwork of its own. There were five and one of them was a
+   film; the film has gone, and so have the two slides that were pointing at
+   `/work-shop.png` and `/work-trade.png` - pictures made for another part of the
+   site and borrowed to make the run longer. A front door padded with the wrong
+   pictures is worse than a short one.
+
+   They are here to be replaced: swap an `image`, `alt` and `tone` and nothing
+   outside this file has to know.
 --------------------------------------------------------------------------- */
 
 export const HERO_SLIDES: readonly Project[] = [
@@ -32,25 +37,8 @@ export const HERO_SLIDES: readonly Project[] = [
       { term: "Visitors", value: "Shoppers and stockists" },
     ],
     image: "/projects/clotting.png",
-    video: "/videos/1.mp4",
     alt: "A clothing shop page open on a product.",
     tone: "#e9ecf1",
-  },
-  {
-    id: "hero-2",
-    name: "A restaurant that fills its tables",
-    kind: "Hospitality",
-    year: "2026",
-    summary:
-      "The four things anybody actually opens a restaurant site for - what is on, when it is open, where it is, and a table tonight - answered above the fold and correct on a phone in the street.",
-    facts: [
-      { term: "Pages", value: "9" },
-      { term: "Built in", value: "4 weeks" },
-      { term: "Visitors", value: "Diners and groups" },
-    ],
-    image: "/work-shop.png",
-    alt: "A restaurant page showing the menu and a table booking.",
-    tone: "#eceef2",
   },
   {
     id: "hero-3",
@@ -83,21 +71,5 @@ export const HERO_SLIDES: readonly Project[] = [
     image: "/projects/delivery.png",
     alt: "An ordering app on a phone, mid checkout.",
     tone: "#eaedf1",
-  },
-  {
-    id: "hero-5",
-    name: "A bookings system that holds the diary",
-    kind: "Booking",
-    year: "2026",
-    summary:
-      "Rooms, people and equipment on one calendar that finally agrees with itself. Availability, deposits, reminders and cancellations live in the system; the site only ever presents what it says.",
-    facts: [
-      { term: "Screens", value: "14" },
-      { term: "Built in", value: "7 weeks" },
-      { term: "Visitors", value: "Staff and customers" },
-    ],
-    image: "/work-trade.png",
-    alt: "A booking calendar showing the week's availability.",
-    tone: "#e7eaef",
   },
 ];

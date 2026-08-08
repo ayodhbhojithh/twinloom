@@ -1,10 +1,15 @@
 /* ---------------------------------------------------------------------------
    The work, as data.
 
-   Four pieces, one per picture. Named for what each build does rather than for a
-   client: inventing client names to fill a carousel would put fake credentials on
-   a company's own site, which is the one lie a portfolio must not tell. These
+   Three pieces, one per picture. Named for what each build does rather than for
+   a client: inventing client names to fill a carousel would put fake credentials
+   on a company's own site, which is the one lie a portfolio must not tell. These
    describe kinds of work, which is true of every one of them.
+
+   Three, and each one has artwork of its own. There were five, and the two that
+   have gone were pointing at `/work-shop.png` and `/work-trade.png` - pictures
+   made for another part of the site and borrowed to make the list longer. A
+   portfolio padded with the wrong pictures is worse than a short one.
 
    The `tone` is the colour a card sits on while its picture is still loading, so
    the shape is there before the image is. It is read from the artwork rather than
@@ -23,14 +28,6 @@ export interface Project {
   facts: readonly { term: string; value: string }[];
   /** In `public`. Named for the project, so the mapping needs no lookup. */
   image: string;
-  /**
-   * A film, where there is one, played in place of the picture.
-   *
-   * The still stays: it is the poster while the film loads, what a reader gets
-   * where motion is not wanted, and the thumbnail in the bite. A project with no
-   * film simply leaves this out.
-   */
-  video?: string;
   /** What the picture shows, for anybody who cannot see it. */
   alt: string;
   /** The colour under the picture until it arrives. */
@@ -51,25 +48,8 @@ export const PROJECTS: readonly Project[] = [
       { term: "Visitors", value: "Shoppers and stockists" },
     ],
     image: "/projects/clotting.png",
-    video: "/videos/1.mp4",
     alt: "A clothing shop page open on a product.",
     tone: "#e9ecf1",
-  },
-  {
-    id: "restaurant",
-    name: "A restaurant that fills its tables",
-    kind: "Hospitality",
-    year: "2026",
-    summary:
-      "The four things anybody actually opens a restaurant site for - what is on, when it is open, where it is, and a table tonight - answered above the fold and correct on a phone in the street.",
-    facts: [
-      { term: "Pages", value: "9" },
-      { term: "Built in", value: "4 weeks" },
-      { term: "Visitors", value: "Diners and groups" },
-    ],
-    image: "/work-shop.png",
-    alt: "A restaurant page showing the menu and a table booking.",
-    tone: "#eceef2",
   },
   {
     id: "medical",
@@ -102,21 +82,5 @@ export const PROJECTS: readonly Project[] = [
     image: "/projects/delivery.png",
     alt: "An ordering app on a phone, mid checkout.",
     tone: "#eaedf1",
-  },
-  {
-    id: "bookings",
-    name: "A bookings system that holds the diary",
-    kind: "Booking",
-    year: "2026",
-    summary:
-      "Rooms, people and equipment on one calendar that finally agrees with itself. Availability, deposits, reminders and cancellations live in the system; the site only ever presents what it says.",
-    facts: [
-      { term: "Screens", value: "14" },
-      { term: "Built in", value: "7 weeks" },
-      { term: "Visitors", value: "Staff and customers" },
-    ],
-    image: "/work-trade.png",
-    alt: "A booking calendar showing the week's availability.",
-    tone: "#e7eaef",
   },
 ];
