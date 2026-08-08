@@ -217,6 +217,14 @@ export function BuildFlow() {
               onCarryOn={() => {
                 setShort(false);
                 setTab("full");
+                /* And the panel, open.
+
+                   The structured journey is sold on the panel: the door that
+                   starts it says the site your answers describe is shown beside
+                   them while you answer. Arriving to a closed tab and having to
+                   find it makes that a claim rather than a fact. It is still
+                   closeable - it is opened for somebody, not on them. */
+                setFace("site");
               }}
             />
           ) : (
