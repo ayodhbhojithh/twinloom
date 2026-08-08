@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -42,6 +42,39 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
+  /* Whether the page has moved at all.
+
+     The fade under the bar is only right while it is not covering anything. At
+     the top of a page there is nothing under the header but the ground, and the
+     fade softens white meeting grey; a pixel of scroll later there is content
+     under it, and a white wash over whatever is passing is a smear rather than a
+     soft edge.
+
+     Four pixels rather than nought, so a page that rests a hair off the top -
+     which browsers do when they restore a position - does not open without it. */
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    let frame = 0;
+
+    const settle = () => {
+      frame = 0;
+      setScrolled(window.scrollY > 4);
+    };
+
+    const again = () => {
+      if (!frame) frame = requestAnimationFrame(settle);
+    };
+
+    settle();
+    window.addEventListener("scroll", again, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", again);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
   /* No rule under it, and opaque. The two go together: a translucent bar shows the
      page sliding through it, and without a rule there is nothing left to mark where
      the header stops. Opaque also removes the shimmer, since a blurred backdrop has
@@ -53,7 +86,10 @@ export function SiteHeader() {
      rule by accident on a header that deliberately has none. A fade is that
      edge given to the page rather than drawn on it. */
   return (
-    <header className="header-fade sticky top-0 z-40 bg-field">
+    <header
+      style={{ ["--header-fade" as string]: scrolled ? "0" : "1" }}
+      className="header-fade sticky top-0 z-40 bg-field"
+    >
       <div className="page-frame flex items-center gap-4 py-2.5">
         <div className="flex min-w-0 flex-1 items-center">
           <Wordmark />

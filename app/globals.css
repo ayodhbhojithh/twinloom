@@ -512,21 +512,45 @@
      the bar stays opaque, which is what keeps the links legible and keeps the
      browser from recompositing a blurred strip on every scroll frame.
 
-     Short on purpose. The landing card's own top air is eight pixels on a phone,
-     so a long tail would lie a white wash over the top edge of a dark picture.
-     Fourteen fades the join without reaching what is under it. */
+     Eight pixels, and that number is a limit rather than a taste. The landing
+     card's own top air is eight on a phone, so anything longer would lay a white
+     wash over the top edge of a dark picture - which is the one thing a fade
+     here must not do.
+
+     And only while the page is at the top. There is nothing under the header
+     then but the ground, so the fade has one job: to soften white meeting grey.
+     The moment anything is scrolled there is content under it instead, and white
+     over whatever is passing is not a soft edge, it is a smear.
+
+     Switched by `--header-fade`, set inline on the header from the one piece of
+     state that knows. An attribute and a selector would do the same thing, but
+     a variable cannot be lost to specificity, to layer order, or to a rule that
+     failed to reach the stylesheet - and the whole point of this pass is that
+     there is nothing left to wonder about.
+
+     Faded rather than cut, because the thing it is doing is being soft, and a
+     soft edge that vanishes on the first pixel of scroll is a flicker at the top
+     of every page. */
   .header-fade::after {
     content: "";
     position: absolute;
     inset-inline: 0;
     top: 100%;
-    height: 14px;
+    height: 8px;
     pointer-events: none;
+    opacity: var(--header-fade, 1);
+    transition: opacity 180ms ease-out;
     background-image: linear-gradient(
       to bottom,
       var(--color-field),
       transparent
     );
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .header-fade::after {
+      transition: none;
+    }
   }
 
   .thread-text {
