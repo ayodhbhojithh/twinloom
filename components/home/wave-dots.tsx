@@ -263,8 +263,7 @@ export function WaveDots({
          object placed in the middle of it. */
       const spread = 0.22 + 2.05 * near;
       const slide = (held.x - 0.5) * width * 0.16 * near * lean;
-      const x =
-        width * (0.5 + SHIFT) + (along - 0.5) * width * spread + slide;
+      const x = width * (0.5 + SHIFT) + (along - 0.5) * width * spread + slide;
 
       /* And the roll, which is the whole thing.
 
@@ -364,13 +363,19 @@ export function WaveDots({
         y,
         r * 1.05,
       );
-      lit.addColorStop(0, css(mixRgb(colour, { r: 255, g: 255, b: 255 }, 0.85)));
+      lit.addColorStop(
+        0,
+        css(mixRgb(colour, { r: 255, g: 255, b: 255 }, 0.85)),
+      );
       lit.addColorStop(0.32, css(colour));
       /* Not black at the rim. A ball on a white card is lit from the card as
          well as from above - the underside picks up what is under it, and a rim
          that goes to nothing reads as a hole rather than as a shadow. */
       lit.addColorStop(0.86, css(shade(colour, 0.66)));
-      lit.addColorStop(1, css(mixRgb(shade(colour, 0.72), { r: 255, g: 255, b: 255 }, 0.22)));
+      lit.addColorStop(
+        1,
+        css(mixRgb(shade(colour, 0.72), { r: 255, g: 255, b: 255 }, 0.22)),
+      );
 
       ink.beginPath();
       ink.arc(x, y, r, 0, Math.PI * 2);

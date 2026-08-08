@@ -15,7 +15,7 @@ import {
 import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-import { LoomMark } from "./loom-mark";
+import { GradientWaves } from "./gradient-waves";
 import { ProjectPanel } from "./project-panel";
 import { WaveDots } from "./wave-dots";
 import { HERO_SLIDES } from "./hero-slides";
@@ -419,16 +419,37 @@ export function NotchedCard({ className }: { className?: string }) {
           />
         ) : null}
 
-        {/* The second screen: the mark, and nothing else on it.
+        {/* The second screen: the water, full bleed and nothing over it.
 
-            No claim, no buttons, no gradient taking the left back. This screen
-            is a picture rather than a page with a picture behind it, and a
-            sentence set across the middle of it would make it a background.
+            No claim, no buttons and no white gradient taking the left back. This
+            screen is a picture rather than a page with a picture behind it, and
+            a sentence set across the middle of it would make it a background.
             What the card is asking for is already said on the first screen and
-            said again in the header, and a front door that asks three times is
-            a door somebody stops reading. */}
-        {shown.view === "mark" ? (
-          <LoomMark className="absolute inset-0" />
+            again in the header. */}
+        {shown.view === "waves" ? (
+          <GradientWaves
+            className="absolute inset-0"
+            horizonColor="#ffffff"
+            waveColor="#2a98fe"
+            crestColor="#06dbaf"
+            speed={0.34}
+            amplitude={2.5}
+            waveScale={0.6}
+            waveRatio={0.9}
+            swell={35}
+            turbulence={20}
+            tilt={1.11}
+            zoom={1}
+            height={5.5}
+            fogDepth={15}
+            detail="medium"
+            brightness={1}
+            opacity={1}
+            mouseInteraction
+            parallaxStrength={0.5}
+            grain
+            grainIntensity={0.04}
+          />
         ) : null}
       </div>
 

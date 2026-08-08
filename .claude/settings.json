@@ -64,7 +64,8 @@
       "Bash(python mark3.py 0.0 e.png)",
       "Bash(python mark3.py 11.0 f.png)",
       "Bash(python mark3.py 0.0 m0.png)",
-      "Bash(python mark3.py 11.0 m11.png)"
+      "Bash(python mark3.py 11.0 m11.png)",
+      "Bash(python mark4.py 0.0 0.315 0.78 n2.png)"
     ]
   }
 }
