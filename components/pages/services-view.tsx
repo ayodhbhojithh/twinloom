@@ -192,14 +192,21 @@ export function ServiceWall({
            seven cards sitting in the middle of a wide screen rather than
            packed against one edge with a gap at the other. */
         className={cn(
-          "flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 py-3 [&::-webkit-scrollbar]:hidden sm:px-6",
+          "flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 [&::-webkit-scrollbar]:hidden sm:px-6",
           still && "justify-center",
         )}
       >
+        {/* Lit rather than lifted on hover.
+
+            The card rose a pixel and a half, which wants vertical room the row
+            no longer has: setting `overflow-x` to anything but `visible` makes
+            the other axis `auto` too, so with the padding gone a card that
+            moved up would be clipped by its own scroller. A shadow happens
+            inside the box and needs none. */}
         {SHOWN.map((entry, index) => (
           <article
             key={entry.n}
-            className="group/card flex w-[clamp(238px,21vw,286px)] shrink-0 snap-start flex-col rounded-[22px] bg-field p-5 transition-transform duration-300 hover:-translate-y-1.5"
+            className="group/card flex w-[clamp(238px,21vw,286px)] shrink-0 snap-start flex-col rounded-[22px] bg-field p-5 transition-shadow duration-300 hover:shadow-[0_10px_30px_rgba(24,39,75,0.08)]"
           >
             {/* The drawing, whole, on the card's own white.
 
