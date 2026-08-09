@@ -126,7 +126,7 @@ export const HEADER_NAV: readonly NavLink[] = [
      This is the order asked for, and it holds to that. */
   { label: "Home", href: ROUTES.home },
   { label: "Services", href: ROUTES.services },
-  { label: "Articles", href: ROUTES.blog },
+  { label: "Insight", href: ROUTES.blog },
   { label: "FAQs", href: ROUTES.faq },
   { label: "How we work", href: ROUTES.how },
   { label: "About", href: ROUTES.about },
@@ -185,7 +185,7 @@ export const RAIL_PAGES: readonly RailPage[] = [
     children: [{ label: "Book a meeting", href: ROUTES.book }],
   },
   { label: "FAQs", href: ROUTES.faq },
-  { label: "Blogs and articles", href: ROUTES.blog },
+  { label: "Insight", href: ROUTES.blog },
 ];
 
 export const FOOTER_COLUMNS: readonly {
@@ -213,7 +213,7 @@ export const FOOTER_COLUMNS: readonly {
     title: "Reading",
     links: [
       { label: "FAQs", href: ROUTES.faq },
-      { label: "Blogs and articles", href: ROUTES.blog },
+      { label: "Insight", href: ROUTES.blog },
     ],
   },
 ];

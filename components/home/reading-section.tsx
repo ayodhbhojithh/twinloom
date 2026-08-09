@@ -28,11 +28,7 @@ export function ReadingSection() {
           layouts that happen to follow each other. */}
       <div className="flex flex-col items-center text-center">
         <h2 className="reveal section-head max-w-[26ch] text-ink">
-          How we think.
-          <span className="text-quiet">
-            {" "}
-            Decisions behind a website, written out.
-          </span>
+          Insight.
         </h2>
 
         <Link

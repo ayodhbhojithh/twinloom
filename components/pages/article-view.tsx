@@ -56,7 +56,7 @@ export function ArticleView({ article }: { article: Article }) {
               aria-hidden
               className="size-3.5 transition-transform group-hover/back:-translate-x-0.5"
             />
-            Blogs and articles
+            Insight
           </Link>
         }
         aside={
