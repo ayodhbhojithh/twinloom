@@ -96,11 +96,10 @@ export function Wordmark({
           One `span`, so the two halves are one line box: set as two blocks they
           could be broken between, and a name that wraps in the middle of itself
           is not a lockup. */}
-      <span className="truncate text-[18px] leading-none font-extrabold tracking-[-0.03em] text-ink">
+      <span className="truncate text-[20px] leading-none font-extrabold tracking-[-0.03em] text-ink">
         {SITE.halves[0]}
         <span className="thread-text">{SITE.halves[1]}</span>
       </span>
-
     </>
   );
 

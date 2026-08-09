@@ -472,11 +472,39 @@ export function NotchedCard({ className }: { className?: string }) {
             it. */}
         {shown.view === "blank" ? <DotGround /> : null}
 
-        {/* No ground under the fifth screen.
+        {/* The ground: one grid, edge to edge, and barely there.
 
-            It had the same dot grid the fourth uses, at a third of the weight,
-            and the artwork that stands on it now brings its own halftone. Two
-            grids at two scales in one picture is a moire, not a texture. */}
+            Not the ringed arrangement the blank screen uses. That one is a
+            picture made of dots and wants shaping; this is paper, and paper does
+            not fade out in the middle - a texture with a hole in it reads as a
+            spotlight nobody switched on.
+
+            Held to the edges, though. Uniform, it ran under the headline, the
+            paragraph and the buttons, and a texture behind a block of type is a
+            texture the type has to be read through. Clear through the middle and
+            arriving in the last third, it does what a margin does: it says where
+            the card ends without drawing a line there.
+
+            The weight does the rest - a sixth of the thread blue at one and a
+            third pixels on a twenty-two pixel pitch. At that strength you do not
+            see dots, you see that the surface is not blank.
+
+            The artwork gets its own clearing on top of this, a halo of the
+            card's white inside `MarkStage`, because it sits in the last third
+            too and the mask cannot know that. */}
+        {shown.view === "mark" ? (
+          <span
+            aria-hidden
+            className="absolute inset-0"
+            style={{
+              ...GRID("--color-thread-blue", 16, 1.3, 22),
+              maskImage:
+                "radial-gradient(ellipse 64% 68% at 50% 50%, transparent 0%, transparent 38%, black 94%)",
+              WebkitMaskImage:
+                "radial-gradient(ellipse 64% 68% at 50% 50%, transparent 0%, transparent 38%, black 94%)",
+            }}
+          />
+        ) : null}
 
         {/* The second screen: the water, full bleed and nothing over it.
 

@@ -167,7 +167,7 @@ export function SiteHeader({
 
         <nav
           aria-label="Primary"
-          className="hidden shrink-0 flex-nowrap items-center gap-x-4 xl:flex 2xl:gap-x-6"
+          className="hidden shrink-0 flex-nowrap items-center gap-x-5 xl:flex 2xl:gap-x-7"
         >
           {HEADER_NAV.map((item) => {
             /* `startsWith` so a child route still marks its parent, but the home
@@ -183,7 +183,14 @@ export function SiteHeader({
                 href={item.href}
                 aria-current={on ? "page" : undefined}
                 className={cn(
-                  "text-[13.5px] whitespace-nowrap hover:underline 2xl:text-[14.5px]",
+                  /* One size, not two.
+
+                     It was 13.5 stepping to 14.5 at the widest breakpoint, which
+                     is a step nobody sees and two numbers to keep. Fifteen at
+                     every width, which is what the buttons under it are set at -
+                     a bar of links smaller than every other line on the page
+                     reads as a bar somebody shrank to make it fit. */
+                  "text-[15px] whitespace-nowrap hover:underline",
                   on ? "font-semibold text-mark" : "text-quiet hover:text-ink",
                 )}
               >
