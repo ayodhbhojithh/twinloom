@@ -105,28 +105,65 @@ export function MarkStage({ className }: { className?: string }) {
    the same coordinate space as the curve.
 --------------------------------------------------------------------------- */
 
-/** Where each bead sits along the curve, how big it is, and what colour. */
-const TRAIL = [
-  { x: 60, y: 96, r: 9, ink: "#2a98fe" },
-  { x: 175, y: 78, r: 15, ink: "#10c996" },
-  { x: 318, y: 62, r: 20, ink: "#7c4dff" },
-  { x: 432, y: 84, r: 8, ink: "#ff7a1a" },
-  { x: 545, y: 66, r: 16, ink: "#2a98fe" },
-  { x: 690, y: 62, r: 19, ink: "#10c996" },
-  { x: 800, y: 90, r: 9, ink: "#7c4dff" },
-  { x: 878, y: 86, r: 8, ink: "#22bde8" },
-  { x: 960, y: 84, r: 12, ink: "#ff7a1a" },
-  { x: 1060, y: 74, r: 11, ink: "#ff4d5e" },
-] as const;
+/* The box the trail is drawn in, and the wave that runs through it.
 
-const CURVE =
-  "M 0 104 C 120 104 180 74 300 70 S 470 96 600 74 S 800 60 900 84 S 1080 92 1200 66";
+   One sine rather than a hand-drawn curve, and that is what makes the thing
+   balanced: every bead's height is read off the same function its path is drawn
+   from, so no bead can be a little above or below the line it is supposed to be
+   resting on. Placing them by eye is how the first version came out with beads
+   hovering.
+
+   A hand and a half of wave across the width, so it rises, falls and rises
+   again - a single hump reads as a hill and two full cycles reads as a pattern.
+*/
+const TRAIL_W = 1200;
+const TRAIL_H = 140;
+const RIDE = (x: number) =>
+  76 + 26 * Math.sin((x / TRAIL_W) * Math.PI * 3 + 0.5);
+
+/* The beads: eleven, evenly spaced, and sized to a rhythm rather than at random.
+
+   Large, small, largest, middle, large, small - a repeating figure with two
+   accents in it. Random sizes at these counts always clump, and a row of eleven
+   equal circles is a rule with lumps in it. The colours run the spectrum the pit
+   uses and come back round, so no two neighbours are the same and the row reads
+   as one set.
+
+   Held a bead's width in from both ends, so nothing is ever cut by the edge of
+   the box. */
+const SIZES = [15, 9, 21, 12, 17, 9, 22, 11, 16, 9, 14];
+const INKS = [
+  "#2a98fe",
+  "#10c996",
+  "#7c4dff",
+  "#ff7a1a",
+  "#22bde8",
+  "#ff4d5e",
+  "#10c996",
+  "#2a98fe",
+  "#7c4dff",
+  "#ff7a1a",
+  "#22bde8",
+];
+
+const TRAIL = SIZES.map((r, n) => {
+  const x = 64 + (n * (TRAIL_W - 128)) / (SIZES.length - 1);
+  return { x, y: RIDE(x), r, ink: INKS[n] };
+});
+
+/* The path, as a hundred straight steps through the same wave. A cubic would be
+   fewer numbers and a different curve, and then the beads would be sitting on
+   one line while resting at heights taken from another. */
+const CURVE = Array.from({ length: 101 }, (_unused, n) => {
+  const x = (n / 100) * TRAIL_W;
+  return `${n === 0 ? "M" : "L"} ${x.toFixed(1)} ${RIDE(x).toFixed(1)}`;
+}).join(" ");
 
 export function BeadTrail({ className }: { className?: string }) {
   return (
     <svg
       aria-hidden
-      viewBox="0 0 1200 130"
+      viewBox={`0 0 ${TRAIL_W} ${TRAIL_H}`}
       className={cn("block h-auto w-full", className)}
     >
       <defs>
@@ -135,44 +172,56 @@ export function BeadTrail({ className }: { className?: string }) {
           <stop offset="100%" stopColor="var(--color-thread-teal)" />
         </linearGradient>
 
+        {/* One blur for every shadow. The first version filled a flat grey
+            ellipse under each bead, which is not a shadow - it is a stone. */}
+        <filter
+          id="trail-shadow"
+          x="-60%"
+          y="-60%"
+          width="220%"
+          height="220%"
+          colorInterpolationFilters="sRGB"
+        >
+          <feGaussianBlur stdDeviation="4" />
+        </filter>
+
         {TRAIL.map((bead, n) => (
-          <radialGradient key={n} id={`bead-${n}`} cx="34%" cy="28%" r="78%">
+          <radialGradient key={n} id={`bead-${n}`} cx="34%" cy="27%" r="80%">
             <stop offset="0%" stopColor="#ffffff" />
             <stop
-              offset="16%"
-              stopColor={`color-mix(in oklab, ${bead.ink} 34%, #ffffff)`}
+              offset="15%"
+              stopColor={`color-mix(in oklab, ${bead.ink} 36%, #ffffff)`}
             />
-            <stop offset="56%" stopColor={bead.ink} />
+            <stop offset="55%" stopColor={bead.ink} />
             <stop
               offset="100%"
-              stopColor={`color-mix(in oklab, ${bead.ink} 60%, #0b1f38)`}
+              stopColor={`color-mix(in oklab, ${bead.ink} 58%, #0b1f38)`}
             />
           </radialGradient>
         ))}
       </defs>
 
-      {/* The path, as dots. Round caps on a one-unit dash is a dot; anything
-          longer is a dash pretending. */}
+      {/* The path, as dots. Round caps on a dash of almost nothing is a dot;
+          anything longer is a dash pretending to be one. */}
       <path
         d={CURVE}
         fill="none"
         stroke="url(#trail-thread)"
-        strokeWidth="3.5"
+        strokeWidth="3.4"
         strokeLinecap="round"
-        strokeDasharray="0.1 16"
-        opacity="0.5"
+        strokeDasharray="0.1 15"
+        opacity="0.55"
       />
 
       {TRAIL.map((bead, n) => (
         <g key={n}>
-          {/* Its shadow first, so the bead sits on the line rather than beside
-              it. Flat and wide, because the light is high and in front. */}
           <ellipse
             cx={bead.x}
-            cy={bead.y + bead.r * 1.05}
-            rx={bead.r * 1.5}
-            ry={bead.r * 0.34}
-            fill="rgba(12,32,56,0.16)"
+            cy={bead.y + bead.r * 0.98}
+            rx={bead.r * 1.15}
+            ry={bead.r * 0.3}
+            fill="rgba(12,32,56,0.22)"
+            filter="url(#trail-shadow)"
           />
           <circle cx={bead.x} cy={bead.y} r={bead.r} fill={`url(#bead-${n})`} />
         </g>
