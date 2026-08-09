@@ -58,15 +58,22 @@ const COLUMNS = 154;
 /**
  * How far the whole field sits to the right of centre, as a share of the width.
  *
- * The card is not a symmetrical thing: its left is a headline, a paragraph and
- * two buttons, and its right is this. Centred, the field spends its densest
- * rows under the type - where they are painted out again by the fade - and runs
- * out of card on the side where it is actually being looked at.
+ * Nought, now that the words are centred.
  *
- * Applied inside `place`, so the spheres move with the surface they are standing
- * on. Applied to the dots alone they would slide off it.
+ * It was a sixth of the width to the right, and that was right at the time: the
+ * card's left was a headline, a paragraph and two buttons, and its right was
+ * this. Centred then, the field would have spent its densest rows under the type
+ * and run out of card on the side actually being looked at.
+ *
+ * The words moved to the middle and the reason went with them. A sheet pushed
+ * off to one side under a centred block of type is a sheet that has been pushed,
+ * and the swell's own middle - the part worth seeing - was hanging off the right
+ * edge of the card.
+ *
+ * Kept as a number rather than deleted, because where the field sits is a
+ * decision and one that has already changed once.
  */
-const SHIFT = 0.15;
+const SHIFT = 0;
 
 /** Where the mark's colours come from, and what to use before CSS has loaded. */
 const FALLBACK = { from: "#2a98fe", to: "#06dbaf" };
@@ -341,10 +348,10 @@ export function WaveDots({
              the same place: where the card ends. The far edge still fades on
              depth, because there is no screen edge there - it is a horizon, and
              a horizon is a thing dissolving rather than a thing being cut. */
-          const softX = Math.min(1, Math.min(x, width - x) / (width * 0.16));
-          const softY = Math.min(1, (height - y) / (height * 0.14));
+          const softX = Math.min(1, Math.min(x, width - x) / (width * 0.11));
+          const softY = Math.min(1, (height - y) / (height * 0.1));
           const edge = Math.max(0, softX) * Math.max(0, softY);
-          const across = Math.sin(depth * Math.PI) ** 0.4;
+          const across = Math.sin(depth * Math.PI) ** 0.26;
 
           /* The wave, read as light. A crest faces up and a hollow faces away,
              and `roll` already is that reading - which is why it is used rather
@@ -376,22 +383,24 @@ export function WaveDots({
              was rounding to nothing and the rest was thin. The floor is what
              fixes it: a dot in a hollow should be small, not absent, and the
              swing has to happen between something and something else. */
-          const weight = Math.pow(0.3 + 0.7 * lit, 1.3);
+          const weight = Math.pow(0.34 + 0.66 * lit, 1.22);
 
-          const r = (1.0 + 3.3 * near) * weight * (0.85 + 0.3 * grit);
+          const r = (1.25 + 4.1 * near) * weight * (0.85 + 0.3 * grit);
 
           /* Alpha does almost nothing now, and that is the point: it only says
              where the field ends. Left carrying the wave as well, the two would
              be saying the same thing twice and the dots would fade instead of
              thinning. */
           const alpha =
-            (0.55 + 0.35 * near) *
-            /* Squared, so the last stretch of the fade is gentle rather than a
-               ramp that arrives and stops. */
+            (0.78 + 0.22 * near) *
+            /* Past squared. It was `edge * edge`, which is a gentle fade and
+               also a wide one - most of the card was somewhere inside it, and
+               the field never reached full strength anywhere. Once and a half
+               keeps the softness at the very edge and gives the middle back. */
             edge *
-            edge *
+            Math.sqrt(edge) *
             across *
-            (0.78 + 0.22 * grit);
+            (0.82 + 0.18 * grit);
 
           ink.globalAlpha = Math.min(alpha, 1);
           ink.fillStyle = columnInk[col];
