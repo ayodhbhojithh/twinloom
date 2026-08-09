@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, JetBrains_Mono } from "next/font/google";
+import { JetBrains_Mono, Sora } from "next/font/google";
 
 import "./globals.css";
 
@@ -10,10 +10,16 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { LOCALE, SITE_URL, organisationLd, websiteLd } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
-/* Archivo carries the whole site. Variable, so no weight list is needed: the
-   draft runs from 400 body copy to 800 display. */
-const archivo = Archivo({
-  variable: "--font-archivo",
+/* Sora carries the whole site. Variable, so no weight list is needed: the draft
+   runs from 400 body copy to 800 display, and Sora covers 100 to 800.
+
+   It replaces Archivo, which is a grotesque - conventional letterforms, a lot of
+   weight at the top end. Sora is geometric: round bowls, a single-storey `a`,
+   open apertures. At the size the landing card sets its claim, which is over a
+   hundred pixels, a geometric face shows its construction and a grotesque hides
+   it. That is the change, and it is the whole site rather than the headline. */
+const sora = Sora({
+  variable: "--font-sora",
   subsets: ["latin"],
   display: "swap",
 });
@@ -97,7 +103,7 @@ export default function RootLayout({
   return (
     <html
       lang="en-GB"
-      className={`${archivo.variable} ${jetbrains.variable} h-full`}
+      className={`${sora.variable} ${jetbrains.variable} h-full`}
     >
       <body className="flex min-h-full flex-col">
         {/* First in the body so it is painted before anything under it, and

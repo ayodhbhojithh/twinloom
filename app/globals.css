@@ -20,10 +20,10 @@
    is not here, it is not in the design.
 --------------------------------------------------------------------------- */
 @theme {
-  /* Archivo carries everything. The system stack sits behind it only as a
-     fallback for the moment before the webfont lands. */
+  /* Sora carries everything. The system stack sits behind it only as a fallback
+     for the moment before the webfont lands. */
   --font-sans:
-    var(--font-archivo), -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    var(--font-sora), -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
 
   /* Mono is a role, not a fallback: the draft sets labels, counts and codes in
      it deliberately. */
