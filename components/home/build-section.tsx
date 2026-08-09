@@ -1,6 +1,6 @@
 import { BuildFlow } from "@/components/build/v5/flow";
 
-import { LoomStrings } from "./loom-strings";
+import { LoomWave } from "./loom-wave";
 
 /**
  * The build screen, on the landing page.
@@ -31,18 +31,21 @@ export function BuildSection() {
           page inserted into a wider one - the gutters stop lining up and the
           tool below looks inset rather than placed. */}
       <div className="w-full">
-        {/* The topic, woven rather than set.
-            The same loom the "play it" screen hangs the name in: each thread
-            samples the column of pixels it stands in and keeps the stretches
-            where it found ink, so the words are made of the cloth rather than
-            printed on it, and the whole thing answers to a pointer.
+        {/* The cloth, on its own.
 
-            The real heading goes in beside it, for a screen reader and for the
-            document's outline. A canvas is a picture, and a picture is not a
-            heading however large the letters in it are. */}
+            It used to weave the words "Build your website" out of the same
+            threads and let you play them, a note per strand. The word is gone
+            and the instrument with it: what stands here now is the warp under a
+            slow swell, which is a picture of what a loom does rather than a
+            sentence made out of one.
+
+            The heading stays, for a screen reader and for the document's
+            outline. A canvas is a picture, and a picture is not a heading -
+            which is truer now than it was, because there are no letters in this
+            one at all. */}
         <h2 className="sr-only">Build your website</h2>
 
-        <LoomStrings word="Build your website" className="reveal w-full" />
+        <LoomWave className="reveal w-full" />
 
         {/* The run-through itself, not a shorter version of it. It reads the
             same answers as the build page, so somebody who starts here and
