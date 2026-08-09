@@ -96,7 +96,7 @@ export function BuildSection() {
                 aria-checked={on}
                 onClick={() => setVersion(entry.id)}
                 className={cn(
-                  "cursor-pointer rounded-pill px-4 py-1.5 font-mono text-[11px] font-bold tracking-[0.16em] uppercase transition-colors",
+                  "cursor-pointer rounded-pill px-3 py-1 font-mono text-[9.5px] font-bold tracking-[0.14em] uppercase transition-colors sm:px-4 sm:py-1.5 sm:text-[11px] sm:tracking-[0.16em]",
                   on
                     ? "bg-ink text-white"
                     : "bg-field text-quiet hover:text-ink",

@@ -702,11 +702,28 @@ export function LoomWave({
       return Math.max(reach, height * ROOM * BAR.min);
     };
 
+    /**
+     * How many of the three hundred threads are actually drawn.
+     *
+     * The count is fixed because the grain is indexed by it - a field that
+     * changed its count with the window would change its texture every time
+     * somebody dragged an edge. But three hundred columns across a phone is
+     * a column every pixel and a quarter, which is not a field of threads,
+     * it is a wash. Drawing every second or third one keeps the texture the
+     * same and gives it room: the threads that are drawn stand where they
+     * always stood, with the ones between them left out.
+     *
+     * Six pixels a thread is about where a stroke and its gap both read.
+     */
+    const everyNth = () => Math.max(1, Math.round(COUNT / (width / 6)));
+
     /** The bar field: one column per thread, standing on the line. */
     const drawBars = (t: number) => {
+      const step = everyNth();
+
       /* The pale layer first, taller and thinner, so the field in front has
          something to stand against rather than sitting on the page. */
-      for (let i = 0; i < COUNT; i += 1) {
+      for (let i = 0; i < COUNT; i += step) {
         const along = i / (COUNT - 1);
         const x = along * width;
         const middle = ride(along, t);
@@ -728,7 +745,7 @@ export function LoomWave({
          ramp itself - so the light hugs the line and the reach away from it
          goes dark, which is one column doing what a gradient per column would
          cost six hundred gradients a frame to do. */
-      for (let i = 0; i < COUNT; i += 1) {
+      for (let i = 0; i < COUNT; i += step) {
         const along = i / (COUNT - 1);
         const x = along * width;
         const middle = ride(along, t);
@@ -806,20 +823,41 @@ export function LoomWave({
       ctx.strokeStyle = paint;
       ctx.lineWidth = RIBBON.weight;
 
-      for (let k = 0; k < RIBBON.lines; k += 1) {
+      /* Fewer curves and fewer points on a narrow box.
+
+         The caustic is the crowding, and crowding needs somewhere to
+         crowd: sixty curves in a band a couple of hundred pixels tall is
+         a solid, and a solid has no bright edge because every part of it
+         is the edge. Thinning the family keeps the same shape and lets the
+         light back into it.
+
+         The samples come down with them because a curve drawn across four
+         hundred pixels cannot show a hundred and sixty of anything - that
+         is two points a pixel, and every one of them is a line segment a
+         frame. */
+      const lines = Math.max(
+        24,
+        Math.round(RIBBON.lines * Math.min(1, width / 900)),
+      );
+      const samples = Math.max(
+        72,
+        Math.round(Math.min(RIBBON.samples, width / 5)),
+      );
+
+      for (let k = 0; k < lines; k += 1) {
         /* Round a full turn, so the family covers every phase once. Any less
            and the band has a gap in it; any more and lines land on each other
            and the crowding stops meaning anything. */
-        const turn = (k / RIBBON.lines) * Math.PI * 2;
+        const turn = (k / lines) * Math.PI * 2;
 
         /* Thinner and fainter towards the outside of the sheaf, which is what
            gives it a near face and a far one rather than reading as flat. */
-        const across = Math.sin((k / RIBBON.lines) * Math.PI);
+        const across = Math.sin((k / lines) * Math.PI);
         ctx.globalAlpha = RIBBON.alpha * (0.35 + across * 0.65);
 
         ctx.beginPath();
-        for (let n = 0; n <= RIBBON.samples; n += 1) {
-          const along = n / RIBBON.samples;
+        for (let n = 0; n <= samples; n += 1) {
+          const along = n / samples;
           const x = along * width;
 
           /* The pluck reaches the ribbon through the same column map the
@@ -1044,8 +1082,13 @@ export function LoomWave({
            The threads are placed across the width and their heights are a share
            of the box, so a box measured against the window changed the cloth's
            proportions every time somebody resized: tall and empty on a short
-           wide screen, cramped on a tall narrow one. */
-        style={{ height: "clamp(190px, 23vw, 320px)" }}
+           wide screen, cramped on a tall narrow one.
+
+           The floor is what a phone actually gets, because 23vw is under a
+           hundred there and the clamp pins it. At 190 the wave was half as
+           tall again as it needed to be against a 335 wide field; 140 keeps
+           the same proportion it has on a desk. */
+        style={{ height: "clamp(140px, 23vw, 320px)" }}
       >
         <canvas ref={sheet} className="block h-full w-full" />
       </div>
