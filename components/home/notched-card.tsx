@@ -1101,33 +1101,54 @@ const GRID = (tint: string, share: number, dot: number, gap: number) => ({
 function DotGround() {
   return (
     <span aria-hidden className="absolute inset-0 overflow-hidden">
-      {/* The card's own weather: a fine grid, thinned out of the middle so the
-          mark below has somewhere to be read against. */}
+      {/* The card's own weather: a fine grid across all of it, thinned only out
+          of the middle so the mark has somewhere to be read against.
+
+          It used to fade out again before the edges, and what that left was a
+          band of dots with white either side of it - the card looked as though
+          the pattern had been cut to fit rather than as though it carried on.
+          It runs to the corners now, and the only thing shaping it is the hole
+          in the middle where the words are. */}
       <span
         className="absolute inset-0"
         style={{
-          ...GRID("--color-thread-blue", 34, 1, 18),
+          ...GRID("--color-thread-blue", 58, 1.2, 17),
           maskImage:
-            "radial-gradient(circle at 50% 50%, transparent 22%, black 68%, black 88%, transparent 100%)",
+            "radial-gradient(circle at 50% 50%, transparent 14%, black 52%)",
           WebkitMaskImage:
-            "radial-gradient(circle at 50% 50%, transparent 22%, black 68%, black 88%, transparent 100%)",
+            "radial-gradient(circle at 50% 50%, transparent 14%, black 52%)",
         }}
       />
 
-      {/* And the mark, cut out of a coarser grid. Square, because the file is,
-          and wider than the card so both loops leave it. */}
+      {/* And the mark, in the mark's own two colours.
+
+          Which needed the whole thing turning inside out. It was a grid of teal
+          dots with the logo cutting a shape out of it - and a background can
+          only be one gradient, so a grid of dots that runs blue into green is
+          not a thing a background can be.
+
+          So the colour is the background and both the shape and the dots are the
+          mask. Two mask layers, the logo and the dot grid, composited to their
+          intersection: what survives is the part of the sheet that is inside the
+          mark and inside a dot. The gradient underneath never has to know it is
+          being drawn as dots. */}
       <span
-        className="absolute top-1/2 left-1/2 aspect-square w-[124%] -translate-x-1/2 -translate-y-1/2"
+        className="absolute top-1/2 left-1/2 aspect-square w-[104%] -translate-x-1/2 -translate-y-1/2"
         style={{
-          ...GRID("--color-thread-teal", 62, 2.1, 15),
-          maskImage: "url(/assets/logo.png)",
-          maskSize: "contain",
-          maskPosition: "center",
-          maskRepeat: "no-repeat",
-          WebkitMaskImage: "url(/assets/logo.png)",
-          WebkitMaskSize: "contain",
-          WebkitMaskPosition: "center",
-          WebkitMaskRepeat: "no-repeat",
+          backgroundImage:
+            "linear-gradient(100deg, color-mix(in oklab, var(--color-thread-blue) 72%, transparent), color-mix(in oklab, var(--color-thread-teal) 72%, transparent))",
+          maskImage:
+            "url(/assets/logo.png), radial-gradient(circle, #000 2.1px, transparent 2.8px)",
+          maskSize: "contain, 15px 15px",
+          maskPosition: "center, center",
+          maskRepeat: "no-repeat, repeat",
+          maskComposite: "intersect",
+          WebkitMaskImage:
+            "url(/assets/logo.png), radial-gradient(circle, #000 2.1px, transparent 2.8px)",
+          WebkitMaskSize: "contain, 15px 15px",
+          WebkitMaskPosition: "center, center",
+          WebkitMaskRepeat: "no-repeat, repeat",
+          WebkitMaskComposite: "source-in",
         }}
       />
 
