@@ -438,6 +438,11 @@ export function NotchedCard({ className }: { className?: string }) {
           />
         ) : null}
 
+        {/* The fourth screen's ground. Inside the clipped layer with the other
+            three drawings, so the card's outline cuts it like everything else on
+            it. */}
+        {shown.view === "blank" ? <DotGround /> : null}
+
         {/* The second screen: the water, full bleed and nothing over it.
 
             No claim, no buttons, and no white gradient taking part of the card
@@ -827,12 +832,12 @@ export function NotchedCard({ className }: { className?: string }) {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
               >
-                <h1 className="mx-auto max-w-[20ch] text-[clamp(32px,4.6vw,64px)] leading-[1.04] font-extrabold tracking-[-0.042em] text-white">
+                <h1 className="mx-auto max-w-[19ch] text-[clamp(40px,6.2vw,92px)] leading-[1.0] font-extrabold tracking-[-0.048em] text-white">
                   {shown.claim?.[0]}
                   <span className="thread-light block">{shown.claim?.[1]}</span>
                 </h1>
 
-                <p className="mx-auto mt-5 max-w-[56ch] text-[15px] leading-[1.62] text-white/85 sm:text-[16.5px]">
+                <p className="mx-auto mt-6 max-w-[60ch] text-[16.5px] leading-[1.6] text-white/85 sm:text-[19px]">
                   {shown.lead}
                 </p>
 
@@ -842,12 +847,12 @@ export function NotchedCard({ className }: { className?: string }) {
                       look for. */}
                   <Link
                     href={ROUTES.services}
-                    className="group/way pointer-events-auto inline-flex items-center gap-2 rounded-pill bg-field px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-opacity hover:opacity-90"
+                    className="group/way pointer-events-auto inline-flex items-center gap-2.5 rounded-pill bg-field px-6 py-3.5 text-[16px] font-semibold whitespace-nowrap text-ink transition-opacity hover:opacity-90"
                   >
                     What we do
                     <ArrowUpRight
                       aria-hidden
-                      className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                      className="size-[18px] shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
                     />
                   </Link>
                 </div>
@@ -939,6 +944,11 @@ export function NotchedCard({ className }: { className?: string }) {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
               >
+                {/* No logo above the claim. There is one behind it, at eight
+                    times the size and made of dots, and the same mark twice on
+                    one screen is the screen saying the name and then saying it
+                    again in case. */}
+
                 <h1 className="mx-auto max-w-[20ch] text-[clamp(32px,4.6vw,64px)] leading-[1.04] font-extrabold tracking-[-0.042em] text-ink">
                   {shown.claim?.[0]}
                   <span className="thread-text block">{shown.claim?.[1]}</span>
@@ -1066,6 +1076,75 @@ export function NotchedCard({ className }: { className?: string }) {
 }
 
 /** One of the three controls that stand in the notch. */
+/* The fourth screen's ground: the mark, in dots, too big for the card.
+
+   The obvious version of this screen was a logo above a headline over a field of
+   dots, and it is the version every card like this already is. This is the same
+   two things arranged so that neither is decoration: the dots are the mark, and
+   the mark is far larger than the card, so what shows is a piece of it - the
+   crossing in the middle and both loops running off the sides.
+
+   How it is made is the whole trick, and it is two lines of CSS. A grid of dots
+   is a repeating radial gradient; the logo is a PNG with a real alpha channel;
+   so the logo masks the grid, and what is left is dots in the shape of the mark.
+   No canvas, no SVG path, no second copy of the artwork to keep in step with the
+   one in the header - the file the header uses is the file that cuts this.
+
+   Standing still is the point of it. Three screens of this card are drawing every
+   frame; the fourth is the one that stops, and a static pattern is not a cheaper
+   animation - it is the quiet at the end. */
+const GRID = (tint: string, share: number, dot: number, gap: number) => ({
+  backgroundImage: `radial-gradient(circle, color-mix(in oklab, var(${tint}) ${share}%, transparent) ${dot}px, transparent ${dot + 0.7}px)`,
+  backgroundSize: `${gap}px ${gap}px`,
+});
+
+function DotGround() {
+  return (
+    <span aria-hidden className="absolute inset-0 overflow-hidden">
+      {/* The card's own weather: a fine grid, thinned out of the middle so the
+          mark below has somewhere to be read against. */}
+      <span
+        className="absolute inset-0"
+        style={{
+          ...GRID("--color-thread-blue", 34, 1, 18),
+          maskImage:
+            "radial-gradient(circle at 50% 50%, transparent 22%, black 68%, black 88%, transparent 100%)",
+          WebkitMaskImage:
+            "radial-gradient(circle at 50% 50%, transparent 22%, black 68%, black 88%, transparent 100%)",
+        }}
+      />
+
+      {/* And the mark, cut out of a coarser grid. Square, because the file is,
+          and wider than the card so both loops leave it. */}
+      <span
+        className="absolute top-1/2 left-1/2 aspect-square w-[124%] -translate-x-1/2 -translate-y-1/2"
+        style={{
+          ...GRID("--color-thread-teal", 62, 2.1, 15),
+          maskImage: "url(/assets/logo.png)",
+          maskSize: "contain",
+          maskPosition: "center",
+          maskRepeat: "no-repeat",
+          WebkitMaskImage: "url(/assets/logo.png)",
+          WebkitMaskSize: "contain",
+          WebkitMaskPosition: "center",
+          WebkitMaskRepeat: "no-repeat",
+        }}
+      />
+
+      {/* The card's white, back in the middle. The mark is a picture and the
+          words are the point, and the one thing a halftone must not do is make a
+          sentence work for it. */}
+      <span
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(ellipse 62% 56% at 50% 50%, color-mix(in oklab, var(--color-field) 92%, transparent) 0%, color-mix(in oklab, var(--color-field) 78%, transparent) 38%, color-mix(in oklab, var(--color-field) 36%, transparent) 66%, transparent 88%)",
+        }}
+      />
+    </span>
+  );
+}
+
 /**
  * The next screen, at the size of a thumbnail.
  *
