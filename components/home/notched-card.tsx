@@ -421,6 +421,11 @@ export function NotchedCard({ className }: { className?: string }) {
             almost at the edge. A small hard wash leaves a hole in the picture; a
             large soft one is weather.
 
+            Its middle is nearly white all the same. The field is dense enough
+            now that a sentence set straight on it is a sentence read twice, and
+            legibility is not the thing to trade for a few more dots - so the
+            core holds and the fade does the work of putting them back.
+
             A gradient rather than a panel, either way: an edge here would be a
             box drawn round the words, and the whole point is that there is no
             box. */}
@@ -429,7 +434,7 @@ export function NotchedCard({ className }: { className?: string }) {
             className="absolute inset-0"
             style={{
               backgroundImage:
-                "radial-gradient(ellipse 68% 62% at 50% 48%, color-mix(in oklab, var(--color-field) 80%, transparent) 0%, color-mix(in oklab, var(--color-field) 66%, transparent) 34%, color-mix(in oklab, var(--color-field) 32%, transparent) 64%, transparent 88%)",
+                "radial-gradient(ellipse 68% 62% at 50% 48%, color-mix(in oklab, var(--color-field) 94%, transparent) 0%, color-mix(in oklab, var(--color-field) 84%, transparent) 32%, color-mix(in oklab, var(--color-field) 46%, transparent) 62%, transparent 88%)",
             }}
           />
         ) : null}
