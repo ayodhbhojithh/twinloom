@@ -837,7 +837,7 @@ function Choose({
                 className="relative hidden size-[72px] flex-none items-center justify-center rounded-pill border border-hair sm:flex"
               >
                 <CalendarDays className="size-7 text-ink" strokeWidth={1.7} />
-                <span className="absolute top-1 right-1 size-3 rounded-pill bg-[#1a4bff]" />
+                <span className="absolute top-1 right-1 size-3 rounded-pill bg-mark" />
               </span>
 
               <div className="min-w-0">
@@ -961,11 +961,20 @@ function Door({
       <CardFlourish />
 
       <div className="relative flex items-center gap-3">
+        {/* The brand's own two ends, named directly rather than through
+            `--color-mark`.
+
+            `BuildFlow` rebinds that token to the green that means "answered"
+            for everything inside it, which is right for a tick and wrong for
+            a door: read through it, the blue half of this pair came out green
+            and the two doors were the same colour. `--color-thread-blue` and
+            `--color-thread-teal` are the mark's own, and nothing rebinds
+            them. */}
         <span
           aria-hidden
           className={cn(
             "flex size-8 items-center justify-center rounded-pill font-mono text-[11px] font-bold text-white tabular-nums",
-            blue ? "bg-[#1a4bff]" : "bg-[#0f9d58]",
+            blue ? "bg-thread-blue" : "bg-done",
           )}
         >
           {n}
@@ -975,8 +984,8 @@ function Door({
           className={cn(
             "rounded-pill px-3 py-1.5",
             blue
-              ? "bg-[#1a4bff]/10 text-[#1a4bff]"
-              : "bg-[#0f9d58]/10 text-[#0b7c45]",
+              ? "bg-thread-blue/12 text-thread-blue"
+              : "bg-done/10 text-done",
           )}
         >
           {kicker}
@@ -1006,8 +1015,8 @@ function Door({
               className={cn(
                 "inline-flex items-center gap-2 rounded-pill px-3.5 py-2 text-[12.5px] font-semibold",
                 blue
-                  ? "bg-[#1a4bff]/8 text-[#1a4bff]"
-                  : "bg-[#0f9d58]/8 text-[#0b7c45]",
+                  ? "bg-thread-blue/10 text-thread-blue"
+                  : "bg-done/8 text-done",
               )}
             >
               <fact.icon aria-hidden className="size-4" strokeWidth={1.9} />
@@ -1016,17 +1025,29 @@ function Door({
           ))}
         </div>
 
+        {/* As wide as what it says, not as wide as the card.
+
+            A pill running the full width of a panel is a bar, and a bar reads
+            as the foot of the card rather than as the thing to press in it.
+            Sized to its own words, it is a button - and the white left of it
+            is what makes the card look like it has been laid out rather than
+            filled.
+
+            Both ends of each ramp are the site's own tokens rather than hex
+            picked to look near them: the deep accent into the brand's own
+            blue, and the same move on the green side. Two doors that have to
+            be told apart, drawn from one palette. */}
         <button
           type="button"
           onClick={onClick}
           className={cn(
-            "group/go mt-5 flex w-full cursor-pointer items-center justify-between gap-3 rounded-pill px-6 py-3.5 text-[15px] font-semibold text-white transition-opacity hover:opacity-90",
+            "group/go mt-5 inline-flex w-fit cursor-pointer items-center gap-2.5 rounded-pill px-6 py-3.5 text-[15px] font-semibold text-white transition-opacity hover:opacity-90",
             blue
-              ? "bg-[linear-gradient(90deg,#1a4bff_0%,#1fa7ff_100%)]"
-              : "bg-[linear-gradient(90deg,#0b7c45_0%,#12a862_100%)]",
+              ? "bg-[linear-gradient(100deg,var(--color-mark),var(--color-thread-blue))]"
+              : "bg-[linear-gradient(100deg,var(--color-done),var(--color-thread-teal))]",
           )}
         >
-          <span className="flex-1 text-center">{go}</span>
+          {go}
           <ArrowRight
             aria-hidden
             className="size-[18px] flex-none transition-transform group-hover/go:translate-x-0.5"

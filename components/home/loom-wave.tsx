@@ -17,6 +17,15 @@ import { useCallback, useEffect, useRef } from "react";
    being played: there, a shape holding still until touched; here, a shape
    already moving, so a pluck is added to a swing rather than started from rest.
 
+   A strike vibrates a thread rather than lighting it. The length flutters at a
+   rate that rises with the note the thread carries, the way a shorter string
+   flutters faster; the strike spreads outward thread by thread rather than
+   arriving everywhere at once, so a pluck is a ripple leaving the point it
+   happened at; and while anything is ringing the centre line's glow widens a
+   little, the way a room is brighter while something in it is sounding. The
+   flutter is drawn from the strike's age each frame rather than accumulated,
+   so a dropped frame costs a frame and not the shape of the decay.
+
    The twist is not the swell. It was, the first time this was tried: the pair
    mirrored around the swell's own centre, so it crossed wherever the swell
    crossed - three or four times along the whole field, which reads as a lens
@@ -36,11 +45,19 @@ import { useCallback, useEffect, useRef } from "react";
    assigning each thread a fixed hue - which is what actually sells two threads
    rather than one doubled.
 
-   The height is a sum, not a shape. Two squared sines at different rates make
-   the broad clusters and two more, indexed by thread rather than by position,
-   roughen every thread inside them. Squared because a sine spends half its life
-   below zero and what is wanted is a swell that never inverts: `sin²` is a row
-   of humps.
+   The height is the wave, heard as well as ridden. The envelope deciding how
+   tall each column stands is locked to the swell's own primary wave rather
+   than free-running: sin² of the same phase puts a lobe on every crest and
+   every trough and pinches the field to almost nothing at each crossing,
+   which is what makes the picture read as a sound wave rather than as a hedge
+   under a ribbon. One smaller free cluster and two per-thread roughnesses
+   keep the lobes from coming out machined.
+
+   And each thread is ink at its tips and lit at its waist. The full length is
+   drawn in its ramp colour pulled most of the way to a deep navy, then the
+   middle half again on top in the colour itself - so the light hugs the line
+   the way it does in a rendered frequency picture, and the reach away from it
+   goes dark instead of carrying the same brightness to the tip.
 
    And there is a ghost layer behind both strands, standing taller than either
    and drawn in pale grey-blue, so the pair has something to sit in front of.
@@ -59,8 +76,8 @@ const CENTRE = 0.5;
 
 /** The swell: one fast wave and one slow, both as shares of the height. */
 const RIDE = [
-  { reach: 0.069, turns: 9, phase: -0.75, speed: 0.1 },
-  { reach: 0.027, turns: 2.55, phase: 0.6, speed: -0.06 },
+  { reach: 0.069, turns: 9, phase: -0.75, speed: 0.14 },
+  { reach: 0.027, turns: 2.55, phase: 0.6, speed: -0.085 },
 ] as const;
 
 /**
@@ -76,14 +93,42 @@ const RIDE = [
  * The swell is untouched by this. Both strands still ride it together, and
  * what the twist adds is the fast, small separation between them - the line
  * itself does not twist, the pair around it does. */
-const TWIST = { reach: 0.05, turns: 34, speed: 0.16 } as const;
+const TWIST = { reach: 0.05, turns: 34, speed: 0.24 } as const;
 
-/** A floor every thread gets, and the clusters that lift it in places. */
-const FLOOR = 0.215;
-const SWELL = [
-  { reach: 0.131, turns: 4.9, phase: 0.15, speed: 0.07 },
-  { reach: 0.065, turns: 10.1, phase: 1.5, speed: -0.05 },
-] as const;
+/**
+ * The envelope: a small floor every thread gets, and the lobes over it.
+ *
+ * `main` is not a wave of its own - it is sin² of the swell's primary wave,
+ * same turns, same phase, same speed. Locked together like that, a lobe sits
+ * on every crest and every trough and the field pinches to the floor exactly
+ * where the line crosses its own centre, which is the shape a sound wave
+ * actually has. A free-running envelope put lobes wherever its phase happened
+ * to fall, and the picture read as a hedge with a ribbon through it.
+ *
+ * `cluster` is the one free voice over it, kept small, so the lobes are not
+ * machined copies of each other.
+ */
+const FLOOR = 0.05;
+const ENV = {
+  main: 0.33,
+  cluster: { reach: 0.07, turns: 12.4, phase: 1.5, speed: -0.07 },
+} as const;
+
+/**
+ * How a struck thread rings.
+ *
+ * `spread` is seconds per thread: a strike reaches its neighbours late, so a
+ * pluck is a ripple leaving a point rather than a patch lighting up at once.
+ * `fade` is how fast the ring dies; `flutter` and `flutterRise` are the
+ * visible vibration in cycles a second, rising left to right the way pitch
+ * does - a thread flutters at a rate that agrees with the note it plays.
+ */
+const PLUCK = {
+  spread: 0.018,
+  fade: 2.1,
+  flutter: 3.2,
+  flutterRise: 3.4,
+} as const;
 
 /** And the roughness, by thread, so the band's edge is ragged rather than drawn. */
 const ROUGH = [
@@ -109,13 +154,20 @@ const GHOST_ROUGH = 0.038;
  * changes. Adding them up here fixes it for good: `ROOM` is whatever makes the
  * worst case fit inside `SAFE`, and no table above can be edited into clipping
  * the picture again.
+ *
+ * The pluck's stretch is deliberately outside the sum. Budgeting for it would
+ * shrink the resting field by a third to reserve room for a peak that lasts a
+ * fraction of a second on a thread somebody is touching - a struck string
+ * overshoots, and a tip brushing the edge of the box mid-ring is the overshoot
+ * showing, not the layout failing.
  */
 const SAFE = 0.47;
 const WORST =
   RIDE.reduce((n, wave) => n + wave.reach, 0) +
   TWIST.reach +
   FLOOR +
-  SWELL.reduce((n, wave) => n + wave.reach, 0) +
+  ENV.main +
+  ENV.cluster.reach +
   ROUGH.reduce((n, grain) => n + grain.reach, 0) +
   GHOST +
   GHOST_ROUGH;
@@ -161,6 +213,26 @@ const read = (ramp: readonly (readonly [number, string])[]) =>
 
 const RAMP_RGB = read(RAMP);
 const GHOST_RGB = read(GHOST_RAMP);
+
+/**
+ * The ramp again, pulled most of the way to a deep navy - the tips.
+ *
+ * Precomputed as a second ramp rather than mixed per stroke: six hundred
+ * strokes a frame each doing three multiplies for a colour that never changes
+ * is arithmetic thrown away sixty times a second.
+ */
+const INK_DEEP: Rgb = [10, 18, 46];
+const DIM_RGB = RAMP_RGB.map(
+  ([at, c]) =>
+    [
+      at,
+      [
+        c[0] + (INK_DEEP[0] - c[0]) * 0.62,
+        c[1] + (INK_DEEP[1] - c[1]) * 0.62,
+        c[2] + (INK_DEEP[2] - c[2]) * 0.62,
+      ] as const,
+    ] as const,
+);
 
 /** The colour at a point along a ramp. */
 function sample(ramp: readonly (readonly [number, Rgb])[], along: number) {
@@ -297,6 +369,14 @@ export function LoomWave({
     let last = 0;
     let dpr = 1;
     let lastAt = -1;
+    /* The last moment a note actually sounded, in milliseconds. A fast sweep
+       crosses several threads inside one frame, and every one of them starting
+       an oscillator pair is a burst of clicks rather than a run of notes - the
+       visual strike still lands on all of them, only the sound is thinned. */
+    let lastNote = 0;
+    /* How much of the field is ringing at all, for the centre line's glow.
+       Lifted by every strike, dying on its own clock in `tick`. */
+    let energy = 0;
 
     const still = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -310,14 +390,23 @@ export function LoomWave({
     const struck = new Float32Array(COUNT).fill(-Infinity);
     const force = new Float32Array(COUNT);
 
-    /** How much a thread is ringing right now, from nought to one. */
+    /** How much a thread is ringing right now, from nought to one. Nought as
+        well before its strike has arrived - `spread` sets each neighbour's
+        `struck` a little into the future, and a ripple is exactly a strike
+        that has not reached everywhere yet. */
     const ringing = (at: number, t: number) => {
       const age = t - struck[at];
-      return age < 0 ? 0 : force[at] * Math.exp(-age * 2.4);
+      return age < 0 ? 0 : force[at] * Math.exp(-age * PLUCK.fade);
     };
 
     /**
-     * Pluck a thread, and the dozen either side of it a little less.
+     * Pluck a thread, and the spread either side of it a little less and a
+     * little later.
+     *
+     * Later is what makes it a ripple: each neighbour's strike is stamped
+     * `spread` seconds further into the future per thread of distance, so the
+     * disturbance visibly leaves the point it happened at instead of a patch
+     * of field lighting up as one block.
      *
      * Visual and audible, and only the one that was actually crossed sounds a
      * note - its neighbours ring because cloth is connected, not because they
@@ -325,17 +414,26 @@ export function LoomWave({
      * field would sound like instead of a single line being drawn along it.
      */
     const pluck = (at: number, amount: number) => {
-      for (let off = -14; off <= 14; off += 1) {
+      for (let off = -20; off <= 20; off += 1) {
         const near = at + off;
         if (near < 0 || near >= COUNT) continue;
-        const share = amount * (1 - Math.abs(off) / 15) ** 2;
-        if (share <= 0) continue;
-        struck[near] = clock;
-        force[near] = share;
+        const share = amount * (1 - Math.abs(off) / 21) ** 1.7;
+        if (share <= 0.01) continue;
+        struck[near] = clock + Math.abs(off) * PLUCK.spread;
+        /* The louder of the two rings wins. Overwriting outright let a sweep's
+           trailing edge stamp a fresh quiet ring over a thread still loud from
+           its own strike, which read as the field flinching backwards. */
+        force[near] = Math.max(force[near] * 0.55, share);
       }
+
+      energy = Math.min(1, energy + 0.3);
 
       const kit = audio.current;
       if (!kit || kit.ctx.state !== "running") return;
+
+      const nowMs = performance.now();
+      if (nowMs - lastNote < 28) return;
+      lastNote = nowMs;
 
       const t = kit.ctx.currentTime;
       const freq = pitchOf(at);
@@ -400,6 +498,36 @@ export function LoomWave({
       TWIST.reach *
       Math.sin(along * Math.PI * TWIST.turns + t * TWIST.speed * speed);
 
+    /** How tall the field stands at this column: the floor, the lobe locked
+        to the swell's primary wave, the one free cluster, and the roughness.
+        Shared by the ghosts and the pair, or the backdrop would stand on a
+        different envelope from the field in front of it. */
+    const stand = (along: number, i: number, t: number) => {
+      const main = Math.sin(
+        along * Math.PI * RIDE[0].turns +
+          RIDE[0].phase +
+          t * RIDE[0].speed * speed,
+      );
+      const free = Math.sin(
+        along * Math.PI * ENV.cluster.turns +
+          ENV.cluster.phase +
+          t * ENV.cluster.speed * speed,
+      );
+
+      let reach =
+        height *
+        ROOM *
+        (FLOOR + ENV.main * main * main + ENV.cluster.reach * free * free);
+      for (const grain of ROUGH) {
+        reach += height * ROOM * grain.reach * Math.sin(i * grain.rate);
+      }
+      /* The floor is small enough now that the roughness can dig below it at
+         a waist. A hair of thread rather than none: a column that vanished
+         entirely would put a gap in the field, and the waists are pinched,
+         not cut. */
+      return Math.max(reach, 1);
+    };
+
     const draw = (t: number) => {
       ctx.clearRect(0, 0, width, height);
       if (width < 2 || height < 2) return;
@@ -413,23 +541,9 @@ export function LoomWave({
         const x = along * width;
         const middle = ride(along, t);
 
-        let reach =
-          height * ROOM * (FLOOR + GHOST + GHOST_ROUGH * Math.sin(i * 0.41));
-        for (const wave of SWELL) {
-          reach +=
-            height *
-            ROOM *
-            wave.reach *
-            Math.sin(
-              along * Math.PI * wave.turns +
-                wave.phase +
-                t * wave.speed * speed,
-            ) **
-              2;
-        }
-        for (const grain of ROUGH) {
-          reach += height * ROOM * grain.reach * Math.sin(i * grain.rate);
-        }
+        const reach =
+          stand(along, i, t) +
+          height * ROOM * (GHOST + GHOST_ROUGH * Math.sin(i * 0.41));
 
         const edge = Math.sin(Math.PI * along);
         ctx.strokeStyle = css(sample(GHOST_RGB, along), 0.16 + edge * 0.24);
@@ -451,22 +565,7 @@ export function LoomWave({
         const middle = ride(along, t);
         const apart = twist(along, t);
 
-        let reach = height * ROOM * FLOOR;
-        for (const wave of SWELL) {
-          reach +=
-            height *
-            ROOM *
-            wave.reach *
-            Math.sin(
-              along * Math.PI * wave.turns +
-                wave.phase +
-                t * wave.speed * speed,
-            ) **
-              2;
-        }
-        for (const grain of ROUGH) {
-          reach += height * ROOM * grain.reach * Math.sin(i * grain.rate);
-        }
+        const reach = stand(along, i, t);
 
         /* Thinned at both ends. An arch rather than a ramp, because the field
            has two ends and both of them should run out. */
@@ -474,32 +573,65 @@ export function LoomWave({
         const weight = i % 7 === 0 ? 2.1 : i % 3 === 0 ? 1.3 : 0.85;
         const alpha = (0.34 + edge * 0.64) * 0.85;
 
-        /* A struck thread reaches further and burns nearer to white, on the
-           same curve rather than as a separate flash - a note that changed
-           colour and length on different clocks would read as two things
-           happening at once instead of one thread ringing. */
-        const rung = ringing(i, t);
+        /* A struck thread vibrates rather than swelling and subsiding.
 
-        /** One strand: its own centre, its own colour, its own dot. */
+           The envelope decides how much, the flutter decides which way this
+           frame: a cosine of the strike's age, at a rate that rises with the
+           note the thread carries, swings the extra length between full and
+           almost nothing while the envelope rings down - which is a string
+           seen from side on. The colour takes the envelope alone: brightness
+           dying smoothly while the length oscillates is one event with two
+           faces, and a colour that flickered with the flutter would read as
+           the thread blinking. */
+        const rung = ringing(i, t);
+        let stretch = 1;
+        if (rung > 0.02) {
+          const wobble = Math.cos(
+            (t - struck[i]) *
+              Math.PI *
+              2 *
+              (PLUCK.flutter + along * PLUCK.flutterRise),
+          );
+          stretch = 1 + rung * (0.5 + 0.5 * wobble);
+        }
+
+        /** One strand: dark to its tips, lit through its waist, dotted.
+
+            Two strokes rather than a gradient. A per-column gradient would be
+            six hundred gradient objects a frame; the full length in the
+            dimmed ramp with the middle half restruck in the ramp itself reads
+            the same from any distance and costs two lines. */
         const strand = (centre: number, at: number) => {
-          ctx.strokeStyle = glow(sample(RAMP_RGB, at), alpha, rung);
+          const span = reach * stretch;
           ctx.lineWidth = weight * (1 + rung * 0.7);
+
+          ctx.strokeStyle = glow(sample(DIM_RGB, at), alpha * 0.9, rung);
           ctx.beginPath();
-          ctx.moveTo(x, centre - reach * (1 + rung * 0.85));
-          ctx.lineTo(x, centre + reach * (1 + rung * 0.85));
+          ctx.moveTo(x, centre - span);
+          ctx.lineTo(x, centre + span);
+          ctx.stroke();
+
+          ctx.strokeStyle = glow(
+            sample(RAMP_RGB, at),
+            Math.min(1, alpha * 1.2),
+            rung,
+          );
+          ctx.beginPath();
+          ctx.moveTo(x, centre - span * 0.52);
+          ctx.lineTo(x, centre + span * 0.52);
           ctx.stroke();
 
           /* A dot on some of the tips. It is the one thing here that is not a
-             thread, and it is what stops the tallest reading as scratches. */
+             thread, and it is what stops the tallest reading as scratches. In
+             the tips' own ink, because the tips are where it sits. */
           if (i % 5 === 0 || i % 11 === 0) {
             const dot = (i % 11 === 0 ? 1.35 : 0.92) * (1 + rung * 0.6);
-            const tip = reach * (1 + rung * 0.85);
-            ctx.fillStyle = css(sample(RAMP_RGB, at), 0.35 + edge * 0.55);
+            ctx.fillStyle = css(sample(DIM_RGB, at), 0.4 + edge * 0.5);
             ctx.beginPath();
-            ctx.arc(x, centre - tip, dot, 0, Math.PI * 2);
+            ctx.arc(x, centre - span, dot, 0, Math.PI * 2);
             ctx.fill();
             ctx.beginPath();
-            ctx.arc(x, centre + tip, dot * 0.9, 0, Math.PI * 2);
+            ctx.arc(x, centre + span, dot * 0.9, 0, Math.PI * 2);
             ctx.fill();
           }
         };
@@ -553,8 +685,14 @@ export function LoomWave({
         { wide: 3.7, tint: "255,255,255", alpha: 0.9 },
         { wide: 1.2, tint: "247,255,255", alpha: 0.95 },
       ]) {
-        ctx.strokeStyle = `rgba(${pass.tint},${pass.alpha})`;
-        ctx.lineWidth = pass.wide;
+        /* The glow answers the playing; the core does not. While anything is
+           ringing the two soft outer passes widen and brighten a little, the
+           way a room holds the light of a sound - and the line itself stays
+           the same line, because the swell has not changed, only the field
+           ringing around it. */
+        const halo = pass.wide > 4 ? 1 + energy * 0.4 : 1;
+        ctx.strokeStyle = `rgba(${pass.tint},${Math.min(1, pass.alpha * halo)})`;
+        ctx.lineWidth = pass.wide * halo;
         path();
         ctx.stroke();
       }
@@ -584,6 +722,9 @@ export function LoomWave({
       const gap = last ? Math.min((now - last) / 1000, 0.05) : 0;
       last = now;
       clock += gap;
+      /* Slower than the threads' own fade, so the halo lingers a moment after
+         the last thread has settled - an echo, not a light switch. */
+      energy *= Math.exp(-gap * 1.6);
       draw(clock);
       frame = requestAnimationFrame(tick);
     };
@@ -665,7 +806,10 @@ export function LoomWave({
       <div
         ref={box}
         aria-hidden
-        className="relative w-full"
+        /* The crosshair is the one hint that this is an instrument rather
+           than a picture - a label saying "play me" would be the wrong kind
+           of louder. */
+        className="relative w-full cursor-crosshair"
         /* Height off the width rather than the window's.
 
            The threads are placed across the width and their heights are a share
