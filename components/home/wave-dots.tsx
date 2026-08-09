@@ -38,8 +38,8 @@ import { cn } from "@/lib/utils";
    are fat, the hollow is where they shrink to almost nothing. The shape is in
    the weight, which is legible at any density and is what makes a printed
    halftone a picture rather than a screen. */
-const ROWS = 38;
-const COLUMNS = 154;
+const ROWS = 42;
+const COLUMNS = 168;
 
 /* The spheres are gone.
 
@@ -236,7 +236,7 @@ export function WaveDots({
          larger, and a window's top edge is not where the world stops - so the
          far rows run up to it and the fade at the edge is what ends them. */
       const horizon = height * (0.03 - (held.y - 0.5) * 0.07 * lean);
-      const groundY = horizon + height * 1.0 * near;
+      const groundY = horizon + height * 1.08 * near;
 
       /* Rows widen as they come forward, and the whole sheet slides with the
          pointer, so the far edge moves less than the near one. That difference
@@ -247,14 +247,17 @@ export function WaveDots({
          ends is how hard it does it. Four-fold read as a slightly narrower row;
          this is over ten-fold, which reads as distance.
 
-         Both ends are up, and the far one twice over. At a fifth of the width
-         the back of the sheet was a thin band in the middle of the card with
-         white either side of it; at half, it reaches the sides and the corners
-         go with it. Widened, the near rows run past the edges and the far ones
+         Both ends are up, and the far one three times over. At a fifth of the
+         width the back of the sheet was a thin band in the middle of the card
+         with white either side of it; at half it reached the sides but left the
+         top corners; at six sevenths there is nothing left of the card it does
+         not touch. The ratio between the ends is still better than three to one,
+         which is all the perspective needs - what it stopped doing is deciding
+         how much of the card gets a picture on it. Widened, the near rows run past the edges and the far ones
          cover the top - so the surface is a piece of something larger that the
          card is a window onto, rather than an object placed in the middle of
          it. */
-      const spread = 0.52 + 1.95 * near;
+      const spread = 0.86 + 1.95 * near;
       const slide = (held.x - 0.5) * width * 0.16 * near * lean;
       const x = width * (0.5 + SHIFT) + (along - 0.5) * width * spread + slide;
 
@@ -359,7 +362,7 @@ export function WaveDots({
           const softX = Math.min(1, Math.min(x, width - x) / (width * 0.11));
           const softY = Math.min(1, (height - y) / (height * 0.1));
           const edge = Math.max(0, softX) * Math.max(0, softY);
-          const across = Math.sin(depth * Math.PI) ** 0.26;
+          const across = Math.sin(depth * Math.PI) ** 0.16;
 
           /* The wave, read as light. A crest faces up and a hollow faces away,
              and `roll` already is that reading - which is why it is used rather

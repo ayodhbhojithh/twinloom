@@ -411,11 +411,15 @@ export function NotchedCard({ className }: { className?: string }) {
             edge and a block of type in the centre of the card are two different
             compositions arguing.
 
-            And it is thinner than it was. The field now covers the whole card
+            Thinner than it was, and wider. The field now covers the whole card
             rather than sitting in the middle of it, so the wash is no longer
             allowed to be white - it never reaches opaque anywhere, and the dots
-            run under the type instead of stopping at it. Enough to keep a
-            sentence readable, not enough to leave a hole in the picture.
+            run under the type instead of stopping at it. What it gives up in
+            strength it takes back in reach: it has to cover a claim running
+            most of the card, a lead under it and two buttons, so the ellipse is
+            two thirds of the width rather than four tenths and its last stop is
+            almost at the edge. A small hard wash leaves a hole in the picture; a
+            large soft one is weather.
 
             A gradient rather than a panel, either way: an edge here would be a
             box drawn round the words, and the whole point is that there is no
@@ -425,7 +429,7 @@ export function NotchedCard({ className }: { className?: string }) {
             className="absolute inset-0"
             style={{
               backgroundImage:
-                "radial-gradient(ellipse 40% 42% at 50% 50%, color-mix(in oklab, var(--color-field) 80%, transparent) 0%, color-mix(in oklab, var(--color-field) 66%, transparent) 34%, color-mix(in oklab, var(--color-field) 34%, transparent) 62%, transparent 84%)",
+                "radial-gradient(ellipse 68% 62% at 50% 48%, color-mix(in oklab, var(--color-field) 88%, transparent) 0%, color-mix(in oklab, var(--color-field) 76%, transparent) 34%, color-mix(in oklab, var(--color-field) 40%, transparent) 64%, transparent 88%)",
             }}
           />
         ) : null}
