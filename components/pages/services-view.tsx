@@ -212,15 +212,23 @@ export function ServiceWall({
 
                   Contained instead, centred, on nothing. The picture's white and
                   the card's white are the same white, so there is no seam to
-                  hide and no mask to hide it with. */}
-            <span className="relative block aspect-[5/4] w-full">
+                  hide and no mask to hide it with.
+
+                  Square, and wider than the card's own text column. `contain`
+                  fits by whichever side runs out first, and on a five-by-four
+                  box that was always the height - so the drawings were being
+                  sized by a number that had nothing to do with how big they
+                  could be. A square box gives back the quarter that was
+                  costing, and the negative margin lets them run into the
+                  padding the words need and the picture does not. */}
+            <span className="relative -mx-2 block aspect-square w-auto">
               {entry.art ? (
                 <Image
                   src={entry.art}
                   alt=""
                   fill
                   draggable={false}
-                  sizes="(max-width: 640px) 60vw, 286px"
+                  sizes="(max-width: 640px) 70vw, 320px"
                   className="object-contain transition-transform duration-500 group-hover/card:scale-[1.06]"
                 />
               ) : (

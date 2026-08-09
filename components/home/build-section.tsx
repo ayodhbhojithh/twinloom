@@ -1,6 +1,22 @@
-import { BuildFlow } from "@/components/build/v5/flow";
+"use client";
 
-import { LoomWave } from "./loom-wave";
+import { useState } from "react";
+
+import { BuildFlow } from "@/components/build/v5/flow";
+import { cn } from "@/lib/utils";
+
+import { LoomWave, type WaveVariant } from "./loom-wave";
+
+/**
+ * The two drawings, and what each is called on the switch.
+ *
+ * Named by number rather than by what they are, because "sheaf" and "bars"
+ * are the words for how they are built and nobody choosing between them is
+ * choosing a construction - they are looking at two pictures. */
+const VERSIONS: readonly { id: WaveVariant; label: string }[] = [
+  { id: "sheaf", label: "Version 1" },
+  { id: "bars", label: "Version 2" },
+];
 
 /**
  * The build screen, on the landing page.
@@ -15,6 +31,8 @@ import { LoomWave } from "./loom-wave";
  * this page already has one, so the same words are set as an `h2` instead.
  */
 export function BuildSection() {
+  const [version, setVersion] = useState<WaveVariant>("sheaf");
+
   /* The landing hero's down arrow points at this section's id, so it carries a
      scroll margin: without one the anchor lands the heading underneath the
      sticky header rather than under it. */
@@ -53,7 +71,44 @@ export function BuildSection() {
             exactly the gutter, so the field takes the whole width without
             having to know what the width is - a field of threads meant to carry
             on past the window must not stop where a paragraph stops. */}
-        <LoomWave className="-mx-(--page-gutter) w-auto" />
+        {/* The switch, over the drawing it switches.
+
+            A `radiogroup` rather than two buttons: they are two states of one
+            thing and only one can be on, which is what a radio group is and
+            what a pair of buttons is not - a screen reader reading two buttons
+            has no way to say that pressing one turns the other off.
+
+            Above the wave rather than below it, because it is the label on
+            what follows: a control under a picture reads as belonging to
+            whatever comes next. */}
+        <div
+          role="radiogroup"
+          aria-label="Wave version"
+          className="mb-4 flex justify-center gap-1 rounded-pill"
+        >
+          {VERSIONS.map((entry) => {
+            const on = entry.id === version;
+            return (
+              <button
+                key={entry.id}
+                type="button"
+                role="radio"
+                aria-checked={on}
+                onClick={() => setVersion(entry.id)}
+                className={cn(
+                  "cursor-pointer rounded-pill px-4 py-1.5 font-mono text-[11px] font-bold tracking-[0.16em] uppercase transition-colors",
+                  on
+                    ? "bg-ink text-white"
+                    : "bg-field text-quiet hover:text-ink",
+                )}
+              >
+                {entry.label}
+              </button>
+            );
+          })}
+        </div>
+
+        <LoomWave className="-mx-(--page-gutter) w-auto" variant={version} />
 
         {/* Centred, and the only centred thing in this section.
 

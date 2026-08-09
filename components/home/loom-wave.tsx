@@ -145,32 +145,86 @@ const RIBBON = {
 } as const;
 
 /**
- * How much of the box the ribbon is allowed.
+ * The bar field's own numbers, which the sheaf has no use for.
+ *
+ * `ROUGH` and `SPIKE` are indexed by column rather than by position, and that
+ * is exactly why they belong to one version and not the other. Per-column
+ * noise is grain when every column is its own object, and a zigzag the moment
+ * the picture is continuous curves - so the two versions are not one drawing
+ * with a flag, they are two drawings that happen to ride the same wave.
+ *
+ * `SPIKE` is the tail the roughness cannot give: a sum of sines is bounded and
+ * spends its life near the middle of its range, so it makes a fuzzy edge and
+ * never a few threads standing well clear of the rest. A sine raised high
+ * enough is nothing almost everywhere and briefly everything, which is what a
+ * spike is. Even, so it can only ever add - a spike that could subtract would
+ * dig a hole in the field.
+ */
+const BAR = {
+  /* The height every column keeps, and it has to beat the roughness.
+     The roughness is signed - it takes away as readily as it adds - so the
+     shortest a column can be is this less the sum of it. At 0.115 against a
+     roughness summing to 0.149 that number was negative: the floor was
+     cancelled outright and the clamp below caught the bar at a pixel, which
+     is the field going out where the wave is quiet. Comfortably over the sum
+     now, so the shortest column is short rather than gone. */
+  floor: 0.185,
+  rough: [
+    { reach: 0.04, rate: 0.7 },
+    { reach: 0.03, rate: 1.87 },
+    { reach: 0.022, rate: 4.31 },
+    { reach: 0.016, rate: 9.13 },
+  ],
+  /* And a backstop under all of it, as a share of the height rather than the
+     one pixel it was. `floor` beating `rough` is an arithmetic relationship
+     between two tables, and tables get edited; this is the guarantee that
+     survives someone adding a fifth voice without checking the sum. */
+  min: 0.05,
+  spike: { reach: 0.2, rate: 2.9, sharpness: 14 },
+  /** The pale taller field drawn behind, so the band has something to stand
+      in front of. One layer of threads is a graph; two is a picture of one. */
+  ghost: 0.092,
+  ghostRough: 0.038,
+} as const;
+
+/**
+ * How much of the box each version is allowed.
  *
  * Not a number somebody picked. Every vertical figure above is a share of the
- * height, and at their worst they all land at the same place along the width:
- * the swell at its furthest from the middle, and both envelope voices at full.
- * Summed unchecked that came to more than half the box, and the widest part of
- * the sheaf was sliced flat against the top edge.
+ * height, and at their worst they all land at the same place along the width.
+ * Summed unchecked that comes to more than half the box, and the widest part
+ * of the drawing is sliced flat against the top edge.
  *
  * Setting a scale by hand fixes it until the next time one of those tables
- * changes. Adding them up here fixes it for good: `ROOM` is whatever makes the
- * worst case fit inside `SAFE`, and no table above can be edited into clipping
- * the picture again.
+ * changes. Adding them up fixes it for good: each `ROOM` is whatever makes its
+ * own worst case fit inside `SAFE`, and no table above can be edited into
+ * clipping the picture again.
  *
- * The pluck's stretch is deliberately outside the sum. Budgeting for it would
- * narrow the resting ribbon by a third to reserve room for a peak that lasts a
+ * Two of them, because the two versions have genuinely different worst cases -
+ * the bars carry roughness, a spike and a ghost layer on top of the same
+ * envelope. One shared number would have to budget for the bars and would
+ * leave the sheaf drawn at two thirds the size it could be.
+ *
+ * The pluck's stretch is deliberately outside both. Budgeting for it would
+ * narrow everything by a third to reserve room for a peak that lasts a
  * fraction of a second where somebody is touching it - a struck string
  * overshoots, and a curve brushing the edge of the box mid-ring is the
  * overshoot showing, not the layout failing.
  */
 const SAFE = 0.47;
-const WORST =
-  RIDE.reduce((n, wave) => n + wave.reach, 0) +
-  ENV.floor +
-  ENV.main +
-  ENV.cluster.reach;
-const ROOM = SAFE / WORST;
+const SWELL = RIDE.reduce((n, wave) => n + wave.reach, 0);
+const LOBES = ENV.main + ENV.cluster.reach;
+
+const ROOM_SHEAF = SAFE / (SWELL + ENV.floor + LOBES);
+const ROOM_BARS =
+  SAFE /
+  (SWELL +
+    BAR.floor +
+    LOBES +
+    BAR.rough.reduce((n, grain) => n + grain.reach, 0) +
+    BAR.spike.reach +
+    BAR.ghost +
+    BAR.ghostRough);
 
 /* The ramp, and the one behind it.
 
@@ -190,19 +244,87 @@ const RAMP = [
   [1, "#3bd8c1"],
 ] as const;
 
-/* No per-colour arithmetic left in here.
+/** The pale field standing behind the bars. */
+const GHOST_RAMP = [
+  [0, "#a8b8ff"],
+  [0.28, "#879bd7"],
+  [0.5, "#96e5ff"],
+  [0.75, "#8ab0da"],
+  [1, "#9fe5d2"],
+] as const;
 
-   There was a good deal of it: the ramp parsed into numbers once, a second
-   ramp mixed most of the way to navy for the tips, a sampler to read a colour
-   at a point along either, and a `glow` that mixed toward white for a struck
-   thread. All of it existed because a column takes one solid colour and there
-   were six hundred columns a frame to colour individually.
+/* The colour arithmetic below belongs to the bar version alone.
 
-   A curve is not a column. The whole family shares one horizontal gradient
-   built straight from `RAMP`, so the ramp is read by the canvas rather than by
-   us, and a strike changes how far a curve swings rather than what colour it
-   is - which is the better answer anyway: the light in this picture comes from
-   curves crowding, not from any one of them being brightened. */
+   The sheaf has none of it: a family of curves shares one horizontal gradient
+   built straight from `RAMP` once a frame, so the canvas reads the ramp rather
+   than us, and a strike changes how far a curve swings rather than what colour
+   it is. Six hundred columns cannot do that - a polyline takes one stroke
+   colour, and a column is one stroke - so the bars read their own colour per
+   column and need the ramp as numbers to do it. */
+
+type Rgb = readonly [number, number, number];
+
+const ink = (hex: string): Rgb => [
+  parseInt(hex.slice(1, 3), 16),
+  parseInt(hex.slice(3, 5), 16),
+  parseInt(hex.slice(5, 7), 16),
+];
+
+/** A ramp read into numbers once, so a frame is arithmetic rather than parsing. */
+const read = (ramp: readonly (readonly [number, string])[]) =>
+  ramp.map(([at, hex]) => [at, ink(hex)] as const);
+
+const RAMP_RGB = read(RAMP);
+const GHOST_RGB = read(GHOST_RAMP);
+
+/**
+ * The ramp again, pulled most of the way to a deep navy - the tips.
+ *
+ * Precomputed as a second ramp rather than mixed per stroke: six hundred
+ * strokes a frame each doing three multiplies for a colour that never changes
+ * is arithmetic thrown away sixty times a second.
+ */
+const INK_DEEP: Rgb = [10, 18, 46];
+const DIM_RGB = RAMP_RGB.map(
+  ([at, c]) =>
+    [
+      at,
+      [
+        c[0] + (INK_DEEP[0] - c[0]) * 0.62,
+        c[1] + (INK_DEEP[1] - c[1]) * 0.62,
+        c[2] + (INK_DEEP[2] - c[2]) * 0.62,
+      ] as const,
+    ] as const,
+);
+
+/** The colour at a point along a ramp. */
+function sample(ramp: readonly (readonly [number, Rgb])[], along: number) {
+  const u = along <= 0 ? 0 : along >= 1 ? 1 : along;
+  let n = 0;
+  while (n < ramp.length - 2 && ramp[n + 1][0] < u) n += 1;
+  const [fromAt, from] = ramp[n];
+  const [toAt, to] = ramp[n + 1];
+  const step = toAt === fromAt ? 0 : (u - fromAt) / (toAt - fromAt);
+  return [
+    from[0] + (to[0] - from[0]) * step,
+    from[1] + (to[1] - from[1]) * step,
+    from[2] + (to[2] - from[2]) * step,
+  ] as const;
+}
+
+const css = (c: Rgb, a: number) =>
+  `rgba(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])},${a})`;
+
+/** A colour, mixed toward white and alpha carried up to one - a struck
+    thread reads as lit rather than merely more opaque. */
+const glow = (c: Rgb, a: number, amount: number) => {
+  const lit: Rgb = [
+    c[0] + (255 - c[0]) * amount,
+    c[1] + (255 - c[1]) * amount,
+    c[2] + (255 - c[2]) * amount,
+  ];
+  return css(lit, Math.min(1, a + amount * (1 - a)));
+};
 
 /**
  * A minor pentatonic, low to high, left to right.
@@ -226,12 +348,25 @@ function pitchOf(thread: number) {
   return ROOT * 2 ** (step / 12);
 }
 
+/**
+ * Which drawing rides the wave.
+ *
+ * `sheaf` is sixty smooth curves whose crowding draws its own edges; `bars` is
+ * a field of separate columns with per-column grain and a pale layer behind.
+ * They share the swell, the envelope, the instrument and the fade, and differ
+ * in the one place that cannot be shared - what a column may do and a curve may
+ * not, which is jump.
+ */
+export type WaveVariant = "sheaf" | "bars";
+
 export function LoomWave({
   className,
   speed = 1,
+  variant = "sheaf",
 }: {
   className?: string;
   speed?: number;
+  variant?: WaveVariant;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const sheet = useRef<HTMLCanvasElement>(null);
@@ -469,6 +604,10 @@ export function LoomWave({
       twin.stop(t + 2.3);
     };
 
+    /* Whichever version's scale this is. Both are bounded against `SAFE`;
+       picking here means everything below reads one number. */
+    const ROOM = variant === "bars" ? ROOM_BARS : ROOM_SHEAF;
+
     /** Where the swell is, at this point across the field, at this moment. */
     const ride = (along: number, t: number) => {
       let y = height * CENTRE;
@@ -483,14 +622,6 @@ export function LoomWave({
       }
       return y;
     };
-
-    /* No `twist` returning a separation any more.
-
-       It gave one number - how far apart the pair is here - which is all a
-       mirrored pair needs and not enough for a helix: a ladder also has to
-       know which way it is facing. `rail` below takes the same phase and
-       reads both off it, `sin` for up the screen and `cos` for how near, and
-       the separation falls out as the first of the two. */
 
     /**
      * How wide the ribbon opens here: the floor, the lobe locked to the
@@ -528,12 +659,123 @@ export function LoomWave({
       );
     };
 
-    const draw = (t: number) => {
-      ctx.clearRect(0, 0, width, height);
-      if (width < 2 || height < 2) return;
+    /**
+     * How tall one column stands: the same envelope, plus everything a column
+     * may have and a curve may not.
+     *
+     * The lobes are shared with the sheaf on purpose - both versions are the
+     * same wave breathing, and only the way it is drawn changes. What is added
+     * here is all indexed by column: four roughnesses so the tips are ragged
+     * rather than swept, and the spike so a few stand right out.
+     */
+    const barAt = (along: number, i: number, t: number) => {
+      const main = Math.sin(
+        along * Math.PI * RIDE[0].turns +
+          RIDE[0].phase +
+          t * RIDE[0].speed * speed,
+      );
+      const free = Math.sin(
+        along * Math.PI * ENV.cluster.turns +
+          ENV.cluster.phase +
+          t * ENV.cluster.speed * speed,
+      );
 
-      ctx.lineCap = "round";
+      let reach =
+        height *
+        ROOM *
+        (BAR.floor + ENV.main * main * main + ENV.cluster.reach * free * free);
 
+      for (const grain of BAR.rough) {
+        reach += height * ROOM * grain.reach * Math.sin(i * grain.rate);
+      }
+
+      reach +=
+        height *
+        ROOM *
+        BAR.spike.reach *
+        Math.sin(i * BAR.spike.rate) ** BAR.spike.sharpness;
+
+      /* Never shorter than `BAR.min`. The waists are pinched, not cut: a
+         column that vanished would leave a hole in the field, and a row of
+         columns with holes in it is not a wave, it is a gap with bars either
+         side. */
+      return Math.max(reach, height * ROOM * BAR.min);
+    };
+
+    /** The bar field: one column per thread, standing on the line. */
+    const drawBars = (t: number) => {
+      /* The pale layer first, taller and thinner, so the field in front has
+         something to stand against rather than sitting on the page. */
+      for (let i = 0; i < COUNT; i += 1) {
+        const along = i / (COUNT - 1);
+        const x = along * width;
+        const middle = ride(along, t);
+        const reach =
+          barAt(along, i, t) +
+          height * ROOM * (BAR.ghost + BAR.ghostRough * Math.sin(i * 0.41));
+
+        const edge = Math.sin(Math.PI * along);
+        ctx.strokeStyle = css(sample(GHOST_RGB, along), 0.16 + edge * 0.24);
+        ctx.lineWidth = i % 4 === 0 ? 0.9 : 0.6;
+        ctx.beginPath();
+        ctx.moveTo(x, middle - reach);
+        ctx.lineTo(x, middle + reach);
+        ctx.stroke();
+      }
+
+      /* Then the field. Each column is drawn twice: its whole length in the
+         ramp pulled most of the way to navy, then its middle half again in the
+         ramp itself - so the light hugs the line and the reach away from it
+         goes dark, which is one column doing what a gradient per column would
+         cost six hundred gradients a frame to do. */
+      for (let i = 0; i < COUNT; i += 1) {
+        const along = i / (COUNT - 1);
+        const x = along * width;
+        const middle = ride(along, t);
+        const reach = barAt(along, i, t) * ringStretch(i, t, along);
+
+        /* Thinned at both ends. An arch rather than a ramp, because the field
+           has two ends and both of them should run out. */
+        const edge = Math.sin(Math.PI * along);
+        const rung = ringing(i, t);
+        const weight = i % 7 === 0 ? 2.1 : i % 3 === 0 ? 1.3 : 0.85;
+        const alpha = (0.34 + edge * 0.64) * 0.85;
+
+        ctx.lineWidth = weight * (1 + rung * 0.7);
+
+        ctx.strokeStyle = glow(sample(DIM_RGB, along), alpha * 0.9, rung);
+        ctx.beginPath();
+        ctx.moveTo(x, middle - reach);
+        ctx.lineTo(x, middle + reach);
+        ctx.stroke();
+
+        ctx.strokeStyle = glow(
+          sample(RAMP_RGB, along),
+          Math.min(1, alpha * 1.2),
+          rung,
+        );
+        ctx.beginPath();
+        ctx.moveTo(x, middle - reach * 0.52);
+        ctx.lineTo(x, middle + reach * 0.52);
+        ctx.stroke();
+
+        /* A dot on some of the tips. It is the one thing here that is not a
+           thread, and it is what stops the tallest reading as scratches. */
+        if (i % 5 === 0 || i % 11 === 0) {
+          const dot = (i % 11 === 0 ? 1.35 : 0.92) * (1 + rung * 0.6);
+          ctx.fillStyle = css(sample(DIM_RGB, along), 0.4 + edge * 0.5);
+          ctx.beginPath();
+          ctx.arc(x, middle - reach, dot, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(x, middle + reach, dot * 0.9, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    };
+
+    /** The sheaf: sixty smooth curves whose crowding is the picture. */
+    const drawSheaf = (t: number) => {
       /* The ribbon: one family of curves, not a row of columns.
 
          Every line is the same wave at a different phase, spread evenly round
@@ -601,6 +843,16 @@ export function LoomWave({
       }
 
       ctx.globalAlpha = 1;
+    };
+
+    const draw = (t: number) => {
+      ctx.clearRect(0, 0, width, height);
+      if (width < 2 || height < 2) return;
+
+      ctx.lineCap = "round";
+
+      if (variant === "bars") drawBars(t);
+      else drawSheaf(t);
 
       /* And the one line through the middle of the pair.
 
@@ -772,7 +1024,11 @@ export function LoomWave({
       wrap.removeEventListener("pointerleave", onLeave);
       still.removeEventListener("change", run);
     };
-  }, [speed]);
+    /* `variant` is in here and has to be: the draw closes over it, and the
+       whole loop is built once when this effect runs. Left out, switching
+       version would leave the old drawing running until something else
+       happened to tear the effect down. */
+  }, [speed, variant]);
 
   return (
     <div className={className}>
