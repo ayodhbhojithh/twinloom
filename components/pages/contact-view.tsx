@@ -76,12 +76,12 @@ export function ContactView() {
           </Link>
         }
       >
-        <div className="max-w-[52ch]">
+        <div className="max-w-[104ch]">
           <p className="font-mono text-[9px] font-bold tracking-[0.16em] text-mark uppercase">
             Contact us
           </p>
 
-          <h1 className="mt-3 max-w-[min(19ch,var(--notch-free,62ch))] text-[clamp(26px,2.9vw,42px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink">
+          <h1 className="mt-3 max-w-[min(30ch,var(--notch-free,86ch))] text-[clamp(26px,2.9vw,42px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink">
             Write, ring, or come
             <span className="text-quiet"> and find us.</span>
           </h1>
@@ -98,7 +98,7 @@ export function ContactView() {
               right to know why the reply comes from a name they have not seen.
               Small, under the paragraph, because it is a fact rather than a
               claim. */}
-          <p className="mt-4 text-[13.5px] leading-[1.6] text-quiet">
+          <p className="mt-4 max-w-[90ch] text-[13.5px] leading-[1.6] text-quiet">
             TwinLoom is the website development and digital services arm of
             TwinCoreTech.
           </p>
