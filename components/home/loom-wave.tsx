@@ -42,19 +42,7 @@ import { useEffect, useRef } from "react";
 /** How many threads, whatever the box is. */
 const COUNT = 315;
 
-/**
- * How much of the box the field is allowed, and where its middle sits.
- *
- * Every vertical number below is a share of the height, and they add up: the
- * floor, both clusters, both roughnesses and the ghosts' extra reach. Summed at
- * their worst that came to more than half the box from the middle, which is a
- * field with its tallest threads sliced off at the top and bottom edges.
- *
- * `ROOM` scales all of them together so the worst case fits, and the middle sits
- * at the middle - nothing to clip, and one number to change if the box ever gets
- * taller.
- */
-const ROOM = 0.78;
+/** Where the middle of the field sits, as a share of the height. */
 const CENTRE = 0.5;
 
 /** The swell: one fast wave and one slow, both as shares of the height. */
@@ -79,6 +67,31 @@ const ROUGH = [
 /** How much further the ghosts reach than the field in front of them. */
 const GHOST = 0.092;
 const GHOST_ROUGH = 0.038;
+
+/**
+ * How much of the box the field is allowed.
+ *
+ * Not a number somebody picked. Every vertical figure above is a share of the
+ * height and at their worst they all land on one thread: the swell at its
+ * furthest from the middle, both clusters at full, both roughnesses at plus one,
+ * and the ghosts' extra reach on top. Summed, that came to more than half the
+ * box - so the tallest threads were sliced flat against the top edge, which is
+ * exactly what it looked like.
+ *
+ * Setting a scale by hand fixes it until the next time one of those tables
+ * changes. Adding them up here fixes it for good: `ROOM` is whatever makes the
+ * worst case fit inside `SAFE`, and no table above can be edited into clipping
+ * the picture again.
+ */
+const SAFE = 0.47;
+const WORST =
+  RIDE.reduce((n, wave) => n + wave.reach, 0) +
+  FLOOR +
+  SWELL.reduce((n, wave) => n + wave.reach, 0) +
+  ROUGH.reduce((n, grain) => n + grain.reach, 0) +
+  GHOST +
+  GHOST_ROUGH;
+const ROOM = SAFE / WORST;
 
 /* The ramp, and the one behind it.
 
