@@ -48,15 +48,18 @@ const EDGES =
 const FADE =
   "linear-gradient(to bottom, black 34%, rgba(0,0,0,0.92) 48%, rgba(0,0,0,0.72) 62%, rgba(0,0,0,0.44) 76%, rgba(0,0,0,0.18) 88%, transparent 100%)";
 
-/**
- * One picture for all six.
- *
- * Six different pictures made six different claims about what each discipline
- * looks like, none of which we can stand behind - these are not photographs of
- * the work. One plate under all of them is honest about that: it is a surface
- * the cards are printed on, not an illustration of the thing.
- */
-const PLATE = "/partners/minimal.png";
+/* The one plate under all six cards is gone.
+
+   It was `/partners/minimal.png`, and the case for it was that six different
+   photographs would make six different claims about what each discipline looks
+   like, none of which we can stand behind - so one surface for all of them was
+   the honest version.
+
+   That argument holds against photographs and not against drawings. A drawing
+   claims nothing about the work; it is a mark for the thing, the way the number
+   in the corner is. Each card carries its own now, in `public/services`, and
+   whichever have not been drawn yet fall back to the Lucide icon the entry
+   already carries. */
 
 /**
  * What the wall shows.
@@ -237,19 +240,48 @@ export function ServiceWall({
               className="group/card flex w-[clamp(260px,24vw,330px)] shrink-0 flex-col overflow-hidden rounded-[20px] bg-field transition-transform duration-300 hover:-translate-y-1.5"
             >
               {/* The picture first, and faded into the card rather than
-                  stopped by an edge. A photograph with a hard bottom line is a
-                  photograph stuck on a card; faded, the card is one thing that
-                  happens to begin as a picture. */}
+                  stopped by an edge. A picture with a hard bottom line is a
+                  picture stuck on a card; faded, the card is one thing that
+                  happens to begin as a picture.
+
+                  Its own picture, not one plate behind all six. They shared a
+                  photograph of nothing in particular, which is a decoration
+                  repeated six times - the eye reads it once and then reads six
+                  cards with the same header. A picture per discipline is the
+                  only version of this that is worth the height it takes.
+
+                  And where a discipline has no picture yet, the icon it already
+                  carries, set large on a wash of the mark's two colours. Not a
+                  placeholder: a card should look decided rather than
+                  half-loaded. */}
               <span className="relative block aspect-[16/10] w-full overflow-hidden">
-                <Image
-                  src={PLATE}
-                  alt=""
-                  fill
-                  draggable={false}
-                  sizes="(max-width: 640px) 70vw, 330px"
-                  className="object-cover transition-transform duration-500 group-hover/card:scale-[1.05]"
-                  style={{ maskImage: FADE, WebkitMaskImage: FADE }}
-                />
+                {entry.art ? (
+                  <Image
+                    src={entry.art}
+                    alt=""
+                    fill
+                    draggable={false}
+                    sizes="(max-width: 640px) 70vw, 330px"
+                    className="object-cover transition-transform duration-500 group-hover/card:scale-[1.05]"
+                    style={{ maskImage: FADE, WebkitMaskImage: FADE }}
+                  />
+                ) : (
+                  <span
+                    className="absolute inset-0 flex items-center justify-center"
+                    style={{
+                      maskImage: FADE,
+                      WebkitMaskImage: FADE,
+                      backgroundImage:
+                        "radial-gradient(ellipse 80% 90% at 50% 30%, color-mix(in oklab, var(--color-thread-blue) 12%, transparent) 0%, color-mix(in oklab, var(--color-thread-teal) 10%, transparent) 55%, transparent 100%)",
+                    }}
+                  >
+                    <entry.icon
+                      aria-hidden
+                      className="size-11 text-mark transition-transform duration-500 group-hover/card:scale-[1.08]"
+                      strokeWidth={1.5}
+                    />
+                  </span>
+                )}
 
                 <span className="absolute top-3 left-3 flex size-7 items-center justify-center rounded-pill bg-field/85 font-mono text-[10px] font-bold text-ink backdrop-blur-sm tabular-nums">
                   {String(index + 1).padStart(2, "0")}
