@@ -220,3 +220,70 @@ export function CardFlourish({ tone }: { tone: "blue" | "green" }) {
     </span>
   );
 }
+
+/**
+ * The line at the foot: a dotted rule with a bead or two sitting on it.
+ *
+ * The beads are in pixels, and that is the whole of the note. They were a share
+ * of the box, which for a strip twelve pixels tall and half a panel wide meant a
+ * radius written as a speck came out as a dome the height of the rule, clipped
+ * flat by it. A decoration inside a thin box has to be measured against
+ * something that is not the box.
+ *
+ * Drawn either side of the words rather than under them, so the sentence stays a
+ * sentence and the rule stays a rule.
+ */
+const FOOT_BEADS = {
+  left: [
+    { at: 16, size: 9, ink: "green" },
+    { at: 54, size: 6, ink: "blue" },
+  ],
+  right: [
+    { at: 44, size: 6, ink: "violet" },
+    { at: 80, size: 9, ink: "orange" },
+  ],
+} as const satisfies Record<
+  "left" | "right",
+  readonly { at: number; size: number; ink: Ink }[]
+>;
+
+export function FootFlourish({ side }: { side: "left" | "right" }) {
+  return (
+    <span
+      aria-hidden
+      className="relative hidden h-3 min-w-[70px] flex-1 items-center sm:flex"
+    >
+      <svg
+        viewBox="0 0 120 12"
+        preserveAspectRatio="none"
+        className="h-3 w-full"
+      >
+        <line
+          x1="0"
+          y1="6"
+          x2="120"
+          y2="6"
+          stroke="var(--color-thread-blue)"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeDasharray="0.1 6"
+          strokeOpacity="0.45"
+        />
+      </svg>
+
+      {FOOT_BEADS[side].map((bead) => (
+        <span
+          key={bead.at}
+          className="absolute top-1/2 rounded-full"
+          style={{
+            left: `${bead.at}%`,
+            width: bead.size,
+            height: bead.size,
+            transform: "translate(-50%, -50%)",
+            backgroundImage: `radial-gradient(circle at 33% 27%, #ffffff 0%, color-mix(in oklab, ${INKS[bead.ink]} 32%, #ffffff) 15%, ${INKS[bead.ink]} 55%, color-mix(in oklab, ${INKS[bead.ink]} 58%, #0b1f38) 100%)`,
+          }}
+        />
+      ))}
+    </span>
+  );
+}

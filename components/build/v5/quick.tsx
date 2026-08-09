@@ -7,6 +7,7 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
+  CalendarDays,
   Check,
   Clock,
   Copy,
@@ -16,6 +17,7 @@ import {
   MessageSquare,
   Paperclip,
   PencilLine,
+  Users,
 } from "lucide-react";
 
 import { ASK_PARTS, REF_KINDS } from "@/lib/build/v5";
@@ -43,7 +45,7 @@ import { cn } from "@/lib/utils";
 import { isPicture, type Attached } from "@/lib/build/upload";
 
 import { DropZone } from "./drop";
-import { CardFlourish, ChooserFlourish } from "./flourish";
+import { CardFlourish, ChooserFlourish, FootFlourish } from "./flourish";
 import {
   AddRow,
   Chip,
@@ -821,40 +823,108 @@ function Choose({
           </span>
         </p>
 
-        {/* No "prefer to talk first" panel.
+        {/* The third way, on a surface of its own.
 
-            It stood here with a ringed calendar, a paragraph, three bullets and
-            a button - which is a fourth thing to read on a screen whose entire
-            job is to make one choice between two. The meeting is not a third
-            door and it never was: it is part of whichever of these two somebody
-            takes, and the line above says so.
+            Not a door, because it is not a brief: it is the way in for somebody
+            who would rather talk first, and standing it beside the other two as
+            an equal turns a choice of two into a choice of three. Under them, on
+            its own surface, it is what it actually is.
 
-            The way to book without briefing first is in the header, in the
-            footer and on the contact page. It does not also need to be the
-            largest object under the choice it is not part of. */}
+            Four columns on a wide card and one on a narrow one, with the rule
+            between the paragraph and the list - the two are a claim and the
+            three things that make it good, which is a caption's relationship and
+            a caption is set off by a line. */}
+        <div className="mt-4 rounded-card bg-field px-6 py-7 sm:px-8">
+          <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,0.8fr)_auto] lg:items-center lg:gap-9">
+            <div className="flex min-w-0 items-start gap-5">
+              <span
+                aria-hidden
+                className="relative hidden size-[72px] flex-none items-center justify-center rounded-pill border border-hair sm:flex"
+              >
+                <CalendarDays className="size-7 text-ink" strokeWidth={1.7} />
+                <span className="absolute top-1 right-1 size-3 rounded-pill bg-[#1a4bff]" />
+              </span>
 
-        {/* The closing line, and nothing either side of it.
+              <div className="min-w-0">
+                <b className="block text-[clamp(17px,1.5vw,21px)] leading-[1.15] font-extrabold tracking-[-0.03em] text-ink">
+                  Prefer to talk first?
+                </b>
+                <p className="mt-2 max-w-[52ch] text-[13px] leading-[1.6] text-quiet">
+                  You can book a meeting without completing a brief first. As
+                  part of the booking you will have space to add a few lines
+                  about what you have in mind and what you would like to discuss,
+                  so we can prepare before the call.
+                </p>
+              </div>
+            </div>
 
-            A dotted rule with beads ran out to both edges here. The beads were
-            sized against the box they sat in - a strip twelve pixels tall and half
-            the panel wide - so a radius meant as a speck came out as a dome the
-            height of the line, clipped flat by it. A rule that has to be measured
-            against two different things to be a rule is a rule worth losing. */}
-        <div className="relative mt-7 flex items-center justify-center gap-3">
-          <Image
-            src="/assets/logo.png"
-            alt=""
-            width={64}
-            height={64}
-            aria-hidden
-            draggable={false}
-            sizes="64px"
-            className="size-6 flex-none object-contain"
-          />
-          <span className="max-w-[62ch] text-center text-[12.5px] leading-[1.6] text-label">
-            Start whichever way suits you. Everything you share stays together
-            as your brief develops.
+            <span
+              aria-hidden
+              className="hidden w-px self-stretch bg-hair lg:block"
+            />
+
+            <ul className="flex flex-col gap-3">
+              {[
+                {
+                  icon: MessageSquare,
+                  say: "Tell us briefly what you have in mind",
+                },
+                {
+                  icon: CalendarDays,
+                  say: "Choose a 15, 30 or 60 minute meeting",
+                },
+                { icon: Users, say: "We will prepare before the call" },
+              ].map((line) => (
+                <li
+                  key={line.say}
+                  className="flex items-center gap-3 text-[13px] leading-[1.5] text-body"
+                >
+                  <line.icon
+                    aria-hidden
+                    className="size-4 flex-none text-idx"
+                    strokeWidth={1.9}
+                  />
+                  {line.say}
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              href={ROUTES.book}
+              className="group/book inline-flex items-center justify-center gap-2.5 rounded-[14px] border border-ink bg-field px-6 py-3.5 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:bg-ink hover:text-white lg:justify-self-end"
+            >
+              Book a meeting
+              <CalendarDays
+                aria-hidden
+                className="size-[18px] shrink-0"
+                strokeWidth={1.9}
+              />
+            </Link>
+          </div>
+        </div>
+
+        {/* The closing line, with the rule running out either side of it. */}
+        <div className="relative mt-7 flex items-center justify-center gap-4">
+          <FootFlourish side="left" />
+
+          <span className="flex flex-none items-center gap-3">
+            <Image
+              src="/assets/logo.png"
+              alt=""
+              width={64}
+              height={64}
+              aria-hidden
+              draggable={false}
+              sizes="64px"
+              className="size-6 flex-none object-contain"
+            />
+            <span className="max-w-[62ch] text-center text-[12.5px] leading-[1.6] text-label">
+              Start whichever way suits you. Everything you share stays together
+              as your brief develops.
+            </span>
           </span>
+
+          <FootFlourish side="right" />
         </div>
       </div>
     </div>

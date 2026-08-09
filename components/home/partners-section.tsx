@@ -24,8 +24,7 @@ export function PartnersSection() {
           across beneath gives the eye somewhere to go. */}
       <div className="flex flex-col items-center text-center">
         <h2 className="reveal section-head max-w-[26ch] text-ink">
-          Specialists are part of the build.
-          <span className="text-quiet"> Never an extra.</span>
+          Our Services
         </h2>
 
         <Link
