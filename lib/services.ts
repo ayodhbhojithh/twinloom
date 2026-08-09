@@ -118,7 +118,7 @@ export const SERVICES: readonly Service[] = [
   },
   {
     icon: LifeBuoy,
-    art: "/assets/services/ongoing-services.png",
+    art: "/assets/services/website-care.png",
     n: "Website Care",
     sub: "Keeping the site current once it is live, and the services that run alongside it.",
     by: "By us",
