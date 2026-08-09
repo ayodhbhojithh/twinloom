@@ -20,7 +20,7 @@ import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 import { Ballpit } from "./ballpit";
-import { MarkStage } from "./mark-stage";
+import { BeadTrail, MarkStage } from "./mark-stage";
 import { GradientWaves } from "./gradient-waves";
 import { ProjectPanel } from "./project-panel";
 import { WaveDots } from "./wave-dots";
@@ -462,6 +462,26 @@ export function NotchedCard({ className }: { className?: string }) {
             three drawings, so the card's outline cuts it like everything else on
             it. */}
         {shown.view === "blank" ? <DotGround /> : null}
+
+        {/* The fifth screen's ground: the same grid, quieter.
+
+            The fourth screen makes a picture out of its dots and this one only
+            wants paper to stand on, so it is the same idea at a third of the
+            weight - and cleared further out of the middle, because there is a
+            good deal more standing in the middle here. */}
+        {shown.view === "mark" ? (
+          <span
+            aria-hidden
+            className="absolute inset-0"
+            style={{
+              ...GRID("--color-thread-blue", 30, 1, 19),
+              maskImage:
+                "radial-gradient(circle at 50% 50%, transparent 30%, black 74%)",
+              WebkitMaskImage:
+                "radial-gradient(circle at 50% 50%, transparent 30%, black 74%)",
+            }}
+          />
+        ) : null}
 
         {/* The second screen: the water, full bleed and nothing over it.
 
@@ -1029,92 +1049,129 @@ export function NotchedCard({ className }: { className?: string }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
-              className="flex w-full flex-col items-center gap-6 lg:flex-row lg:items-center lg:gap-10"
+              className="flex w-full flex-col gap-5"
             >
-              <MarkStage className="w-[64%] max-w-[290px] shrink-0 lg:order-2 lg:w-[46%] lg:max-w-none" />
+              <div className="flex flex-col items-center gap-6 lg:flex-row lg:items-center lg:gap-10">
+                <MarkStage className="w-[58%] max-w-[250px] shrink-0 lg:order-2 lg:w-[43%] lg:max-w-none" />
 
-              <div className="min-w-0 text-center lg:order-1 lg:flex-1 lg:text-left">
-                {/* The trades, as a list rather than a sentence. Dots between
+                <div className="min-w-0 text-center lg:order-1 lg:flex-1 lg:text-left">
+                  {/* The trades, as a list rather than a sentence. Dots between
                     them, because a comma would make it a sentence and it is a
                     label. */}
-                <ul className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 font-mono text-[9.5px] font-bold tracking-[0.16em] text-idx uppercase lg:justify-start">
-                  {shown.kicker?.map((trade, n) => (
-                    <li key={trade} className="flex items-center gap-2.5">
-                      {n > 0 ? (
-                        <span
-                          aria-hidden
-                          className="size-1 rounded-pill bg-mark"
-                        />
-                      ) : null}
-                      {trade}
-                    </li>
-                  ))}
-                </ul>
+                  <ul className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 font-mono text-[9.5px] font-bold tracking-[0.16em] text-idx uppercase lg:justify-start">
+                    {shown.kicker?.map((trade, n) => (
+                      <li key={trade} className="flex items-center gap-2.5">
+                        {n > 0 ? (
+                          <span
+                            aria-hidden
+                            className="size-1 rounded-pill bg-mark"
+                          />
+                        ) : null}
+                        {trade}
+                      </li>
+                    ))}
+                  </ul>
 
-                <h1 className="mx-auto mt-3 max-w-[20ch] text-[clamp(28px,3.6vw,52px)] leading-[1.06] font-extrabold tracking-[-0.04em] text-ink lg:mx-0">
-                  {shown.claim?.[0]}
-                  <span className="thread-text block">{shown.claim?.[1]}</span>
-                </h1>
+                  <h1 className="mx-auto mt-3 max-w-[20ch] text-[clamp(28px,3.6vw,52px)] leading-[1.06] font-extrabold tracking-[-0.04em] text-ink lg:mx-0">
+                    {shown.claim?.[0]}
+                    <span className="thread-text block">
+                      {shown.claim?.[1]}
+                    </span>
+                  </h1>
 
-                <p className="mx-auto mt-4 max-w-[38ch] text-[clamp(15px,1.35vw,20px)] leading-[1.35] font-bold tracking-[-0.02em] text-ink lg:mx-0">
-                  {shown.lead}
-                </p>
+                  <p className="mx-auto mt-4 max-w-[38ch] text-[clamp(15px,1.35vw,20px)] leading-[1.35] font-bold tracking-[-0.02em] text-ink lg:mx-0">
+                    {shown.lead}
+                  </p>
 
-                <p className="mx-auto mt-3.5 max-w-[58ch] text-[13.5px] leading-[1.62] text-quiet sm:text-[14.5px] lg:mx-0">
-                  {shown.note}
-                </p>
+                  <p className="mx-auto mt-3.5 max-w-[58ch] text-[13.5px] leading-[1.62] text-quiet sm:text-[14.5px] lg:mx-0">
+                    {shown.note}
+                  </p>
 
-                {/* Four doors, one row, and the first one filled. Where they all
+                  {/* Four doors, one row, and the first one filled. Where they all
                     look the same there is no first choice, and a row of four
                     equal buttons is four decisions rather than one. */}
-                <div className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 lg:justify-start">
-                  <Link
-                    href={ROUTES.build}
-                    className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
-                  >
-                    <PencilLine aria-hidden className="size-4 shrink-0" />
-                    Scope your website
-                    <ArrowRight
-                      aria-hidden
-                      className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
-                      strokeWidth={2.4}
-                    />
-                  </Link>
-
-                  {[
-                    {
-                      at: ROUTES.services,
-                      icon: LayoutGrid,
-                      say: "View our services",
-                    },
-                    {
-                      at: ROUTES.book,
-                      icon: CalendarDays,
-                      say: "Book a meeting",
-                    },
-                    {
-                      at: ROUTES.services,
-                      icon: Code2,
-                      say: "Custom software",
-                    },
-                  ].map((way) => (
+                  <div className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 lg:justify-start">
                     <Link
-                      key={way.say}
-                      href={way.at}
-                      className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
+                      href={ROUTES.build}
+                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
                     >
-                      <way.icon
-                        aria-hidden
-                        className="size-4 shrink-0 text-idx"
-                      />
-                      {way.say}
+                      <PencilLine aria-hidden className="size-4 shrink-0" />
+                      Scope your website
                       <ArrowRight
                         aria-hidden
                         className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
+                        strokeWidth={2.4}
                       />
                     </Link>
-                  ))}
+
+                    {[
+                      {
+                        at: ROUTES.services,
+                        icon: LayoutGrid,
+                        say: "View our services",
+                      },
+                      {
+                        at: ROUTES.book,
+                        icon: CalendarDays,
+                        say: "Book a meeting",
+                      },
+                      {
+                        at: ROUTES.services,
+                        icon: Code2,
+                        say: "Custom software",
+                      },
+                    ].map((way) => (
+                      <Link
+                        key={way.say}
+                        href={way.at}
+                        className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
+                      >
+                        <way.icon
+                          aria-hidden
+                          className="size-4 shrink-0 text-idx"
+                        />
+                        {way.say}
+                        <ArrowRight
+                          aria-hidden
+                          className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
+                        />
+                      </Link>
+                    ))}
+                  </div>
                 </div>
+              </div>
+
+              {/* The trail, and the sister company under it.
+
+                  Both are held back until there is room. On a card the height of
+                  a phone, the two-up above already fills it, and a picture and a
+                  footnote pushed in underneath would push the buttons off the
+                  bottom - which is the one thing on this screen that must not
+                  move. `hidden md:block` is the whole of that decision. */}
+              <BeadTrail className="hidden md:block" />
+
+              <div className="hidden items-center justify-center gap-4 md:flex">
+                <Image
+                  src="/assets/logo.png"
+                  alt=""
+                  width={64}
+                  height={64}
+                  aria-hidden
+                  draggable={false}
+                  sizes="64px"
+                  className="size-7 flex-none object-contain"
+                />
+                <span className="text-[14px] font-bold tracking-[-0.02em] text-ink">
+                  TwinCoreTech
+                </span>
+                {/* A rule between them, not a bullet. The two are a name and a
+                    description of it, which is a caption - and a caption is set
+                    off by a line. */}
+                <span aria-hidden className="h-6 w-px flex-none bg-hair" />
+                <span className="max-w-[46ch] text-[12.5px] leading-[1.45] text-quiet">
+                  Custom software development for businesses that need more than
+                  a website.
+                </span>
               </div>
             </motion.div>
           </AnimatePresence>
