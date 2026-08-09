@@ -46,7 +46,12 @@ export function OverviewOpen() {
           fits and grows past it when it does not, which scrolls from the top
           like anything else. */}
       <div className="quiet-scroll min-h-0 bg-canvas lg:overflow-y-auto">
-        <div className="flex min-h-full flex-col justify-center px-6 py-5 sm:px-9 sm:py-6 lg:px-11 lg:py-7">
+        {/* Down the middle, all of it. The cards and the line at the foot were
+            centred already and the three things above them were not, so the
+            column had two left edges - one for the type and one for the grid
+            under it. `items-center` puts the capped blocks on the same axis
+            the grid is already on. */}
+        <div className="flex min-h-full flex-col items-center justify-center px-6 py-5 text-center sm:px-9 sm:py-6 lg:px-11 lg:py-7">
           <div className="flex items-center gap-3.5">
             <Image
               src="/assets/logo.png"
@@ -78,7 +83,9 @@ export function OverviewOpen() {
             six sentences the services page sets, and a card that needs its own
             shorter copy is a seventh place for the offer to be worded
             differently. Three lines is what the tallest of them takes. */}
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {/* `w-full` because the column centres its children now, and a grid
+              left to size itself would shrink to its contents. */}
+          <div className="mt-6 grid w-full grid-cols-2 gap-3 sm:grid-cols-3">
             {CARDS.map((card) => (
               <div
                 key={card.name}
@@ -132,7 +139,11 @@ export function OverviewOpen() {
               sentence broken over two, and setting the first darker made it a
               heading with a caption under it - which is two things where the
               reference has one. */}
-            <p className="text-[15.5px] leading-[1.55] text-quiet">
+            {/* Left within itself, though the column around it is centred.
+                It is one sentence broken over two lines beside a mark, and
+                two centred lines next to a picture are ragged on both sides
+                with nothing holding them to it. */}
+            <p className="text-left text-[15.5px] leading-[1.55] text-quiet">
               One partner. Every part connected.
               <span className="block">
                 From the first idea to long-term growth.
