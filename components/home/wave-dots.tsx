@@ -41,32 +41,19 @@ import { cn } from "@/lib/utils";
 const ROWS = 38;
 const COLUMNS = 154;
 
-/**
- * Where the spheres stand, and what colour each one is.
- *
- * `along` is across the sheet and `depth` is how near, both nought to one; `size`
- * is a share of the box's height, so the group keeps its proportions whatever
- * shape the card is.
- *
- * `ink` is the colour, written out rather than mixed from the mark's two.
- *
- * They were all a point on that ramp, which meant five balls in five shades of
- * the same blue-green: correct, and dull. The sheet under them is the ramp -
- * every one of five and a half thousand dots is a mix of exactly those two
- * colours - so the balls standing on it are the one place where another colour
- * can appear without the drawing becoming a colour chart. Two of them still hold
- * the mark's own blue and green, and the rest are the accents the second screen
- * uses, so the two screens are lit from the same box of paint.
- */
-const SPHERES = [
-  { along: 0.14, depth: 0.62, size: 0.03, ink: "#ff7a1a" },
-  { along: 0.19, depth: 0.4, size: 0.044, ink: "#06dbaf" },
-  { along: 0.34, depth: 0.33, size: 0.024, ink: "#7c4dff" },
-  { along: 0.48, depth: 0.64, size: 0.062, ink: "#2a98fe" },
-  { along: 0.62, depth: 0.46, size: 0.028, ink: "#ff4d5e" },
-  { along: 0.7, depth: 0.3, size: 0.019, ink: "#22bde8" },
-  { along: 0.76, depth: 0.55, size: 0.036, ink: "#2e7cff" },
-] as const;
+/* The spheres are gone.
+
+   Seven glossy balls stood on the sheet and rode the wave, and taking them off
+   is not a loss of detail - it is what the drawing was for. The field is a
+   halftone: five and a half thousand dots whose size and spacing are the whole
+   picture. A row of shaded spheres in front of it is a second picture, drawn in
+   a different language, standing where the first one is densest.
+
+   What went with them: `drawSphere` and its four gradients a frame, the depth
+   sort, and the clamp that kept a ball off the card's edge. Only `place` is
+   left, and only the dots read it now.
+
+*/
 
 /**
  * How far the whole field sits to the right of centre, as a share of the width.
@@ -109,15 +96,6 @@ const mixRgb = (a: Rgb, b: Rgb, t: number): Rgb => ({
   g: Math.round(a.g + (b.g - a.g) * t),
   b: Math.round(a.b + (b.b - a.b) * t),
 });
-
-const shade = (c: Rgb, t: number): Rgb => ({
-  r: Math.round(c.r * t),
-  g: Math.round(c.g * t),
-  b: Math.round(c.b * t),
-});
-
-const css = (c: Rgb, alpha = 1) =>
-  `rgba(${c.r}, ${c.g}, ${c.b}, ${Math.max(0, Math.min(alpha, 1))})`;
 
 export function WaveDots({
   className,
@@ -319,89 +297,6 @@ export function WaveDots({
       return n - Math.floor(n);
     };
 
-    const drawSphere = (
-      x: number,
-      y: number,
-      r: number,
-      colour: Rgb,
-      depth: number,
-    ) => {
-      /* The reflection first, so the ball sits on top of its own. It starts at
-         the ball's foot rather than below it - a gap between a thing and its
-         reflection is the thing hovering - and it fades out fast, because a
-         sheet is a surface with a sheen and not a mirror. */
-      const pool = ink.createLinearGradient(x, y + r, x, y + r * 2.2);
-      pool.addColorStop(0, css(colour, 0.34 * depth));
-      pool.addColorStop(1, css(colour, 0));
-
-      ink.beginPath();
-      ink.ellipse(x, y + r * 1.32, r * 0.66, r * 0.62, 0, 0, Math.PI * 2);
-      ink.fillStyle = pool;
-      ink.fill();
-
-      /* And the contact: a small, tight shadow exactly where the ball meets the
-         sheet. The reflection alone leaves a ball hovering a few pixels above
-         its own image, because a reflection is soft everywhere and a thing
-         touching a surface is dark at precisely one point. */
-      const foot = ink.createRadialGradient(x, y + r, 0, x, y + r, r * 0.75);
-      foot.addColorStop(0, css(shade(colour, 0.5), 0.3 * depth));
-      foot.addColorStop(1, css(shade(colour, 0.5), 0));
-
-      ink.beginPath();
-      ink.ellipse(x, y + r, r * 0.75, r * 0.2, 0, 0, Math.PI * 2);
-      ink.fillStyle = foot;
-      ink.fill();
-
-      /* The ball. Lit from up and to the left, every one of them from the same
-         place - five balls each lit from its own direction is five balls in five
-         different rooms. */
-      const lit = ink.createRadialGradient(
-        x - r * 0.34,
-        y - r * 0.38,
-        r * 0.04,
-        x,
-        y,
-        r * 1.05,
-      );
-      lit.addColorStop(
-        0,
-        css(mixRgb(colour, { r: 255, g: 255, b: 255 }, 0.85)),
-      );
-      lit.addColorStop(0.32, css(colour));
-      /* Not black at the rim. A ball on a white card is lit from the card as
-         well as from above - the underside picks up what is under it, and a rim
-         that goes to nothing reads as a hole rather than as a shadow. */
-      lit.addColorStop(0.86, css(shade(colour, 0.66)));
-      lit.addColorStop(
-        1,
-        css(mixRgb(shade(colour, 0.72), { r: 255, g: 255, b: 255 }, 0.22)),
-      );
-
-      ink.beginPath();
-      ink.arc(x, y, r, 0, Math.PI * 2);
-      ink.fillStyle = lit;
-      ink.fill();
-
-      /* One small highlight on top of the gradient. It is the difference between
-         a shaded circle and something with a surface. */
-      const spark = ink.createRadialGradient(
-        x - r * 0.34,
-        y - r * 0.42,
-        0,
-        x - r * 0.34,
-        y - r * 0.42,
-        r * 0.46,
-      );
-      spark.addColorStop(0, "rgba(255,255,255,0.92)");
-      spark.addColorStop(0.45, "rgba(255,255,255,0.28)");
-      spark.addColorStop(1, "rgba(255,255,255,0)");
-
-      ink.beginPath();
-      ink.arc(x - r * 0.34, y - r * 0.42, r * 0.46, 0, Math.PI * 2);
-      ink.fillStyle = spark;
-      ink.fill();
-    };
-
     const draw = (ms: number) => {
       const now = live.current;
       const t = (ms / 1000) * now.speed;
@@ -504,38 +399,6 @@ export function WaveDots({
           ink.arc(x, y, r, 0, Math.PI * 2);
           ink.fill();
         }
-      }
-
-      /* Back to solid before the spheres, which carry their own alpha in their
-         gradients. Left at whatever the last dot set, every ball would be as
-         faint as the corner of the sheet. */
-      ink.globalAlpha = 1;
-
-      /* Far to near, so a nearer ball covers a further one rather than the order
-         they happen to be written in deciding it. */
-      for (const sphere of [...SPHERES].sort((a, b) => a.depth - b.depth)) {
-        const { x, y, near } = place(sphere.along, sphere.depth, t);
-        const r = height * sphere.size * (0.55 + 0.75 * near);
-
-        /* Never against a side.
-
-           `along` is a place on the sheet and the sheet is far wider than the
-           card - a near row runs to more than twice the width - so the same
-           `along` that sat comfortably inside before the field was widened ends
-           up beyond the edge afterwards. A ball cut in half by the card's own
-           border is the one thing in this drawing that reads as a mistake rather
-           than as a composition, so the whole of every one of them is kept
-           inside with its own radius to spare. Held rather than dropped: a ball
-           that vanishes at a window size is worse than one that has been moved
-           a little. */
-        const room = r * 1.25;
-        const at = Math.min(Math.max(x, room), width - room);
-
-        /* Its foot on the sheet, not its middle. Placed by the centre, a ball
-           sinks into the surface by its own radius; placed by the foot, it
-           stands on it - and it rides the wave, because the point it stands on
-           is a point on the wave. */
-        drawSphere(at, y - r, r, readRgb(sphere.ink, FALLBACK.from), near);
       }
     };
 
