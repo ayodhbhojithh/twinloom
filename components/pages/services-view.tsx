@@ -222,13 +222,22 @@ export function ServiceWall({
                   padding, which the words need and the picture does not. */}
             {/* Sized by its height, so that is the number to turn.
 
-                The box is wider than it is tall and the drawings are close to
-                square, so `contain` always fits them by the height and the
-                width never binds. Raising the height is the only thing that
-                makes them bigger; widening the box does nothing at all. */}
+                The box is wider than it is tall and the files are square, so
+                `contain` always fits them by the height and the width never
+                binds. Raising the height is the only thing that makes them
+                bigger; widening the box does nothing at all.
+
+                And they are square in the file on purpose. They were seven
+                different canvases with the artwork sitting in a different
+                share of each - between four tenths and seven - so `contain`
+                scaled every one by a different number and no CSS could have
+                evened them up. Each is cropped to its own artwork and padded
+                back out to a square, so the largest side of every drawing is
+                the same fraction of its own file and one box scales them all
+                alike. */}
             <span
               aria-hidden
-              className="pointer-events-none absolute inset-x-0 top-1 block h-[224px]"
+              className="pointer-events-none absolute inset-x-0 top-1 block h-[248px]"
             >
               {entry.art ? (
                 <Image
@@ -251,7 +260,7 @@ export function ServiceWall({
 
             {/* Clear of the drawing by the drawing's own height, so this is
                 the one number that decides where every card's type starts. */}
-            <div className="pt-[228px]">
+            <div className="pt-[252px]">
               {/* Two lines' worth of room whether the name needs it or not.
                   Four of these run to one line and three to two, and with the
                   box sized to its own words the sentences under them landed at
