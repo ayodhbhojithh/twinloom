@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { BuildSection } from "@/components/home/build-section";
 import { NotchedCard } from "@/components/home/notched-card";
 import { PartnersSection } from "@/components/home/partners-section";
-import { ReadingSection } from "@/components/home/reading-section";
 import { pageMeta } from "@/lib/seo";
 import { ROUTES, SITE } from "@/lib/site";
 
@@ -94,10 +93,11 @@ export default function LandingPage() {
 
       <BuildSection />
 
-      {/* Third: what we have written. Somebody who has read the card and tried
-          the tool either wants to start or wants to know how we think, and this
-          is the answer to the second. */}
-      <ReadingSection />
+      {/* What we have written stood here, answering somebody who had read the
+          card and tried the tool and wanted to know how we think rather than
+          start. It is off the home page now, not deleted: `ReadingSection` and
+          the page it points to are both still live, reachable from the header
+          as `Insight` for whoever came looking for it rather than met it here. */}
 
       {/* The sandbox stood here and is off the page for now.
 
