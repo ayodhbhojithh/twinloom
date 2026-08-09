@@ -445,6 +445,9 @@ export function LoomWave({
     let last = 0;
     let dpr = 1;
     let lastAt = -1;
+    /* Where the box starts across the window, cached by `size` rather than
+       measured on every pointer move - see there for why. */
+    let atLeft = 0;
     /* The last moment a note actually sounded, in milliseconds. A fast sweep
        crosses several threads inside one frame, and every one of them starting
        an oscillator pair is a burst of clicks rather than a run of notes - the
@@ -791,6 +794,22 @@ export function LoomWave({
       }
     };
 
+    /* The per-column scratch, allocated once and written over every frame.
+
+       Sized to the most samples the sheaf can ever ask for, so a resize never
+       reallocates - and a frame that only needs the first eighty of them just
+       reads the first eighty. Five arrays of a hundred and sixty floats is
+       nothing to hold; five arrays a frame is work for the collector. */
+    const atX = new Float32Array(RIBBON.samples + 1);
+    const atY = new Float32Array(RIBBON.samples + 1);
+    const atAmp = new Float32Array(RIBBON.samples + 1);
+    const atSin = new Float32Array(RIBBON.samples + 1);
+    const atCos = new Float32Array(RIBBON.samples + 1);
+
+    /* And the centre line's own, walked once a frame and stroked six times. */
+    const spineX = new Float32Array(201);
+    const spineY = new Float32Array(201);
+
     /** The sheaf: sixty smooth curves whose crowding is the picture. */
     const drawSheaf = (t: number) => {
       /* The ribbon: one family of curves, not a row of columns.
@@ -844,11 +863,45 @@ export function LoomWave({
         Math.round(Math.min(RIBBON.samples, width / 5)),
       );
 
+      /* The column, worked out once for the whole family.
+
+         Every curve is sampled at the same places along the width, and the
+         swell, the envelope and the ring depend on the place and the moment -
+         not on which curve. Inside the loop they were being recomputed for
+         each of sixty curves: the same answer, sixty times, about sixty
+         thousand sines a frame. That is what made this stutter, and it is why
+         the notes arrived late as well - the two share a thread, and a frame
+         that overruns delays whatever the pointer was about to do next.
+
+         The phase is split rather than stored whole, because
+         `sin(p + turn)` opens into `sin p cos turn + cos p sin turn`. Both
+         halves of the phase are per-column and both parts of the turn are
+         per-curve, so with all four precomputed the inner loop has no
+         trigonometry in it at all - a multiply and an add. */
+      const spin = t * RIBBON.speed * speed;
+
+      for (let n = 0; n <= samples; n += 1) {
+        const along = n / samples;
+        /* The pluck reaches the ribbon through the same column map the notes
+           use, so the bulge lands under the pointer rather than somewhere the
+           maths happened to put it. */
+        const i = Math.round(along * (COUNT - 1));
+        const phase = along * Math.PI * RIBBON.turns + spin;
+
+        atX[n] = along * width;
+        atY[n] = ride(along, t);
+        atAmp[n] = envAt(along, t) * ringStretch(i, t, along);
+        atSin[n] = Math.sin(phase);
+        atCos[n] = Math.cos(phase);
+      }
+
       for (let k = 0; k < lines; k += 1) {
         /* Round a full turn, so the family covers every phase once. Any less
            and the band has a gap in it; any more and lines land on each other
            and the crowding stops meaning anything. */
         const turn = (k / lines) * Math.PI * 2;
+        const turnSin = Math.sin(turn);
+        const turnCos = Math.cos(turn);
 
         /* Thinner and fainter towards the outside of the sheaf, which is what
            gives it a near face and a far one rather than reading as flat. */
@@ -857,25 +910,10 @@ export function LoomWave({
 
         ctx.beginPath();
         for (let n = 0; n <= samples; n += 1) {
-          const along = n / samples;
-          const x = along * width;
-
-          /* The pluck reaches the ribbon through the same column map the
-             notes use, so the bulge lands under the pointer rather than
-             somewhere the maths happened to put it. */
-          const i = Math.round(along * (COUNT - 1));
           const y =
-            ride(along, t) +
-            envAt(along, t) *
-              ringStretch(i, t, along) *
-              Math.sin(
-                along * Math.PI * RIBBON.turns +
-                  turn +
-                  t * RIBBON.speed * speed,
-              );
-
-          if (n === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+            atY[n] + atAmp[n] * (atSin[n] * turnCos + atCos[n] * turnSin);
+          if (n === 0) ctx.moveTo(atX[n], y);
+          else ctx.lineTo(atX[n], y);
         }
         ctx.stroke();
       }
@@ -900,65 +938,62 @@ export function LoomWave({
          a second time, thicker and brighter, rather than the one slow curve
          the whole field is bent to.
 
-         Four passes, widest and faintest first, and the two soft ones are
-         genuinely blurred rather than only wide. A wide translucent stroke has
-         an edge, and four of them stacked is four edges - which at a glance is
-         a line with rings round it rather than a line that is glowing.
-         `shadowBlur` is the canvas's own gaussian: drawn with the stroke
-         itself transparent, what lands is the blur and nothing else.
+         Six passes, widest and faintest first, and none of them blurred.
 
-         The blur costs a full-canvas composite per pass, which is why only the
-         two soft passes take it and the two sharp ones do not - a crisp core
-         gains nothing from being blurred and would lose the crispness that
-         makes it the core.
+         Two of them were, using `shadowBlur` for a real gaussian, and it is
+         the reason this stuttered. A canvas shadow is not a local effect: it
+         composites the whole backing store once per stroke, and at two strokes
+         a frame on a canvas the width of a window that is most of the frame
+         budget on its own - which is felt as the animation dragging and as
+         notes arriving late, because the drawing and the pointer share a
+         thread.
+
+         Stacked strokes are the cheap way and the objection to them was real:
+         a wide translucent stroke has an edge, and four of them read as a line
+         with rings round it. Six with the widths close together and the alpha
+         falling smoothly do not - the steps land inside each other and what is
+         left is a gradient. It is a fake gaussian, and at this width nobody
+         can tell it from the real one.
+
+         The path is sampled once and reused for all six, rather than walked
+         six times. `ride` is two sines a point and this was calling it just
+         under two thousand times a frame to draw the same line repeatedly.
 
          Pale cyan rather than pure white. Everything it crosses is coloured,
          and a white line over a blue field reads as a gap in the field; the
          palest end of the mark's own teal reads as light on it. */
+      const SPINE = 200;
+      for (let n = 0; n <= SPINE; n += 1) {
+        const along = n / SPINE;
+        spineX[n] = along * width;
+        spineY[n] = ride(along, t);
+      }
+
       const path = () => {
         ctx.beginPath();
-        for (let n = 0; n <= 320; n += 1) {
-          const along = n / 320;
-          const x = along * width;
-          const y = ride(along, t);
-          if (n === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
+        ctx.moveTo(spineX[0], spineY[0]);
+        for (let n = 1; n <= SPINE; n += 1) ctx.lineTo(spineX[n], spineY[n]);
       };
 
       for (const pass of [
-        { wide: 9, tint: "142,241,255", alpha: 0.3, blur: 14 },
-        { wide: 5, tint: "216,253,255", alpha: 0.42, blur: 5 },
-        { wide: 3.4, tint: "232,255,255", alpha: 0.92, blur: 0 },
-        { wide: 1.2, tint: "247,255,255", alpha: 0.95, blur: 0 },
+        { wide: 15, tint: "142,241,255", alpha: 0.05, soft: true },
+        { wide: 11, tint: "160,244,255", alpha: 0.07, soft: true },
+        { wide: 7.5, tint: "196,250,255", alpha: 0.1, soft: true },
+        { wide: 4.6, tint: "224,253,255", alpha: 0.18, soft: true },
+        { wide: 2.6, tint: "236,255,255", alpha: 0.75, soft: false },
+        { wide: 1.1, tint: "247,255,255", alpha: 0.95, soft: false },
       ]) {
         /* The glow answers the playing; the core does not. While anything is
-           ringing the two soft outer passes widen and brighten a little, the
-           way a room holds the light of a sound - and the line itself stays
-           the same line, because the swell has not changed, only the field
-           ringing around it. */
-        const halo = pass.blur ? 1 + energy * 0.4 : 1;
-        const paint = `rgba(${pass.tint},${Math.min(1, pass.alpha * halo)})`;
-
-        if (pass.blur) {
-          /* The stroke is drawn in nothing and its shadow is drawn in the
-             colour, offset by nought - so the only thing painted is the
-             blur. Stroking in the colour as well would put the hard line
-             back underneath the soft one. */
-          ctx.shadowBlur = pass.blur * halo;
-          ctx.shadowColor = paint;
-          ctx.strokeStyle = "rgba(0,0,0,0)";
-        } else {
-          ctx.shadowBlur = 0;
-          ctx.strokeStyle = paint;
-        }
-
+           ringing the soft outer passes widen and brighten a little, the way a
+           room holds the light of a sound - and the line itself stays the same
+           line, because the swell has not changed, only the field ringing
+           around it. */
+        const halo = pass.soft ? 1 + energy * 0.4 : 1;
+        ctx.strokeStyle = `rgba(${pass.tint},${Math.min(1, pass.alpha * halo)})`;
         ctx.lineWidth = pass.wide * halo;
         path();
         ctx.stroke();
       }
-
-      ctx.shadowBlur = 0;
 
       /* The ends given away, by erasing rather than by painting.
 
@@ -1008,6 +1043,16 @@ export function LoomWave({
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = rect.width;
       height = rect.height;
+      /* Kept for the pointer, which used to ask for this itself on every
+         move. Reading a rect forces the browser to settle layout before it
+         can answer, and a pointer reports far more often than a frame is
+         drawn - so a sweep across the field was demanding a reflow a hundred
+         times a second, on the same thread as the drawing and the notes.
+
+         Only the left edge and the width matter, and neither changes without
+         a resize - which is precisely when this runs. Scrolling moves the top
+         and nothing here reads it. */
+      atLeft = rect.left;
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -1035,8 +1080,8 @@ export function LoomWave({
        Only on crossing into a new one, so resting on a thread does not pluck
        it every pointer event a browser happens to send while it sits still. */
     const onPointer = (event: PointerEvent) => {
-      const rect = wrap.getBoundingClientRect();
-      const along = (event.clientX - rect.left) / rect.width;
+      if (width < 2) return;
+      const along = (event.clientX - atLeft) / width;
       const at = Math.round(along * (COUNT - 1));
       if (at < 0 || at >= COUNT || at === lastAt) return;
       lastAt = at;
