@@ -1,7 +1,14 @@
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, CalendarClock, Phone } from "lucide-react";
 import Link from "next/link";
 
-import { FOOTER_COLUMNS, FOOTER_LEGAL, LEGAL, ROUTES, SITE } from "@/lib/site";
+import {
+  CONTACT_INFO,
+  FOOTER_COLUMNS,
+  FOOTER_LEGAL,
+  LEGAL,
+  ROUTES,
+  SITE,
+} from "@/lib/site";
 
 import { CutPanel, TopDisc } from "./cut-panel";
 
@@ -113,32 +120,58 @@ export function SiteFooter() {
             side is worth. */}
         <div className="grid gap-x-12 gap-y-11 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
           <div className="min-w-0">
-            <p className="max-w-[24ch] text-[clamp(21px,2.1vw,30px)] leading-[1.12] font-extrabold tracking-[-0.035em] text-ink">
-              {SITE.tagline}
-            </p>
+            {/* The heading is the offer, and it is also the way to take it.
 
-            {/* Both ways in, now that the header carries neither.
+                It said "tell us who your website is for, we write the rest down
+                for you", which is the claim made in full on the landing card, on
+                the build page and at the foot of every other page - a fourth
+                time in the footer is not emphasis, it is the site repeating
+                itself to somebody who has just finished reading it. This says
+                what to do instead.
 
-                One filled and one quiet, because they are not equal offers:
-                writing it down is the one that ends in something you can read,
-                and the call is for people who would rather not start that
-                way. */}
+                A link set as the heading rather than a heading with a button
+                under it. It is the largest thing in the footer and it names an
+                action; dressing it as a button as well would be saying it twice,
+                and leaving it as plain type would be a heading that tells you to
+                do something and gives you nowhere to do it. The arrow and the
+                underline on hover are what mark it as a way on.
+
+                Then the two that are not writing: a call for somebody who would
+                rather not, and a slot in the diary for somebody who wants a
+                date. Those are buttons, because they are alternatives to the
+                heading rather than the heading again. */}
+            <Link
+              href={ROUTES.build}
+              className="group/ask inline-flex max-w-[24ch] items-start gap-2.5 text-[clamp(21px,2.1vw,30px)] leading-[1.12] font-extrabold tracking-[-0.035em] text-ink"
+            >
+              <span className="group-hover/ask:underline">
+                Send us your requirements
+              </span>
+              <ArrowUpRight
+                aria-hidden
+                className="mt-[0.2em] size-[0.72em] shrink-0 transition-transform group-hover/ask:translate-x-0.5 group-hover/ask:-translate-y-0.5"
+                strokeWidth={2.6}
+              />
+            </Link>
+
             <div className="mt-5 flex flex-wrap items-center gap-2.5">
-              <Link
-                href={ROUTES.build}
-                className="group/go inline-flex items-center gap-2 rounded-pill bg-ink px-5 py-2.5 text-[14px] font-semibold text-white transition-opacity hover:opacity-85"
+              <a
+                href={CONTACT_INFO.phoneHref}
+                className="inline-flex items-center gap-2 rounded-pill bg-field px-5 py-2.5 text-[14px] font-semibold text-ink transition-colors hover:bg-hair"
               >
-                Build your website
-                <ArrowUpRight
-                  aria-hidden
-                  className="size-4 transition-transform group-hover/go:translate-x-0.5 group-hover/go:-translate-y-0.5"
-                />
-              </Link>
+                <Phone aria-hidden className="size-4" strokeWidth={1.9} />
+                Give us a call
+              </a>
 
               <Link
                 href={ROUTES.book}
                 className="group/talk inline-flex items-center gap-2 rounded-pill bg-field px-5 py-2.5 text-[14px] font-semibold text-ink transition-colors hover:bg-hair"
               >
+                <CalendarClock
+                  aria-hidden
+                  className="size-4"
+                  strokeWidth={1.9}
+                />
                 Book a meeting
                 <ArrowUpRight
                   aria-hidden

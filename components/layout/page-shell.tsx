@@ -132,9 +132,7 @@ export function Section({
       aria-labelledby={`${id}-heading`}
       className={cn(
         "scroll-mt-6",
-        first
-          ? "mt-8"
-          : "mt-14 border-t border-border pt-12",
+        first ? "mt-8" : "mt-14 border-t border-border pt-12",
         className,
       )}
     >
