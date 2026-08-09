@@ -265,6 +265,7 @@ export const LEGAL = {
 export const CONTACT_INFO = {
   companyName: "TwinCoreTech Ltd",
   emails: [
+    "enquiries@twincoretech.com",
     "sales@twincoretech.com",
     "careers@twincoretech.com",
     "privacy@twincoretech.com",
@@ -273,19 +274,25 @@ export const CONTACT_INFO = {
     "info@twincoretech.com",
     "hello@twincoretech.com",
   ],
-  primaryEmail: "hello@twincoretech.com",
-  phone: "+44 (0) 753 973 0098",
-  phoneHref: "tel:+447539730098",
+  primaryEmail: "enquiries@twincoretech.com",
+  phone: "+44 (0)20 3627 1123",
+  phoneHref: "tel:+442036271123",
   address: {
     name: "Bromley Old Town Hall",
     street: "30 Tweedy Road",
+    /* Set out as it would be written on an envelope: town, postcode, country,
+       each on its own line. One string with commas in it is an address that
+       reads as a sentence. */
+    town: "Bromley",
+    postcode: "BR1 3FE",
+    country: "United Kingdom",
     cityLine: "Bromley, BR1 3FE, United Kingdom",
     mapUrl:
       "https://maps.google.com/?q=Bromley+Old+Town+Hall,+30+Tweedy+Road,+BR1+3FE",
     embedUrl:
       "https://maps.google.com/maps?width=100%25&height=600&hl=en&q=Bromley%20Old%20Town%20Hall,%2030%20Tweedy%20Road,%20Bromley,%20BR1%203FE,%20United%20Kingdom+(TwinCoreTech%20Ltd)&t=&z=15&ie=UTF8&iwloc=B&output=embed",
   },
-  hours: "Mon - Fri, 9AM - 6PM GMT",
+  hours: "Mon - Fri, 9AM - 5PM",
 } as const;
 
 /**
