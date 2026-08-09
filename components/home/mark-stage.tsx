@@ -11,9 +11,8 @@ import { cn } from "@/lib/utils";
    wants is a rendered one, glossy and lit, with its own halftone drifting round
    it, and none of that is a thing CSS should be asked to fake.
 
-   `home1.png` is that artwork - the mark as water: two ribbons turning through
-   each other, a spray of droplets round them and the dotted thread through the
-   middle. So the haloes are gone, the wash is gone, and what is left is the
+   `home3.png` is that artwork - the mark rendered glossy and lit, with its own
+   halftone drifting round it in arcs and the dotted thread through the middle. So the haloes are gone, the wash is gone, and what is left is the
    file. It carries its own light and its own scatter, and a set of CSS dots
    drawn underneath would be two textures at two scales arguing.
 
@@ -30,18 +29,18 @@ import { cn } from "@/lib/utils";
 
 export function MarkStage({ className }: { className?: string }) {
   return (
-    /* Wider than it is tall, and the picture is cropped to it.
+    /* The file's own shape, not a shape chosen for it.
 
-       The file is square with the mark across the middle of it, so a square box
-       here holds a fifth of a screen of empty white above the mark and another
-       below. `object-cover` on a shallower box throws both away and leaves the
-       part of the file that has something in it. */
-    <div className={cn("relative aspect-[7/5] w-full", className)}>
+       The one before this was square with the mark across its middle, so the box
+       had to be shallower than the file and crop the empty white off the top and
+       bottom. This one is already landscape and already filled, so the box is
+       its ratio and nothing is thrown away. */
+    <div className={cn("relative aspect-[1586/992] w-full", className)}>
       <Image
-        src="/assets/home1.png"
+        src="/assets/home3.png"
         alt=""
-        width={1254}
-        height={1254}
+        width={1586}
+        height={992}
         aria-hidden
         draggable={false}
         sizes="(max-width: 1024px) 70vw, 52vw"

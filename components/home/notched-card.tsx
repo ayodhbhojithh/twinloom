@@ -1085,16 +1085,22 @@ export function NotchedCard({ className }: { className?: string }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
-              className="flex w-full flex-col gap-5"
+              /* One rhythm down the screen, and it is worth naming because it
+                 was five arbitrary numbers before: 4 between the trades and the
+                 claim, 5 between the claim and the line under it, 4 again
+                 between that and the paragraph, 7 before the buttons, 7 again
+                 before the sister company. Tight where two things are one thing,
+                 wide where one thing ends. */
+              className="flex w-full flex-col gap-7"
             >
-              <div className="flex flex-col items-center gap-6 lg:flex-row lg:items-center lg:gap-10">
+              <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-center lg:gap-12">
                 <MarkStage className="w-[72%] max-w-[300px] shrink-0 lg:order-2 lg:w-[52%] lg:max-w-none" />
 
                 <div className="min-w-0 text-center lg:order-1 lg:flex-1 lg:text-left">
                   {/* The trades, as a list rather than a sentence. Dots between
                     them, because a comma would make it a sentence and it is a
                     label. */}
-                  <ul className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 font-mono text-[9.5px] font-bold tracking-[0.16em] text-idx uppercase lg:justify-start">
+                  <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-mono text-[11px] font-bold tracking-[0.15em] text-idx uppercase lg:justify-start">
                     {shown.kicker?.map((trade, n) => (
                       <li key={trade} className="flex items-center gap-2.5">
                         {n > 0 ? (
@@ -1108,14 +1114,14 @@ export function NotchedCard({ className }: { className?: string }) {
                     ))}
                   </ul>
 
-                  <h1 className="mx-auto mt-3 max-w-[20ch] text-[clamp(28px,3.6vw,52px)] leading-[1.06] font-extrabold tracking-[-0.04em] text-ink lg:mx-0">
+                  <h1 className="mx-auto mt-4 max-w-[19ch] text-[clamp(32px,4.2vw,62px)] leading-[1.04] font-extrabold tracking-[-0.042em] text-ink lg:mx-0">
                     {shown.claim?.[0]}
                     <span className="thread-text block">
                       {shown.claim?.[1]}
                     </span>
                   </h1>
 
-                  <p className="mx-auto mt-4 max-w-[38ch] text-[clamp(15px,1.35vw,20px)] leading-[1.35] font-bold tracking-[-0.02em] text-ink lg:mx-0">
+                  <p className="mx-auto mt-5 max-w-[36ch] text-[clamp(17px,1.6vw,24px)] leading-[1.36] font-bold tracking-[-0.022em] text-ink lg:mx-0">
                     {shown.lead}
                   </p>
 
@@ -1125,7 +1131,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       sentence is a sentence, and cutting it into pieces in the
                       data so the middle one can be blue is a sentence that can no
                       longer be rewritten without touching the markup. */}
-                  <p className="pointer-events-auto mx-auto mt-3.5 max-w-[58ch] text-[13.5px] leading-[1.62] text-quiet sm:text-[14.5px] lg:mx-0">
+                  <p className="pointer-events-auto mx-auto mt-4 max-w-[56ch] text-[15px] leading-[1.65] text-quiet sm:text-[16px] lg:mx-0">
                     {shown.note?.split(SISTER).map((part, n) => (
                       <span key={n}>
                         {n > 0 ? (
@@ -1144,12 +1150,15 @@ export function NotchedCard({ className }: { className?: string }) {
                   {/* Four doors, one row, and the first one filled. Where they all
                     look the same there is no first choice, and a row of four
                     equal buttons is four decisions rather than one. */}
-                  <div className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 lg:justify-start">
+                  <div className="pointer-events-auto mt-7 flex flex-wrap justify-center gap-2.5 lg:justify-start">
                     <Link
                       href={ROUTES.build}
-                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-5.5 py-3.5 text-[15px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
                     >
-                      <PencilLine aria-hidden className="size-4 shrink-0" />
+                      <PencilLine
+                        aria-hidden
+                        className="size-[18px] shrink-0"
+                      />
                       Scope your website
                       <ArrowRight
                         aria-hidden
@@ -1178,7 +1187,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       <Link
                         key={way.say}
                         href={way.at}
-                        className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
+                        className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-5.5 py-3.5 text-[15px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
                       >
                         <way.icon
                           aria-hidden
@@ -1212,9 +1221,9 @@ export function NotchedCard({ className }: { className?: string }) {
                   aria-hidden
                   draggable={false}
                   sizes="64px"
-                  className="size-7 flex-none object-contain"
+                  className="size-8 flex-none object-contain"
                 />
-                <span className="text-[14px] font-bold tracking-[-0.02em] text-ink">
+                <span className="text-[15.5px] font-bold tracking-[-0.02em] text-ink">
                   TwinCoreTech
                 </span>
                 {/* A rule between them, not a bullet. The two are a name and a
@@ -1226,7 +1235,7 @@ export function NotchedCard({ className }: { className?: string }) {
                     "more than", which puts "a website." alone on a second line -
                     a two word orphan under a caption that is one sentence long.
                     Seventy-six is the sentence. */}
-                <span className="max-w-[76ch] text-[12.5px] leading-[1.45] text-quiet">
+                <span className="max-w-[76ch] text-[13.5px] leading-[1.5] text-quiet">
                   Custom software development for businesses that need more than
                   a website.
                 </span>
