@@ -1223,16 +1223,31 @@ export function NotchedCard({ className }: { className?: string }) {
                   button dropped onto a second line. The picture loses ten points
                   and reads no smaller for it; the words gain a column. */}
               <div className="flex flex-1 flex-col items-center justify-center gap-8 lg:flex-row lg:items-center lg:gap-10">
-                {/* The larger share of the row on a wide screen.
+                {/* Drawn wider than the room it takes, and grown leftward.
 
-                    It was 42 per cent and capped at 300 on anything narrower,
-                    which on a card the width of a window left the mark a
-                    third of the way to being the picture the screen is built
-                    around - the type beside it runs to a 62ch measure and
-                    stops, and everything past that measure was empty card.
-                    The words do not lose a character: their column is capped
-                    by its own measure long before this takes any of it. */}
-                <MarkStage className="w-[86%] max-w-[380px] shrink-0 lg:order-2 lg:w-[52%] lg:max-w-none" />
+                    At a straight 52 per cent the mark was half the row and the
+                    four doors beside it broke onto a second line - a picture
+                    deciding how a row of controls reads, the wrong way round.
+                    The negative margin is the fix and it is not a fudge: a
+                    flex item contributes `width + margin` to the layout, so
+                    this asks for 54 and takes 42, and the twelve it does not
+                    take is drawn anyway.
+
+                    On the left, not the right. Taken off the right the mark
+                    kept its left edge and ran out past the card, so growing it
+                    moved it - the artwork slid sideways and lost its outer
+                    edge to the clip. Taken off the left it keeps its right
+                    edge exactly where it was and grows back towards the words,
+                    over the empty card between the end of a 62ch measure and
+                    the start of the picture. Nothing is covered: that gap had
+                    nothing in it.
+
+                    A margin rather than a transform, deliberately. The image
+                    carries `mix-blend-multiply` and its own mask, and a scale
+                    anywhere above it would make a stacking context and cut the
+                    blend group - the white box this file has already come back
+                    as twice. */}
+                <MarkStage className="pointer-events-none w-[86%] max-w-[380px] shrink-0 lg:order-2 lg:-ml-[12%] lg:w-[54%] lg:max-w-none" />
 
                 <div className="min-w-0 text-center lg:order-1 lg:flex-1 lg:text-left">
                   {/* The trades, as a list rather than a sentence. Dots between
@@ -1306,7 +1321,15 @@ export function NotchedCard({ className }: { className?: string }) {
                   {/* Four doors, one row, and the first one filled. Where they all
                     look the same there is no first choice, and a row of four
                     equal buttons is four decisions rather than one. */}
-                  <div className="pointer-events-auto mt-8 flex flex-wrap justify-center gap-2.5 sm:mt-10 lg:justify-start">
+                  {/* Wrapping below `lg`, one row at and above it.
+
+                      Four doors on two lines is four decisions in two groups,
+                      and the group a button falls into is decided by whatever
+                      width the picture beside it happened to leave. On a wide
+                      card they hold one line; on a narrow one, where there is
+                      genuinely no line to hold, they wrap as they always
+                      did. */}
+                  <div className="pointer-events-auto mt-8 flex flex-wrap justify-center gap-2.5 sm:mt-10 lg:flex-nowrap lg:justify-start">
                     <Link
                       href={ROUTES.build}
                       className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-5.5 py-3.5 text-[15px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
