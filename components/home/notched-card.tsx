@@ -469,25 +469,11 @@ export function NotchedCard({ className }: { className?: string }) {
             it. */}
         {shown.view === "blank" ? <DotGround /> : null}
 
-        {/* The fifth screen's ground: the same grid, quieter.
+        {/* No ground under the fifth screen.
 
-            The fourth screen makes a picture out of its dots and this one only
-            wants paper to stand on, so it is the same idea at a third of the
-            weight - and cleared further out of the middle, because there is a
-            good deal more standing in the middle here. */}
-        {shown.view === "mark" ? (
-          <span
-            aria-hidden
-            className="absolute inset-0"
-            style={{
-              ...GRID("--color-thread-blue", 30, 1, 19),
-              maskImage:
-                "radial-gradient(circle at 50% 50%, transparent 30%, black 74%)",
-              WebkitMaskImage:
-                "radial-gradient(circle at 50% 50%, transparent 30%, black 74%)",
-            }}
-          />
-        ) : null}
+            It had the same dot grid the fourth uses, at a third of the weight,
+            and the artwork that stands on it now brings its own halftone. Two
+            grids at two scales in one picture is a moire, not a texture. */}
 
         {/* The second screen: the water, full bleed and nothing over it.
 
