@@ -369,14 +369,14 @@ export function AboutView() {
             </span>
           }
           corner={
-            <Link
+            <a
               href={ROUTES.services}
               aria-label="How partners work"
               title="How partners work"
               className="flex size-11 items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
             >
               <ArrowUpRight className="size-[18px]" strokeWidth={2.2} />
-            </Link>
+            </a>
           }
         >
           {/* Two lines where there were four.

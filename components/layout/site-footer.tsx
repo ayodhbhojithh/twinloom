@@ -213,16 +213,28 @@ export function SiteFooter() {
                     links, so each is a 25px target with no gap left to miss
                     into and the column looks exactly as it did. */}
                 <ul className="mt-2.5 flex flex-col">
-                  {column.links.map((link) => (
-                    <li key={`${column.title}-${link.href}`} className="flex">
-                      <Link
-                        href={link.href}
-                        className="py-1.5 text-[13.5px] leading-[1.3] font-medium text-quiet transition-colors hover:text-ink"
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
+                  {column.links.map((link) => {
+                    const className =
+                      "py-1.5 text-[13.5px] leading-[1.3] font-medium text-quiet transition-colors hover:text-ink";
+
+                    /* A section of the home page rather than a page of its
+                       own, and `Link` mishandles the jump when the section is
+                       on the page already open - see the header for the long
+                       version. A plain anchor leaves it to the browser. */
+                    return (
+                      <li key={`${column.title}-${link.href}`} className="flex">
+                        {link.href.includes("#") ? (
+                          <a href={link.href} className={className}>
+                            {link.label}
+                          </a>
+                        ) : (
+                          <Link href={link.href} className={className}>
+                            {link.label}
+                          </Link>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               </nav>
             ))}

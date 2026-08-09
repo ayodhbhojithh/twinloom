@@ -189,22 +189,38 @@ export function SiteHeader({
                 ? pathname === item.href
                 : pathname.startsWith(item.href);
 
+            const className = cn(
+              /* One size, not two.
+
+                 It was 13.5 stepping to 14.5 at the widest breakpoint, which
+                 is a step nobody sees and two numbers to keep. Fifteen at
+                 every width, which is what the buttons under it are set at -
+                 a bar of links smaller than every other line on the page
+                 reads as a bar somebody shrank to make it fit. */
+              "text-[15px] whitespace-nowrap hover:underline",
+              on ? "font-semibold text-mark" : "text-quiet hover:text-ink",
+            );
+
+            /* A section of a page rather than a page, and `Link` does not
+               agree. Clicked while already on the page it points into, its own
+               hash-scroll wrote the new fragment onto whatever the address bar
+               already carried instead of replacing it - `/#services` arrived
+               as `/#services#services`. A plain anchor leaves the jump to the
+               browser, which has never got this wrong. */
+            if (item.href.includes("#")) {
+              return (
+                <a key={item.href} href={item.href} className={className}>
+                  {item.label}
+                </a>
+              );
+            }
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 aria-current={on ? "page" : undefined}
-                className={cn(
-                  /* One size, not two.
-
-                     It was 13.5 stepping to 14.5 at the widest breakpoint, which
-                     is a step nobody sees and two numbers to keep. Fifteen at
-                     every width, which is what the buttons under it are set at -
-                     a bar of links smaller than every other line on the page
-                     reads as a bar somebody shrank to make it fit. */
-                  "text-[15px] whitespace-nowrap hover:underline",
-                  on ? "font-semibold text-mark" : "text-quiet hover:text-ink",
-                )}
+                className={className}
               >
                 {item.label}
               </Link>

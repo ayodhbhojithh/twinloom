@@ -66,10 +66,13 @@ export const ROUTES = {
   how: "/how-we-work",
 
   about: "/about",
-  /* Was `/partners`. The page is about what we sell rather than about who
-     helps deliver it; the specialists are a section of it now. Old links are
+  /* Was `/partners`, then `/services` - a page of its own both times. It is a
+     section of the home page now, not a page: `ServiceWall` and the heading
+     over it already stood there teasing a page one click further on, and a
+     page whose whole content was "here is more of what you just saw, follow
+     the link" was a click nobody needed to spend. Both old addresses are
      redirected in `next.config.ts` rather than left to 404. */
-  services: "/services",
+  services: "/#services",
   contact: "/contact",
   book: "/book",
   faq: "/faqs",
@@ -178,7 +181,6 @@ export const RAIL_PAGES: readonly RailPage[] = [
   { label: "Build your website", href: ROUTES.build },
   { label: "About us", href: ROUTES.about },
   { label: "How we work", href: ROUTES.how },
-  { label: "Our services", href: ROUTES.services },
   {
     label: "Contact us",
     href: ROUTES.contact,

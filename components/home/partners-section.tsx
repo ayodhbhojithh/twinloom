@@ -1,23 +1,26 @@
-import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
-
 import { ServiceWall } from "@/components/pages/services-view";
-import { ROUTES } from "@/lib/site";
 
 /**
- * Our partners, on the landing page.
+ * Our services, on the landing page - and the whole of the section now
+ * rather than a teaser for one.
  *
- * The fourth screen. The first three say what we do, let you try it and show
- * how we think; this answers the question that follows all of them - who is
- * actually going to do the work.
+ * It used to link out to `/services` for the rest of the story: a rules
+ * panel, a longer standfirst, the same wall repeated. That page was one click
+ * further into what this section had already shown, so the click has come
+ * off and `id="services"` has gone on instead - the header's `Services` link
+ * and every other page's own points at this section directly now, the same
+ * way the hero's arrow points into `BuildSection` below.
  *
- * It borrows the wall from the services page rather than restating it. Two
- * copies of the list would disagree the first week one of them changed, and the
- * wall is the part of that page worth seeing from here.
+ * It still borrows the wall from `services-view.tsx` rather than restating
+ * it. Two copies of the list would disagree the first week one of them
+ * changed, and the wall is the part of that page worth keeping.
  */
 export function PartnersSection() {
   return (
-    <section className="page-frame pt-14 pb-14 sm:pt-20 sm:pb-20 lg:pt-32 lg:pb-28">
+    <section
+      id="services"
+      className="page-frame scroll-mt-[var(--nav-height)] pt-14 pb-14 sm:pt-20 sm:pb-20 lg:pt-32 lg:pb-28"
+    >
       {/* Down the middle, and the wall crosses underneath it. That is the
           whole reason a centred heading works here: a column of centred text
           has no second reading direction on its own, and something drifting
@@ -26,17 +29,6 @@ export function PartnersSection() {
         <h2 className="reveal section-head max-w-[26ch] text-ink">
           Our Services
         </h2>
-
-        <Link
-          href={ROUTES.services}
-          className="group/all reveal mt-6 inline-flex items-center gap-2 rounded-pill bg-field px-4.5 py-2 text-[13.5px] font-semibold text-ink transition-colors [--step:1] hover:bg-hair"
-        >
-          What we offer
-          <ArrowUpRight
-            aria-hidden
-            className="size-4 transition-transform group-hover/all:translate-x-0.5 group-hover/all:-translate-y-0.5"
-          />
-        </Link>
       </div>
 
       {/* The wall is the one thing here that already moves. It arrives on the
@@ -44,11 +36,11 @@ export function PartnersSection() {
           is why the reveal is on a wrapper rather than on the wall: two
           animations on one element would be one `transform` written twice, and
           the second would win. */}
-      <div className="reveal mt-10 [--step:2] lg:mt-12">
+      <div className="reveal mt-10 [--step:1] lg:mt-12">
         <ServiceWall bleed />
       </div>
 
-      <p className="reveal mx-auto mt-6 max-w-[92ch] text-center text-[14px] leading-[1.6] text-quiet [--step:3]">
+      <p className="reveal mx-auto mt-6 max-w-[92ch] text-center text-[14px] leading-[1.6] text-quiet [--step:2]">
         One contract, one invoice, and named in the proposal before the work
         starts. Most projects need none of them - a specialist is added because
         the work justifies one.

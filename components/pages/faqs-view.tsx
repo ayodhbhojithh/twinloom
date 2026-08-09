@@ -44,11 +44,22 @@ export const FAQ_SECTIONS: readonly PageSection[] = Object.values(S);
 
 /** A link that reads as one, inside an answer. */
 function A({ href, children }: { href: string; children: React.ReactNode }) {
+  const className =
+    "font-semibold text-ink underline decoration-hair underline-offset-2 transition-colors hover:text-mark hover:decoration-mark";
+
+  /* A section rather than a page, for the one answer that points at the home
+     page's services section - `Link` mishandles that jump on the page it
+     already stands on. A plain anchor leaves it to the browser. */
+  if (href.includes("#")) {
+    return (
+      <a href={href} className={className}>
+        {children}
+      </a>
+    );
+  }
+
   return (
-    <Link
-      href={href}
-      className="font-semibold text-ink underline decoration-hair underline-offset-2 transition-colors hover:text-mark hover:decoration-mark"
-    >
+    <Link href={href} className={className}>
       {children}
     </Link>
   );

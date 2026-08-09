@@ -1012,7 +1012,7 @@ export function NotchedCard({ className }: { className?: string }) {
                   {/* Solid white, because everything around it is blue. An
                       outline in white on this ground is a button you have to
                       look for. */}
-                  <Link
+                  <a
                     href={ROUTES.services}
                     className="group/way pointer-events-auto inline-flex items-center gap-2.5 rounded-pill bg-field px-6 py-3.5 text-[16px] font-semibold whitespace-nowrap text-ink transition-opacity hover:opacity-90"
                   >
@@ -1021,7 +1021,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       aria-hidden
                       className="size-[18px] shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
                     />
-                  </Link>
+                  </a>
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -1246,12 +1246,12 @@ export function NotchedCard({ className }: { className?: string }) {
                     {shown.note?.split(SISTER).map((part, n) => (
                       <span key={n}>
                         {n > 0 ? (
-                          <Link
+                          <a
                             href={ROUTES.services}
                             className="font-semibold text-mark hover:underline"
                           >
                             {SISTER}
-                          </Link>
+                          </a>
                         ) : null}
                         {part}
                       </span>
@@ -1294,23 +1294,36 @@ export function NotchedCard({ className }: { className?: string }) {
                         icon: Code2,
                         say: "Custom software",
                       },
-                    ].map((way) => (
-                      <Link
-                        key={way.say}
-                        href={way.at}
-                        className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-5.5 py-3.5 text-[15px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
-                      >
-                        <way.icon
-                          aria-hidden
-                          className="size-4 shrink-0 text-idx"
-                        />
-                        {way.say}
-                        <ArrowRight
-                          aria-hidden
-                          className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
-                        />
-                      </Link>
-                    ))}
+                    ].map((way) => {
+                      const className =
+                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-5.5 py-3.5 text-[15px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink";
+                      const body = (
+                        <>
+                          <way.icon
+                            aria-hidden
+                            className="size-4 shrink-0 text-idx"
+                          />
+                          {way.say}
+                          <ArrowRight
+                            aria-hidden
+                            className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
+                          />
+                        </>
+                      );
+
+                      /* "View our services" points into this same page's own
+                         `#services` - a plain anchor, or `Link` doubles the
+                         fragment when the section is already open. */
+                      return way.at.includes("#") ? (
+                        <a key={way.say} href={way.at} className={className}>
+                          {body}
+                        </a>
+                      ) : (
+                        <Link key={way.say} href={way.at} className={className}>
+                          {body}
+                        </Link>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
