@@ -29,11 +29,14 @@ import type { Project } from "./projects";
    than as the first one with the picture swapped.
 
    The third is a field of glass beads that drift and get shoved around by the
-   cursor, and it carries no words at all. The first screen makes the offer and
-   holds both ways in, the second says who is making it, and the third is there
-   to be played with. It still carries the fields a `Project` needs, because the
-   panel that opens from the corner disc reads those and an empty panel is a
-   broken one - what it does not carry is a `claim` or a `lead`.
+   cursor, with dark type centred on it - light ground again, so it is set the
+   way the first one is.
+
+   Three screens, one arrangement, three arguments. The first makes the offer and
+   holds both ways in; the second says who is making it; the third says what you
+   get before agreeing to anything. Each of the last two takes one way on rather
+   than two, because a front door that asks for the same thing three times is a
+   door people stop reading.
 --------------------------------------------------------------------------- */
 
 /**
@@ -119,7 +122,12 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     alt: "",
     tone: "#ffffff",
   },
-  /* The third: how the work is agreed, over the pit. */
+  /* The third: how the work is agreed, over the pit.
+
+     Dark type again, like the first screen, because the ground is light again -
+     a field of glass beads on white. What separates it from the first is not the
+     treatment, it is the argument: that one makes the offer, this one says what
+     you get before anybody agrees to anything. */
   {
     id: "hero-3",
     view: "balls",
@@ -133,6 +141,8 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
       { term: "Assumptions", value: "Named, not buried" },
       { term: "Not in the scope", value: "Not in the price" },
     ],
+    claim: ["Nothing gets built", "until it is written."],
+    lead: "You get the scope in your own words, with every assumption named, before anything is agreed. If it is not in there, it is not in the price.",
     image: "",
     alt: "",
     tone: "#ffffff",

@@ -561,6 +561,20 @@ export function NotchedCard({ className }: { className?: string }) {
             maxZ={1.6}
           />
         ) : null}
+
+        {/* And the middle taken back for the type, the way the first screen
+            does it. Light ground, dark words, white wash - the pit is a field of
+            pale glass and the one thing it is not is a surface you can read
+            small type off. */}
+        {shown.view === "balls" ? (
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "radial-gradient(ellipse 68% 62% at 50% 48%, color-mix(in oklab, var(--color-field) 94%, transparent) 0%, color-mix(in oklab, var(--color-field) 84%, transparent) 32%, color-mix(in oklab, var(--color-field) 46%, transparent) 62%, transparent 88%)",
+            }}
+          />
+        ) : null}
       </div>
 
       <AnimatePresence initial={false}>
@@ -822,6 +836,63 @@ export function NotchedCard({ className }: { className?: string }) {
                     className="group/way pointer-events-auto inline-flex items-center gap-2.5 rounded-pill bg-field px-6 py-3.5 text-[16px] font-semibold whitespace-nowrap text-ink transition-opacity hover:opacity-90"
                   >
                     What we do
+                    <ArrowUpRight
+                      aria-hidden
+                      className="size-[18px] shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                    />
+                  </Link>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+      ) : null}
+
+      {/* The third screen's words: centred, dark, and one way on.
+
+          The same block as the second screen at the same sizes, set the other
+          way up because the ground is the other way up. Written out rather than
+          shared with it: they are two screens and not one screen with two
+          pictures, and the day either wants its own measure or a second way on,
+          that is an edit here rather than a condition threaded through a block
+          serving both. */}
+      {shown.view === "balls" ? (
+        <div
+          className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
+          style={{
+            paddingTop: cut.barDepth + 12,
+            paddingBottom: cut.barDepth + 12,
+            paddingLeft: pad,
+            paddingRight: pad,
+          }}
+        >
+          <div className="w-full text-center">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={shown.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <h1 className="mx-auto max-w-[22ch] text-[clamp(42px,7vw,104px)] leading-[1.0] font-extrabold tracking-[-0.05em] text-ink">
+                  {shown.claim?.[0]}
+                  <span className="thread-text block">{shown.claim?.[1]}</span>
+                </h1>
+
+                <p className="mx-auto mt-6 max-w-[62ch] text-[17px] leading-[1.6] text-quiet sm:text-[20px]">
+                  {shown.lead}
+                </p>
+
+                <div className="mt-7 flex justify-center">
+                  {/* Solid ink, because everything around it is pale. The
+                      outline the first screen uses for its second way in is a
+                      button you have to look for on a ground like this. */}
+                  <Link
+                    href={ROUTES.how}
+                    className="group/way pointer-events-auto inline-flex items-center gap-2.5 rounded-pill bg-ink px-6 py-3.5 text-[16px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90"
+                  >
+                    How we work
                     <ArrowUpRight
                       aria-hidden
                       className="size-[18px] shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
