@@ -29,18 +29,18 @@ import { cn } from "@/lib/utils";
 
 export function MarkStage({ className }: { className?: string }) {
   return (
-    /* The file's own shape, not a shape chosen for it.
+    /* Shallower than the file, because the file is square and the mark is not.
 
-       The one before this was square with the mark across its middle, so the box
-       had to be shallower than the file and crop the empty white off the top and
-       bottom. This one is already landscape and already filled, so the box is
-       its ratio and nothing is thrown away. */
-    <div className={cn("relative aspect-[1586/992] w-full", className)}>
+       The artwork sits across the middle of a square with a good deal of white
+       above it and below, so a square box would hold that white as well and the
+       mark would come out two thirds the size it could be. Seven by five,
+       covered, keeps the mark and throws the margins away. */
+    <div className={cn("relative aspect-[7/5] w-full", className)}>
       <Image
-        src="/assets/home3.png"
+        src="/assets/home4.png"
         alt=""
-        width={1586}
-        height={992}
+        width={1254}
+        height={1254}
         aria-hidden
         draggable={false}
         sizes="(max-width: 1024px) 70vw, 52vw"

@@ -50,7 +50,8 @@ const FADE_OVER = 20;
 export function SiteHeader({
   bare,
   appear,
-}: { bare?: boolean; appear?: number } = {}) {
+  reserve = 0,
+}: { bare?: boolean; appear?: number; reserve?: number } = {}) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -160,14 +161,25 @@ export function SiteHeader({
       )}
       data-here={appear !== undefined ? "no" : undefined}
     >
-      <div className="page-frame flex items-center gap-4 py-2.5">
+      <div className="page-frame relative flex items-center gap-4 py-2.5">
         <div className="flex min-w-0 flex-1 items-center">
           <Wordmark />
         </div>
 
+        {/* Centred on the bar, not between its neighbours.
+
+            In the flow it was the middle of three columns, so it sat wherever
+            the two either side left room - and the moment one of them was given
+            padding to clear something, the whole row slid and the "centre" went
+            with it. Taken out of the flow it centres on the bar itself, which is
+            the thing anybody looking at it is measuring against.
+
+            Only from `xl`, which is the width the links appear at anyway: below
+            that there is not room for a centred row of eight between a wordmark
+            and a button, and it is hidden. */}
         <nav
           aria-label="Primary"
-          className="hidden shrink-0 flex-nowrap items-center gap-x-5 xl:flex 2xl:gap-x-7"
+          className="absolute left-1/2 hidden -translate-x-1/2 flex-nowrap items-center gap-x-5 xl:flex 2xl:gap-x-7"
         >
           {HEADER_NAV.map((item) => {
             /* `startsWith` so a child route still marks its parent, but the home
@@ -200,18 +212,21 @@ export function SiteHeader({
           })}
         </nav>
 
-        {/* The far right, and only as wide as what is in it.
+        {/* A third column of the same weight as the first, which is what puts
+            the nav in the middle of the row rather than at one end.
 
-            It used to be a third column with `flex-1` on it, which made the row
-            three equal parts and left the nav sitting in the middle of the bar.
-            That was fine while the header stood on its own; inside the landing
-            card the notch is cut into the middle of the same edge, and the links
-            ran straight through it.
-
-            The name is left, the pages are right, and the middle is empty - so
-            whatever the card puts in its top edge has the room, and every other
-            page gets the arrangement a bar of links has anyway. */}
-        <div className="flex shrink-0 items-center gap-2">
+            It was `shrink-0` for a while, because the notch was cut into the
+            middle of the landing card's top edge and centred links ran straight
+            through it. The notch is in the corner now, so the middle is free and
+            the links can have it. */}
+        {/* And the far end, holding whatever the page asks it to hold clear
+            of. On the landing card that is the notch cut into the top right
+            corner; everywhere else `reserve` is nought and this is an ordinary
+            end of a row. */}
+        <div
+          className="flex min-w-0 flex-1 items-center justify-end gap-2"
+          style={reserve ? { paddingRight: reserve } : undefined}
+        >
           {/* No call to action here, and no contact disc.
 
               Both were removed on purpose. Every page of this site already

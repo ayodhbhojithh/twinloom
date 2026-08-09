@@ -53,6 +53,15 @@ export interface Cuts {
   radius: number;
   /** The bar at the top: width, depth, its own corners, and the outward curve. */
   barWidth: number;
+  /**
+   * Where along the top edge it sits.
+   *
+   * Centred unless this says otherwise. A notch in the middle of an edge is the
+   * default because it reads as a piece taken out of a symmetrical thing; at one
+   * end it reads as a corner detail, which is what it should be when the edge
+   * above it is also carrying a bar of links.
+   */
+  barRight?: boolean;
   barDepth: number;
   barRadius: number;
   barFlare: number;
@@ -115,9 +124,15 @@ export function outline(w: number, h: number, cut: Cuts): string {
     footFlare: ff = 0,
   } = cut;
 
-  /* The bar is centred, so the top edge is cut from here to here. */
-  const left = (w - bw) / 2;
-  const right = left + bw;
+  /* Where the top edge is cut from and to.
+
+     Centred by default. Held hard against the corner when asked: the notch's
+     own flare ends exactly where the card's corner arc begins, so there is no
+     straight edge between them at all. One curve runs out of the notch and
+     straight into the corner, and the cut reads as a piece taken out of the
+     corner rather than as a notch parked near one. */
+  const right = cut.barRight ? w - r - bf : (w + bw) / 2;
+  const left = right - bw;
 
   /* A cut asked for at nothing is not a tiny cut - it is no cut, and the corner
      it would have eaten has to come back as an ordinary rounded corner.
@@ -348,6 +363,7 @@ export function NotchedCard({ className }: { className?: string }) {
       radius,
       barWidth,
       barDepth,
+      barRight: true,
       barRadius: barFlare,
       barFlare: barFlare,
       /* Nought, which `outline` reads as no cut at all - and the bottom left
@@ -371,13 +387,13 @@ export function NotchedCard({ className }: { className?: string }) {
      a surface that fills the window, so what it can afford at the sides is a
      question about the surface and not about the class of device.
 
-     A twentieth of the width, capped at eighty-eight. It was taken down to a
+     A fourteenth of the width, capped at a hundred and thirty two. It was taken down to a
      thirty-fifth so the screens would line up with the header inside the card,
      and that was the wrong way round: the header reads `--page-gutter`, and the
      card sets that variable to this number when it renders the bar. The two
      agree either way, so this can be whatever the card wants rather than
      whatever the page happens to use. */
-  const pad = Math.max(24, Math.min(size.w * 0.05, 88));
+  const pad = Math.max(28, Math.min(size.w * 0.07, 132));
 
   /* How far down the card anything can start.
 
@@ -744,7 +760,7 @@ export function NotchedCard({ className }: { className?: string }) {
           paddingTop: 7,
         }}
       >
-        <SiteHeader bare />
+        <SiteHeader bare reserve={cut.barWidth + 16} />
       </div>
 
       {/* The bar, standing in the top of the cut. No plate behind it: the notch
@@ -761,8 +777,18 @@ export function NotchedCard({ className }: { className?: string }) {
           all three screens: worth keeping over a top edge that changes shape
           depending on what is drawn under it. */}
       <div
-        className="absolute top-0 left-1/2 z-30 flex -translate-x-1/2 justify-center"
-        style={{ width: cut.barWidth, height: cut.barDepth, paddingTop: 4 }}
+        className="absolute top-0 z-30 flex justify-center"
+        style={{
+          /* The same arithmetic the outline uses, so the controls stand in the
+             cut rather than near it. Written twice is written twice - but the
+             alternative is `outline` returning positions as well as a path, and
+             a shape that reports where its holes are is a shape doing two
+             jobs. */
+          right: cut.radius + cut.barFlare,
+          width: cut.barWidth,
+          height: cut.barDepth,
+          paddingTop: 4,
+        }}
       >
         <div className="flex h-9 items-center gap-0.5 rounded-pill px-1.5">
           <Tool
@@ -1127,10 +1153,25 @@ export function NotchedCard({ className }: { className?: string }) {
                  between that and the paragraph, 7 before the buttons, 7 again
                  before the sister company. Tight where two things are one thing,
                  wide where one thing ends. */
-              className="flex w-full flex-col gap-7"
+              /* Full height, so the sister company can sit on the floor.
+
+                 It was a column centred as one block, which left the two-up in
+                 the middle and the line under it wherever the block happened to
+                 end - halfway down the card, with a screenful of nothing beneath
+                 it. The two-up takes the room that is going and centres in it;
+                 the line takes only its own height and stays at the bottom,
+                 which is where a footnote belongs. */
+              className="flex h-full w-full flex-col gap-7"
             >
-              <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-center lg:gap-12">
-                <MarkStage className="w-[72%] max-w-[300px] shrink-0 lg:order-2 lg:w-[52%] lg:max-w-none" />
+              {/* The words take the larger share, not the picture.
+
+                  It was 52 to the artwork and what was left to the type, and
+                  what was left could not hold the claim on two lines or the four
+                  doors on one row - so a headline broke into three and the last
+                  button dropped onto a second line. The picture loses ten points
+                  and reads no smaller for it; the words gain a column. */}
+              <div className="flex flex-1 flex-col items-center justify-center gap-8 lg:flex-row lg:items-center lg:gap-10">
+                <MarkStage className="w-[72%] max-w-[300px] shrink-0 lg:order-2 lg:w-[42%] lg:max-w-none" />
 
                 <div className="min-w-0 text-center lg:order-1 lg:flex-1 lg:text-left">
                   {/* The trades, as a list rather than a sentence. Dots between
@@ -1150,14 +1191,14 @@ export function NotchedCard({ className }: { className?: string }) {
                     ))}
                   </ul>
 
-                  <h1 className="mx-auto mt-4 max-w-[19ch] text-[clamp(32px,4.2vw,62px)] leading-[1.04] font-extrabold tracking-[-0.042em] text-ink lg:mx-0">
+                  <h1 className="mx-auto mt-4 max-w-[26ch] text-[clamp(32px,4.2vw,62px)] leading-[1.04] font-extrabold tracking-[-0.042em] text-ink lg:mx-0">
                     {shown.claim?.[0]}
                     <span className="thread-text block">
                       {shown.claim?.[1]}
                     </span>
                   </h1>
 
-                  <p className="mx-auto mt-5 max-w-[36ch] text-[clamp(17px,1.6vw,24px)] leading-[1.36] font-bold tracking-[-0.022em] text-ink lg:mx-0">
+                  <p className="mx-auto mt-5 max-w-[44ch] text-[clamp(17px,1.6vw,24px)] leading-[1.36] font-bold tracking-[-0.022em] text-ink lg:mx-0">
                     {shown.lead}
                   </p>
 
@@ -1167,7 +1208,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       sentence is a sentence, and cutting it into pieces in the
                       data so the middle one can be blue is a sentence that can no
                       longer be rewritten without touching the markup. */}
-                  <p className="pointer-events-auto mx-auto mt-4 max-w-[56ch] text-[15px] leading-[1.65] text-quiet sm:text-[16px] lg:mx-0">
+                  <p className="pointer-events-auto mx-auto mt-4 max-w-[68ch] text-[15px] leading-[1.65] text-quiet sm:text-[16px] lg:mx-0">
                     {shown.note?.split(SISTER).map((part, n) => (
                       <span key={n}>
                         {n > 0 ? (
