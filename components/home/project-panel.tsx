@@ -97,13 +97,18 @@ export function ProjectPanel({
               exit={{ opacity: 0 }}
               transition={{ duration: quiet ? 0 : 0.2 }}
               className={cn(
-                "pointer-events-auto relative grid h-full overflow-hidden rounded-[20px] bg-field",
-                /* The overview is two columns of words, so its halves are
-                   even and it stacks rather than reserving a third of a phone
-                   for a picture it does not have. */
+                "pointer-events-auto relative grid h-full rounded-[20px] bg-field",
+                /* The overview is two columns of words, so its halves are even
+                   and it stacks rather than reserving a third of a phone for a
+                   picture it does not have.
+
+                   Stacked, the panel itself is what scrolls. Two boxes each
+                   scrolling inside a fixed height is right side by side and
+                   wrong one above the other: it splits a phone into two short
+                   windows and puts the foot of each out of reach. */
                 project.overview
-                  ? "grid-rows-[minmax(0,auto)_minmax(0,auto)] lg:grid-cols-2 lg:grid-rows-1"
-                  : "grid-rows-[minmax(0,34svh)_minmax(0,1fr)] lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:grid-rows-1",
+                  ? "auto-rows-min overflow-y-auto lg:auto-rows-auto lg:grid-cols-2 lg:grid-rows-1 lg:overflow-hidden"
+                  : "grid-rows-[minmax(0,34svh)_minmax(0,1fr)] overflow-hidden lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:grid-rows-1",
               )}
             >
               {project.overview ? (

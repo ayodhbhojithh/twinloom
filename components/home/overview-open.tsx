@@ -38,17 +38,17 @@ export function OverviewOpen() {
     <>
       {/* What we do. On the canvas, so the eleven beside it read as the
           white surface and this reads as the room they stand in. */}
-      <div className="quiet-scroll min-h-0 overflow-y-auto bg-canvas px-6 py-5 sm:px-9 sm:py-6 lg:px-11 lg:py-7">
+      <div className="quiet-scroll min-h-0 bg-canvas px-6 py-5 sm:px-9 sm:py-6 lg:overflow-y-auto lg:px-11 lg:py-7">
         <div className="flex items-center gap-3.5">
           <Image
             src="/assets/logo.png"
             alt=""
-            width={128}
-            height={128}
+            width={192}
+            height={192}
             aria-hidden
             draggable={false}
-            sizes="128px"
-            className="size-11 flex-none object-contain"
+            sizes="192px"
+            className="size-16 flex-none object-contain"
           />
           <span className="text-[clamp(22px,2.2vw,32px)] leading-none font-extrabold tracking-[-0.03em] text-ink">
             TwinLoom
@@ -76,6 +76,13 @@ export function OverviewOpen() {
               key={card.name}
               className="flex min-w-0 flex-col items-center rounded-card border border-hair/40 bg-field px-4 py-4 text-center"
             >
+              {/* A square box, and the drawing fitted inside it.
+
+                  Sized by height alone they were not one size at all: the
+                  browser window is a wide drawing and the mark is a square
+                  one, so fitting both to the same height made the first half
+                  again as large as the second. One box for all six is what
+                  makes them read as a set. */}
               {card.art ? (
                 <Image
                   src={card.art}
@@ -84,15 +91,15 @@ export function OverviewOpen() {
                   height={320}
                   aria-hidden
                   draggable={false}
-                  sizes="200px"
-                  className="h-24 w-auto flex-none object-contain"
+                  sizes="220px"
+                  className="size-28 flex-none object-contain sm:size-30 lg:size-32"
                 />
               ) : null}
 
-              <b className="mt-3 block text-[13.5px] leading-[1.25] font-bold tracking-[-0.02em] text-ink">
+              <b className="mt-2.5 block text-[12.5px] leading-[1.25] font-bold tracking-[-0.02em] text-ink">
                 {card.name}
               </b>
-              <p className="mt-1.5 line-clamp-3 text-[12px] leading-[1.5] text-quiet">
+              <p className="mt-1 line-clamp-3 text-[11px] leading-[1.45] text-quiet">
                 {card.say}
               </p>
             </div>
@@ -128,7 +135,7 @@ export function OverviewOpen() {
 
       {/* The eleven. Numbered rather than ticked: a column of eleven ticks
           says the same thing eleven times, and the count is the actual claim. */}
-      <div className="quiet-scroll flex min-h-0 flex-col overflow-y-auto px-6 py-5 sm:px-9 sm:py-6 lg:px-11 lg:py-7">
+      <div className="quiet-scroll flex min-h-0 flex-col px-6 py-5 sm:px-9 sm:py-6 lg:overflow-y-auto lg:px-11 lg:py-7">
         <h3
           id="project-open-name"
           className="max-w-[34ch] text-[clamp(19px,1.9vw,27px)] leading-[1.15] font-extrabold tracking-[-0.032em] text-ink"
