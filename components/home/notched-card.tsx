@@ -648,7 +648,7 @@ export function NotchedCard({ className }: { className?: string }) {
             was when it stood on the left, because a centred measure is read from
             both ends and a narrow one in the middle of a wide card reads as a
             column somebody forgot to fill. */}
-          <div className="w-full max-w-[74ch] text-center">
+          <div className="w-full text-center">
             <div className="pointer-events-auto min-w-0">
               {/* The claim, and the half of it that is the offer set in the
                 mark's own gradient. The same device the name in the header
@@ -682,14 +682,14 @@ export function NotchedCard({ className }: { className?: string }) {
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
                 >
-                  <h1 className="mx-auto max-w-[24ch] text-[clamp(32px,4.4vw,62px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
+                  <h1 className="mx-auto max-w-[38ch] text-[clamp(36px,5.6vw,82px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
                     {shown.claim?.[0]}
                     <span className="thread-text block">
                       {shown.claim?.[1]}
                     </span>
                   </h1>
 
-                  <p className="mx-auto mt-5 max-w-[64ch] text-[15px] leading-[1.65] text-quiet sm:text-[16.5px]">
+                  <p className="mx-auto mt-5 max-w-[92ch] text-[16px] leading-[1.6] text-quiet sm:text-[17.5px]">
                     {shown.lead}
                   </p>
                 </motion.div>
