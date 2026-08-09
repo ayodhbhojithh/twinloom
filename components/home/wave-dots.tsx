@@ -38,8 +38,8 @@ import { cn } from "@/lib/utils";
    are fat, the hollow is where they shrink to almost nothing. The shape is in
    the weight, which is legible at any density and is what makes a printed
    halftone a picture rather than a screen. */
-const ROWS = 42;
-const COLUMNS = 168;
+const ROWS = 48;
+const COLUMNS = 190;
 
 /* The spheres are gone.
 
@@ -235,8 +235,8 @@ export function WaveDots({
          reading as an object placed in it. The card is a window onto something
          larger, and a window's top edge is not where the world stops - so the
          far rows run up to it and the fade at the edge is what ends them. */
-      const horizon = height * (0.03 - (held.y - 0.5) * 0.07 * lean);
-      const groundY = horizon + height * 1.08 * near;
+      const horizon = height * (-0.06 - (held.y - 0.5) * 0.07 * lean);
+      const groundY = horizon + height * 1.2 * near;
 
       /* Rows widen as they come forward, and the whole sheet slides with the
          pointer, so the far edge moves less than the near one. That difference
@@ -250,14 +250,15 @@ export function WaveDots({
          Both ends are up, and the far one three times over. At a fifth of the
          width the back of the sheet was a thin band in the middle of the card
          with white either side of it; at half it reached the sides but left the
-         top corners; at six sevenths there is nothing left of the card it does
-         not touch. The ratio between the ends is still better than three to one,
-         which is all the perspective needs - what it stopped doing is deciding
+         top corners; and now past the full width of it, so even the farthest
+         row runs out of the card on both sides rather than ending inside it. The
+         ratio between the ends is still nearly three to one, which is all the
+         perspective needs - what it stopped doing is deciding
          how much of the card gets a picture on it. Widened, the near rows run past the edges and the far ones
          cover the top - so the surface is a piece of something larger that the
          card is a window onto, rather than an object placed in the middle of
          it. */
-      const spread = 0.86 + 1.95 * near;
+      const spread = 1.1 + 2.1 * near;
       const slide = (held.x - 0.5) * width * 0.16 * near * lean;
       const x = width * (0.5 + SHIFT) + (along - 0.5) * width * spread + slide;
 
@@ -359,8 +360,8 @@ export function WaveDots({
              the same place: where the card ends. The far edge still fades on
              depth, because there is no screen edge there - it is a horizon, and
              a horizon is a thing dissolving rather than a thing being cut. */
-          const softX = Math.min(1, Math.min(x, width - x) / (width * 0.11));
-          const softY = Math.min(1, (height - y) / (height * 0.1));
+          const softX = Math.min(1, Math.min(x, width - x) / (width * 0.075));
+          const softY = Math.min(1, (height - y) / (height * 0.07));
           const edge = Math.max(0, softX) * Math.max(0, softY);
           const across = Math.sin(depth * Math.PI) ** 0.16;
 
@@ -394,24 +395,25 @@ export function WaveDots({
              was rounding to nothing and the rest was thin. The floor is what
              fixes it: a dot in a hollow should be small, not absent, and the
              swing has to happen between something and something else. */
-          const weight = Math.pow(0.34 + 0.66 * lit, 1.22);
+          const weight = Math.pow(0.44 + 0.56 * lit, 1.12);
 
-          const r = (1.25 + 4.1 * near) * weight * (0.85 + 0.3 * grit);
+          const r = (1.6 + 4.7 * near) * weight * (0.85 + 0.3 * grit);
 
           /* Alpha does almost nothing now, and that is the point: it only says
              where the field ends. Left carrying the wave as well, the two would
              be saying the same thing twice and the dots would fade instead of
              thinning. */
           const alpha =
-            (0.78 + 0.22 * near) *
-            /* Past squared. It was `edge * edge`, which is a gentle fade and
-               also a wide one - most of the card was somewhere inside it, and
-               the field never reached full strength anywhere. Once and a half
-               keeps the softness at the very edge and gives the middle back. */
+            (0.9 + 0.1 * near) *
+            /* Barely more than once. It was `edge * edge`, which is a gentle
+               fade and also a wide one - most of the card was somewhere inside
+               it, and the field never reached full strength anywhere. A quarter
+               power over the top keeps the softness at the very edge and gives
+               everything inside it back at full weight. */
             edge *
-            Math.sqrt(edge) *
+            Math.pow(edge, 0.25) *
             across *
-            (0.82 + 0.18 * grit);
+            (0.86 + 0.14 * grit);
 
           ink.globalAlpha = Math.min(alpha, 1);
           ink.fillStyle = columnInk[col];
