@@ -87,7 +87,7 @@ export function BuildSection() {
             threads and capping the width made it small.
 
             So the margins came off the file instead. This one is nineteen by
-            three and a half rather than nineteen by eight, which is well under
+            four and a half rather than nineteen by eight, which is not far off
             half the height at the same width with nothing cut out of the picture
             at all - the blank was never part of it.
 
@@ -97,10 +97,10 @@ export function BuildSection() {
             you can see. */}
         <div aria-hidden className="-mx-(--page-gutter) w-auto">
           <Image
-            src="/assets/wave2.png"
+            src="/assets/wave3.png"
             alt=""
             width={1916}
-            height={345}
+            height={422}
             draggable={false}
             sizes="100vw"
             className="block h-auto w-full mix-blend-multiply"

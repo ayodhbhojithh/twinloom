@@ -107,7 +107,8 @@
       "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/twist.py\")",
       "Bash(rm -f public/assets/wave-original.png)",
       "Bash(rm -f public/assets/wave.png)",
-      "Bash(rm -rf .next/dev/cache/images)"
+      "Bash(rm -rf .next/dev/cache/images)",
+      "Bash(rm -f public/assets/wave2.png)"
     ],
     "additionalDirectories": [
       "c:\\Users\\prave\\Desktop\\PROJECTS\\very-good-websites\\components\\home",
