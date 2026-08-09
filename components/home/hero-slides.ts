@@ -13,7 +13,7 @@ import type { Project } from "./projects";
    fields. Only the list is separate - one type, two lists, and the type is the
    thing that keeps them interchangeable if a slide ever is a project.
 
-   Four screens, and they are meant to be four different screens rather than
+   Five screens, and they are meant to be five different screens rather than
    one screen with its contents swapped. Each carries a `view`, and the card
    branches on it - so an arrow does not change a picture, it changes what the
    card is.
@@ -37,10 +37,13 @@ import type { Project } from "./projects";
    off; the last one stops, and what is left is the sentence and the way in. A
    front door that never stops talking is one people stop reading.
 
-   Four screens, one arrangement, four arguments: who is making it, what is on
-   offer, what you get before agreeing to anything, and what it costs to find
-   out. Only the screen that makes the offer carries both ways in - the rest take
-   one each.
+   The fifth is the mark, centred, at the size of the card, with not a word on
+   it. Four screens argue and this one signs.
+
+   Which is the shape of the whole card: who is making it, what is on offer, what
+   you get before agreeing to anything, what it costs to find out - and then the
+   name. Only the screen that makes the offer carries both ways in; the two in
+   between take one each, and the last takes none.
 --------------------------------------------------------------------------- */
 
 /**
@@ -52,12 +55,13 @@ import type { Project } from "./projects";
  * here and a case there.
  *
  * `wave` is a claim over the dotted surface with the two ways in beneath it.
- * `waves` is the raymarched water and `balls` is the pit, both with nothing set
- * over them. `blank` is a white card and nothing else - not a placeholder graphic and not a
+ * `waves` is the raymarched water and `balls` is the pit. `mark` is the logo at
+ * the size of the card with the words beside it, and it is the only screen that
+ * is not centred - the whole of it is the asymmetry. `blank` is a white card and nothing else - not a placeholder graphic and not a
  * greyed panel, because either of those is a design decision made in advance of
  * the design.
  */
-export type SlideView = "wave" | "waves" | "balls" | "blank";
+export type SlideView = "wave" | "waves" | "balls" | "blank" | "mark";
 
 /**
  * A slide, which is a `Project` and a few more things.
@@ -172,6 +176,30 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     ],
     claim: ["Two working days.", "Then you decide."],
     lead: "Tell us what the site is for and we write the scope in your own words. It costs nothing, commits you to nothing, and you keep it either way.",
+    image: "",
+    alt: "",
+    tone: "#ffffff",
+  },
+
+  /* The fifth: the mark, and nothing else.
+
+     No `claim` and no `lead`, which is the design. Four screens argue and this
+     one signs. What it still carries is what a `Project` needs, because the
+     panel that opens from the corner disc reads those fields and an empty panel
+     is a broken one. */
+  {
+    id: "hero-5",
+    view: "mark",
+    name: "The same people",
+    kind: "Who you deal with",
+    year: "2026",
+    summary:
+      "Nobody hands you to an account manager. The people who scope the work are the people who build it, and they are the people you email a year later.",
+    facts: [
+      { term: "Account managers", value: "None" },
+      { term: "Who builds it", value: "Who scoped it" },
+      { term: "Who answers later", value: "The same people" },
+    ],
     image: "",
     alt: "",
     tone: "#ffffff",

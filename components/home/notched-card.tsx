@@ -12,7 +12,7 @@ import {
   Maximize2,
 } from "lucide-react";
 
-import { ROUTES } from "@/lib/site";
+import { ROUTES, SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 import { Ballpit } from "./ballpit";
@@ -209,6 +209,21 @@ export function outline(w: number, h: number, cut: Cuts): string {
  */
 const TOOL = 36;
 const BAR = TOOL * 3 + 2 * 2 + 6 * 2;
+
+/**
+ * How far the next slide's thumbnail stands inside the bite.
+ *
+ * Three sides, not four. Its foot sits on the card's bottom edge, so the cut
+ * reads as a corner the card gives up rather than as a window with a sill under
+ * it - the same reason the bar in the notch stands in the top edge instead of
+ * floating below it.
+ *
+ * The left inset is what keeps that safe. The card's bottom left corner is
+ * rounded, and a square box set flush into a round corner is a box with its
+ * bottom clipped; held clear of the curve, its foot lands on the straight part
+ * of the edge. If it ever looks cut again, this is the number, not the foot.
+ */
+const BITE_INSET = 13;
 
 export function NotchedCard({ className }: { className?: string }) {
   const box = useRef<HTMLDivElement>(null);
@@ -977,6 +992,58 @@ export function NotchedCard({ className }: { className?: string }) {
         </div>
       ) : null}
 
+      {/* The fifth screen: the mark, centred, and nothing else at all.
+
+          It has been three other things. A logo on the right with a paragraph on
+          the left and rings behind it, which is the layout every page like this
+          already has. A repeating band bleeding off both edges, which had to cut
+          a mark at each end and then fade the ends to hide the cut. Nine whole
+          marks in a row, which is a row of stickers.
+
+          The fault they shared is that each was the mark plus an idea about the
+          mark. This is the mark. Four screens argue and this one signs, which is
+          why it carries no claim, no sentence and no way on - all three are said
+          on the screens either side of it, and a signature that explains itself
+          is not one.
+
+          Sized against both edges of the card rather than one. `max-h-full`
+          inside a box that already holds the padding is what keeps it whole on a
+          short window; the width clamp is what stops it filling a wide one. A
+          mark that has to be cropped to fit is a mark drawn at the wrong
+          size. */}
+      {shown.view === "mark" ? (
+        <div
+          className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
+          style={{
+            paddingTop: cut.barDepth + 20,
+            paddingBottom: cut.barDepth + 20,
+            paddingLeft: pad,
+            paddingRight: pad,
+          }}
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={shown.id}
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.02 }}
+              transition={{ duration: 0.44, ease: [0.4, 0, 0.2, 1] }}
+              className="flex h-full w-full items-center justify-center"
+            >
+              <Image
+                src="/assets/logo.png"
+                alt={SITE.name}
+                width={1200}
+                height={1200}
+                priority={false}
+                sizes="(max-width: 640px) 76vw, 52vw"
+                className="h-auto max-h-full w-[clamp(230px,46vw,660px)] object-contain"
+              />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      ) : null}
+
       {/* The next slide, standing in the bite.
 
           A pair of buttons stood here for a moment and they are gone again: the
@@ -988,8 +1055,24 @@ export function NotchedCard({ className }: { className?: string }) {
         type="button"
         onClick={() => setAt((was) => (was + 1) % HERO_SLIDES.length)}
         aria-label={`Next: ${next.name}`}
-        className="group absolute bottom-0 left-0 z-10 cursor-pointer rounded-[20px] p-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-active"
-        style={{ width: cut.biteWidth - 14, height: cut.biteHeight - 14 }}
+        /* One inset, on all four sides, written once.
+
+           It was pinned to the card's bottom left corner and then made smaller,
+           so the whole of the difference came off the top and the right - its
+           bottom and left edges sat exactly on the card's own, where the outline
+           curves away, and a square box in a round corner reads as a box with
+           its bottom cut off.
+
+           The offset and the size are the same number now rather than two that
+           have to be kept in step, so the air around it is even and changing it
+           is changing one thing. */
+        className="group absolute z-10 cursor-pointer rounded-[20px] p-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-active"
+        style={{
+          left: BITE_INSET,
+          bottom: 0,
+          width: cut.biteWidth - BITE_INSET * 2,
+          height: cut.biteHeight - BITE_INSET,
+        }}
       >
         <span
           /* No border. The bite around it is already the outline, and a second
@@ -1242,6 +1325,26 @@ function Preview({ view }: { view: SlideView }) {
 
   if (view === "wave") {
     return <WaveDots className="absolute inset-0" density={0.34} />;
+  }
+
+  /* And the mark screen previews as the mark. It is the one view whose
+     thumbnail can be honest at any size, because there is nothing on it but one
+     object that was already centred. */
+  if (view === "mark") {
+    return (
+      <span className="absolute inset-0 flex items-center justify-center p-4">
+        <Image
+          src="/assets/logo.png"
+          alt=""
+          width={240}
+          height={240}
+          aria-hidden
+          draggable={false}
+          sizes="240px"
+          className="h-auto max-h-full w-[76%] object-contain"
+        />
+      </span>
+    );
   }
 
   return null;
