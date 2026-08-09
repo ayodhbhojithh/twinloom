@@ -47,7 +47,7 @@ import { cn } from "@/lib/utils";
  */
 const FADE_OVER = 20;
 
-export function SiteHeader() {
+export function SiteHeader({ bare }: { bare?: boolean } = {}) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -108,8 +108,24 @@ export function SiteHeader() {
      tinted ground, so the two met in a hard line across the whole window - a
      rule by accident on a header that deliberately has none. A fade is that
      edge given to the page rather than drawn on it. */
+  /* Two headers, one component.
+
+     Everywhere but the landing page it is the page's own bar: stuck to the top
+     of the window, on the card white, with a fade under it so it does not meet
+     the tinted ground in a hard line.
+
+     On the landing page it stands inside the card. Nothing there is true any
+     more - it is not at the top of the window, it has the card's white under it
+     already, and a fade below it would be a fade in the middle of a picture. So
+     `bare` takes all three off and leaves the row of links, which is the part
+     that was ever the header. */
   return (
-    <header ref={bar} className="header-fade sticky top-0 z-40 bg-field">
+    <header
+      ref={bar}
+      className={
+        bare ? "relative z-30" : "header-fade sticky top-0 z-40 bg-field"
+      }
+    >
       <div className="page-frame flex items-center gap-4 py-2.5">
         <div className="flex min-w-0 flex-1 items-center">
           <Wordmark />

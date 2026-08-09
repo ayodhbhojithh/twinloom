@@ -55,7 +55,7 @@ export default function LandingPage() {
     <>
       <section
         style={{
-          ["--page-gutter" as string]: "clamp(16px, 2.2vw, 40px)",
+          ["--page-gutter" as string]: "clamp(12px, 1.5vw, 28px)",
           /* Under the sides and the foot, but not by much.
 
              It was taken down to eleven, which is the floor the header's own
@@ -67,7 +67,7 @@ export default function LandingPage() {
              Around two thirds of the sides is where it sits. The top is the one
              edge with something above it rather than the window, so it wants
              less than the other three - but it wants some. */
-          paddingTop: "clamp(14px, 1.5vw, 28px)",
+          paddingTop: "clamp(10px, 1vw, 18px)",
           /* A shade under the sides rather than exactly them.
 
              On paper this was already the gutter and so already equal to the
@@ -77,9 +77,12 @@ export default function LandingPage() {
              either side of the card, and this is read against nothing. The eye
              adds the rest, so four equal numbers do not give four equal gaps. A
              fifth under the sides is where it settles. */
-          paddingBottom: "clamp(12px, 1.8vw, 32px)",
+          paddingBottom: "clamp(10px, 1.2vw, 22px)",
         }}
-        className="flex h-[var(--stage)] flex-col overflow-clip"
+        /* The whole window, not the window less the header - the header is
+           inside the card on this page, so there is nothing above it to take
+           off. */
+        className="flex h-svh flex-col overflow-clip"
       >
         {/* No heading here. The card carries the `h1` now - it says the same
             claim, on the screen, where the words and the two ways in sit inside

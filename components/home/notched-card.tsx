@@ -23,6 +23,8 @@ import { Ballpit } from "./ballpit";
 import { MarkStage } from "./mark-stage";
 import { GradientWaves } from "./gradient-waves";
 import { ProjectPanel } from "./project-panel";
+import { SiteHeader } from "@/components/layout/site-header";
+
 import { WaveDots } from "./wave-dots";
 import { HERO_SLIDES } from "./hero-slides";
 import { type Project } from "./projects";
@@ -218,6 +220,16 @@ export function outline(w: number, h: number, cut: Cuts): string {
 const TOOL = 36;
 const BAR = TOOL * 3 + 2 * 2 + 6 * 2;
 
+/**
+ * The header's own height, as the stylesheet sets it.
+ *
+ * A copy of `--nav-height`, and the only honest way to have one: this card lays
+ * its screens out in JavaScript from measured pixels, and a CSS variable is not
+ * a number until the browser has one. Kept beside the other measurements so the
+ * day the bar changes height, both places are one screen apart.
+ */
+const NAV_HEIGHT = 53;
+
 export function NotchedCard({ className }: { className?: string }) {
   const box = useRef<HTMLDivElement>(null);
 
@@ -348,8 +360,23 @@ export function NotchedCard({ className }: { className?: string }) {
 
   /* The card's own side inset, from its width rather than a breakpoint: this is
      a surface that fills the window, so what it can afford at the sides is a
-     question about the surface and not about the class of device. */
-  const pad = Math.max(22, Math.min(size.w * 0.045, 72));
+     question about the surface and not about the class of device.
+
+     Down from a twentieth of the width to a thirty-fifth, and capped at
+     forty-four rather than seventy-two. The header inside the card sets the line
+     everything else is read against - it has the page gutter and no more - and a
+     screen indented twice as far as the wordmark above it reads as a second
+     page inside the first. */
+  const pad = Math.max(16, Math.min(size.w * 0.028, 44));
+
+  /* How far down the card anything can start.
+
+     The notch and the header standing under it, and nothing added to either. It
+     had ten pixels of air below the bar and four above it, and on a card this
+     tall that reads as a gap rather than as spacing - the screens below are
+     centred in what is left, so every pixel here is one the words move down
+     by. */
+  const head = cut.barDepth + NAV_HEIGHT;
 
   /* The measurement that placed the name on the picture went with the name. It
      worked out whether the bottom edge had room for it beside the thumbnail, and
@@ -649,6 +676,33 @@ export function NotchedCard({ className }: { className?: string }) {
         </motion.div>
       </AnimatePresence>
 
+      {/* The site's header, inside the card.
+
+          Everywhere else it is a bar across the top of the window with the page
+          under it. Here the card is the window, so a bar above it would be a bar
+          above the page rather than part of it - `SiteShell` renders nothing on
+          this route and this renders it instead, bare: no sticky, no white
+          ground of its own, no fade under it. It is standing on the card's white
+          already.
+
+          Held clear of the notch, which is centred in the same edge. The notch
+          is measured, so this is measured from it rather than guessed at - a
+          number here would be a number to fix the day the bar in the notch
+          changes size. */}
+      {/* `pointer-events-none` on the box, not on the bar inside it.
+
+          The box runs the whole width of the top edge, and the notch with the
+          three arrows in it is in the middle of that same edge. Sitting above
+          them, it took every click meant for an arrow and the card stopped
+          turning. The box is only here to place the bar, so it takes no clicks;
+          the bar takes its own. */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 z-20"
+        style={{ paddingTop: cut.barDepth }}
+      >
+        <SiteHeader bare />
+      </div>
+
       {/* The bar, standing in the top of the cut. No plate behind it: the notch
           is already the outline, and a pill drawn inside it is a second shape
           inside the first.
@@ -663,7 +717,7 @@ export function NotchedCard({ className }: { className?: string }) {
           all three screens: worth keeping over a top edge that changes shape
           depending on what is drawn under it. */}
       <div
-        className="absolute top-0 left-1/2 z-10 flex -translate-x-1/2 justify-center"
+        className="absolute top-0 left-1/2 z-30 flex -translate-x-1/2 justify-center"
         style={{ width: cut.barWidth, height: cut.barDepth, paddingTop: 4 }}
       >
         <div className="flex h-9 items-center gap-0.5 rounded-pill px-1.5">
@@ -712,7 +766,7 @@ export function NotchedCard({ className }: { className?: string }) {
         <div
           className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
           style={{
-            paddingTop: cut.barDepth + 12,
+            paddingTop: head,
             /* The same at the foot as at the head, so the block sits in the
                middle of the card rather than in the middle of what is left after
                the cuts. It cleared whichever bottom cut was deeper, which is
@@ -825,7 +879,7 @@ export function NotchedCard({ className }: { className?: string }) {
         <div
           className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
           style={{
-            paddingTop: cut.barDepth + 12,
+            paddingTop: head,
             /* The same at the foot as at the head, so the block sits in the
                middle of the card rather than in the middle of what is left after
                the cuts. It cleared whichever bottom cut was deeper, which is
@@ -888,7 +942,7 @@ export function NotchedCard({ className }: { className?: string }) {
         <div
           className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
           style={{
-            paddingTop: cut.barDepth + 12,
+            paddingTop: head,
             paddingBottom: cut.barDepth + 12,
             paddingLeft: pad,
             paddingRight: pad,
@@ -943,7 +997,7 @@ export function NotchedCard({ className }: { className?: string }) {
         <div
           className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
           style={{
-            paddingTop: cut.barDepth + 12,
+            paddingTop: head,
             paddingBottom: cut.barDepth + 12,
             paddingLeft: pad,
             paddingRight: pad,
@@ -1010,7 +1064,7 @@ export function NotchedCard({ className }: { className?: string }) {
         <div
           className="pointer-events-none absolute inset-0 z-10 flex items-center"
           style={{
-            paddingTop: cut.barDepth + 12,
+            paddingTop: head,
             paddingBottom: cut.barDepth + 12,
             paddingLeft: pad,
             paddingRight: pad,

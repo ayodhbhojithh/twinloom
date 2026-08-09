@@ -43,7 +43,11 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <SiteHeader />
+      {/* Everywhere but the landing page. That page puts the header inside its
+          card - the card is the whole window there, and a bar above it would be
+          a bar above the page rather than part of it. `NotchedCard` renders it,
+          bare. */}
+      {pathname === ROUTES.home ? null : <SiteHeader />}
 
       <div className="flex flex-1 items-start">
         {/* No rail. Every page it carried is in the header now, and a docked
