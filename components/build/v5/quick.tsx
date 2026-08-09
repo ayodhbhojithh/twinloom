@@ -45,7 +45,7 @@ import { cn } from "@/lib/utils";
 import { isPicture, type Attached } from "@/lib/build/upload";
 
 import { DropZone } from "./drop";
-import { CardFlourish, FootFlourish } from "./flourish";
+import { CardFlourish } from "./flourish";
 import {
   AddRow,
   Chip,
@@ -733,25 +733,25 @@ function Choose({
     <div className="relative w-full">
       {/* Held to the same measure the pane around it is, and centred. */}
       <div className="relative mx-auto w-full max-w-[1320px] px-2 sm:px-8">
-        {/* The lockup, and the one place on this panel the name is set.
+        {/* The mark alone, centred.
 
-            The header carries it and so does the foot of the page, so a third
-            setting has to earn itself. It does here: this panel is the front door
-            of the whole tool and somebody may well have arrived straight at it. */}
-        <div className="relative flex items-center justify-center gap-3.5">
+            The name was set beside it and has come off: the header carries it
+            two lines above this and the footer carries it again, so a third
+            setting was the site introducing itself to somebody already three
+            screens in. The mark on its own still says whose door this is, and
+            at this size it is the picture at the top of the panel rather than
+            a badge in front of a word. */}
+        <div className="relative flex justify-center">
           <Image
             src="/assets/logo.png"
             alt=""
-            width={96}
-            height={96}
+            width={192}
+            height={192}
             aria-hidden
             draggable={false}
-            sizes="96px"
-            className="size-9 flex-none object-contain sm:size-11"
+            sizes="192px"
+            className="size-16 flex-none object-contain sm:size-20"
           />
-          <span className="text-[clamp(20px,2.2vw,29px)] leading-none font-extrabold tracking-[0.16em] text-ink uppercase">
-            TwinLoom
-          </span>
         </div>
 
         <div className="relative mt-7 min-w-0 text-center">
@@ -897,29 +897,13 @@ function Choose({
           </div>
         </div>
 
-        {/* The closing line, with the rule running out either side of it. */}
-        <div className="relative mt-7 flex items-center justify-center gap-4">
-          <FootFlourish side="left" />
+        {/* No closing line under the panel.
 
-          <span className="flex flex-none items-center gap-3">
-            <Image
-              src="/assets/logo.png"
-              alt=""
-              width={64}
-              height={64}
-              aria-hidden
-              draggable={false}
-              sizes="64px"
-              className="size-6 flex-none object-contain"
-            />
-            <span className="max-w-[62ch] text-center text-[12.5px] leading-[1.6] text-label">
-              Start whichever way suits you. Everything you share stays together
-              as your brief develops.
-            </span>
-          </span>
-
-          <FootFlourish side="right" />
-        </div>
+            A dotted rule with beads on it carried "start whichever way suits
+            you" across the foot, which is the sentence the standfirst at the
+            top already opens with and the mark above it already says a second
+            time. Three panels of real choices do not need a fourth thing
+            under them agreeing with the first. */}
       </div>
     </div>
   );

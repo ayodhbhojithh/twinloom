@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Check } from "lucide-react";
+import { ArrowUpRight, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -77,16 +77,28 @@ const RULES = [
 ] as const;
 
 /**
- * The disciplines, as a wall that drifts past.
+ * The disciplines, as a row you push rather than one that drifts.
  *
- * The same arrangement the work uses on the landing page: one track holding the
- * run twice and shifting by exactly half its width, so the loop has no seam and
- * no gap, and each card hung at its own height so the row reads as a wall
- * rather than as a contact sheet. It stops under the pointer, because a card
- * nobody can hold still is a card nobody can read.
+ * It looped and moved on its own: the list rendered twice, the position
+ * wrapping at half the width so the seam had nothing to see, drifting at
+ * thirty-odd pixels a second and stopping under a hand. All of that is gone.
  *
- * Its own component because the landing page carries it too. Two copies of six
- * disciplines would disagree the first week one of them changed.
+ * A loop has to render everything twice, which puts a second `Custom
+ * software` on screen beside the first at any width wide enough to show the
+ * seam - the list is seven cards, not a ticker tape, and a reader who has
+ * counted to seven and sees an eighth has been told the count was a lie. And
+ * a row that moves on its own is a row that moves off whatever somebody was
+ * reading.
+ *
+ * What is left is the seven, once, in order, held still. It scrolls when
+ * there is more of it than there is room, and the two arrows step it a card
+ * at a time. They are only there when there is somewhere to go: rendered off
+ * a measurement rather than a guess about the width, so a screen wide enough
+ * to hold all seven shows no controls at all - and neither arrow is offered
+ * at an end it cannot move away from.
+ *
+ * Its own component because the landing page carries it too. Two copies of
+ * seven disciplines would disagree the first week one of them changed.
  */
 export function ServiceWall({
   className,
@@ -103,138 +115,93 @@ export function ServiceWall({
   bleed?: boolean;
 }) {
   const track = useRef<HTMLDivElement>(null);
-  const held = useRef(false);
-  const [grabbing, setGrabbing] = useState(false);
+  const [at, setAt] = useState({ start: true, end: true });
 
   /**
-   * The loop, and the hand on it.
+   * Where the row stands: hard against its left end, its right end, or
+   * neither.
    *
-   * Both move the same number - `scrollLeft` - which is what lets them be the
-   * same control rather than two. A CSS animation could do the drift on its
-   * own, but nothing can then take hold of it: a transform and a scroll
-   * position are two positions, and dragging one leaves the other where it
-   * was.
+   * Measured rather than assumed, and re-measured on scroll and on resize -
+   * the answer depends on how many cards fit, which depends on the width. A
+   * row with no overflow reads as both ends at once, which is what hides both
+   * arrows: there is nowhere to go in either direction.
    *
-   * The list is rendered twice and the position wraps at half the width, so
-   * the seam falls where the copy repeats and there is nothing to see. It
-   * stops while a drag is in progress and at no other time.
-   *
-   * It does not check `prefers-reduced-motion`. It did, and that was the
-   * reason it looked broken on a machine with animations turned off in the
-   * operating system - which is most Windows laptops that have ever had a
-   * battery-saver on. Asked for explicitly, so it runs; it is a slow drift
-   * rather than anything that flashes, and a hand on it stops it.
+   * The pixel of slack absorbs sub-pixel scroll positions. Without it a row
+   * scrolled fully right reports one-third of a pixel short of its own end
+   * on a fractional-DPR screen, and the arrow to nowhere stays lit.
    */
   useEffect(() => {
     const node = track.current;
     if (!node) return;
 
-    let frame = 0;
-    let last = 0;
-    /* The position is kept here, in a float, and written to the element -
-       never read back from it.
-
-       That is the fix for the row standing still. At thirty pixels a second a
-       frame moves it half a pixel, and `scrollLeft += 0.5` is a read, an add
-       and a write: the browser rounds the value it stores, the next read gets
-       the rounded number back, and the half pixel is lost every frame forever.
-       Accumulating outside the DOM means the fraction survives until it adds
-       up to something the element can hold. */
-    let pos = node.scrollLeft;
-
-    const tick = (now: number) => {
-      const step = last ? Math.min(now - last, 64) : 16;
-      last = now;
-
-      const half = node.scrollWidth / 2;
-
-      if (held.current) {
-        /* A hand is on it. Follow where it was put, so letting go does not
-           snap back to wherever the drift had got to. */
-        pos = node.scrollLeft;
-      } else {
-        pos += (step / 1000) * 34;
-
-        /* Wrap on the half, in both directions - a drag can run it backwards
-           past the start as easily as the drift runs it past the end. */
-        if (half > 0) {
-          if (pos >= half) pos -= half;
-          else if (pos < 0) pos += half;
-        }
-
-        node.scrollLeft = pos;
-      }
-
-      frame = requestAnimationFrame(tick);
+    const measure = () => {
+      const room = node.scrollWidth - node.clientWidth;
+      setAt({
+        start: node.scrollLeft <= 1,
+        end: node.scrollLeft >= room - 1,
+      });
     };
 
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    measure();
+    node.addEventListener("scroll", measure, { passive: true });
+
+    const watcher = new ResizeObserver(measure);
+    watcher.observe(node);
+
+    return () => {
+      node.removeEventListener("scroll", measure);
+      watcher.disconnect();
+    };
   }, []);
 
-  const from = useRef({ x: 0, left: 0 });
-
-  const grab = (event: React.PointerEvent) => {
+  /** One card and its gap, so a press moves by exactly what the eye counts. */
+  const step = (way: 1 | -1) => {
     const node = track.current;
     if (!node) return;
-    held.current = true;
-    setGrabbing(true);
-    from.current = { x: event.clientX, left: node.scrollLeft };
-    node.setPointerCapture(event.pointerId);
+    const card = node.firstElementChild as HTMLElement | null;
+    const by = card ? card.offsetWidth + 16 : node.clientWidth * 0.8;
+    node.scrollBy({ left: by * way, behavior: "smooth" });
   };
 
-  const move = (event: React.PointerEvent) => {
-    const node = track.current;
-    if (!node || !held.current) return;
-    node.scrollLeft = from.current.left - (event.clientX - from.current.x);
-  };
-
-  const drop = (event: React.PointerEvent) => {
-    held.current = false;
-    setGrabbing(false);
-    track.current?.releasePointerCapture(event.pointerId);
-  };
+  const still = at.start && at.end;
 
   return (
     <div
       className={cn(
-        "group",
+        "group relative",
         bleed ? "mx-[calc(50%-50vw)] w-screen" : "",
         className,
       )}
     >
       <div
         ref={track}
-        onPointerDown={grab}
-        onPointerMove={move}
-        onPointerUp={drop}
-        onPointerCancel={drop}
-        /* Faded at both ends rather than cut off. A row that stops at a
-           straight edge is a row that has been trimmed; one that thins into
-           the page carries on past it, which is the point of it moving. */
+        /* Faded at both ends rather than cut off - but only while there is
+           something past them. Thinning the ends of a row that already fits
+           dims the first and last card for no reason. */
         style={{
-          maskImage: EDGES,
-          WebkitMaskImage: EDGES,
+          maskImage: still ? undefined : EDGES,
+          WebkitMaskImage: still ? undefined : EDGES,
           scrollbarWidth: "none",
-          /* Not smooth. `html` carries `scroll-behavior: smooth` for the
-             page's own anchors, and a scroller that inherits it animates
-             every one of these one-pixel-a-frame writes - which cancel each
-             other out and leave the row standing still. */
-          scrollBehavior: "auto",
         }}
+        /* Centred while they fit, packed from the left once they do not.
+
+           `justify-center` on an overflowing scroller is the old trap: it
+           centres the whole track, which pushes the first card out past
+           `scrollLeft: 0` where nothing can ever scroll back to it. Applied
+           only when the row has room to spare, it does what it looks like -
+           seven cards sitting in the middle of a wide screen rather than
+           packed against one edge with a gap at the other. */
         className={cn(
-          "flex gap-4 overflow-x-auto px-4 py-3 [&::-webkit-scrollbar]:hidden sm:px-6",
-          grabbing ? "cursor-grabbing select-none" : "cursor-grab",
+          "flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 py-3 [&::-webkit-scrollbar]:hidden sm:px-6",
+          still && "justify-center",
         )}
       >
-        {[0, 1].map((copy) =>
-          SHOWN.map((entry, index) => (
-            <article
-              key={`${copy}-${entry.n}`}
-              aria-hidden={copy === 1}
-              className="group/card flex w-[clamp(238px,21vw,286px)] shrink-0 flex-col rounded-[22px] bg-field p-5 transition-transform duration-300 hover:-translate-y-1.5"
-            >
-              {/* The drawing, whole, on the card's own white.
+        {SHOWN.map((entry, index) => (
+          <article
+            key={entry.n}
+            className="group/card flex w-[clamp(238px,21vw,286px)] shrink-0 snap-start flex-col rounded-[22px] bg-field p-5 transition-transform duration-300 hover:-translate-y-1.5"
+          >
+            {/* The drawing, whole, on the card's own white.
 
                   It was cropped to fill a 16:10 band and faded out at the
                   bottom, which is how you treat a photograph - a photograph has
@@ -246,54 +213,87 @@ export function ServiceWall({
                   Contained instead, centred, on nothing. The picture's white and
                   the card's white are the same white, so there is no seam to
                   hide and no mask to hide it with. */}
-              <span className="relative block aspect-[5/4] w-full">
-                {entry.art ? (
-                  <Image
-                    src={entry.art}
-                    alt=""
-                    fill
-                    draggable={false}
-                    sizes="(max-width: 640px) 60vw, 286px"
-                    className="object-contain transition-transform duration-500 group-hover/card:scale-[1.06]"
+            <span className="relative block aspect-[5/4] w-full">
+              {entry.art ? (
+                <Image
+                  src={entry.art}
+                  alt=""
+                  fill
+                  draggable={false}
+                  sizes="(max-width: 640px) 60vw, 286px"
+                  className="object-contain transition-transform duration-500 group-hover/card:scale-[1.06]"
+                />
+              ) : (
+                <span className="absolute inset-0 flex items-center justify-center">
+                  <entry.icon
+                    aria-hidden
+                    className="size-12 text-mark transition-transform duration-500 group-hover/card:scale-[1.06]"
+                    strokeWidth={1.5}
                   />
-                ) : (
-                  <span className="absolute inset-0 flex items-center justify-center">
-                    <entry.icon
-                      aria-hidden
-                      className="size-12 text-mark transition-transform duration-500 group-hover/card:scale-[1.06]"
-                      strokeWidth={1.5}
-                    />
-                  </span>
-                )}
-              </span>
+                </span>
+              )}
+            </span>
 
-              {/* The number, in the line rather than on the picture.
+            {/* The number, in the line rather than on the picture.
 
                   It sat in a frosted disc over the top left corner, which is a
                   badge - a second object standing on the drawing. In the type it
                   is what it always was: a count. */}
-              <span className="mt-4 block font-mono text-[10px] font-bold tracking-[0.16em] text-idx tabular-nums">
-                {String(index + 1).padStart(2, "0")}
-              </span>
+            <span className="mt-4 block font-mono text-[10px] font-bold tracking-[0.16em] text-idx tabular-nums">
+              {String(index + 1).padStart(2, "0")}
+            </span>
 
-              <h3 className="mt-2 text-[17px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink">
-                {entry.n}
-              </h3>
+            <h3 className="mt-2 text-[17px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink">
+              {entry.n}
+            </h3>
 
-              {/* The sentence, and nothing after it.
+            {/* The sentence, and nothing after it.
 
                   Four bullets of what each discipline covers stood here, which
                   is a wall of list drifting past that nobody can stop to
                   read. The list belongs on the page this links to. Three lines,
                   clamped, so every card is one height without any of them being
                   padded to reach it. */}
-              <p className="mt-2 line-clamp-3 text-[13.5px] leading-[1.6] text-quiet">
-                {entry.sub}
-              </p>
-            </article>
-          )),
-        )}
+            <p className="mt-2 line-clamp-3 text-[13.5px] leading-[1.6] text-quiet">
+              {entry.sub}
+            </p>
+          </article>
+        ))}
       </div>
+
+      {/* One arrow each side, and neither one when there is nowhere to go.
+
+          They stand over the row's own ends rather than beside it, so the
+          seven cards keep the full width - a control column either side would
+          take a card's worth of room to hold a button that is not always
+          there. Hidden from the reading order: the row is a scroller and a
+          keyboard reaches it as one, so these are a pointer's shortcut rather
+          than the only way through. */}
+      {!still ? (
+        <>
+          <button
+            type="button"
+            aria-hidden
+            tabIndex={-1}
+            onClick={() => step(-1)}
+            disabled={at.start}
+            className="absolute top-1/2 left-2 hidden size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-pill border border-hair bg-field text-ink shadow-sm transition-opacity hover:bg-hair disabled:pointer-events-none disabled:opacity-0 sm:left-4 sm:flex"
+          >
+            <ChevronLeft className="size-5" strokeWidth={2.2} />
+          </button>
+
+          <button
+            type="button"
+            aria-hidden
+            tabIndex={-1}
+            onClick={() => step(1)}
+            disabled={at.end}
+            className="absolute top-1/2 right-2 hidden size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-pill border border-hair bg-field text-ink shadow-sm transition-opacity hover:bg-hair disabled:pointer-events-none disabled:opacity-0 sm:right-4 sm:flex"
+          >
+            <ChevronRight className="size-5" strokeWidth={2.2} />
+          </button>
+        </>
+      ) : null}
     </div>
   );
 }
