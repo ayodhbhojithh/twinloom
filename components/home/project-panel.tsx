@@ -5,6 +5,9 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 
+import { cn } from "@/lib/utils";
+
+import { OverviewOpen } from "./overview-open";
 import type { Project } from "./projects";
 
 /**
@@ -93,76 +96,91 @@ export function ProjectPanel({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: quiet ? 0 : 0.2 }}
-              className="pointer-events-auto relative grid h-full grid-rows-[minmax(0,34svh)_minmax(0,1fr)] overflow-hidden rounded-[20px] bg-field lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:grid-rows-1"
+              className={cn(
+                "pointer-events-auto relative grid h-full overflow-hidden rounded-[20px] bg-field",
+                /* The overview is two columns of words, so its halves are
+                   even and it stacks rather than reserving a third of a phone
+                   for a picture it does not have. */
+                project.overview
+                  ? "grid-rows-[minmax(0,auto)_minmax(0,auto)] lg:grid-cols-2 lg:grid-rows-1"
+                  : "grid-rows-[minmax(0,34svh)_minmax(0,1fr)] lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:grid-rows-1",
+              )}
             >
-              <motion.div
-                layoutId={`shot-${project.id}`}
-                className="artwork min-h-0 overflow-hidden"
-                style={{ backgroundColor: project.tone }}
-              >
-                {/* `fill` because the panel's half is sized by the grid, not by
-                    the picture, and `cover` because a scope illustration reads
-                    from its middle. `sizes` keeps a 3360px master from being
-                    fetched to fill a phone.
-
-                    Guarded, because this panel opens from the landing card as
-                    well as from the work, and two of that card's three slides
-                    are waiting for artwork. Their `image` is empty on purpose;
-                    handed an empty `src`, `next/image` throws rather than
-                    drawing nothing. The tone behind it is what shows. */}
-                {project.image ? (
-                  <Image
-                    src={project.image}
-                    alt={project.alt}
-                    fill
-                    quality={100}
-                    sizes="(max-width: 1024px) 100vw, 55vw"
-                    className="object-cover"
-                  />
-                ) : null}
-              </motion.div>
-
-              <div className="quiet-scroll flex min-h-0 flex-col overflow-y-auto p-6 sm:p-9 lg:p-12">
-                <motion.div
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: quiet ? 0 : 0.4,
-                    delay: quiet ? 0 : 0.16,
-                  }}
-                >
-                  <p className="font-mono text-[10px] font-bold tracking-[0.2em] text-label uppercase">
-                    {project.kind} / {project.year}
-                  </p>
-
-                  <h2
-                    id="project-open-name"
-                    className="mt-4 max-w-[18ch] text-[clamp(24px,2.8vw,42px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink"
+              {project.overview ? (
+                <OverviewOpen />
+              ) : (
+                <>
+                  <motion.div
+                    layoutId={`shot-${project.id}`}
+                    className="artwork min-h-0 overflow-hidden"
+                    style={{ backgroundColor: project.tone }}
                   >
-                    {project.name}
-                  </h2>
+                    {/* `fill` because the panel's half is sized by the grid, not
+                        by the picture, and `cover` because a scope illustration
+                        reads from its middle. `sizes` keeps a 3360px master from
+                        being fetched to fill a phone.
 
-                  <p className="mt-5 max-w-[48ch] text-[15.5px] leading-[1.65] text-body sm:text-[16px]">
-                    {project.summary}
-                  </p>
+                        Guarded, because this panel opens from the landing card
+                        as well as from the work, and two of that card's three
+                        slides are waiting for artwork. Their `image` is empty on
+                        purpose; handed an empty `src`, `next/image` throws rather
+                        than drawing nothing. The tone behind it is what
+                        shows. */}
+                    {project.image ? (
+                      <Image
+                        src={project.image}
+                        alt={project.alt}
+                        fill
+                        quality={100}
+                        sizes="(max-width: 1024px) 100vw, 55vw"
+                        className="object-cover"
+                      />
+                    ) : null}
+                  </motion.div>
 
-                  <dl className="mt-8 grid grid-cols-3 border-t border-hair">
-                    {project.facts.map((fact) => (
-                      <div
-                        key={fact.term}
-                        className="border-b border-hair py-3.5"
+                  <div className="quiet-scroll flex min-h-0 flex-col overflow-y-auto p-6 sm:p-9 lg:p-12">
+                    <motion.div
+                      initial={{ opacity: 0, y: 14 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: quiet ? 0 : 0.4,
+                        delay: quiet ? 0 : 0.16,
+                      }}
+                    >
+                      <p className="font-mono text-[10px] font-bold tracking-[0.2em] text-label uppercase">
+                        {project.kind} / {project.year}
+                      </p>
+
+                      <h2
+                        id="project-open-name"
+                        className="mt-4 max-w-[18ch] text-[clamp(24px,2.8vw,42px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink"
                       >
-                        <dt className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
-                          {fact.term}
-                        </dt>
-                        <dd className="mt-1.5 text-[15px] font-semibold text-ink">
-                          {fact.value}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                </motion.div>
-              </div>
+                        {project.name}
+                      </h2>
+
+                      <p className="mt-5 max-w-[48ch] text-[15.5px] leading-[1.65] text-body sm:text-[16px]">
+                        {project.summary}
+                      </p>
+
+                      <dl className="mt-8 grid grid-cols-3 border-t border-hair">
+                        {project.facts.map((fact) => (
+                          <div
+                            key={fact.term}
+                            className="border-b border-hair py-3.5"
+                          >
+                            <dt className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
+                              {fact.term}
+                            </dt>
+                            <dd className="mt-1.5 text-[15px] font-semibold text-ink">
+                              {fact.value}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </motion.div>
+                  </div>
+                </>
+              )}
 
               <button
                 ref={closer}

@@ -18,6 +18,7 @@ import type { LucideIcon } from "lucide-react";
 import { PageShell } from "@/components/layout";
 import { CutPanel } from "@/components/layout/cut-panel";
 import { STOPS } from "@/lib/journey";
+import { INCLUDED } from "@/lib/services";
 import { CONTACT_INFO, ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -60,27 +61,6 @@ const OFFER = [
     sub: "Managed software built for what your website sits on top of, by TwinCoreTech. Same group, same people to talk to.",
     by: "Built by TwinCoreTech",
   },
-] as const;
-
-/**
- * What every site gets, whatever it costs.
- *
- * Written as the eleven separate promises they are rather than compressed into
- * four bullets with commas in them. Each one is a thing that either happened or
- * did not, which is the only kind of inclusion worth listing.
- */
-const INCLUDED = [
-  "It works on a phone, a tablet and a computer",
-  "Your visual identity, applied to layouts we already have",
-  "Set up so search engines can find and read every page",
-  "Secure, with access managed where it is needed",
-  "Hosted, backed up and monitored",
-  "Built to load quickly and stay still while it loads",
-  "Reviewed for accessibility before it goes live",
-  "An enquiry form that reaches the right inbox",
-  "Analytics and Search Console, in accounts you own",
-  "Two weeks of attention after launch",
-  "A handover pack, and a session with the people who will use it",
 ] as const;
 
 /** Everything that is not the build. Ours, or a partner's, named either way. */
@@ -348,7 +328,7 @@ export function AboutView() {
                   already has, and the ragged row goes from two short to one. */}
           <ol className="mt-10 grid w-full gap-x-8 gap-y-3.5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {INCLUDED.map((line, n) => (
-              <li key={line} className="flex min-w-0 gap-3.5">
+              <li key={line.say} className="flex min-w-0 gap-3.5">
                 <span
                   aria-hidden
                   className="mt-px flex size-6 flex-none items-center justify-center rounded-pill bg-canvas font-mono text-[9.5px] font-bold text-idx tabular-nums"
@@ -356,7 +336,7 @@ export function AboutView() {
                   {String(n + 1).padStart(2, "0")}
                 </span>
                 <span className="min-w-0 text-[13.5px] leading-[1.55] text-body">
-                  {line}
+                  {line.say}
                 </span>
               </li>
             ))}

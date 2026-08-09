@@ -32,6 +32,16 @@ export interface Project {
   alt: string;
   /** The colour under the picture until it arrives. */
   tone: string;
+  /**
+   * Opens as the company rather than as a piece of work.
+   *
+   * Only the landing card's first screen sets it. That screen is not a project
+   * - it is the whole offer, and opening it to a picture and three facts about
+   * account managers was opening a portfolio entry for a portfolio that does
+   * not have one. Set here rather than matched on an id, so what the panel
+   * checks is a decision somebody wrote down.
+   */
+  overview?: boolean;
 }
 
 export const PROJECTS: readonly Project[] = [

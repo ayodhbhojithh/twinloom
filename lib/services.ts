@@ -1,11 +1,22 @@
 import {
+  Accessibility,
   Boxes,
+  CalendarDays,
+  Cloud,
   Compass,
+  FileText,
+  Gauge,
   Globe,
   Infinity as Loop,
   LifeBuoy,
+  LineChart,
+  Lock,
+  Mail,
   Megaphone,
+  MonitorSmartphone,
   Palette,
+  Search,
+  Type,
   type LucideIcon,
 } from "lucide-react";
 
@@ -178,5 +189,51 @@ export const SERVICES: readonly Service[] = [
       "Measurement in accounts you own",
       "The ongoing work of it after launch",
     ],
+  },
+];
+
+/**
+ * What every site gets, whatever it costs.
+ *
+ * Written as the eleven separate promises they are rather than compressed into
+ * four bullets with commas in them. Each one is a thing that either happened or
+ * did not, which is the only kind of inclusion worth listing.
+ *
+ * Here rather than on the about page because two screens read it now - that
+ * page and the panel the landing card opens - and a list of eleven promises
+ * kept in two places is a list that disagrees with itself the first time one of
+ * them is edited.
+ *
+ * The icon is the line said again in a picture, which is what lets the list be
+ * scanned rather than read. Where a line has no obvious object the icon is the
+ * nearest honest one: a gauge for loading quickly, a calendar for the fortnight
+ * after launch.
+ */
+export const INCLUDED: readonly { icon: LucideIcon; say: string }[] = [
+  {
+    icon: MonitorSmartphone,
+    say: "It works on a phone, a tablet and a computer",
+  },
+  {
+    icon: Type,
+    say: "Your visual identity, applied to layouts we already have",
+  },
+  {
+    icon: Search,
+    say: "Set up so search engines can find and read every page",
+  },
+  { icon: Lock, say: "Secure, with access managed where it is needed" },
+  { icon: Cloud, say: "Hosted, backed up and monitored" },
+  { icon: Gauge, say: "Built to load quickly and stay still while it loads" },
+  {
+    icon: Accessibility,
+    say: "Reviewed for accessibility before it goes live",
+  },
+  { icon: Mail, say: "An enquiry form that reaches the right inbox" },
+  { icon: LineChart, say: "Analytics and Search Console, in accounts you own" },
+  { icon: CalendarDays, say: "Two weeks of attention after launch" },
+  {
+    icon: FileText,
+    say: "A handover pack, and a session with the people who will use it",
   },
 ];

@@ -123,6 +123,7 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     image: "",
     alt: "",
     tone: "#ffffff",
+    overview: true,
   },
 
   /* The first: the water, with its words set on it in white.
