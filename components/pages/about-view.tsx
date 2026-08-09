@@ -509,8 +509,9 @@ export function AboutView() {
           Two stood here: a wall of specialist disciplines, and an ask under it.
           The wall is gone because this page is about who we are, and a row of
           six trades read from the services list was that page answering a
-          question this one had not asked - it is still on `/services`, where
-          somebody looking for it is looking for it.
+          question this one had not asked - it is on the home page's own
+          services section now, where somebody looking for it is looking for
+          it.
 
           The ask that stood below it went with it, not as well. Its words are
           here: leaving both would be two panels in a row asking for the same

@@ -1,13 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* `/partners` became `/services`.
+  /* `/partners` became `/services`, and `/services` has become a section of
+     the home page rather than a page of its own.
 
-     A permanent redirect rather than a deleted route: the old address is in
-     the sitemap Google already crawled, and a 404 throws away whatever the URL
-     had earned. */
+     Both old addresses are in the sitemap Google already crawled, and a 404
+     throws away whatever either URL had earned - so both are permanent
+     redirects rather than deleted routes, and both land on the section that
+     is now the whole of what either page said. */
   async redirects() {
-    return [{ source: "/partners", destination: "/services", permanent: true }];
+    return [
+      { source: "/partners", destination: "/#services", permanent: true },
+      { source: "/services", destination: "/#services", permanent: true },
+    ];
   },
 
   images: {
