@@ -9,13 +9,18 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
+  CalendarDays,
+  Code2,
+  LayoutGrid,
   Maximize2,
+  PencilLine,
 } from "lucide-react";
 
-import { ROUTES, SITE } from "@/lib/site";
+import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 import { Ballpit } from "./ballpit";
+import { MarkStage } from "./mark-stage";
 import { GradientWaves } from "./gradient-waves";
 import { ProjectPanel } from "./project-panel";
 import { WaveDots } from "./wave-dots";
@@ -992,31 +997,27 @@ export function NotchedCard({ className }: { className?: string }) {
         </div>
       ) : null}
 
-      {/* The fifth screen: the mark, centred, and nothing else at all.
+      {/* The fifth screen: the mark staged, with the whole offer beside it.
 
-          It has been three other things. A logo on the right with a paragraph on
-          the left and rings behind it, which is the layout every page like this
-          already has. A repeating band bleeding off both edges, which had to cut
-          a mark at each end and then fade the ends to hide the cut. Nine whole
-          marks in a row, which is a row of stickers.
+          The long version, and the only screen here that is. The four before it
+          each make one argument and open one door - right for a card that turns,
+          wrong for the one somebody might not turn past. This one names the
+          trades, makes the claim, says the line under it, gives the paragraph
+          and puts all four ways in on the same row.
 
-          The fault they shared is that each was the mark plus an idea about the
-          mark. This is the mark. Four screens argue and this one signs, which is
-          why it carries no claim, no sentence and no way on - all three are said
-          on the screens either side of it, and a signature that explains itself
-          is not one.
+          Two columns on a wide card and one on a narrow one, and the artwork
+          leads on the narrow one: a picture at the top of a phone screen says
+          which company this is before the first line of type does. `order` moves
+          it, so the reading order and the composition stay separate decisions.
 
-          Sized against both edges of the card rather than one. `max-h-full`
-          inside a box that already holds the padding is what keeps it whole on a
-          short window; the width clamp is what stops it filling a wide one. A
-          mark that has to be cropped to fit is a mark drawn at the wrong
-          size. */}
+          The buttons wrap rather than scroll. Four of them across a phone is
+          four rows, which is fine - a row that scrolls sideways hides doors. */}
       {shown.view === "mark" ? (
         <div
-          className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
+          className="pointer-events-none absolute inset-0 z-10 flex items-center"
           style={{
-            paddingTop: cut.barDepth + 20,
-            paddingBottom: cut.barDepth + 20,
+            paddingTop: cut.barDepth + 12,
+            paddingBottom: cut.barDepth + 12,
             paddingLeft: pad,
             paddingRight: pad,
           }}
@@ -1024,21 +1025,97 @@ export function NotchedCard({ className }: { className?: string }) {
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={shown.id}
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.02 }}
-              transition={{ duration: 0.44, ease: [0.4, 0, 0.2, 1] }}
-              className="flex h-full w-full items-center justify-center"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
+              className="flex w-full flex-col items-center gap-6 lg:flex-row lg:items-center lg:gap-10"
             >
-              <Image
-                src="/assets/logo.png"
-                alt={SITE.name}
-                width={1200}
-                height={1200}
-                priority={false}
-                sizes="(max-width: 640px) 76vw, 52vw"
-                className="h-auto max-h-full w-[clamp(230px,46vw,660px)] object-contain"
-              />
+              <MarkStage className="w-[64%] max-w-[290px] shrink-0 lg:order-2 lg:w-[46%] lg:max-w-none" />
+
+              <div className="min-w-0 text-center lg:order-1 lg:flex-1 lg:text-left">
+                {/* The trades, as a list rather than a sentence. Dots between
+                    them, because a comma would make it a sentence and it is a
+                    label. */}
+                <ul className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 font-mono text-[9.5px] font-bold tracking-[0.16em] text-idx uppercase lg:justify-start">
+                  {shown.kicker?.map((trade, n) => (
+                    <li key={trade} className="flex items-center gap-2.5">
+                      {n > 0 ? (
+                        <span
+                          aria-hidden
+                          className="size-1 rounded-pill bg-mark"
+                        />
+                      ) : null}
+                      {trade}
+                    </li>
+                  ))}
+                </ul>
+
+                <h1 className="mx-auto mt-3 max-w-[20ch] text-[clamp(28px,3.6vw,52px)] leading-[1.06] font-extrabold tracking-[-0.04em] text-ink lg:mx-0">
+                  {shown.claim?.[0]}
+                  <span className="thread-text block">{shown.claim?.[1]}</span>
+                </h1>
+
+                <p className="mx-auto mt-4 max-w-[38ch] text-[clamp(15px,1.35vw,20px)] leading-[1.35] font-bold tracking-[-0.02em] text-ink lg:mx-0">
+                  {shown.lead}
+                </p>
+
+                <p className="mx-auto mt-3.5 max-w-[58ch] text-[13.5px] leading-[1.62] text-quiet sm:text-[14.5px] lg:mx-0">
+                  {shown.note}
+                </p>
+
+                {/* Four doors, one row, and the first one filled. Where they all
+                    look the same there is no first choice, and a row of four
+                    equal buttons is four decisions rather than one. */}
+                <div className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 lg:justify-start">
+                  <Link
+                    href={ROUTES.build}
+                    className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+                  >
+                    <PencilLine aria-hidden className="size-4 shrink-0" />
+                    Scope your website
+                    <ArrowRight
+                      aria-hidden
+                      className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
+                      strokeWidth={2.4}
+                    />
+                  </Link>
+
+                  {[
+                    {
+                      at: ROUTES.services,
+                      icon: LayoutGrid,
+                      say: "View our services",
+                    },
+                    {
+                      at: ROUTES.book,
+                      icon: CalendarDays,
+                      say: "Book a meeting",
+                    },
+                    {
+                      at: ROUTES.services,
+                      icon: Code2,
+                      say: "Custom software",
+                    },
+                  ].map((way) => (
+                    <Link
+                      key={way.say}
+                      href={way.at}
+                      className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
+                    >
+                      <way.icon
+                        aria-hidden
+                        className="size-4 shrink-0 text-idx"
+                      />
+                      {way.say}
+                      <ArrowRight
+                        aria-hidden
+                        className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
+                      />
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </motion.div>
           </AnimatePresence>
         </div>

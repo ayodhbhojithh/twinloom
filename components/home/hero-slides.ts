@@ -37,13 +37,14 @@ import type { Project } from "./projects";
    off; the last one stops, and what is left is the sentence and the way in. A
    front door that never stops talking is one people stop reading.
 
-   The fifth is the mark, centred, at the size of the card, with not a word on
-   it. Four screens argue and this one signs.
+   The fifth is the mark staged - haloes and glass beads around it - with the
+   whole offer set beside it: the trades, the claim, the line under it, the
+   paragraph and all four ways in.
 
-   Which is the shape of the whole card: who is making it, what is on offer, what
-   you get before agreeing to anything, what it costs to find out - and then the
-   name. Only the screen that makes the offer carries both ways in; the two in
-   between take one each, and the last takes none.
+   Which is the shape of the card. The first four each make one argument and open
+   one door, because a card that turns should not ask for the same thing five
+   times. The fifth is the long version, for somebody who lands on it and turns
+   no further.
 --------------------------------------------------------------------------- */
 
 /**
@@ -82,6 +83,10 @@ export interface HeroSlide extends Project {
   view: SlideView;
   claim?: [string, string];
   lead?: string;
+  /** The line above the claim, set as a list. Only the mark screen has one. */
+  kicker?: readonly string[];
+  /** The paragraph under the lead, where a screen has more to say than a line. */
+  note?: string;
 }
 
 export const HERO_SLIDES: readonly HeroSlide[] = [
@@ -181,25 +186,36 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     tone: "#ffffff",
   },
 
-  /* The fifth: the mark, and nothing else.
+  /* The fifth: the mark staged, with the whole offer written beside it.
 
-     No `claim` and no `lead`, which is the design. Four screens argue and this
-     one signs. What it still carries is what a `Project` needs, because the
-     panel that opens from the corner disc reads those fields and an empty panel
-     is a broken one. */
+     The one screen that says everything at once. The four before it each make a
+     single argument and take a single way on, which is right for a card that
+     turns - but somebody who lands on this one and turns no further should still
+     have been told what this company does and been given every door. So this is
+     the long version: the trades along the top, the claim, the line under it,
+     the paragraph, and all four ways in. */
   {
     id: "hero-5",
     view: "mark",
-    name: "The same people",
-    kind: "Who you deal with",
+    name: "Your website, your brand",
+    kind: "The whole of it",
     year: "2026",
     summary:
       "Nobody hands you to an account manager. The people who scope the work are the people who build it, and they are the people you email a year later.",
     facts: [
+      { term: "We build", value: "Sites and the software under them" },
+      { term: "Contracts", value: "One" },
       { term: "Account managers", value: "None" },
-      { term: "Who builds it", value: "Who scoped it" },
-      { term: "Who answers later", value: "The same people" },
     ],
+    kicker: [
+      "Websites",
+      "Brand identity",
+      "Digital presence",
+      "Digital services",
+    ],
+    claim: ["Your website. Your brand.", "Connected to your systems."],
+    lead: "We build digital experiences that move you forward.",
+    note: "TwinLoom designs and builds websites, digital presence and brand-led experiences that connect the dots and deliver results. When you need more than a website, our sister company TwinCoreTech builds the custom software around your business, your systems and your future.",
     image: "",
     alt: "",
     tone: "#ffffff",
