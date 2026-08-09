@@ -42,8 +42,20 @@ import { useEffect, useRef } from "react";
 /** How many threads, whatever the box is. */
 const COUNT = 315;
 
-/** Where the swell sits, as a share of the height. */
-const CENTRE = 0.446;
+/**
+ * How much of the box the field is allowed, and where its middle sits.
+ *
+ * Every vertical number below is a share of the height, and they add up: the
+ * floor, both clusters, both roughnesses and the ghosts' extra reach. Summed at
+ * their worst that came to more than half the box from the middle, which is a
+ * field with its tallest threads sliced off at the top and bottom edges.
+ *
+ * `ROOM` scales all of them together so the worst case fits, and the middle sits
+ * at the middle - nothing to clip, and one number to change if the box ever gets
+ * taller.
+ */
+const ROOM = 0.78;
+const CENTRE = 0.5;
 
 /** The swell: one fast wave and one slow, both as shares of the height. */
 const RIDE = [
@@ -93,9 +105,6 @@ const GHOST_RAMP = [
   [0.75, "#8ab0da"],
   [1, "#9fe5d2"],
 ] as const;
-
-/** The page's own ground, which is what the ends of the field fade into. */
-const GROUND = "247,248,251";
 
 type Rgb = readonly [number, number, number];
 
@@ -164,6 +173,7 @@ export function LoomWave({
       for (const wave of RIDE) {
         y +=
           height *
+          ROOM *
           wave.reach *
           Math.sin(
             along * Math.PI * wave.turns + wave.phase + t * wave.speed * speed,
@@ -187,10 +197,11 @@ export function LoomWave({
           const x = along * width;
           const middle = ride(along, t);
 
-          let reach = height * FLOOR;
+          let reach = height * ROOM * FLOOR;
           for (const wave of SWELL) {
             reach +=
               height *
+              ROOM *
               wave.reach *
               Math.sin(
                 along * Math.PI * wave.turns +
@@ -200,7 +211,7 @@ export function LoomWave({
                 2;
           }
           for (const grain of ROUGH) {
-            reach += height * grain.reach * Math.sin(i * grain.rate);
+            reach += height * ROOM * grain.reach * Math.sin(i * grain.rate);
           }
 
           /* Thinned at both ends. An arch rather than a ramp, because the field
@@ -208,7 +219,7 @@ export function LoomWave({
           const edge = Math.sin(Math.PI * along);
 
           if (ghosts) {
-            reach += height * (GHOST + GHOST_ROUGH * Math.sin(i * 0.41));
+            reach += height * ROOM * (GHOST + GHOST_ROUGH * Math.sin(i * 0.41));
             ctx.strokeStyle = css(sample(GHOST_RGB, along), 0.16 + edge * 0.24);
             ctx.lineWidth = i % 4 === 0 ? 0.9 : 0.6;
           } else {
@@ -272,18 +283,25 @@ export function LoomWave({
         ctx.stroke();
       }
 
-      /* The ends given away. The arch above already thins them; this takes the
-         last of it, so the field runs off the sides rather than stopping at
-         them. */
+      /* The ends given away, by erasing rather than by painting.
+
+         It used to fill the two ends with the page's own grey, which meant this
+         drawing had to know what colour the page behind it was - and it had the
+         wrong one, so both ends came out as pale rectangles laid over a slightly
+         darker ground. `destination-out` takes the alpha away instead: the
+         threads simply stop existing towards the edges and whatever is behind
+         shows through, on any page and any colour. */
+      ctx.globalCompositeOperation = "destination-out";
       const fade = ctx.createLinearGradient(0, 0, width, 0);
-      fade.addColorStop(0, `rgba(${GROUND},1)`);
-      fade.addColorStop(0.055, `rgba(${GROUND},0.15)`);
-      fade.addColorStop(0.1, `rgba(${GROUND},0)`);
-      fade.addColorStop(0.9, `rgba(${GROUND},0)`);
-      fade.addColorStop(0.945, `rgba(${GROUND},0.15)`);
-      fade.addColorStop(1, `rgba(${GROUND},1)`);
+      fade.addColorStop(0, "rgba(0,0,0,1)");
+      fade.addColorStop(0.05, "rgba(0,0,0,0.72)");
+      fade.addColorStop(0.12, "rgba(0,0,0,0)");
+      fade.addColorStop(0.88, "rgba(0,0,0,0)");
+      fade.addColorStop(0.95, "rgba(0,0,0,0.72)");
+      fade.addColorStop(1, "rgba(0,0,0,1)");
       ctx.fillStyle = fade;
       ctx.fillRect(0, 0, width, height);
+      ctx.globalCompositeOperation = "source-over";
     };
 
     const tick = (now: number) => {

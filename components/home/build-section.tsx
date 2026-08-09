@@ -31,21 +31,54 @@ export function BuildSection() {
           page inserted into a wider one - the gutters stop lining up and the
           tool below looks inset rather than placed. */}
       <div className="w-full">
-        {/* The cloth, on its own.
+        {/* The cloth, and the words under it.
 
-            It used to weave the words "Build your website" out of the same
-            threads and let you play them, a note per strand. The word is gone
-            and the instrument with it: what stands here now is the warp under a
-            slow swell, which is a picture of what a loom does rather than a
-            sentence made out of one.
+            It used to weave "Build your website" out of these same threads and
+            let you play them, a note per strand. The word is gone and the
+            instrument with it: what stands here is the warp under a slow swell,
+            which is a picture of what a loom does rather than a sentence made
+            out of one - and the sentence is set in type underneath, where a
+            sentence belongs. */}
+        {/* Out past the page's gutter, on both sides.
 
-            The heading stays, for a screen reader and for the document's
-            outline. A canvas is a picture, and a picture is not a heading -
-            which is truer now than it was, because there are no letters in this
-            one at all. */}
-        <h2 className="sr-only">Build your website</h2>
+            Everything else in this section is held inside the frame, and this
+            one thing is not: a field of threads meant to carry on past the
+            window is a field that must not stop where a paragraph stops. The
+            negative margin is exactly the gutter, so it takes the whole width
+            without knowing what the width is. */}
+        <LoomWave className="reveal -mx-(--page-gutter) w-auto" />
 
-        <LoomWave className="reveal w-full" />
+        {/* Centred, and the only centred thing in this section.
+
+            What is said here is one address to the room and it can sit in the
+            middle of the page; the tool below it is work, and work has a left
+            edge to read down.
+
+            The heading is a real one now rather than the screen-reader-only one
+            that stood in for the canvas. A picture is not a heading however many
+            letters were woven into it, and now that there are none at all there
+            is nothing to argue about. */}
+        <div className="reveal mt-8 flex flex-col items-center text-center [--step:1]">
+          {/* No eyebrow over it, and no rule under that.
+
+              The word TwinLoom stood here in small caps with a short rule below
+              it, which is a lockup: a name, a mark and then a heading. The name
+              is in the bar at the top of every page and again at the foot of it,
+              and a third setting of it four inches above the second is a page
+              introducing itself to somebody who has been reading it for a
+              while. */}
+          <h2 className="max-w-[22ch] text-[clamp(34px,4.4vw,64px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
+            Weave your digital presence.
+          </h2>
+
+          {/* Two commas rather than a dash. The sentence is one thing with an
+              aside folded into the middle of it, and a dash there would make the
+              aside the point. */}
+          <p className="mt-4 max-w-[52ch] text-[clamp(16px,1.4vw,21px)] leading-[1.45] text-quiet">
+            Your website, your brand and the systems behind them, woven into one
+            clear digital presence.
+          </p>
+        </div>
 
         {/* The run-through itself, not a shorter version of it. It reads the
             same answers as the build page, so somebody who starts here and

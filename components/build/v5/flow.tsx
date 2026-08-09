@@ -177,23 +177,17 @@ export function BuildFlow() {
           read what either of them meant. "Carry on through the questions" is
           the only place the choice needs to be, because it is the only place
           somebody has the information to make it. */}
-      {/* Centred, like the booking page's head and like every step heading on
-          the surface below it. Left against the edge it was one short block in
-          the corner of a very wide screen, with the question it introduces
-          centred underneath. */}
-      <div className="mb-7 text-center sm:mb-8">
-        {/* `text-balance` off below `sm`. Balancing evens the lines, which on a
-            phone turns a four line headline into four short ones with a ragged
-            block of space beside them - the measure is already doing the
-            breaking there. */}
-        <h1 className="section-head mx-auto max-w-[26ch] text-ink max-sm:[text-wrap:pretty]">
-          Build your website.
-          <span className="text-quiet">
-            {" "}
-            Answer what you like, we write it down.
-          </span>
-        </h1>
-      </div>
+      {/* No heading over the tool.
+
+          It said "Build your website. Answer what you like, we write it down.",
+          which is exactly what the section above it now says in type twice the
+          size - and this component renders inside that section as well as on its
+          own page. Two headings a hand's width apart saying the same thing is
+          the page stammering.
+
+          The step's own question is the heading from here down, which is the
+          right one: it changes as somebody moves through the run, and it is the
+          only thing on the surface they have to read. */}
 
       {/* The tool and the panel, side by side.
 
