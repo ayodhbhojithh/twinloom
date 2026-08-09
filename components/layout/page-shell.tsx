@@ -87,7 +87,7 @@ export function PageHeading({
         </p>
       ) : null}
 
-      <h1 className="mb-4 max-w-[980px] text-[30px] leading-[1.12] font-extrabold tracking-[-0.028em] text-ink sm:text-[38px]">
+      <h1 className="mb-4 max-w-[1280px] text-[30px] leading-[1.12] font-extrabold tracking-[-0.028em] text-ink sm:text-[38px]">
         {title}
       </h1>
 
