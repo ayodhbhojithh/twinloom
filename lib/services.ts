@@ -27,7 +27,7 @@ export interface Offer {
   n: string;
   sub: string;
   /**
-   * The card's own picture, in `public/services`.
+   * The card's own picture, in `public/assets/services`.
    *
    * Optional, and the card has a proper answer for its absence: the Lucide icon
    * above, set large on a wash of the mark's two colours. That is not a
@@ -47,7 +47,7 @@ export const OFFER: readonly Offer[] = [
   {
     icon: Globe,
     kicker: "What we do",
-    art: "/services/websites.png",
+    art: "/assets/services/websites.png",
     n: "Websites",
     sub: "From a handful of pages through to online shops, booking systems, and sites that connect to the software you already run.",
     by: "Built by TwinLoom",
@@ -62,7 +62,7 @@ export const OFFER: readonly Offer[] = [
   {
     icon: Boxes,
     kicker: "What sits behind it",
-    art: "/services/custom-software.png",
+    art: "/assets/services/custom-software.png",
     n: "Custom software",
     sub: "Managed software built for what your website sits on top of, by TwinCoreTech. Same group, same people to talk to.",
     by: "Built by TwinCoreTech",
@@ -80,7 +80,7 @@ export interface Service {
   n: string;
   sub: string;
   /**
-   * The card's own picture, in `public/services`.
+   * The card's own picture, in `public/assets/services`.
    *
    * Optional, and the card has a proper answer for its absence: the Lucide icon
    * above, set large on a wash of the mark's two colours. That is not a
@@ -104,7 +104,7 @@ export interface Service {
 export const SERVICES: readonly Service[] = [
   {
     icon: Compass,
-    art: "/services/digital-consultancy.png",
+    art: "/assets/services/digital-consultancy.png",
     n: "Digital consultancy",
     sub: "Working out what the site has to do, who it is for, and what it needs to connect to.",
     by: "By us",
@@ -117,7 +117,7 @@ export const SERVICES: readonly Service[] = [
   },
   {
     icon: LifeBuoy,
-    art: "/services/ongoing-services.png",
+    art: "/assets/services/ongoing-services.png",
     n: "Ongoing services",
     sub: "Keeping the site current once it is live, and the services that run alongside it.",
     by: "By us",
@@ -131,7 +131,7 @@ export const SERVICES: readonly Service[] = [
   },
   {
     icon: Palette,
-    art: "/services/brand-identity.png",
+    art: "/assets/services/brand-identity.png",
     n: "Brand identity",
     sub: "Logo, visual identity, photography and imagery, artwork, and the words on the page.",
     by: "Us, or a partner",
@@ -144,7 +144,7 @@ export const SERVICES: readonly Service[] = [
   },
   {
     icon: Megaphone,
-    art: "/services/campaign-management.png",
+    art: "/assets/services/campaign-management.png",
     n: "Digital campaign management",
     sub: "Running and measuring campaigns once the site is live.",
     by: "With a partner",

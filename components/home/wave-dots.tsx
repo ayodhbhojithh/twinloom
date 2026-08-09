@@ -122,12 +122,23 @@ export function WaveDots({
    * another.
    */
   phase = 0,
+  /**
+   * How much of the lattice to draw, against the full one.
+   *
+   * The counts above are set for a field that fills the window. The same numbers
+   * inside a thumbnail two hundred pixels wide are eleven thousand dots inside
+   * an area that can show a few hundred - which costs the same as the full field
+   * and looks like grey paper. A share of them, and it reads as the same drawing
+   * seen from further away, which is what a preview is.
+   */
+  density = 1,
 }: {
   className?: string;
   amplitude?: number;
   speed?: number;
   interactive?: boolean;
   phase?: number;
+  density?: number;
 }) {
   const surface = useRef<HTMLCanvasElement>(null);
 
@@ -163,8 +174,11 @@ export function WaveDots({
        mount, replace five and a half thousand built every frame. Its alpha is
        carried on the context instead, which is a number rather than a string to
        parse. That is the whole reason this many dots is affordable. */
-    const columnInk = Array.from({ length: COLUMNS + 1 }, (_unused, col) => {
-      const c = mixRgb(from, to, col / COLUMNS);
+    const rows = Math.max(8, Math.round(ROWS * density));
+    const columns = Math.max(24, Math.round(COLUMNS * density));
+
+    const columnInk = Array.from({ length: columns + 1 }, (_unused, col) => {
+      const c = mixRgb(from, to, col / columns);
       return `rgb(${c.r}, ${c.g}, ${c.b})`;
     });
 
@@ -327,11 +341,11 @@ export function WaveDots({
       held.pull += (wanted.pull - held.pull) * 0.05;
       heldPhase += (now.phase - heldPhase) * 0.045;
 
-      for (let row = 0; row < ROWS; row += 1) {
-        const depth = (row + 0.5) / ROWS;
+      for (let row = 0; row < rows; row += 1) {
+        const depth = (row + 0.5) / rows;
 
-        for (let col = 0; col <= COLUMNS; col += 1) {
-          const along = col / COLUMNS;
+        for (let col = 0; col <= columns; col += 1) {
+          const along = col / columns;
           const { x, y, near, roll } = place(along, depth, t);
 
           if (x < -24 || x > width + 24) continue;
@@ -480,7 +494,12 @@ export function WaveDots({
       canvas.removeEventListener("pointermove", onMove);
       canvas.removeEventListener("pointerleave", onLeave);
     };
-  }, []);
+    /* The density is read once, at mount, and it is the only prop here that is:
+       the lattice, the column colours and the whole loop are built from it, so
+       changing it means building all of that again. Nothing changes it while a
+       card is on the screen - the full field asks for one and the thumbnail asks
+       for a fraction, and each of them is a different element. */
+  }, [density]);
 
   return (
     <canvas

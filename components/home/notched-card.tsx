@@ -19,7 +19,7 @@ import { Ballpit } from "./ballpit";
 import { GradientWaves } from "./gradient-waves";
 import { ProjectPanel } from "./project-panel";
 import { WaveDots } from "./wave-dots";
-import { HERO_SLIDES } from "./hero-slides";
+import { HERO_SLIDES, type SlideView } from "./hero-slides";
 import { type Project } from "./projects";
 
 /* ---------------------------------------------------------------------------
@@ -938,7 +938,13 @@ export function NotchedCard({ className }: { className?: string }) {
           )}
           style={{ backgroundColor: next.tone }}
         >
-          {/* A slide with no artwork shows the colour it will arrive on. */}
+          {/* What is actually next, drawn.
+
+              It showed `tone`, which for three screens with no photograph
+              between them is three white rectangles - a preview of nothing. Each
+              screen is a drawing, so the thumbnail draws it: the same components
+              at a fraction of the work, which is what makes this affordable at
+              all. A picture still wins where a slide has one. */}
           {next.image ? (
             <Image
               src={next.image}
@@ -948,7 +954,9 @@ export function NotchedCard({ className }: { className?: string }) {
               sizes="200px"
               className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
             />
-          ) : null}
+          ) : (
+            <Preview view={next.view} />
+          )}
         </span>
       </button>
 
@@ -1005,6 +1013,87 @@ export function NotchedCard({ className }: { className?: string }) {
 }
 
 /** One of the three controls that stand in the notch. */
+/**
+ * The next screen, at the size of a thumbnail.
+ *
+ * The same three drawings, each asked to do far less. That is the whole design
+ * of this: a preview that is a different drawing is not a preview, and a preview
+ * that is the same drawing at full cost doubles what the card is already paying.
+ *
+ * So every one of them takes its own reduction. The field draws a third of its
+ * lattice, because eleven thousand dots inside two hundred pixels costs the same
+ * as the full field and looks like grey paper. The water drops to the low
+ * raymarch tier, loses its grain and its parallax, and pulls the camera back so
+ * a swell reads at this size. The pit keeps a sixth of its balls, which is still
+ * a pit - and loses the cursor, because the pointer that matters here is the one
+ * pressing the button this sits inside.
+ *
+ * Nothing here is interactive. It is a picture of a screen, and a picture that
+ * answers the pointer is a control the button around it has to argue with.
+ */
+function Preview({ view }: { view: SlideView }) {
+  if (view === "waves") {
+    return (
+      <GradientWaves
+        className="absolute inset-0"
+        horizonColor="#00b4e3"
+        waveColor="#0087ff"
+        crestColor="#0098ff"
+        speed={0.5}
+        amplitude={2.05}
+        waveScale={0.85}
+        waveRatio={0.9}
+        swell={35}
+        turbulence={20.5}
+        tilt={1.11}
+        zoom={0.72}
+        height={5.5}
+        fogDepth={15}
+        detail="low"
+        brightness={0.5}
+        opacity={1}
+        mouseInteraction={false}
+        grain={false}
+      />
+    );
+  }
+
+  if (view === "balls") {
+    return (
+      <Ballpit
+        className="absolute inset-0"
+        count={36}
+        gravity={0}
+        friction={1}
+        wallBounce={0.95}
+        followCursor={false}
+        colors={[0x2a98fe, 0x06dbaf]}
+        accents={[
+          [0xf5c518, 0xffa41a],
+          [0xff8a1a, 0xff4d1a],
+          [0xff5a5a, 0xe11d38],
+          [0x3ddc84, 0x0f9d58],
+          [0x4aa8ff, 0x1663d6],
+        ]}
+        accentShare={0.18}
+        ambientColor={0xffffff}
+        ambientIntensity={1}
+        lightIntensity={190}
+        minSize={0.5}
+        maxSize={1.1}
+        maxVelocity={0.05}
+        maxZ={1.6}
+      />
+    );
+  }
+
+  if (view === "wave") {
+    return <WaveDots className="absolute inset-0" density={0.34} />;
+  }
+
+  return null;
+}
+
 function Tool({
   label,
   onClick,
