@@ -103,7 +103,7 @@ export function BuildSection() {
             height={422}
             draggable={false}
             sizes="100vw"
-            className="block h-auto w-full mix-blend-multiply"
+            className="wave-breathe block h-auto w-full mix-blend-multiply"
             style={{ maskImage: WAVE_EDGE, WebkitMaskImage: WAVE_EDGE }}
           />
         </div>

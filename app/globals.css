@@ -1117,6 +1117,49 @@
      `transition-property` from a later cascade layer - it would win, and the
      reveal on those two would simply not run. Nothing sets `animation`.
   --------------------------------------------------------------------------- */
+  /* ---------------------------------------------------------------------------
+     The wave, breathing.
+
+     A picture that never moves on a page where three other screens do reads as
+     an illustration somebody pasted in. This gives it the least motion that
+     still counts as alive: a slow slide of a percent either way with the
+     brightness rising and falling on the same clock, over nineteen seconds -
+     long enough that nobody catches it starting and nobody sees it loop.
+
+     The slide is a transform, which does make a stacking context - and that is
+     safe here only because it is on the image itself. An element's own stacking
+     context holds its descendants; its own `mix-blend-mode` still resolves
+     against the page behind it. On the wrapper it would isolate the blend and
+     put the white box back, which is the mistake this file has already made
+     twice with `will-change` and with `mask`.
+
+     Scaled a shade over one, so a percent of travel can never pull an edge into
+     view. Nothing here is on the compositor's critical path: no layout, no
+     paint, two properties, one element.
+  --------------------------------------------------------------------------- */
+  @keyframes wave-breathe {
+    0%,
+    100% {
+      transform: translate3d(-0.8%, 0, 0) scale(1.02);
+      opacity: 0.9;
+    }
+    50% {
+      transform: translate3d(0.8%, 0, 0) scale(1.02);
+      opacity: 1;
+    }
+  }
+
+  .wave-breathe {
+    animation: wave-breathe 19s ease-in-out infinite;
+  }
+
+  /* Asked for less motion, and this is nothing but motion. */
+  @media (prefers-reduced-motion: reduce) {
+    .wave-breathe {
+      animation: none;
+    }
+  }
+
   @keyframes reveal {
     from {
       opacity: 0;

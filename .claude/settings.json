@@ -108,7 +108,8 @@
       "Bash(rm -f public/assets/wave-original.png)",
       "Bash(rm -f public/assets/wave.png)",
       "Bash(rm -rf .next/dev/cache/images)",
-      "Bash(rm -f public/assets/wave2.png)"
+      "Bash(rm -f public/assets/wave2.png)",
+      "Bash(transform)"
     ],
     "additionalDirectories": [
       "c:\\Users\\prave\\Desktop\\PROJECTS\\very-good-websites\\components\\home",
