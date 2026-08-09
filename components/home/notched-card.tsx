@@ -827,12 +827,12 @@ export function NotchedCard({ className }: { className?: string }) {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
               >
-                <h1 className="mx-auto max-w-[22ch] text-[clamp(42px,7vw,104px)] leading-[1.0] font-extrabold tracking-[-0.05em] text-white">
+                <h1 className="mx-auto max-w-[20ch] text-[clamp(32px,4.6vw,64px)] leading-[1.04] font-extrabold tracking-[-0.042em] text-white">
                   {shown.claim?.[0]}
                   <span className="thread-light block">{shown.claim?.[1]}</span>
                 </h1>
 
-                <p className="mx-auto mt-6 max-w-[62ch] text-[17px] leading-[1.6] text-white/85 sm:text-[20px]">
+                <p className="mx-auto mt-5 max-w-[56ch] text-[15px] leading-[1.62] text-white/85 sm:text-[16.5px]">
                   {shown.lead}
                 </p>
 
@@ -842,12 +842,12 @@ export function NotchedCard({ className }: { className?: string }) {
                       look for. */}
                   <Link
                     href={ROUTES.services}
-                    className="group/way pointer-events-auto inline-flex items-center gap-2.5 rounded-pill bg-field px-6 py-3.5 text-[16px] font-semibold whitespace-nowrap text-ink transition-opacity hover:opacity-90"
+                    className="group/way pointer-events-auto inline-flex items-center gap-2 rounded-pill bg-field px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-opacity hover:opacity-90"
                   >
                     What we do
                     <ArrowUpRight
                       aria-hidden
-                      className="size-[18px] shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                      className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
                     />
                   </Link>
                 </div>
@@ -884,12 +884,12 @@ export function NotchedCard({ className }: { className?: string }) {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
               >
-                <h1 className="mx-auto max-w-[22ch] text-[clamp(42px,7vw,104px)] leading-[1.0] font-extrabold tracking-[-0.05em] text-ink">
+                <h1 className="mx-auto max-w-[20ch] text-[clamp(32px,4.6vw,64px)] leading-[1.04] font-extrabold tracking-[-0.042em] text-ink">
                   {shown.claim?.[0]}
                   <span className="thread-text block">{shown.claim?.[1]}</span>
                 </h1>
 
-                <p className="mx-auto mt-6 max-w-[62ch] text-[17px] leading-[1.6] text-quiet sm:text-[20px]">
+                <p className="mx-auto mt-5 max-w-[56ch] text-[15px] leading-[1.62] text-quiet sm:text-[16.5px]">
                   {shown.lead}
                 </p>
 
@@ -899,12 +899,65 @@ export function NotchedCard({ className }: { className?: string }) {
                       button you have to look for on a ground like this. */}
                   <Link
                     href={ROUTES.how}
-                    className="group/way pointer-events-auto inline-flex items-center gap-2.5 rounded-pill bg-ink px-6 py-3.5 text-[16px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90"
+                    className="group/way pointer-events-auto inline-flex items-center gap-2 rounded-pill bg-ink px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90"
                   >
                     How we work
                     <ArrowUpRight
                       aria-hidden
-                      className="size-[18px] shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                      className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                    />
+                  </Link>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+      ) : null}
+
+      {/* The fourth screen's words: centred on nothing at all.
+
+          The same block again, and the only one with no drawing under it and no
+          wash over it - there is nothing to take the card back from. Which is
+          why this is the screen the ask goes on: it is the only one where the
+          words are not competing with anything. */}
+      {shown.view === "blank" ? (
+        <div
+          className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
+          style={{
+            paddingTop: cut.barDepth + 12,
+            paddingBottom: cut.barDepth + 12,
+            paddingLeft: pad,
+            paddingRight: pad,
+          }}
+        >
+          <div className="w-full text-center">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={shown.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <h1 className="mx-auto max-w-[20ch] text-[clamp(32px,4.6vw,64px)] leading-[1.04] font-extrabold tracking-[-0.042em] text-ink">
+                  {shown.claim?.[0]}
+                  <span className="thread-text block">{shown.claim?.[1]}</span>
+                </h1>
+
+                <p className="mx-auto mt-5 max-w-[56ch] text-[15px] leading-[1.62] text-quiet sm:text-[16.5px]">
+                  {shown.lead}
+                </p>
+
+                <div className="mt-7 flex justify-center">
+                  <Link
+                    href={ROUTES.build}
+                    className="group/way thread-fill pointer-events-auto inline-flex items-center gap-2 rounded-pill px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+                  >
+                    Start yours
+                    <ArrowRight
+                      aria-hidden
+                      className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
+                      strokeWidth={2.4}
                     />
                   </Link>
                 </div>

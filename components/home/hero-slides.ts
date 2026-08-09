@@ -13,7 +13,7 @@ import type { Project } from "./projects";
    fields. Only the list is separate - one type, two lists, and the type is the
    thing that keeps them interchangeable if a slide ever is a project.
 
-   Three screens, and they are meant to be three different screens rather than
+   Four screens, and they are meant to be four different screens rather than
    one screen with its contents swapped. Each carries a `view`, and the card
    branches on it - so an arrow does not change a picture, it changes what the
    card is.
@@ -32,11 +32,15 @@ import type { Project } from "./projects";
    cursor, with dark type centred on it - light ground again, so it is set the
    way the first one is.
 
-   Three screens, one arrangement, three arguments. The first makes the offer and
-   holds both ways in; the second says who is making it; the third says what you
-   get before agreeing to anything. Each of the last two takes one way on rather
-   than two, because a front door that asks for the same thing three times is a
-   door people stop reading.
+   The fourth is white and empty behind its words, and that is the design rather
+   than the absence of one. Three screens of drawing in a row is a card showing
+   off; the last one stops, and what is left is the sentence and the way in. A
+   front door that never stops talking is one people stop reading.
+
+   Four screens, one arrangement, four arguments: who is making it, what is on
+   offer, what you get before agreeing to anything, and what it costs to find
+   out. Only the screen that makes the offer carries both ways in - the rest take
+   one each.
 --------------------------------------------------------------------------- */
 
 /**
@@ -143,6 +147,31 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     ],
     claim: ["Nothing gets built", "until it is written."],
     lead: "You get the scope in your own words, with every assumption named, before anything is agreed. If it is not in there, it is not in the price.",
+    image: "",
+    alt: "",
+    tone: "#ffffff",
+  },
+
+  /* The fourth: white, with the ask on it.
+
+     No drawing at all. It is last for the same reason a room goes quiet before
+     somebody says the thing they came to say, and the words are the plainest on
+     the card: what it costs, how long it takes, and what you are committing to. */
+  {
+    id: "hero-4",
+    view: "blank",
+    name: "Two working days",
+    kind: "The ask",
+    year: "2026",
+    summary:
+      "Tell us what the site is for and we write the scope in your own words. It costs nothing, commits you to nothing, and you keep it either way.",
+    facts: [
+      { term: "Comes back", value: "Within two working days" },
+      { term: "Costs", value: "Nothing" },
+      { term: "Commits you to", value: "Nothing" },
+    ],
+    claim: ["Two working days.", "Then you decide."],
+    lead: "Tell us what the site is for and we write the scope in your own words. It costs nothing, commits you to nothing, and you keep it either way.",
     image: "",
     alt: "",
     tone: "#ffffff",

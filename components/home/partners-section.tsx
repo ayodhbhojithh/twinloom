@@ -11,9 +11,9 @@ import { ROUTES } from "@/lib/site";
  * how we think; this answers the question that follows all of them - who is
  * actually going to do the work.
  *
- * It borrows the wall from the partners page rather than restating it. Two
- * copies of six disciplines would disagree the first week one of them changed,
- * and the wall is the part of that page worth seeing from here.
+ * It borrows the wall from the services page rather than restating it. Two
+ * copies of the list would disagree the first week one of them changed, and the
+ * wall is the part of that page worth seeing from here.
  */
 export function PartnersSection() {
   return (

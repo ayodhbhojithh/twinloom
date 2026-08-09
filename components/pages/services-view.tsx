@@ -60,10 +60,10 @@ const EDGES =
 /**
  * What the wall shows.
  *
- * The six things we do, not six partner disciplines. There are no partners to
- * name, and a wall of specialisms on a page about services was answering a
- * question nobody had asked yet - somebody arriving here wants the list of
- * what can be bought, and this is that list.
+ * The seven things we do, not seven partner disciplines. There are no partners
+ * to name, and a wall of specialisms on a page about services was answering a
+ * question nobody had asked yet - somebody arriving here wants the list of what
+ * can be bought, and this is that list.
  */
 const SHOWN = [...OFFER, ...SERVICES];
 
@@ -283,10 +283,10 @@ export function ServiceWall({
               {/* The sentence, and nothing after it.
 
                   Four bullets of what each discipline covers stood here, which
-                  is twenty-four lines of list drifting past on a wall nobody can
-                  stop to read. The list belongs on the page this links to. Three
-                  lines, clamped, so six cards are one height without any of them
-                  being padded to reach it. */}
+                  is a wall of list drifting past that nobody can stop to
+                  read. The list belongs on the page this links to. Three lines,
+                  clamped, so every card is one height without any of them being
+                  padded to reach it. */}
               <p className="mt-2 line-clamp-3 text-[13.5px] leading-[1.6] text-quiet">
                 {entry.sub}
               </p>
@@ -381,14 +381,14 @@ export function ServicesView() {
       {/* And the specialists, which is how some of the above gets delivered. */}
       <section className="page-frame pt-10 pb-16">
         <h2 className="mx-auto max-w-[34ch] text-center text-[clamp(21px,2.1vw,30px)] leading-[1.1] font-extrabold tracking-[-0.035em] text-ink">
-          What we do, in six.
+          What we do, in seven.
         </h2>
 
         <p className="mx-auto mt-3 max-w-[110ch] text-center text-[15.5px] leading-[1.65] text-quiet">
-          Two things we build and four that run alongside them. Some are led by
-          a specialist who does that one thing all day - where a project needs
-          one we say so in the proposal, brief them inside the work, and stay
-          responsible for what comes back.
+          Two things we build, four that run alongside them, and the reason they
+          are on one list. Some are led by a specialist who does that one thing
+          all day - where a project needs one we say so in the proposal, brief
+          them inside the work, and stay responsible for what comes back.
         </p>
 
         <p className="mx-auto mt-4 text-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
