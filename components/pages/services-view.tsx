@@ -32,21 +32,17 @@ import { cn } from "@/lib/utils";
  * at its own height is a wall, and which card sits where is a composition
  * rather than a random number.
  */
-const HANG = [48, 0, 30, 66, 14, 54];
+/* The stagger is gone.
 
-/**
- * How the picture leaves the card.
- *
- * Curved rather than linear, and over most of the lower half: a short straight
- * fade reads as a band with an edge at each end, which is the one thing a blend
- * must not have.
- */
+   Six cards hung at six different heights, which on a row that is already
+   drifting sideways is two movements at once - and with the cards at unequal
+   heights as well, the row had no line anywhere: not along the top and not along
+   the bottom. One baseline, one height, and the drift is the only thing moving.
+*/
+
 /** How the wall leaves the page: thinned at both ends, never cut. */
 const EDGES =
   "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.35) 3%, black 12%, black 88%, rgba(0,0,0,0.35) 97%, transparent 100%)";
-
-const FADE =
-  "linear-gradient(to bottom, black 34%, rgba(0,0,0,0.92) 48%, rgba(0,0,0,0.72) 62%, rgba(0,0,0,0.44) 76%, rgba(0,0,0,0.18) 88%, transparent 100%)";
 
 /* The one plate under all six cards is gone.
 
@@ -236,80 +232,64 @@ export function ServiceWall({
             <article
               key={`${copy}-${entry.n}`}
               aria-hidden={copy === 1}
-              style={{ marginTop: HANG[index % HANG.length] }}
-              className="group/card flex w-[clamp(260px,24vw,330px)] shrink-0 flex-col overflow-hidden rounded-[20px] bg-field transition-transform duration-300 hover:-translate-y-1.5"
+              className="group/card flex w-[clamp(238px,21vw,286px)] shrink-0 flex-col rounded-[22px] bg-field p-5 transition-transform duration-300 hover:-translate-y-1.5"
             >
-              {/* The picture first, and faded into the card rather than
-                  stopped by an edge. A picture with a hard bottom line is a
-                  picture stuck on a card; faded, the card is one thing that
-                  happens to begin as a picture.
+              {/* The drawing, whole, on the card's own white.
 
-                  Its own picture, not one plate behind all six. They shared a
-                  photograph of nothing in particular, which is a decoration
-                  repeated six times - the eye reads it once and then reads six
-                  cards with the same header. A picture per discipline is the
-                  only version of this that is worth the height it takes.
+                  It was cropped to fill a 16:10 band and faded out at the
+                  bottom, which is how you treat a photograph - a photograph has
+                  no edges of its own and needs the card to give it some. These
+                  are not photographs. Each is one object floating in white, so
+                  cropping it cuts the object and fading it out fades the object,
+                  and what the card gained was a header band it did not need.
 
-                  And where a discipline has no picture yet, the icon it already
-                  carries, set large on a wash of the mark's two colours. Not a
-                  placeholder: a card should look decided rather than
-                  half-loaded. */}
-              <span className="relative block aspect-[16/10] w-full overflow-hidden">
+                  Contained instead, centred, on nothing. The picture's white and
+                  the card's white are the same white, so there is no seam to
+                  hide and no mask to hide it with. */}
+              <span className="relative block aspect-[5/4] w-full">
                 {entry.art ? (
                   <Image
                     src={entry.art}
                     alt=""
                     fill
                     draggable={false}
-                    sizes="(max-width: 640px) 70vw, 330px"
-                    className="object-cover transition-transform duration-500 group-hover/card:scale-[1.05]"
-                    style={{ maskImage: FADE, WebkitMaskImage: FADE }}
+                    sizes="(max-width: 640px) 60vw, 286px"
+                    className="object-contain transition-transform duration-500 group-hover/card:scale-[1.06]"
                   />
                 ) : (
-                  <span
-                    className="absolute inset-0 flex items-center justify-center"
-                    style={{
-                      maskImage: FADE,
-                      WebkitMaskImage: FADE,
-                      backgroundImage:
-                        "radial-gradient(ellipse 80% 90% at 50% 30%, color-mix(in oklab, var(--color-thread-blue) 12%, transparent) 0%, color-mix(in oklab, var(--color-thread-teal) 10%, transparent) 55%, transparent 100%)",
-                    }}
-                  >
+                  <span className="absolute inset-0 flex items-center justify-center">
                     <entry.icon
                       aria-hidden
-                      className="size-11 text-mark transition-transform duration-500 group-hover/card:scale-[1.08]"
+                      className="size-12 text-mark transition-transform duration-500 group-hover/card:scale-[1.06]"
                       strokeWidth={1.5}
                     />
                   </span>
                 )}
-
-                <span className="absolute top-3 left-3 flex size-7 items-center justify-center rounded-pill bg-field/85 font-mono text-[10px] font-bold text-ink backdrop-blur-sm tabular-nums">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
               </span>
 
-              <h3 className="-mt-3 max-w-[18ch] px-5 text-[17px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink">
+              {/* The number, in the line rather than on the picture.
+
+                  It sat in a frosted disc over the top left corner, which is a
+                  badge - a second object standing on the drawing. In the type it
+                  is what it always was: a count. */}
+              <span className="mt-4 block font-mono text-[10px] font-bold tracking-[0.16em] text-idx tabular-nums">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+
+              <h3 className="mt-2 text-[17px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink">
                 {entry.n}
               </h3>
 
-              <p className="mt-2.5 px-5 text-[13.5px] leading-[1.6] text-body">
+              {/* The sentence, and nothing after it.
+
+                  Four bullets of what each discipline covers stood here, which
+                  is twenty-four lines of list drifting past on a wall nobody can
+                  stop to read. The list belongs on the page this links to. Three
+                  lines, clamped, so six cards are one height without any of them
+                  being padded to reach it. */}
+              <p className="mt-2 line-clamp-3 text-[13.5px] leading-[1.6] text-quiet">
                 {entry.sub}
               </p>
-
-              <ul className="mt-auto flex flex-col gap-1.5 px-5 pt-4 pb-5">
-                {entry.covers.slice(0, 4).map((line) => (
-                  <li
-                    key={line}
-                    className="flex gap-2.5 text-[12.5px] leading-[1.5] text-quiet"
-                  >
-                    <span
-                      aria-hidden
-                      className="mt-[7px] size-1 flex-none rounded-pill bg-mark"
-                    />
-                    {line}
-                  </li>
-                ))}
-              </ul>
             </article>
           )),
         )}
