@@ -731,8 +731,11 @@ function Choose({
 }) {
   return (
     <div className="relative w-full">
-      {/* Held to the same measure the pane around it is, and centred. */}
-      <div className="relative mx-auto w-full max-w-[1320px] px-2 sm:px-8">
+      {/* Held to the same measure the pane around it is, and centred.
+
+          No padding of its own. The page frame outside sets the gutter and the
+          stage no longer adds one, so anything here would be a third. */}
+      <div className="relative mx-auto w-full max-w-[1320px]">
         {/* The mark alone, centred.
 
             The name was set beside it and has come off: the header carries it
@@ -754,7 +757,7 @@ function Choose({
           />
         </div>
 
-        <div className="relative mt-7 min-w-0 text-center">
+        <div className="relative mt-5 min-w-0 text-center sm:mt-7">
           <H>Choose how you want to start.</H>
           <Sub>
             Two ways to brief, plus a fast way to talk. No commitment, just the
@@ -762,7 +765,7 @@ function Choose({
           </Sub>
         </div>
 
-        <div className="relative mt-9 grid gap-4 lg:grid-cols-2">
+        <div className="relative mt-6 grid gap-3 sm:mt-9 sm:gap-4 lg:grid-cols-2">
           <Door
             n="01"
             kicker="Open brief"
@@ -805,7 +808,7 @@ function Choose({
             It belongs to both doors, so it sits under both rather than being
             repeated inside each - and a line that appears in two cards is a line
             people read as two different promises. */}
-        <p className="mt-4 flex items-start justify-center gap-3 rounded-card bg-field px-5 py-4 text-center text-[13px] leading-[1.6] text-quiet">
+        <p className="mt-3 flex items-start justify-center gap-2.5 rounded-card bg-field px-4 py-3.5 text-center text-[12px] leading-[1.55] text-quiet sm:mt-4 sm:gap-3 sm:px-5 sm:py-4 sm:text-[13px] sm:leading-[1.6]">
           <Info
             aria-hidden
             className="mt-0.5 size-4 flex-none text-idx"
@@ -829,7 +832,7 @@ function Choose({
             between the paragraph and the list - the two are a claim and the
             three things that make it good, which is a caption's relationship and
             a caption is set off by a line. */}
-        <div className="mt-4 rounded-card bg-field px-6 py-7 sm:px-8">
+        <div className="mt-3 rounded-card bg-field px-4 py-5 sm:mt-4 sm:px-8 sm:py-7">
           <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,0.8fr)_auto] lg:items-center lg:gap-9">
             <div className="flex min-w-0 items-start gap-5">
               <span
@@ -847,7 +850,7 @@ function Choose({
                 <b className="block text-[clamp(17px,1.5vw,21px)] leading-[1.15] font-extrabold tracking-[-0.03em] text-ink">
                   Prefer to talk first?
                 </b>
-                <p className="mt-2 max-w-[52ch] text-[13px] leading-[1.6] text-quiet">
+                <p className="mt-2 max-w-[52ch] text-[12.5px] leading-[1.55] text-quiet sm:text-[13px] sm:leading-[1.6]">
                   You can book a meeting without completing a brief first. As
                   part of the booking you will have space to add a few lines
                   about what you have in mind and what you would like to
@@ -875,7 +878,7 @@ function Choose({
               ].map((line) => (
                 <li
                   key={line.say}
-                  className="flex items-center gap-3 text-[13px] leading-[1.5] text-body"
+                  className="flex items-center gap-2.5 text-[12.5px] leading-[1.5] text-body sm:gap-3 sm:text-[13px]"
                 >
                   <line.icon
                     aria-hidden
@@ -889,7 +892,7 @@ function Choose({
 
             <Link
               href={ROUTES.book}
-              className="group/book inline-flex items-center justify-center gap-2 rounded-pill border border-hair bg-field px-6 py-3.5 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink lg:justify-self-end"
+              className="group/book inline-flex items-center justify-center gap-2 rounded-pill border border-hair bg-field px-5 py-3 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink sm:px-6 sm:py-3.5 sm:text-[14.5px] lg:justify-self-end"
             >
               Book a meeting
               <CalendarDays aria-hidden className="size-4" strokeWidth={1.9} />
@@ -944,7 +947,7 @@ function Door({
   const blue = tone === "blue";
 
   return (
-    <div className="relative flex min-w-0 flex-col overflow-hidden rounded-card bg-field px-6 py-7 sm:px-8">
+    <div className="relative flex min-w-0 flex-col overflow-hidden rounded-card bg-field px-4 py-5 sm:px-8 sm:py-7">
       <CardFlourish />
 
       <div className="relative flex items-center gap-3">
@@ -979,14 +982,14 @@ function Door({
         </Kicker>
       </div>
 
-      <b className="relative mt-5 block text-[clamp(20px,2.1vw,27px)] leading-[1.12] font-extrabold tracking-[-0.03em] text-ink">
+      <b className="relative mt-4 block text-[clamp(19px,2.1vw,27px)] leading-[1.12] font-extrabold tracking-[-0.03em] text-ink sm:mt-5">
         {title}
       </b>
 
       {notes.map((note) => (
         <p
           key={note}
-          className="relative mt-3.5 max-w-[52ch] text-[13.5px] leading-[1.62] text-quiet"
+          className="relative mt-3 max-w-[52ch] text-[12.5px] leading-[1.6] text-quiet sm:mt-3.5 sm:text-[13.5px] sm:leading-[1.62]"
         >
           {note}
         </p>
@@ -994,7 +997,7 @@ function Door({
 
       {/* Pushed to the foot, so two cards with different amounts to say still
           line their buttons up. */}
-      <div className="relative mt-auto pt-7">
+      <div className="relative mt-auto pt-5 sm:pt-7">
         <div className="flex flex-wrap gap-2">
           {facts.map((fact) => (
             <span

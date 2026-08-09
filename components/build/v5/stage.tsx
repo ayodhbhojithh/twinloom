@@ -401,8 +401,17 @@ export function Stage({
                 corner ? cut.dropHeight : 0,
                 26,
               ) + 34,
-          paddingLeft: pad,
-          paddingRight: pad,
+          /* The side inset holds content off the cuts, and a `plain` stage has
+             none - no surface, no corners, nothing to be held off.
+
+             Left on, it was a second gutter: the page frame around this
+             already sets one, so the chooser sat forty pixels in from a phone
+             where every other section sits at twenty, and its cards were
+             narrower than the hero above them for no reason anybody could
+             see. Nought here means it lines up with the page, which is what
+             "the same padding as the hero" is. */
+          paddingLeft: tone === "plain" ? 0 : pad,
+          paddingRight: tone === "plain" ? 0 : pad,
         }}
       >
         {foot ? (

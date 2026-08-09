@@ -206,38 +206,46 @@ export function ServiceWall({
         {SHOWN.map((entry) => (
           <article
             key={entry.n}
-            className="group/card relative w-[clamp(238px,21vw,286px)] shrink-0 snap-start overflow-hidden rounded-[22px] bg-field p-5 transition-shadow duration-300 hover:shadow-[0_10px_30px_rgba(24,39,75,0.08)]"
+            /* The middle term is the phone's card and the cap is the desk's.
+
+               At 72vw a card was 270 wide on a 375 screen, and the drawing is
+               a square of that width - so nearly three quarters of the phone,
+               and the picture alone as tall as the words twice over. 44vw puts
+               two on screen at once with a third showing past them, which is
+               what tells somebody the row goes on. Because the drawing is a
+               ratio rather than a height it comes down with the card and
+               nothing else has to be told.
+
+               The cap is unchanged, so a wide screen is where it was: 44vw
+               passes 286 at about a 650 wide window, and everything above that
+               gets the same card as before. */
+            className="group/card flex w-[clamp(146px,40vw,286px)] shrink-0 snap-start flex-col rounded-[16px] bg-field p-2.5 transition-shadow duration-300 sm:rounded-[22px] sm:p-5 hover:shadow-[0_10px_30px_rgba(24,39,75,0.08)]"
           >
-            {/* The drawing, laid over the card rather than stacked on it.
+            {/* The drawing, in the flow and sized by ratio rather than by a
+                number.
 
-                  It was the first thing in a flex column, so it took real
-                  height and every word under it started wherever that height
-                  ended. Laid over the top instead, it takes none: the text
-                  begins at one number on all seven cards, and the drawing is
-                  the same size on all seven whatever the words below it do.
+                It was laid over the card at a fixed height with the text
+                pushed clear of it by a matching fixed padding - two numbers
+                that had to agree, and a picture 248 tall on a card 232 wide,
+                which is what a phone got. A ratio needs neither number: every
+                card in this row is the same width, so every box is the same
+                height, so the type below still starts level across all seven
+                - which was the only thing the overlay was buying.
 
-                  Contained, centred, on nothing. The picture's white and the
-                  card's white are the same white, so there is no seam to hide
-                  and no mask to hide it with - and out past the card's own
-                  padding, which the words need and the picture does not. */}
-            {/* Sized by its height, so that is the number to turn.
+                Contained, centred, on nothing. The picture's white and the
+                card's white are the same white, so there is no seam to hide
+                and no mask to hide it with - and out past the card's own
+                padding, which the words need and the picture does not.
 
-                The box is wider than it is tall and the files are square, so
-                `contain` always fits them by the height and the width never
-                binds. Raising the height is the only thing that makes them
-                bigger; widening the box does nothing at all.
-
-                And they are square in the file on purpose. They were seven
-                different canvases with the artwork sitting in a different
-                share of each - between four tenths and seven - so `contain`
-                scaled every one by a different number and no CSS could have
-                evened them up. Each is cropped to its own artwork and padded
-                back out to a square, so the largest side of every drawing is
-                the same fraction of its own file and one box scales them all
-                alike. */}
+                The files are square on purpose. They were seven different
+                canvases with the artwork sitting in a different share of each
+                - between four tenths and seven - so `contain` scaled every one
+                by a different number and no CSS could have evened them up.
+                Each is cropped to its own artwork and padded back out to a
+                square, so one box scales them all alike. */}
             <span
               aria-hidden
-              className="pointer-events-none absolute inset-x-0 top-1 block h-[248px]"
+              className="relative -mx-1 block aspect-4/3 shrink-0 sm:aspect-square"
             >
               {entry.art ? (
                 <Image
@@ -245,7 +253,7 @@ export function ServiceWall({
                   alt=""
                   fill
                   draggable={false}
-                  sizes="(max-width: 640px) 70vw, 320px"
+                  sizes="(max-width: 640px) 72vw, 286px"
                   className="object-contain transition-transform duration-500 group-hover/card:scale-[1.06]"
                 />
               ) : (
@@ -258,14 +266,12 @@ export function ServiceWall({
               )}
             </span>
 
-            {/* Clear of the drawing by the drawing's own height, so this is
-                the one number that decides where every card's type starts. */}
-            <div className="pt-[252px]">
+            <div className="mt-2 sm:mt-3">
               {/* Two lines' worth of room whether the name needs it or not.
                   Four of these run to one line and three to two, and with the
                   box sized to its own words the sentences under them landed at
                   four different heights along the row. */}
-              <h3 className="min-h-[2.4em] text-[17px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink">
+              <h3 className="min-h-[2.4em] text-[12px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink sm:text-[17px]">
                 {entry.n}
               </h3>
 
@@ -276,7 +282,7 @@ export function ServiceWall({
                   read. The list belongs on the page this links to. Three
                   lines, clamped, so every card is one height without any of
                   them being padded to reach it. */}
-              <p className="mt-1.5 line-clamp-3 text-[13.5px] leading-[1.6] text-quiet">
+              <p className="mt-1 line-clamp-3 text-[10.5px] leading-[1.5] text-quiet sm:mt-1.5 sm:text-[13.5px] sm:leading-[1.6]">
                 {entry.sub}
               </p>
             </div>
@@ -291,7 +297,14 @@ export function ServiceWall({
           take a card's worth of room to hold a button that is not always
           there. Hidden from the reading order: the row is a scroller and a
           keyboard reaches it as one, so these are a pointer's shortcut rather
-          than the only way through. */}
+          than the only way through.
+
+          Shown on a phone too, and they were not. A row that scrolls
+          sideways inside a page that scrolls down is the one gesture people
+          miss on a touch screen - there is nothing to see unless the cards
+          happen to be cut off at the right moment. Smaller there, and closer
+          to the edge, so they sit over the gap between cards rather than
+          over a drawing. */}
       {!still ? (
         <>
           <button
@@ -300,9 +313,9 @@ export function ServiceWall({
             tabIndex={-1}
             onClick={() => step(-1)}
             disabled={at.start}
-            className="absolute top-1/2 left-2 hidden size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-pill border border-hair bg-field text-ink shadow-sm transition-opacity hover:bg-hair disabled:pointer-events-none disabled:opacity-0 sm:left-4 sm:flex"
+            className="absolute top-1/2 left-1 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-pill border border-hair bg-field/95 text-ink shadow-sm transition-opacity hover:bg-hair disabled:pointer-events-none disabled:opacity-0 sm:left-4 sm:size-10"
           >
-            <ChevronLeft className="size-5" strokeWidth={2.2} />
+            <ChevronLeft className="size-4 sm:size-5" strokeWidth={2.2} />
           </button>
 
           <button
@@ -311,9 +324,9 @@ export function ServiceWall({
             tabIndex={-1}
             onClick={() => step(1)}
             disabled={at.end}
-            className="absolute top-1/2 right-2 hidden size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-pill border border-hair bg-field text-ink shadow-sm transition-opacity hover:bg-hair disabled:pointer-events-none disabled:opacity-0 sm:right-4 sm:flex"
+            className="absolute top-1/2 right-1 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-pill border border-hair bg-field/95 text-ink shadow-sm transition-opacity hover:bg-hair disabled:pointer-events-none disabled:opacity-0 sm:right-4 sm:size-10"
           >
-            <ChevronRight className="size-5" strokeWidth={2.2} />
+            <ChevronRight className="size-4 sm:size-5" strokeWidth={2.2} />
           </button>
         </>
       ) : null}
