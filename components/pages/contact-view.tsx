@@ -10,7 +10,6 @@ import Link from "next/link";
 
 import { PageShell } from "@/components/layout";
 import { CutPanel } from "@/components/layout/cut-panel";
-import { ContactMap } from "@/components/pages/contact-map";
 import { CONTACT_INFO, ROUTES } from "@/lib/site";
 
 /* ---------------------------------------------------------------------------
@@ -261,51 +260,54 @@ export function ContactView() {
             </span>
           }
         >
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start">
-            <address className="mt-2 flex gap-3 not-italic">
-              <MapPin
-                aria-hidden
-                className="mt-1 size-4 flex-none text-mark"
-                strokeWidth={2.2}
-              />
-              <span className="min-w-0">
-                <b className="block text-[clamp(16px,1.4vw,19px)] leading-[1.2] font-extrabold tracking-[-0.03em] text-ink">
-                  {CONTACT_INFO.companyName}
-                </b>
-                <span className="mt-1.5 block text-[14.5px] leading-[1.7] text-body">
-                  {CONTACT_INFO.address.name}
-                  <br />
-                  {CONTACT_INFO.address.street}
-                  <br />
-                  {CONTACT_INFO.address.town}
-                  <br />
-                  {CONTACT_INFO.address.postcode}
-                  <br />
-                  {CONTACT_INFO.address.country}
-                </span>
+          {/* No map beside it.
 
-                <a
-                  href={CONTACT_INFO.address.mapUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group/map mt-5 inline-flex items-center gap-2 rounded-pill bg-canvas px-4.5 py-2.5 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair"
-                >
-                  <MapPin aria-hidden className="size-4" strokeWidth={1.9} />
-                  Open in Google Maps
-                  <ArrowUpRight
-                    aria-hidden
-                    className="size-4 transition-transform group-hover/map:translate-x-0.5 group-hover/map:-translate-y-0.5"
-                  />
-                </a>
+              An embedded map is a picture of a place somebody either already
+              knows or is going to open in their own maps app anyway, and it
+              took the larger half of this panel to say what the five lines to
+              the left of it had already said. The button is the whole of what
+              it was for.
+
+              Which leaves the address on the panel's own width rather than in a
+              column sized to balance a picture: the lines set on one edge, the
+              way out under them, and nothing to align to but the surface. */}
+          <address className="mt-2 flex gap-3 not-italic">
+            <MapPin
+              aria-hidden
+              className="mt-1 size-4 flex-none text-mark"
+              strokeWidth={2.2}
+            />
+            <span className="min-w-0">
+              <b className="block text-[clamp(16px,1.4vw,19px)] leading-[1.2] font-extrabold tracking-[-0.03em] text-ink">
+                {CONTACT_INFO.companyName}
+              </b>
+              <span className="mt-1.5 block text-[14.5px] leading-[1.7] text-body">
+                {CONTACT_INFO.address.name}
+                <br />
+                {CONTACT_INFO.address.street}
+                <br />
+                {CONTACT_INFO.address.town}
+                <br />
+                {CONTACT_INFO.address.postcode}
+                <br />
+                {CONTACT_INFO.address.country}
               </span>
-            </address>
 
-            {/* The map is cut to the site's outline and carries the way out to
-                the real one in its corner, so nothing has to sit under it
-                saying "open in maps" - the button beside it is for somebody
-                reading the address rather than looking at the picture. */}
-            <ContactMap className="group/map relative block h-[clamp(200px,22vw,280px)] w-full cursor-pointer" />
-          </div>
+              <a
+                href={CONTACT_INFO.address.mapUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="group/map mt-5 inline-flex items-center gap-2 rounded-pill bg-canvas px-4.5 py-2.5 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair"
+              >
+                <MapPin aria-hidden className="size-4" strokeWidth={1.9} />
+                Open in Google Maps
+                <ArrowUpRight
+                  aria-hidden
+                  className="size-4 transition-transform group-hover/map:translate-x-0.5 group-hover/map:-translate-y-0.5"
+                />
+              </a>
+            </span>
+          </address>
         </CutPanel>
       </section>
     </PageShell>

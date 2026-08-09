@@ -1,8 +1,7 @@
-import { ArrowUpRight, CalendarClock, Phone } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 import {
-  CONTACT_INFO,
   FOOTER_COLUMNS,
   FOOTER_LEGAL,
   LEGAL,
@@ -120,62 +119,49 @@ export function SiteFooter() {
             side is worth. */}
         <div className="grid gap-x-12 gap-y-11 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
           <div className="min-w-0">
-            {/* The heading is the offer, and it is also the way to take it.
+            {/* The ask, in the words the about page ends on.
 
-                It said "tell us who your website is for, we write the rest down
-                for you", which is the claim made in full on the landing card, on
-                the build page and at the foot of every other page - a fourth
-                time in the footer is not emphasis, it is the site repeating
-                itself to somebody who has just finished reading it. This says
-                what to do instead.
+                It was "Send us your requirements" set as the heading itself -
+                the offer and the way to take it in one line. What replaced it
+                names the reader's position rather than our process: somebody at
+                the foot of a page has not decided what they want yet, and
+                "start with what you need" is the sentence that meets them
+                there. The instruction it used to be is now the first button,
+                which is where an instruction belongs.
 
-                A link set as the heading rather than a heading with a button
-                under it. It is the largest thing in the footer and it names an
-                action; dressing it as a button as well would be saying it twice,
-                and leaving it as plain type would be a heading that tells you to
-                do something and gives you nowhere to do it. The arrow and the
-                underline on hover are what mark it as a way on.
+                Two ways rather than three. Writing it down and putting it in
+                the diary are the two anybody actually chooses between, and a
+                third in a row of three is a third of the attention gone. */}
+            <h2 className="max-w-[24ch] text-[clamp(21px,2.1vw,30px)] leading-[1.12] font-extrabold tracking-[-0.035em] text-ink">
+              Start with what you need.
+            </h2>
 
-                Then the two that are not writing: a call for somebody who would
-                rather not, and a slot in the diary for somebody who wants a
-                date. Those are buttons, because they are alternatives to the
-                heading rather than the heading again. */}
-            <Link
-              href={ROUTES.build}
-              className="group/ask inline-flex max-w-[24ch] items-start gap-2.5 text-[clamp(21px,2.1vw,30px)] leading-[1.12] font-extrabold tracking-[-0.035em] text-ink"
-            >
-              <span className="group-hover/ask:underline">
-                Send us your requirements
-              </span>
-              <ArrowUpRight
-                aria-hidden
-                className="mt-[0.2em] size-[0.72em] shrink-0 transition-transform group-hover/ask:translate-x-0.5 group-hover/ask:-translate-y-0.5"
-                strokeWidth={2.6}
-              />
-            </Link>
+            <p className="mt-3 max-w-[52ch] text-[15px] leading-[1.65] text-quiet">
+              Tell us what you are looking to build, improve or connect. We will
+              help you work out the rest.
+            </p>
 
-            <div className="mt-5 flex flex-wrap items-center gap-2.5">
-              <a
-                href={CONTACT_INFO.phoneHref}
-                className="inline-flex items-center gap-2 rounded-pill bg-field px-5 py-2.5 text-[14px] font-semibold text-ink transition-colors hover:bg-hair"
+            <div className="mt-6 flex flex-wrap items-center gap-2.5">
+              <Link
+                href={ROUTES.build}
+                className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
               >
-                <Phone aria-hidden className="size-4" strokeWidth={1.9} />
-                Give us a call
-              </a>
+                Send us your requirements
+                <ArrowRight
+                  aria-hidden
+                  className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
+                  strokeWidth={2.4}
+                />
+              </Link>
 
               <Link
                 href={ROUTES.book}
-                className="group/talk inline-flex items-center gap-2 rounded-pill bg-field px-5 py-2.5 text-[14px] font-semibold text-ink transition-colors hover:bg-hair"
+                className="group/way inline-flex items-center gap-2 rounded-pill bg-field px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:bg-hair"
               >
-                <CalendarClock
-                  aria-hidden
-                  className="size-4"
-                  strokeWidth={1.9}
-                />
                 Book a meeting
                 <ArrowUpRight
                   aria-hidden
-                  className="size-4 transition-transform group-hover/talk:translate-x-0.5 group-hover/talk:-translate-y-0.5"
+                  className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
                 />
               </Link>
             </div>
