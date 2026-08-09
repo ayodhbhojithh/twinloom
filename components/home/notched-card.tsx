@@ -371,12 +371,13 @@ export function NotchedCard({ className }: { className?: string }) {
      a surface that fills the window, so what it can afford at the sides is a
      question about the surface and not about the class of device.
 
-     Down from a twentieth of the width to a thirty-fifth, and capped at
-     forty-four rather than seventy-two. The header inside the card sets the line
-     everything else is read against - it has the page gutter and no more - and a
-     screen indented twice as far as the wordmark above it reads as a second
-     page inside the first. */
-  const pad = Math.max(16, Math.min(size.w * 0.028, 44));
+     A twentieth of the width, capped at eighty-eight. It was taken down to a
+     thirty-fifth so the screens would line up with the header inside the card,
+     and that was the wrong way round: the header reads `--page-gutter`, and the
+     card sets that variable to this number when it renders the bar. The two
+     agree either way, so this can be whatever the card wants rather than
+     whatever the page happens to use. */
+  const pad = Math.max(24, Math.min(size.w * 0.05, 88));
 
   /* How far down the card anything can start.
 
@@ -485,9 +486,16 @@ export function NotchedCard({ className }: { className?: string }) {
             arriving in the last third, it does what a margin does: it says where
             the card ends without drawing a line there.
 
-            The weight does the rest - a sixth of the thread blue at one and a
-            third pixels on a twenty-two pixel pitch. At that strength you do not
-            see dots, you see that the surface is not blank.
+            Grey, not the mark's blue. The blue made the texture a colour
+            decision - a faint tint across the card that the eye reads as
+            something, and the one thing this is meant to say is nothing. Ash is
+            the paper showing its weave, with no opinion about blue.
+
+            At a little over a third of the border grey it was not saying even
+            that: on a white card, a 1.3px dot at that strength is a dot you can
+            only find by looking for it. Nearly three quarters, one and a half
+            pixels, on a twenty pixel pitch - still quiet, and now actually
+            there.
 
             The artwork gets its own clearing on top of this, a halo of the
             card's white inside `MarkStage`, because it sits in the last third
@@ -497,11 +505,11 @@ export function NotchedCard({ className }: { className?: string }) {
             aria-hidden
             className="absolute inset-0"
             style={{
-              ...GRID("--color-thread-blue", 16, 1.3, 22),
+              ...GRID("--color-border", 72, 1.6, 20),
               maskImage:
-                "radial-gradient(ellipse 64% 68% at 50% 50%, transparent 0%, transparent 38%, black 94%)",
+                "radial-gradient(ellipse 62% 66% at 50% 50%, transparent 0%, transparent 22%, black 74%)",
               WebkitMaskImage:
-                "radial-gradient(ellipse 64% 68% at 50% 50%, transparent 0%, transparent 38%, black 94%)",
+                "radial-gradient(ellipse 62% 66% at 50% 50%, transparent 0%, transparent 22%, black 74%)",
             }}
           />
         ) : null}
