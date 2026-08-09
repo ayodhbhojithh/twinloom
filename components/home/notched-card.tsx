@@ -20,7 +20,7 @@ import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 import { Ballpit } from "./ballpit";
-import { MarkStage } from "./mark-stage";
+import { BeadTrail, MarkStage } from "./mark-stage";
 import { GradientWaves } from "./gradient-waves";
 import { ProjectPanel } from "./project-panel";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -1192,6 +1192,25 @@ export function NotchedCard({ className }: { className?: string }) {
             paddingRight: pad,
           }}
         >
+          {/* The trail, laid on the floor rather than set into it.
+
+              In the flow it was a block at the end of the column, and it had
+              to be pulled out past the card's own side padding to reach the
+              edges - which is a negative margin escaping a rounded corner, so
+              the beads ran off the bottom of the card and onto the page.
+
+              Absolute against this box instead. The box is `inset-0` of the
+              card, so `inset-x-0 bottom-0` is the card's own floor exactly:
+              no margin to escape with, and nothing to overrun. Drawn before
+              the words so it paints under them, and taking no clicks, because
+              it is scenery on the surface the sentence beside it stands on. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 hidden md:block"
+          >
+            <BeadTrail />
+          </div>
+
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={shown.id}
@@ -1213,7 +1232,12 @@ export function NotchedCard({ className }: { className?: string }) {
                  it. The two-up takes the room that is going and centres in it;
                  the line takes only its own height and stays at the bottom,
                  which is where a footnote belongs. */
-              className="flex h-full w-full flex-col gap-7"
+              /* Positioned, so it paints over the trail behind it. The trail
+                 is absolute and this was static, and a positioned element
+                 beats static content in the same stacking context however
+                 early in the markup it appears - the beads came out on top of
+                 the sentence they are meant to be under. */
+              className="relative flex h-full w-full flex-col gap-7"
             >
               {/* The words take the larger share, not the picture.
 
@@ -1395,14 +1419,6 @@ export function NotchedCard({ className }: { className?: string }) {
                   </div>
                 </div>
               </div>
-
-              {/* No trail under the buttons.
-
-                  A row of beads on a dotted line ran here, and it is one picture
-                  too many: the mark is already the picture on this screen, and a
-                  second one below the doors puts the eye past them rather than
-                  on them. The sister company stays - that is a fact about who
-                  builds what, not decoration. */}
 
               <div className="hidden items-center justify-center gap-4 md:flex">
                 <Image

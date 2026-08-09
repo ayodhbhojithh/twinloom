@@ -27,6 +27,111 @@ import { cn } from "@/lib/utils";
    five screens in it.
 --------------------------------------------------------------------------- */
 
+/**
+ * The beads, and where each one sits on the line.
+ *
+ * Ten of them, and every number here is placed rather than generated: the
+ * sizes run small, medium, large and back in no repeating order, and the
+ * colours never put two of the same next to each other. A row of evenly
+ * spaced, evenly sized beads is a progress bar; this is a handful of things
+ * that happen to be on the same thread.
+ *
+ * `y` is not derived from `CURVE`. Reading a point off a path costs a DOM
+ * measurement per bead and gains nothing - these were placed against the
+ * curve by eye, which is the only test that matters for whether a bead looks
+ * like it is sitting on a line.
+ */
+const TRAIL = [
+  { x: 60, y: 96, r: 9, ink: "#2a98fe" },
+  { x: 175, y: 78, r: 15, ink: "#10c996" },
+  { x: 318, y: 62, r: 20, ink: "#7c4dff" },
+  { x: 432, y: 84, r: 8, ink: "#ff7a1a" },
+  { x: 545, y: 66, r: 16, ink: "#2a98fe" },
+  { x: 690, y: 62, r: 19, ink: "#10c996" },
+  { x: 800, y: 90, r: 9, ink: "#7c4dff" },
+  { x: 878, y: 86, r: 8, ink: "#22bde8" },
+  { x: 960, y: 84, r: 12, ink: "#ff7a1a" },
+  { x: 1060, y: 74, r: 11, ink: "#ff4d5e" },
+] as const;
+
+/** The line they sit on: one long shallow S, never crossing its own middle
+    twice in the same direction. */
+const CURVE =
+  "M 0 104 C 120 104 180 74 300 70 S 470 96 600 74 S 800 60 900 84 S 1080 92 1200 66";
+
+/**
+ * A dotted thread with glass beads along it.
+ *
+ * Every bead is one radial gradient and one ellipse: the gradient puts the
+ * highlight off centre at a third across and a quarter down, which is where a
+ * light high and in front would put it, and runs out to a mix of the bead's
+ * own colour and the ink blue rather than to black - a sphere's dark side is
+ * still its colour, and a black edge reads as a hole.
+ *
+ * The shadow is drawn before the bead and is flat and wide for the same
+ * reason: the light is high, so the shadow is a squashed ellipse under the
+ * bead rather than a circle behind it. Without it the beads float beside the
+ * line instead of resting on it.
+ */
+export function BeadTrail({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 1200 130"
+      className={cn("block h-auto w-full", className)}
+    >
+      <defs>
+        <linearGradient id="trail-thread" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="var(--color-thread-blue)" />
+          <stop offset="100%" stopColor="var(--color-thread-teal)" />
+        </linearGradient>
+
+        {TRAIL.map((bead, n) => (
+          <radialGradient key={n} id={`bead-${n}`} cx="34%" cy="28%" r="78%">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop
+              offset="16%"
+              stopColor={`color-mix(in oklab, ${bead.ink} 34%, #ffffff)`}
+            />
+            <stop offset="56%" stopColor={bead.ink} />
+            <stop
+              offset="100%"
+              stopColor={`color-mix(in oklab, ${bead.ink} 60%, #0b1f38)`}
+            />
+          </radialGradient>
+        ))}
+      </defs>
+
+      {/* The path, as dots. Round caps on a one-unit dash is a dot; anything
+          longer is a dash pretending. */}
+      <path
+        d={CURVE}
+        fill="none"
+        stroke="url(#trail-thread)"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+        strokeDasharray="0.1 16"
+        opacity="0.5"
+      />
+
+      {TRAIL.map((bead, n) => (
+        <g key={n}>
+          {/* Its shadow first, so the bead sits on the line rather than beside
+              it. Flat and wide, because the light is high and in front. */}
+          <ellipse
+            cx={bead.x}
+            cy={bead.y + bead.r * 1.05}
+            rx={bead.r * 1.5}
+            ry={bead.r * 0.34}
+            fill="rgba(12,32,56,0.16)"
+          />
+          <circle cx={bead.x} cy={bead.y} r={bead.r} fill={`url(#bead-${n})`} />
+        </g>
+      ))}
+    </svg>
+  );
+}
+
 export function MarkStage({ className }: { className?: string }) {
   return (
     /* Shallower than the file, because the file is square and the mark is not.
