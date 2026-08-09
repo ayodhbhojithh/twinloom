@@ -21,17 +21,19 @@ import type { Project } from "./projects";
    The first is the wave: a horizon of dots with a claim set over it and the two
    ways in underneath.
 
-   The second is water: a raymarched swell filling the card. The third is a
-   field of glass beads that drift and get shoved around by the cursor. Neither
-   carries a word.
+   The second is water: a raymarched swell filling the card, with its words
+   centred on it in white. Dark ink on a white wash is the first screen's
+   arrangement, and the water is far too strong a ground to bleach a hole in - so
+   this one goes the other way and sets light type on a dark one. Same layout,
+   opposite polarity, and that is what makes it read as a second screen rather
+   than as the first one with the picture swapped.
 
-   That is the arrangement rather than an omission. The first screen makes the
-   offer and carries both ways in; a card that says something on all three of its
-   faces is a card nobody turns twice, and the two that follow are there to be
-   looked at. They still carry the fields a `Project` needs, because the panel
-   that opens from the corner disc reads those and an empty panel is a broken one
-   - what they do not carry is a `claim` or a `lead`, so the card sets type
-   nowhere.
+   The third is a field of glass beads that drift and get shoved around by the
+   cursor, and it carries no words at all. The first screen makes the offer and
+   holds both ways in, the second says who is making it, and the third is there
+   to be played with. It still carries the fields a `Project` needs, because the
+   panel that opens from the corner disc reads those and an empty panel is a
+   broken one - what it does not carry is a `claim` or a `lead`.
 --------------------------------------------------------------------------- */
 
 /**
@@ -92,12 +94,12 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     tone: "#ffffff",
   },
 
-  /* The second: the water, and no words on it.
+  /* The second: the water, with its words set on it in white.
 
-     No `claim` and no `lead`, which is not an omission - the card branches on
-     the view and this one sets type nowhere. What it still carries is what a
-     `Project` needs, because the panel that opens from the corner disc reads
-     those fields and an empty panel is a broken one. */
+     Its own claim rather than the first screen's, because the two are different
+     arguments for the same offer - the first says what you get, this says who
+     you are getting it from. One way on and not two: the pair of buttons belongs
+     to the screen making the offer. */
   {
     id: "hero-2",
     view: "waves",
@@ -111,6 +113,8 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
       { term: "Contracts", value: "One" },
       { term: "People to ask", value: "The same ones" },
     ],
+    claim: ["Two threads.", "One piece of work."],
+    lead: "The site people see and the software behind it are one build, not two suppliers who blame each other. One contract, one invoice, and the same people to ask either way.",
     image: "",
     alt: "",
     tone: "#ffffff",

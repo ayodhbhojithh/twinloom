@@ -22,13 +22,14 @@
 @theme {
   /* Archivo carries everything. The system stack sits behind it only as a
      fallback for the moment before the webfont lands. */
-  --font-sans: var(--font-archivo), -apple-system, "Segoe UI", Helvetica, Arial,
-    sans-serif;
+  --font-sans:
+    var(--font-archivo), -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
 
   /* Mono is a role, not a fallback: the draft sets labels, counts and codes in
      it deliberately. */
-  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo,
-    Consolas, monospace;
+  --font-mono:
+    var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, Consolas,
+    monospace;
 
   /* Surfaces, lightest to firmest.
 
@@ -548,7 +549,6 @@
     );
   }
 
-
   /* The same gradient as a fill, for something you press rather than read.
 
      White on it. The colour is set here beside the fill rather than left to a
@@ -567,6 +567,21 @@
       var(--color-thread-teal)
     );
     color: #ffffff;
+  }
+
+  /* The same device as `.thread-text`, for type standing on the water.
+
+     The mark's own blue and green clipped to a headline is a headline you cannot
+     read on a blue ground - the gradient and the surface are the same two
+     colours. This is that gradient taken to the top of its own range: white into
+     the palest mint the green will give. It says the same thing about which half
+     of a sentence is the promise, and it says it against the ground it is
+     actually standing on. */
+  .thread-light {
+    background-image: linear-gradient(100deg, #ffffff, #a9f6e0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
   .thread-text {
@@ -1003,7 +1018,11 @@
     /* Mixed into the leaf's own surface rather than into `transparent`. Mixing
        with transparent interpolates the alpha as well as the colour, and in
        oklab that dragged the blue through green on the way. */
-    background-color: color-mix(in srgb, var(--color-mark) 30%, var(--color-canvas));
+    background-color: color-mix(
+      in srgb,
+      var(--color-mark) 30%,
+      var(--color-canvas)
+    );
     pointer-events: none;
   }
 
