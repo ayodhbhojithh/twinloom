@@ -371,12 +371,11 @@ export function NotchedCard({ className }: { className?: string }) {
 
   /* How far down the card anything can start.
 
-     The notch and the header standing under it, and nothing added to either. It
-     had ten pixels of air below the bar and four above it, and on a card this
-     tall that reads as a gap rather than as spacing - the screens below are
-     centred in what is left, so every pixel here is one the words move down
-     by. */
-  const head = cut.barDepth + NAV_HEIGHT;
+     The header, and nothing else. It used to be the notch plus the header,
+     because the bar sat below the cut; it is level with it now and split around
+     it, so the notch takes no height of its own. Every pixel here is one the
+     words below move down by, and the screens are centred in what is left. */
+  const head = NAV_HEIGHT + 8;
 
   /* The measurement that placed the name on the picture went with the name. It
      worked out whether the bottom edge had room for it beside the thumbnail, and
@@ -696,10 +695,7 @@ export function NotchedCard({ className }: { className?: string }) {
           them, it took every click meant for an arrow and the card stopped
           turning. The box is only here to place the bar, so it takes no clicks;
           the bar takes its own. */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-20"
-        style={{ paddingTop: cut.barDepth }}
-      >
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-20">
         <SiteHeader bare />
       </div>
 
@@ -1195,7 +1191,12 @@ export function NotchedCard({ className }: { className?: string }) {
                     description of it, which is a caption - and a caption is set
                     off by a line. */}
                 <span aria-hidden className="h-6 w-px flex-none bg-hair" />
-                <span className="max-w-[46ch] text-[12.5px] leading-[1.45] text-quiet">
+                {/* Wide enough for the whole sentence on one line where there
+                    is room for one. At forty-six characters it broke after
+                    "more than", which puts "a website." alone on a second line -
+                    a two word orphan under a caption that is one sentence long.
+                    Seventy-six is the sentence. */}
+                <span className="max-w-[76ch] text-[12.5px] leading-[1.45] text-quiet">
                   Custom software development for businesses that need more than
                   a website.
                 </span>

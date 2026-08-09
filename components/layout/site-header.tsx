@@ -159,7 +159,18 @@ export function SiteHeader({ bare }: { bare?: boolean } = {}) {
           })}
         </nav>
 
-        <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
+        {/* The far right, and only as wide as what is in it.
+
+            It used to be a third column with `flex-1` on it, which made the row
+            three equal parts and left the nav sitting in the middle of the bar.
+            That was fine while the header stood on its own; inside the landing
+            card the notch is cut into the middle of the same edge, and the links
+            ran straight through it.
+
+            The name is left, the pages are right, and the middle is empty - so
+            whatever the card puts in its top edge has the room, and every other
+            page gets the arrangement a bar of links has anyway. */}
+        <div className="flex shrink-0 items-center gap-2">
           {/* No call to action here, and no contact disc.
 
               Both were removed on purpose. Every page of this site already
