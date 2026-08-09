@@ -1003,7 +1003,7 @@ function Door({
             <span
               key={fact.say}
               className={cn(
-                "inline-flex items-center gap-2 rounded-pill px-3.5 py-2 text-[12.5px] font-semibold",
+                "inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[11.5px] font-semibold sm:gap-2 sm:px-3.5 sm:py-2 sm:text-[12.5px]",
                 blue
                   ? "bg-thread-blue/10 text-thread-blue"
                   : "bg-done/8 text-done",
@@ -1032,7 +1032,7 @@ function Door({
           type="button"
           onClick={onClick}
           className={cn(
-            "group/go mt-5 inline-flex w-fit cursor-pointer items-center gap-2.5 rounded-pill px-6 py-3.5 text-[15px] font-semibold text-white transition-opacity hover:opacity-90",
+            "group/go mt-4 inline-flex w-fit cursor-pointer items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13px] font-semibold text-white transition-opacity hover:opacity-90 sm:mt-5 sm:gap-2.5 sm:px-6 sm:py-3.5 sm:text-[15px]",
             blue
               ? "thread-fill"
               : "bg-[linear-gradient(100deg,var(--color-done),var(--color-thread-teal))] text-white",
@@ -1041,7 +1041,7 @@ function Door({
           {go}
           <ArrowRight
             aria-hidden
-            className="size-[18px] flex-none transition-transform group-hover/go:translate-x-0.5"
+            className="size-4 flex-none transition-transform group-hover/go:translate-x-0.5 sm:size-[18px]"
             strokeWidth={2.2}
           />
         </button>
