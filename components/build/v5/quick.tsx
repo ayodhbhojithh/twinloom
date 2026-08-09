@@ -1,15 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
   Check,
+  Clock,
   Copy,
   FileText,
+  Info,
   ListOrdered,
+  MessageSquare,
+  Paperclip,
+  PencilLine,
 } from "lucide-react";
 
 import { ASK_PARTS, REF_KINDS } from "@/lib/build/v5";
@@ -37,6 +43,7 @@ import { cn } from "@/lib/utils";
 import { isPicture, type Attached } from "@/lib/build/upload";
 
 import { DropZone } from "./drop";
+import { CardFlourish, ChooserFlourish } from "./flourish";
 import {
   AddRow,
   Chip,
@@ -202,21 +209,21 @@ export function QuickPane({
       ) : route === "choose" ? (
         <Choose onQuick={() => setRoute("quick")} onFull={onCarryOn} />
       ) : (
-      <div className="mx-auto w-full max-w-[1320px]">
-        {/* Back to the two ways in. A route somebody can only leave by sending
+        <div className="mx-auto w-full max-w-[1320px]">
+          {/* Back to the two ways in. A route somebody can only leave by sending
             is a route they were pushed down rather than chose. */}
-        <div className="flex justify-center">
-          <button
-            type="button"
-            onClick={() => setRoute("choose")}
-            className="inline-flex cursor-pointer items-center gap-2 font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase transition-colors hover:text-ink"
-          >
-            <ArrowLeft aria-hidden className="size-3.5" />
-            Both ways in
-          </button>
-        </div>
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={() => setRoute("choose")}
+              className="inline-flex cursor-pointer items-center gap-2 font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase transition-colors hover:text-ink"
+            >
+              <ArrowLeft aria-hidden className="size-3.5" />
+              Both ways in
+            </button>
+          </div>
 
-        {/* The first of the two, marked rather than titled.
+          {/* The first of the two, marked rather than titled.
 
             Both routes used to be two buttons at the foot of one screen - "Send
             it as a quick submission" and "Carry on through the questions" - so
@@ -228,28 +235,28 @@ export function QuickPane({
             A numbered pill rather than a second heading. The surface already
             carries one heading centred over it, and a route that opens with a
             heading of its own is a page inside a page. */}
-        <div className="mt-9 flex justify-center">
-          <span className="inline-flex items-center gap-2.5 rounded-pill bg-canvas py-1.5 pr-4 pl-1.5">
-            <span
-              aria-hidden
-              className="flex size-6 items-center justify-center rounded-pill bg-ink font-mono text-[10px] font-bold text-white tabular-nums"
-            >
-              01
+          <div className="mt-9 flex justify-center">
+            <span className="inline-flex items-center gap-2.5 rounded-pill bg-canvas py-1.5 pr-4 pl-1.5">
+              <span
+                aria-hidden
+                className="flex size-6 items-center justify-center rounded-pill bg-ink font-mono text-[10px] font-bold text-white tabular-nums"
+              >
+                01
+              </span>
+              <Kicker className="text-body">Quick submission</Kicker>
             </span>
-            <Kicker className="text-body">Quick submission</Kicker>
-          </span>
-        </div>
+          </div>
 
-        <p className="mx-auto mt-3.5 max-w-[54ch] text-center text-[15px] leading-[1.5] font-semibold text-ink">
-          Use this if you already know roughly what you want.
-        </p>
+          <p className="mx-auto mt-3.5 max-w-[54ch] text-center text-[15px] leading-[1.5] font-semibold text-ink">
+            Use this if you already know roughly what you want.
+          </p>
 
-        <p className="mx-auto mt-1.5 max-w-[62ch] text-center text-[13px] leading-[1.6] text-quiet">
-          No questions, no order, no structure. It goes exactly as you typed it,
-          with anything you want to show us attached to it.
-        </p>
+          <p className="mx-auto mt-1.5 max-w-[62ch] text-center text-[13px] leading-[1.6] text-quiet">
+            No questions, no order, no structure. It goes exactly as you typed
+            it, with anything you want to show us attached to it.
+          </p>
 
-        {/* `items-stretch`, not `items-start`.
+          {/* `items-stretch`, not `items-start`.
 
             The writing box was already told to grow into its column, but
             `items-start` sized both columns to their own content, so the
@@ -257,262 +264,267 @@ export function QuickPane({
             and note added to the right made the two halves finish further
             apart. Stretched, the row is as tall as its tallest column and the
             box takes the rest. */}
-        <div className="mt-7 grid items-stretch gap-6 lg:grid-cols-2 lg:gap-8">
-          {/* The writing. `flex-1` on the box rather than a row count, so it
+          <div className="mt-7 grid items-stretch gap-6 lg:grid-cols-2 lg:gap-8">
+            {/* The writing. `flex-1` on the box rather than a row count, so it
               grows to whatever the column beside it needs and the two halves
               end level. */}
-          <div className="flex min-w-0 flex-col">
-            <textarea
-              rows={12}
-              aria-label="Say it in your own words"
-              value={answers.text["quick.words"] ?? ""}
-              placeholder="What the business does, who it is for, what the website has to do, and anything you already know you want."
-              onChange={(event) => setText("quick.words", event.target.value)}
-              className="min-h-[280px] w-full flex-1 resize-y rounded-[14px] border border-border bg-field px-4 py-3 text-[14px] leading-[1.6] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
-            />
-          </div>
+            <div className="flex min-w-0 flex-col">
+              <textarea
+                rows={12}
+                aria-label="Say it in your own words"
+                value={answers.text["quick.words"] ?? ""}
+                placeholder="What the business does, who it is for, what the website has to do, and anything you already know you want."
+                onChange={(event) => setText("quick.words", event.target.value)}
+                className="min-h-[280px] w-full flex-1 resize-y rounded-[14px] border border-border bg-field px-4 py-3 text-[14px] leading-[1.6] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
+              />
+            </div>
 
-          <div className="min-w-0">
-            {/* Files, then the line for the two things that are not files. No
+            <div className="min-w-0">
+              {/* Files, then the line for the two things that are not files. No
             heading over either: the drop zone says what it is on its face, and
             a title above a control that already carries a label is the same
             words twice. */}
-            <DropZone
-              className="mt-0"
-              label="Drop files here, or choose them"
-              note="Pictures, brochures, price lists, screenshots. Up to 10 MB each."
-              files={files}
-              onAdd={(taken) => {
-                setFiles((was) => [...was, ...taken]);
-                for (const file of taken) {
-                  addRef({
-                    kind: isPicture(file.type)
-                      ? REF_KINDS.image
-                      : REF_KINDS.file,
-                    text: file.name,
-                    where: null,
-                    url: file.url,
-                    publicId: file.publicId,
-                  });
+              <DropZone
+                className="mt-0"
+                label="Drop files here, or choose them"
+                note="Pictures, brochures, price lists, screenshots. Up to 10 MB each."
+                files={files}
+                onAdd={(taken) => {
+                  setFiles((was) => [...was, ...taken]);
+                  for (const file of taken) {
+                    addRef({
+                      kind: isPicture(file.type)
+                        ? REF_KINDS.image
+                        : REF_KINDS.file,
+                      text: file.name,
+                      where: null,
+                      url: file.url,
+                      publicId: file.publicId,
+                    });
+                  }
+                }}
+                onDrop={(at) =>
+                  setFiles((was) => was.filter((_, index) => index !== at))
                 }
-              }}
-              onDrop={(at) =>
-                setFiles((was) => was.filter((_, index) => index !== at))
-              }
-            />
+              />
 
-            {/* The chips over the row they change.
+              {/* The chips over the row they change.
 
                 On one line the two shared a column with the drop zone and the
                 field was left about a third of it - wide enough for a link and
                 not for a sentence. Given a line each, the field is the width
                 of the column and the chips still sit directly above what they
                 switch. */}
-            <div className="mt-3">
-              {/* Centred over the field they switch. The drop zone above and
+              <div className="mt-3">
+                {/* Centred over the field they switch. The drop zone above and
                   the row below both take the whole column, so a pair of chips
                   against the left edge was the one thing in it starting
                   somewhere else. */}
-              <div className="flex flex-wrap items-center justify-center gap-2">
-                {SAYABLE.map((key) => (
-                  <Chip
-                    key={key}
-                    on={kind === key}
-                    title={KIND_WHY[key]}
-                    onClick={() => setKind(key)}
-                  >
-                    {REF_KINDS[key]}
-                  </Chip>
-                ))}
-              </div>
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  {SAYABLE.map((key) => (
+                    <Chip
+                      key={key}
+                      on={kind === key}
+                      title={KIND_WHY[key]}
+                      onClick={() => setKind(key)}
+                    >
+                      {REF_KINDS[key]}
+                    </Chip>
+                  ))}
+                </div>
 
-              {/* The field follows the chip. One placeholder for both said
+                {/* The field follows the chip. One placeholder for both said
                   "a sentence, or a link" and then took either as text, so a
                   website was filed under a label saying Website and never
                   became one. */}
-              <div className="mt-2.5">
-                <AddRow
-                  key={kind}
-                  kind={kind === "site" ? "url" : "text"}
-                  label={kind === "site" ? "A website address" : "A sentence"}
-                  placeholder={
-                    kind === "site"
-                      ? "twinloom.com"
-                      : "A sentence you want kept in your words"
-                  }
-                  onAdd={(value) =>
-                    addRef({ kind: REF_KINDS[kind], text: value, where: null })
-                  }
-                />
+                <div className="mt-2.5">
+                  <AddRow
+                    key={kind}
+                    kind={kind === "site" ? "url" : "text"}
+                    label={kind === "site" ? "A website address" : "A sentence"}
+                    placeholder={
+                      kind === "site"
+                        ? "twinloom.com"
+                        : "A sentence you want kept in your words"
+                    }
+                    onAdd={(value) =>
+                      addRef({
+                        kind: REF_KINDS[kind],
+                        text: value,
+                        where: null,
+                      })
+                    }
+                  />
+                </div>
               </div>
-            </div>
 
-            {answers.refs.length ? (
-              <ul className="mt-3 flex flex-col gap-1.5">
-                {answers.refs.map((ref) => (
-                  <li
-                    key={ref.n}
-                    className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[10px] bg-canvas px-3 py-1.5"
-                  >
-                    <Kicker className="w-[64px] flex-none">{ref.kind}</Kicker>
-                    <span className="min-w-[12ch] flex-1 text-[13px] leading-[1.35] text-ink">
-                      <RefText text={ref.text} />
-                    </span>
-                    <input
-                      value={answers.like[ref.n] ?? ""}
-                      placeholder="What you like about it"
-                      onChange={(event) => setLike(ref.n, event.target.value)}
-                      className={cn(
-                        "h-7 w-full rounded-field border border-border bg-field px-2.5 text-[12px] text-ink outline-none transition-colors",
-                        "placeholder:text-label focus:border-ink sm:w-[200px]",
-                      )}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => dropRef(ref.n)}
-                      className="flex-none cursor-pointer font-mono text-[9px] font-bold tracking-[0.12em] text-label uppercase transition-colors hover:text-ink"
+              {answers.refs.length ? (
+                <ul className="mt-3 flex flex-col gap-1.5">
+                  {answers.refs.map((ref) => (
+                    <li
+                      key={ref.n}
+                      className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[10px] bg-canvas px-3 py-1.5"
                     >
-                      Remove
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
+                      <Kicker className="w-[64px] flex-none">{ref.kind}</Kicker>
+                      <span className="min-w-[12ch] flex-1 text-[13px] leading-[1.35] text-ink">
+                        <RefText text={ref.text} />
+                      </span>
+                      <input
+                        value={answers.like[ref.n] ?? ""}
+                        placeholder="What you like about it"
+                        onChange={(event) => setLike(ref.n, event.target.value)}
+                        className={cn(
+                          "h-7 w-full rounded-field border border-border bg-field px-2.5 text-[12px] text-ink outline-none transition-colors",
+                          "placeholder:text-label focus:border-ink sm:w-[200px]",
+                        )}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => dropRef(ref.n)}
+                        className="flex-none cursor-pointer font-mono text-[9px] font-bold tracking-[0.12em] text-label uppercase transition-colors hover:text-ink"
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
           </div>
-        </div>
 
-        {/* The way out, under both columns - where somebody has finished
+          {/* The way out, under both columns - where somebody has finished
             rather than at the top where they have not started.
 
             No rule over it. Space is already saying the same thing. */}
-        {/* Who is asking, once pressing send has shown that we do not know.
+          {/* Who is asking, once pressing send has shown that we do not know.
 
             Not a field on the screen from the start: the whole offer of this
             pane is that you write a paragraph and go. Asked at the moment it
             actually blocks something, it is four fields filled in by somebody
             who has already decided to send. */}
-        {asking && !answers.sent ? (
-          <div className="mx-auto mt-9 w-full max-w-[720px] rounded-[18px] bg-canvas p-5 text-left sm:p-6">
-            <b className="block text-[15px] leading-[1.25] font-extrabold tracking-[-0.02em] text-ink">
-              Who is asking
-            </b>
-            <p className="mt-1.5 text-[12.5px] leading-[1.5] text-label">
-              The only part about you, and the only part we cannot do without.
-            </p>
+          {asking && !answers.sent ? (
+            <div className="mx-auto mt-9 w-full max-w-[720px] rounded-[18px] bg-canvas p-5 text-left sm:p-6">
+              <b className="block text-[15px] leading-[1.25] font-extrabold tracking-[-0.02em] text-ink">
+                Who is asking
+              </b>
+              <p className="mt-1.5 text-[12.5px] leading-[1.5] text-label">
+                The only part about you, and the only part we cannot do without.
+              </p>
 
-            <div className="mt-4 grid gap-x-6 gap-y-5 sm:grid-cols-2">
-              {FIELDS.map((field) => (
-                <Field
-                  key={field.k}
-                  id={`quick-ask-${field.k}`}
-                  label={field.label}
-                  required={field.req}
-                  why={field.why}
-                  type={field.k === "email" ? "email" : "text"}
-                  value={answers.ask[field.k] ?? ""}
-                  bad={tried && field.req && !askDone(answers, field.k)}
-                  onChange={(value) => setAsk(field.k, value)}
-                />
-              ))}
-            </div>
-
-            <div id="quick-ask-part" className="mt-6 scroll-mt-24">
-              <div className="mb-2 flex items-baseline justify-between gap-3">
-                <b className="text-[13.5px] font-semibold text-ink">
-                  What part do you play in this decision
-                </b>
-                <Kicker
-                  className={
-                    tried && !askDone(answers, "part")
-                      ? "text-blocked"
-                      : "text-mark"
-                  }
-                >
-                  Required
-                </Kicker>
+              <div className="mt-4 grid gap-x-6 gap-y-5 sm:grid-cols-2">
+                {FIELDS.map((field) => (
+                  <Field
+                    key={field.k}
+                    id={`quick-ask-${field.k}`}
+                    label={field.label}
+                    required={field.req}
+                    why={field.why}
+                    type={field.k === "email" ? "email" : "text"}
+                    value={answers.ask[field.k] ?? ""}
+                    bad={tried && field.req && !askDone(answers, field.k)}
+                    onChange={(value) => setAsk(field.k, value)}
+                  />
+                ))}
               </div>
 
-              <TickSet
-                single
-                options={ASK_PARTS.map((part) => ({
-                  k: part.v,
-                  label: part.label,
-                }))}
-                isOn={(k: string) => chipOn(answers, "ask.part", k)}
-                onPick={(k: string) => toggleChip("ask.part", k, true, "submit")}
-              />
+              <div id="quick-ask-part" className="mt-6 scroll-mt-24">
+                <div className="mb-2 flex items-baseline justify-between gap-3">
+                  <b className="text-[13.5px] font-semibold text-ink">
+                    What part do you play in this decision
+                  </b>
+                  <Kicker
+                    className={
+                      tried && !askDone(answers, "part")
+                        ? "text-blocked"
+                        : "text-mark"
+                    }
+                  >
+                    Required
+                  </Kicker>
+                </div>
 
-              {tried && !askDone(answers, "part") ? (
-                <p className="mt-2 text-[12px] leading-[1.4] font-semibold text-blocked">
-                  Pick one before this can go.
-                </p>
-              ) : null}
+                <TickSet
+                  single
+                  options={ASK_PARTS.map((part) => ({
+                    k: part.v,
+                    label: part.label,
+                  }))}
+                  isOn={(k: string) => chipOn(answers, "ask.part", k)}
+                  onPick={(k: string) =>
+                    toggleChip("ask.part", k, true, "submit")
+                  }
+                />
+
+                {tried && !askDone(answers, "part") ? (
+                  <p className="mt-2 text-[12px] leading-[1.4] font-semibold text-blocked">
+                    Pick one before this can go.
+                  </p>
+                ) : null}
+              </div>
             </div>
-          </div>
-        ) : null}
+          ) : null}
 
-        {/* The send, under both columns and on their centre line.
+          {/* The send, under both columns and on their centre line.
 
             It sat under the left column because it is the next thing in the
             flow after it, which put it against one edge of a surface whose
             heading is centred over the whole of it. */}
-        <div className="mt-8 min-w-0 text-center">
-          {/* What went wrong, or what is still needed, above the control rather
+          <div className="mt-8 min-w-0 text-center">
+            {/* What went wrong, or what is still needed, above the control rather
               than after it has been pressed again. A button that refuses without
               saying why is a button somebody presses four times. */}
-          {answers.problem ? (
-            <p
-              role="alert"
-              className="mx-auto mb-5 max-w-[62ch] rounded-[12px] bg-blocked/[0.08] px-4 py-3 text-[13px] leading-[1.6] text-blocked"
-            >
-              {answers.problem}
-            </p>
-          ) : asking && missing.length ? (
-            <p className="mx-auto mb-5 max-w-[62ch] text-[13px] leading-[1.6] text-quiet">
-              Before this can go we need {missing.join(", ").toLowerCase()}.
-            </p>
-          ) : null}
+            {answers.problem ? (
+              <p
+                role="alert"
+                className="mx-auto mb-5 max-w-[62ch] rounded-[12px] bg-blocked/[0.08] px-4 py-3 text-[13px] leading-[1.6] text-blocked"
+              >
+                {answers.problem}
+              </p>
+            ) : asking && missing.length ? (
+              <p className="mx-auto mb-5 max-w-[62ch] text-[13px] leading-[1.6] text-quiet">
+                Before this can go we need {missing.join(", ").toLowerCase()}.
+              </p>
+            ) : null}
 
-          {/* "Send", and nothing else on the line.
+            {/* "Send", and nothing else on the line.
 
               It read "Send it as a quick submission", which is the name of the
               section it now stands in - so the button was repeating its own
               heading, and the other route was sitting beside it as though it
               were an equal way of pressing the same thing. */}
-          <div className="flex justify-center">
-            <Pill
-              tone="ink"
-              arrow
-              className="justify-center"
-              disabled={answers.sending}
-              onClick={send}
-            >
-              {answers.sending ? "Sending it" : "Send"}
-            </Pill>
-          </div>
+            <div className="flex justify-center">
+              <Pill
+                tone="ink"
+                arrow
+                className="justify-center"
+                disabled={answers.sending}
+                onClick={send}
+              >
+                {answers.sending ? "Sending it" : "Send"}
+              </Pill>
+            </div>
 
-          <p className="mx-auto mt-4 max-w-[62ch] text-[12.5px] leading-[1.55] text-quiet">
-            Nothing is thrown away and nothing is final. Once it has gone you can
-            still add to it, or book a time to talk it through.
-          </p>
+            <p className="mx-auto mt-4 max-w-[62ch] text-[12.5px] leading-[1.55] text-quiet">
+              Nothing is thrown away and nothing is final. Once it has gone you
+              can still add to it, or book a time to talk it through.
+            </p>
 
-          {/* At the point of collection, not seven links down the footer. This
+            {/* At the point of collection, not seven links down the footer. This
               pane takes free text, files and contact details, and a privacy
               notice somebody has to go looking for is not one that was
               given. */}
-          <p className="mx-auto mt-2 max-w-[62ch] text-[12px] leading-[1.55] text-label">
-            What happens to your details is set out in our{" "}
-            <Link
-              href={ROUTES.privacy}
-              className="font-semibold text-body underline decoration-hair underline-offset-2 transition-colors hover:text-mark hover:decoration-mark"
-            >
-              Privacy notice
-            </Link>
-            .
-          </p>
+            <p className="mx-auto mt-2 max-w-[62ch] text-[12px] leading-[1.55] text-label">
+              What happens to your details is set out in our{" "}
+              <Link
+                href={ROUTES.privacy}
+                className="font-semibold text-body underline decoration-hair underline-offset-2 transition-colors hover:text-mark hover:decoration-mark"
+              >
+                Privacy notice
+              </Link>
+              .
+            </p>
+          </div>
         </div>
-
-      </div>
       )}
     </Stage>
   );
@@ -679,20 +691,27 @@ function Delivered({
 }
 
 /**
- * The two ways in, and nothing else.
+ * The chooser.
  *
- * What opened here before was one of them with the other underneath it: a form,
- * and below the form a band offering the other way of filling the same form in.
- * Somebody arriving was given the answer to a question nobody had asked them,
- * and had to scroll a screenful of the wrong route to reach the right one.
+ * Two doors and a way round the back of both. It was two cards, one white and
+ * one nearly black, with the whole card as the button - which was a strong idea
+ * and two weak consequences: the dark one read as the recommended one when
+ * neither is, and a card that is itself a control has nowhere to put a second
+ * one.
  *
- * So the choice comes first and it is the whole screen. Two doors, the same
- * shape, and the only thing that separates them is which of the two it makes
- * sense for you to walk through: one is for somebody who already knows what they
- * want, the other for somebody who would rather be asked.
+ * Both are light now and they are told apart by colour rather than by weight -
+ * blue for the one you write yourself, green for the one we ask. Neither is
+ * heavier than the other, which is the honest arrangement for a choice with no
+ * right answer.
  *
- * The whole card presses. A card with a button in the corner of it is two
- * targets for one decision, and the smaller of them is the one people aim at.
+ * And the meeting is out of the pair entirely. It used to be a third thing
+ * competing with them; below the two, on its own surface, it is what it actually
+ * is - the way in for somebody who does not want to write anything yet.
+ *
+ * No width cap of its own. The pane around this already holds it to 1320, and a
+ * second smaller cap inside that one reads as a narrower panel inserted into a
+ * wider one - which puts the decoration in the middle of the surface rather than
+ * at its edges, and the edges are the only place it belongs.
  */
 function Choose({
   onQuick,
@@ -702,45 +721,142 @@ function Choose({
   onFull: () => void;
 }) {
   return (
-    <div className="mx-auto w-full max-w-[1080px]">
-      <div className="min-w-0">
-        <H>Send us your requirements.</H>
-        <Sub>
-          Two ways in, and they end in the same place. Write it out yourself, or
-          let us ask the questions.
-        </Sub>
+    <div className="relative w-full overflow-hidden">
+      <ChooserFlourish />
+
+      {/* The words and the cards, held to a measure and centred.
+
+          The panel itself takes the whole width, and it has to: the sweeps and
+          the beads are drawn into its corners, and a corner is only a corner
+          at the edge of something. What must not take the whole width is the
+          reading - two cards run edge to edge on a wide screen are two
+          paragraphs a foot apart with nothing holding them together.
+
+          So the decoration is the panel's and everything else is this
+          container's. One surface, two widths, and the padding is what keeps
+          the cards clear of the corners the decoration is standing in. */}
+      <div className="relative mx-auto w-full max-w-[1120px] px-2 sm:px-8">
+        {/* The lockup, and the one place on this panel the name is set.
+
+            The header carries it and so does the foot of the page, so a third
+            setting has to earn itself. It does here: this panel is the front door
+            of the whole tool and somebody may well have arrived straight at it. */}
+        <div className="relative flex items-center justify-center gap-3.5">
+          <Image
+            src="/assets/logo.png"
+            alt=""
+            width={96}
+            height={96}
+            aria-hidden
+            draggable={false}
+            sizes="96px"
+            className="size-9 flex-none object-contain sm:size-11"
+          />
+          <span className="text-[clamp(20px,2.2vw,29px)] leading-none font-extrabold tracking-[0.16em] text-ink uppercase">
+            TwinLoom
+          </span>
+        </div>
+
+        <div className="relative mt-7 min-w-0 text-center">
+          <H>Choose how you want to start.</H>
+          <Sub>
+            Two ways to brief, plus a fast way to talk. No commitment, just the
+            right starting point for you.
+          </Sub>
+        </div>
+
+        <div className="relative mt-9 grid gap-4 lg:grid-cols-2">
+          <Door
+            n="01"
+            kicker="Open brief"
+            tone="blue"
+            title="Write it in your own words."
+            notes={[
+              "Send us whatever you have, however you have it: a finished brief, bullet points, rough notes, ideas, links or files. There is no format to follow.",
+              "Can be done in less than five minutes, or you can take your time. If you want to move to the guided brief at any point you will be given the option to switch, and anything you have already written is saved as a note.",
+            ]}
+            facts={[
+              { icon: MessageSquare, say: "Any format" },
+              { icon: Paperclip, say: "Attach anything" },
+              { icon: Clock, say: "Less than 5 minutes" },
+            ]}
+            go="Write your brief"
+            onClick={onQuick}
+          />
+
+          <Door
+            n="02"
+            kicker="Guided brief"
+            tone="green"
+            title="Let us guide the brief."
+            notes={[
+              "Answer a few guided questions and we will shape the brief with context, clarity and depth.",
+              "You have the option to add as many notes as you want, and you can also send us any files, links or attachments you want us to take a look at.",
+            ]}
+            facts={[
+              { icon: ListOrdered, say: "Guided questions" },
+              { icon: PencilLine, say: "Add notes" },
+              { icon: FileText, say: "Send files" },
+            ]}
+            go="Start the guided journey"
+            onClick={onFull}
+          />
+        </div>
+
+        {/* What happens after either of them, said once rather than twice.
+
+            It belongs to both doors, so it sits under both rather than being
+            repeated inside each - and a line that appears in two cards is a line
+            people read as two different promises. */}
+        <p className="mt-4 flex items-start justify-center gap-3 rounded-card bg-field px-5 py-4 text-center text-[13px] leading-[1.6] text-quiet">
+          <Info
+            aria-hidden
+            className="mt-0.5 size-4 flex-none text-idx"
+            strokeWidth={2}
+          />
+          <span className="max-w-[92ch]">
+            As part of your submission you can either book a meeting or simply
+            share a few time slots that suit you. We will review your brief and
+            reach out to arrange the next conversation.
+          </span>
+        </p>
+
+        {/* No "prefer to talk first" panel.
+
+            It stood here with a ringed calendar, a paragraph, three bullets and
+            a button - which is a fourth thing to read on a screen whose entire
+            job is to make one choice between two. The meeting is not a third
+            door and it never was: it is part of whichever of these two somebody
+            takes, and the line above says so.
+
+            The way to book without briefing first is in the header, in the
+            footer and on the contact page. It does not also need to be the
+            largest object under the choice it is not part of. */}
+
+        {/* The closing line, and nothing either side of it.
+
+            A dotted rule with beads ran out to both edges here. The beads were
+            sized against the box they sat in - a strip twelve pixels tall and half
+            the panel wide - so a radius meant as a speck came out as a dome the
+            height of the line, clipped flat by it. A rule that has to be measured
+            against two different things to be a rule is a rule worth losing. */}
+        <div className="relative mt-7 flex items-center justify-center gap-3">
+          <Image
+            src="/assets/logo.png"
+            alt=""
+            width={64}
+            height={64}
+            aria-hidden
+            draggable={false}
+            sizes="64px"
+            className="size-6 flex-none object-contain"
+          />
+          <span className="max-w-[62ch] text-center text-[12.5px] leading-[1.6] text-label">
+            Start whichever way suits you. Everything you share stays together
+            as your brief develops.
+          </span>
+        </div>
       </div>
-
-      <div className="mt-9 grid gap-4 lg:grid-cols-2">
-        <Door
-          n="01"
-          kicker="Quick submission"
-          icon={FileText}
-          title="Write it out yourself."
-          note="Use this if you already know roughly what you want. One box, no questions and no order - it goes exactly as you typed it, with anything you want to show us attached."
-          facts={["One box", "Attach anything", "About two minutes"]}
-          go="Write it out"
-          onClick={onQuick}
-        />
-
-        <Door
-          ink
-          n="02"
-          kicker="Structured scoping journey"
-          icon={ListOrdered}
-          title="Let us ask the questions."
-          note="Use this if you would rather be asked. It starts with your organisation and industry, and the panel beside it shows the site your answers describe while you answer them."
-          facts={["10 steps", "Nothing compulsory", "Stop and send at any point"]}
-          go="Start with your organisation and industry"
-          onClick={onFull}
-        />
-      </div>
-
-      <p className="mx-auto mt-6 max-w-[64ch] text-center text-[12px] leading-[1.6] text-label">
-        Neither is the better answer and neither commits you to anything. Send
-        the quick one and the questions are still there afterwards, under the
-        same reference.
-      </p>
     </div>
   );
 }
@@ -748,135 +864,111 @@ function Choose({
 /**
  * One of the two doors.
  *
- * One shape, two tones, and the tone is the design rather than decoration: the
- * quick route is a blank sheet of paper and the structured one is the tool, so
- * one is white and open and the other dark and led. Nobody has to be told which
- * is which.
+ * One shape and two colours, and the colour is the only thing that separates
+ * them. It was one white card and one nearly black, which said the dark one was
+ * the one to take - and neither of these is. Blue for the brief you write and
+ * green for the brief we ask; same weight, same size, same everything else.
  *
- * The numeral is set large and faint behind the words, clipped by the corner it
- * stands in, so it reads as a figure printed on the card rather than a label
- * stuck to it. It says nothing the pill does not, which is why it can be that
- * quiet.
+ * The whole card was the button and it is not any more. A card that is a control
+ * cannot hold a control, and this one now has three facts and a button inside
+ * it, so pressing the card and pressing the button would be one action with two
+ * targets. The button is the target and the card is a card.
  */
 function Door({
   n,
   kicker,
-  icon: Icon,
+  tone,
   title,
-  note,
+  notes,
   facts,
   go,
   onClick,
-  ink,
 }: {
   n: string;
   kicker: string;
-  icon: typeof FileText;
+  tone: "blue" | "green";
   title: string;
-  note: string;
-  facts: readonly string[];
+  notes: readonly string[];
+  facts: readonly { icon: typeof FileText; say: string }[];
   go: string;
   onClick: () => void;
-  ink?: boolean;
 }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "group/door relative flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-[24px] px-6 py-8 text-center transition-colors sm:px-8",
-        ink ? "bg-ink" : "bg-canvas hover:bg-canvas-firm",
-      )}
-    >
-      <span
-        aria-hidden
-        className={cn(
-          "pointer-events-none absolute -top-8 -left-3 font-mono text-[148px] leading-none font-bold tabular-nums select-none",
-          ink ? "text-white/6" : "text-ink/4",
-        )}
-      >
-        {n}
-      </span>
+  const blue = tone === "blue";
 
-      <span className="relative flex flex-col items-center">
+  return (
+    <div className="relative flex min-w-0 flex-col overflow-hidden rounded-card bg-field px-6 py-7 sm:px-8">
+      <CardFlourish tone={tone} />
+
+      <div className="relative flex items-center gap-3">
         <span
           aria-hidden
           className={cn(
-            "flex size-11 items-center justify-center rounded-pill",
-            ink ? "bg-white/10 text-white" : "bg-field text-ink",
+            "flex size-8 items-center justify-center rounded-pill font-mono text-[11px] font-bold text-white tabular-nums",
+            blue ? "bg-[#1a4bff]" : "bg-[#0f9d58]",
           )}
         >
-          <Icon className="size-5" strokeWidth={2} />
+          {n}
         </span>
 
-        <span
+        <Kicker
           className={cn(
-            "mt-4 inline-flex items-center gap-2.5 rounded-pill py-1.5 pr-4 pl-1.5",
-            ink ? "bg-white/10" : "bg-field",
+            "rounded-pill px-3 py-1.5",
+            blue ? "bg-mark/10 text-mark" : "bg-[#0f9d58]/10 text-[#0b7c45]",
           )}
         >
-          <span
-            aria-hidden
-            className={cn(
-              "flex size-6 items-center justify-center rounded-pill font-mono text-[10px] font-bold tabular-nums",
-              ink ? "bg-white text-ink" : "bg-ink text-white",
-            )}
-          >
-            {n}
-          </span>
-          <Kicker className={ink ? "text-white/70" : "text-body"}>
-            {kicker}
-          </Kicker>
-        </span>
+          {kicker}
+        </Kicker>
+      </div>
 
-        <b
-          className={cn(
-            "mt-5 block text-[clamp(20px,2.2vw,28px)] leading-[1.12] font-extrabold tracking-[-0.03em]",
-            ink ? "text-white" : "text-ink",
-          )}
-        >
-          {title}
-        </b>
+      <b className="relative mt-5 block text-[clamp(20px,2.1vw,27px)] leading-[1.12] font-extrabold tracking-[-0.03em] text-ink">
+        {title}
+      </b>
 
-        <span
-          className={cn(
-            "mx-auto mt-3.5 block max-w-[46ch] text-[13px] leading-[1.65]",
-            ink ? "text-white/65" : "text-quiet",
-          )}
+      {notes.map((note) => (
+        <p
+          key={note}
+          className="relative mt-3.5 max-w-[52ch] text-[13.5px] leading-[1.62] text-quiet"
         >
           {note}
-        </span>
+        </p>
+      ))}
 
-        <span className="mt-6 flex flex-wrap justify-center gap-2">
+      {/* Pushed to the foot, so two cards with different amounts to say still
+          line their buttons up. */}
+      <div className="relative mt-auto pt-7">
+        <div className="flex flex-wrap gap-2">
           {facts.map((fact) => (
             <span
-              key={fact}
+              key={fact.say}
               className={cn(
-                "rounded-pill px-3.5 py-1.5 text-[12px] font-semibold",
-                ink ? "bg-white/8 text-white/75" : "bg-field text-body",
+                "inline-flex items-center gap-2 rounded-pill px-3.5 py-2 text-[12.5px] font-semibold",
+                blue ? "bg-mark/8 text-mark" : "bg-[#0f9d58]/8 text-[#0b7c45]",
               )}
             >
-              {fact}
+              <fact.icon aria-hidden className="size-4" strokeWidth={1.9} />
+              {fact.say}
             </span>
           ))}
-        </span>
+        </div>
 
-        {/* Drawn as a control, but it is not one: the card is the button, and a
-            real button inside it would be a second target for one decision. */}
-        <span
+        <button
+          type="button"
+          onClick={onClick}
           className={cn(
-            "mt-7 inline-flex items-center gap-2.5 rounded-pill px-5 py-2.5 text-[13.5px] font-semibold transition-opacity group-hover/door:opacity-90",
-            ink ? "bg-white text-ink" : "bg-ink text-white",
+            "group/go mt-5 flex w-full cursor-pointer items-center justify-between gap-3 rounded-pill px-6 py-3.5 text-[15px] font-semibold text-white transition-opacity hover:opacity-90",
+            blue
+              ? "bg-[linear-gradient(90deg,#1a4bff_0%,#1fa7ff_100%)]"
+              : "bg-[linear-gradient(90deg,#0b7c45_0%,#12a862_100%)]",
           )}
         >
-          {go}
+          <span className="flex-1 text-center">{go}</span>
           <ArrowRight
             aria-hidden
-            className="size-4 transition-transform group-hover/door:translate-x-0.5"
-            strokeWidth={2.4}
+            className="size-[18px] flex-none transition-transform group-hover/go:translate-x-0.5"
+            strokeWidth={2.2}
           />
-        </span>
-      </span>
-    </button>
+        </button>
+      </div>
+    </div>
   );
 }
