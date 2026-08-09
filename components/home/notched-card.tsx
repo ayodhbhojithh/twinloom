@@ -389,7 +389,6 @@ export function NotchedCard({ className }: { className?: string }) {
       radius,
       barWidth,
       barDepth,
-      barRight: true,
       barRadius: barFlare,
       barFlare: barFlare,
       /* Nought, which `outline` reads as no cut at all - and the bottom left
@@ -421,13 +420,22 @@ export function NotchedCard({ className }: { className?: string }) {
      whatever the page happens to use. */
   const pad = Math.max(28, Math.min(size.w * 0.07, 132));
 
-  /* How far down the card anything can start.
+  /* How far down the header itself starts.
 
-     The header, and nothing else. It used to be the notch plus the header,
-     because the bar sat below the cut; it is level with it now and split around
-     it, so the notch takes no height of its own. Every pixel here is one the
-     words below move down by, and the screens are centred in what is left. */
-  const head = NAV_HEIGHT + 15;
+     Clear of the notch rather than level with it: the notch is centred now,
+     which puts it directly over the nav rather than beside it, and a header
+     that started at the top edge regardless had the arrows sitting on top of
+     "How we work". Six pixels of air past the cut's own floor is the same
+     "level, not touching" gap this card draws everywhere else. */
+  const headTop = cut.barDepth + 6;
+
+  /* How far down the card anything else can start.
+
+     The header, and nothing else. Every pixel here is one the words below
+     move down by, and the screens are centred in what is left - so it has to
+     clear the header's own bottom edge, wherever that now is, plus the eight
+     pixels of air the original number already held past it. */
+  const head = headTop + NAV_HEIGHT + 8;
 
   /* The measurement that placed the name on the picture went with the name. It
      worked out whether the bottom edge had room for it beside the thumbnail, and
@@ -779,14 +787,12 @@ export function NotchedCard({ className }: { className?: string }) {
              paragraph on one left edge, which is the only alignment on this
              screen anybody will notice. */
           ["--page-gutter" as string]: `${pad}px`,
-          /* And a little air above it. Level with the notch is right; touching
-             the top edge of the card is not - the arrows in the cut have the
-             cut's own depth around them and the bar either side of it had
-             nothing. */
-          paddingTop: 7,
+          /* Clear of the notch, which is centred over the nav now rather than
+             off to one side of it - see `headTop`. */
+          paddingTop: headTop,
         }}
       >
-        <SiteHeader bare reserve={cut.barWidth + 16} />
+        <SiteHeader bare />
       </div>
 
       {/* The bar, standing in the top of the cut. No plate behind it: the notch
@@ -803,11 +809,10 @@ export function NotchedCard({ className }: { className?: string }) {
           all three screens: worth keeping over a top edge that changes shape
           depending on what is drawn under it. */}
       <div
-        className="absolute top-0 z-30 flex justify-center"
+        className="absolute top-0 left-0 right-0 z-30 flex justify-center"
         style={{
-          /* Hard against the corner, because that is where the cut is. */
-          right: 0,
-          width: cut.barWidth,
+          /* The full width rather than the notch's own, so the pill centres
+             on the card - the notch it stands in is centred the same way. */
           height: cut.barDepth,
           paddingTop: 4,
         }}
