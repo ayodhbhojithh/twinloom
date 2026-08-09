@@ -420,21 +420,34 @@ export function NotchedCard({ className }: { className?: string }) {
      whatever the page happens to use. */
   const pad = Math.max(28, Math.min(size.w * 0.07, 132));
 
-  /* How far down the header itself starts.
+  /* Where the bar sits, and where the links inside it sit.
 
-     Clear of the notch rather than level with it: the notch is centred now,
-     which puts it directly over the nav rather than beside it, and a header
-     that started at the top edge regardless had the arrows sitting on top of
-     "How we work". Six pixels of air past the cut's own floor is the same
-     "level, not touching" gap this card draws everywhere else. */
-  const headTop = cut.barDepth + 6;
+     Two numbers, because the notch only lands on one part of the bar. It is
+     centred and so are the links; the name is out at the gutter and the menu
+     button is at the far end, and neither goes anywhere near it. So the bar
+     itself sits near the top edge where the name belongs, and the links alone
+     drop past the cut's own floor - `barTop` is the whole bar, `navDrop` is
+     what `SiteHeader` adds to the middle of it.
+
+     The alternative was one number for both, which is what this was: the bar
+     started below the notch, and the name was pushed a notch's depth down the
+     card to clear something a third of the width away from it. */
+  const barTop = 10;
+  /* Level with the floor of the cut rather than clear of it.
+
+     There was six pixels of air past it, and the links sat a visible step
+     below a notch they only had to miss - the arcs at the notch's two bottom
+     corners curve away from its middle, so type set on the floor line is
+     already clear of the shape either side of the arrows. */
+  const headTop = cut.barDepth;
+  const navDrop = Math.max(0, headTop - barTop);
 
   /* How far down the card anything else can start.
 
-     The header, and nothing else. Every pixel here is one the words below
-     move down by, and the screens are centred in what is left - so it has to
-     clear the header's own bottom edge, wherever that now is, plus the eight
-     pixels of air the original number already held past it. */
+     The links, which are the lowest thing in the bar, and nothing else. Every
+     pixel here is one the words below move down by, and the screens are
+     centred in what is left - so it clears wherever the links actually end,
+     plus the eight pixels of air the original number already held past it. */
   const head = headTop + NAV_HEIGHT + 8;
 
   /* The measurement that placed the name on the picture went with the name. It
@@ -788,11 +801,11 @@ export function NotchedCard({ className }: { className?: string }) {
              screen anybody will notice. */
           ["--page-gutter" as string]: `${pad}px`,
           /* Clear of the notch, which is centred over the nav now rather than
-             off to one side of it - see `headTop`. */
-          paddingTop: headTop,
+             off to one side of it - see `barTop` and `navDrop`. */
+          paddingTop: barTop,
         }}
       >
-        <SiteHeader bare />
+        <SiteHeader bare navTop={navDrop} />
       </div>
 
       {/* The bar, standing in the top of the cut. No plate behind it: the notch
@@ -1210,13 +1223,22 @@ export function NotchedCard({ className }: { className?: string }) {
                   button dropped onto a second line. The picture loses ten points
                   and reads no smaller for it; the words gain a column. */}
               <div className="flex flex-1 flex-col items-center justify-center gap-8 lg:flex-row lg:items-center lg:gap-10">
-                <MarkStage className="w-[72%] max-w-[300px] shrink-0 lg:order-2 lg:w-[42%] lg:max-w-none" />
+                {/* The larger share of the row on a wide screen.
+
+                    It was 42 per cent and capped at 300 on anything narrower,
+                    which on a card the width of a window left the mark a
+                    third of the way to being the picture the screen is built
+                    around - the type beside it runs to a 62ch measure and
+                    stops, and everything past that measure was empty card.
+                    The words do not lose a character: their column is capped
+                    by its own measure long before this takes any of it. */}
+                <MarkStage className="w-[86%] max-w-[380px] shrink-0 lg:order-2 lg:w-[52%] lg:max-w-none" />
 
                 <div className="min-w-0 text-center lg:order-1 lg:flex-1 lg:text-left">
                   {/* The trades, as a list rather than a sentence. Dots between
                     them, because a comma would make it a sentence and it is a
                     label. */}
-                  <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-mono text-[11px] font-bold tracking-[0.15em] text-idx uppercase lg:justify-start">
+                  <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 font-mono text-[11px] font-bold tracking-[0.15em] text-idx uppercase lg:justify-start">
                     {shown.kicker?.map((trade, n) => (
                       <li key={trade} className="flex items-center gap-2.5">
                         {n > 0 ? (
@@ -1230,14 +1252,32 @@ export function NotchedCard({ className }: { className?: string }) {
                     ))}
                   </ul>
 
-                  <h1 className="mx-auto mt-4 max-w-[26ch] text-[clamp(32px,4.2vw,62px)] leading-[1.04] font-extrabold tracking-[-0.042em] text-ink lg:mx-0">
+                  {/* The gaps are the grouping, and they were all much of a
+                      muchness: four, five, four, seven, which says the trades
+                      belong to the headline about as much as the headline
+                      belongs to the line under it - and the lead and the
+                      paragraph, which are a claim and its explanation, sat
+                      closer together than either sat to anything else.
+
+                      Set as a ladder instead. The trades are a label on the
+                      headline and stay tight to it. The lead is the second
+                      half of the claim, so it takes a real step. The
+                      paragraph explains the lead rather than continuing it,
+                      so it takes a larger one. The doors take the largest:
+                      everything above is reading and they are the first thing
+                      to do, and a control set at a paragraph's distance from
+                      a paragraph reads as one more line of it.
+
+                      Each grows a little past `sm`, because a gap that is
+                      right at 62px of headline is mean at 32. */}
+                  <h1 className="mx-auto mt-3.5 max-w-[26ch] text-[clamp(32px,4.2vw,62px)] leading-[1.04] font-extrabold tracking-[-0.042em] text-ink lg:mx-0">
                     {shown.claim?.[0]}
                     <span className="thread-text block">
                       {shown.claim?.[1]}
                     </span>
                   </h1>
 
-                  <p className="mx-auto mt-5 max-w-[44ch] text-[clamp(17px,1.6vw,24px)] leading-[1.36] font-bold tracking-[-0.022em] text-ink lg:mx-0">
+                  <p className="mx-auto mt-5 max-w-[44ch] text-[clamp(17px,1.6vw,24px)] leading-[1.36] font-bold tracking-[-0.022em] text-ink sm:mt-6 lg:mx-0">
                     {shown.lead}
                   </p>
 
@@ -1247,7 +1287,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       sentence is a sentence, and cutting it into pieces in the
                       data so the middle one can be blue is a sentence that can no
                       longer be rewritten without touching the markup. */}
-                  <p className="pointer-events-auto mx-auto mt-4 max-w-[68ch] text-[15px] leading-[1.65] text-quiet sm:text-[16px] lg:mx-0">
+                  <p className="pointer-events-auto mx-auto mt-5 max-w-[62ch] text-[15px] leading-[1.7] text-quiet sm:mt-6 sm:text-[16px] lg:mx-0">
                     {shown.note?.split(SISTER).map((part, n) => (
                       <span key={n}>
                         {n > 0 ? (
@@ -1266,7 +1306,7 @@ export function NotchedCard({ className }: { className?: string }) {
                   {/* Four doors, one row, and the first one filled. Where they all
                     look the same there is no first choice, and a row of four
                     equal buttons is four decisions rather than one. */}
-                  <div className="pointer-events-auto mt-7 flex flex-wrap justify-center gap-2.5 lg:justify-start">
+                  <div className="pointer-events-auto mt-8 flex flex-wrap justify-center gap-2.5 sm:mt-10 lg:justify-start">
                     <Link
                       href={ROUTES.build}
                       className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-5.5 py-3.5 text-[15px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"

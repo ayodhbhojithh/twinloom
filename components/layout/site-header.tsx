@@ -51,7 +51,27 @@ export function SiteHeader({
   bare,
   appear,
   reserve = 0,
-}: { bare?: boolean; appear?: number; reserve?: number } = {}) {
+  navTop = 0,
+}: {
+  bare?: boolean;
+  appear?: number;
+  reserve?: number;
+  /**
+   * How far to drop the centred links, and only them, in pixels.
+   *
+   * For the landing card, which cuts a notch into the middle of its own top
+   * edge. The notch is centred and so are these links, so they are the one
+   * part of the bar it lands on - the name is out at the gutter and the menu
+   * button is at the far end, and neither is anywhere near it. Dropping the
+   * whole bar to clear a cut that only overlaps its middle third pushes the
+   * brand down for a collision it is not in.
+   *
+   * A margin rather than a `top`, because the links are absolutely positioned
+   * with no offsets set: their static position is what centres them on the
+   * bar, and a margin shifts that where a `top` would replace it.
+   */
+  navTop?: number;
+} = {}) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -179,6 +199,7 @@ export function SiteHeader({
             and a button, and it is hidden. */}
         <nav
           aria-label="Primary"
+          style={navTop ? { marginTop: navTop } : undefined}
           className="absolute left-1/2 hidden -translate-x-1/2 flex-nowrap items-center gap-x-5 xl:flex 2xl:gap-x-7"
         >
           {HEADER_NAV.map((item) => {
