@@ -3,12 +3,20 @@
 import { useCallback, useEffect, useRef } from "react";
 
 /* ---------------------------------------------------------------------------
-   The loom, as two threads twisted round one wave.
+   The loom, as a frequency read off a slow wave.
 
-   A field of vertical threads riding a slow swell, split into a pair that
-   spirals tightly around it and crosses many times along the field's length -
-   a braid, not a bend. `Twin` and `Loom` are two things woven into one word,
-   and one thread would only ever draw the second half of that.
+   One row of vertical threads standing on one travelling swell, with a bright
+   line drawn along the swell itself. It is a waveform and it is meant to be:
+   a loom's warp is a row of parallel threads, and a row of parallel threads
+   over a moving line is what this company is named after doing.
+
+   One row, and that is a decision this arrived at twice from the other side.
+   It was a mirrored pair for a while, then a full double helix - two
+   backbones half a turn apart with rungs between them and the near half drawn
+   over the far. Both were built and both came out wrong for the same reason:
+   a frequency plot is columns about one axis, and the moment there are two of
+   anything the eye starts reading the gap between them instead of the shape
+   they make. The shape is the whole picture.
 
    It plays, the way an earlier version did. That one wove a word out of its
    threads and struck a note for every one a pointer crossed; the word is gone
@@ -26,32 +34,19 @@ import { useCallback, useEffect, useRef } from "react";
    flutter is drawn from the strike's age each frame rather than accumulated,
    so a dropped frame costs a frame and not the shape of the decay.
 
-   The twist is not the swell. It was, the first time this was tried: the pair
-   mirrored around the swell's own centre, so it crossed wherever the swell
-   crossed - three or four times along the whole field, which reads as a lens
-   opening and closing rather than as anything twisted. A rope's pitch has
-   nothing to do with how the rope is laid out; `TWIST` is its own frequency,
-   several times `RIDE`'s, and the pair rides the swell together while
-   spiralling around it at that faster rate.
-
-   Which strand is in front swaps at every crossing, decided the same way the
-   crossing is: by which side `TWIST` put that strand on. Nothing is layered by
-   strand as a whole - it is decided column by column, the same way the ghosts
-   are kept behind the field by drawing all of one pass before any of the
-   other.
-
-   Two ramps rather than two colours. Strand two reads the strand one ramp
-   backwards, so the piece is telling one continuous colour story rather than
-   assigning each thread a fixed hue - which is what actually sells two threads
-   rather than one doubled.
-
    The height is the wave, heard as well as ridden. The envelope deciding how
    tall each column stands is locked to the swell's own primary wave rather
    than free-running: sin² of the same phase puts a lobe on every crest and
-   every trough and pinches the field to almost nothing at each crossing,
-   which is what makes the picture read as a sound wave rather than as a hedge
-   under a ribbon. One smaller free cluster and two per-thread roughnesses
-   keep the lobes from coming out machined.
+   every trough and pinches the field at each crossing, which is what makes
+   the picture read as a sound wave rather than as a hedge under a ribbon. A
+   smaller free cluster, four per-thread roughnesses and a sparse spike keep
+   the lobes from coming out machined.
+
+   The grain matters as much as the envelope. A sum of sines is bounded and
+   spends its life near the middle of its range, so roughness alone gives a
+   soft edge and never the spikes standing clear of their neighbours that a
+   real plot has. Those come from `SPIKE`, which is a sine raised high enough
+   that it is nothing almost everywhere and briefly everything.
 
    And each thread is ink at its tips and lit at its waist. The full length is
    drawn in its ramp colour pulled most of the way to a deep navy, then the
@@ -59,9 +54,9 @@ import { useCallback, useEffect, useRef } from "react";
    the way it does in a rendered frequency picture, and the reach away from it
    goes dark instead of carrying the same brightness to the tip.
 
-   And there is a ghost layer behind both strands, standing taller than either
-   and drawn in pale grey-blue, so the pair has something to sit in front of.
-   One layer of threads is a graph; a backdrop behind it is a picture of one.
+   And there is a ghost layer behind the field, standing taller than it and
+   drawn in pale grey-blue, so the band has something to sit in front of. One
+   layer of threads is a graph; a backdrop behind it is a picture of one.
 
    The count is fixed rather than taken from the width, because the roughness is
    indexed by thread - a field that changed its count with the window would
@@ -80,20 +75,14 @@ const RIDE = [
   { reach: 0.027, turns: 2.55, phase: 0.6, speed: -0.085 },
 ] as const;
 
-/**
- * The twist itself, separate from the swell.
- *
- * `RIDE` decided how the pair crossed the first time this was tried, and it
- * was wrong for it: a wave built to bend slowly across the whole field crosses
- * its own centre three or four times along the width, which reads as a lens
- * opening and closing, not a rope. A twist wants many crossings in the space a
- * bend takes one, so it needs a frequency of its own - `turns` here is roughly
- * four times `RIDE`'s, which is what actually looks braided rather than bowed.
- *
- * The swell is untouched by this. Both strands still ride it together, and
- * what the twist adds is the fast, small separation between them - the line
- * itself does not twist, the pair around it does. */
-const TWIST = { reach: 0.05, turns: 34, speed: 0.24 } as const;
+/* No twist, and nothing that separates a pair.
+
+   There was one, and then a whole helix built on it: two backbones half a
+   turn apart with rungs between them and the near half drawn over the far.
+   Both are gone for the same reason. A frequency plot is one row of columns
+   about one axis - the moment there are two of anything, the eye reads the
+   gap between them instead of the shape they make, and the shape is the
+   whole picture. */
 
 /**
  * The envelope: a small floor every thread gets, and the lobes over it.
@@ -107,10 +96,17 @@ const TWIST = { reach: 0.05, turns: 34, speed: 0.24 } as const;
  *
  * `cluster` is the one free voice over it, kept small, so the lobes are not
  * machined copies of each other.
+ *
+ * The floor is what the waists keep, and it was five per cent - near enough
+ * to nothing that the field went out between lobes and came back, which is a
+ * row of separate tufts rather than one wave that rises and falls. The
+ * reference pinches hard and still has short threads all the way through, and
+ * that is the difference between a waist and a gap: a waist is the same cloth,
+ * narrower.
  */
-const FLOOR = 0.05;
+const FLOOR = 0.115;
 const ENV = {
-  main: 0.33,
+  main: 0.29,
   cluster: { reach: 0.07, turns: 12.4, phase: 1.5, speed: -0.07 },
 } as const;
 
@@ -130,11 +126,35 @@ const PLUCK = {
   flutterRise: 3.4,
 } as const;
 
-/** And the roughness, by thread, so the band's edge is ragged rather than drawn. */
+/**
+ * The roughness, by thread, so the band's edge is ragged rather than drawn.
+ *
+ * Indexed by thread rather than by position, which is what makes it grain
+ * instead of another wave: neighbouring columns land on unrelated parts of
+ * these sines, so the edge jumps where a wave would slope.
+ *
+ * Four voices at rates that do not divide into each other, and the two fast
+ * ones carry most of it. The reference is not a smooth envelope with a fuzzy
+ * edge - it is a ragged field, spikes standing well clear of their
+ * neighbours, and two slow voices could only ever make a soft one.
+ */
 const ROUGH = [
-  { reach: 0.031, rate: 0.7 },
-  { reach: 0.019, rate: 1.87 },
+  { reach: 0.055, rate: 0.7 },
+  { reach: 0.042, rate: 1.87 },
+  { reach: 0.03, rate: 4.31 },
+  { reach: 0.022, rate: 9.13 },
 ] as const;
+
+/**
+ * The spikes: a few threads a great deal taller than the rest.
+ *
+ * The reference has them and no amount of roughness produces them, because
+ * roughness is bounded - every voice is a sine and a sum of sines spends its
+ * life near the middle of its range. These are the tail: `sin` raised to a
+ * high power is nearly nought almost everywhere and briefly one, so a handful
+ * of columns stand right out and the rest are untouched.
+ */
+const SPIKE = { reach: 0.2, rate: 2.9, sharpness: 14 } as const;
 
 /** How much further the ghosts reach than the field in front of them. */
 const GHOST = 0.092;
@@ -164,11 +184,11 @@ const GHOST_ROUGH = 0.038;
 const SAFE = 0.47;
 const WORST =
   RIDE.reduce((n, wave) => n + wave.reach, 0) +
-  TWIST.reach +
   FLOOR +
   ENV.main +
   ENV.cluster.reach +
   ROUGH.reduce((n, grain) => n + grain.reach, 0) +
+  SPIKE.reach +
   GHOST +
   GHOST_ROUGH;
 const ROOM = SAFE / WORST;
@@ -400,6 +420,28 @@ export function LoomWave({
     };
 
     /**
+     * What a strike does to the ladder's width, as a multiplier.
+     *
+     * A struck rung swings wider and narrower rather than simply growing: the
+     * envelope decides how much and a cosine of the strike's age decides which
+     * way this frame, at a rate that rises with the note the column carries.
+     * The colour takes the envelope alone - brightness dying smoothly while
+     * the width oscillates is one event with two faces, where a colour
+     * flickering on the same clock would read as the rung blinking.
+     */
+    const ringStretch = (at: number, t: number, along: number) => {
+      const rung = ringing(at, t);
+      if (rung <= 0.02) return 1;
+      const wobble = Math.cos(
+        (t - struck[at]) *
+          Math.PI *
+          2 *
+          (PLUCK.flutter + along * PLUCK.flutterRise),
+      );
+      return 1 + rung * (0.5 + 0.5 * wobble);
+    };
+
+    /**
      * Pluck a thread, and the spread either side of it a little less and a
      * little later.
      *
@@ -490,13 +532,13 @@ export function LoomWave({
       return y;
     };
 
-    /** How far apart the pair is, at this point, at this moment - the one
-        number `RIDE` no longer has any part in. */
-    const twist = (along: number, t: number) =>
-      height *
-      ROOM *
-      TWIST.reach *
-      Math.sin(along * Math.PI * TWIST.turns + t * TWIST.speed * speed);
+    /* No `twist` returning a separation any more.
+
+       It gave one number - how far apart the pair is here - which is all a
+       mirrored pair needs and not enough for a helix: a ladder also has to
+       know which way it is facing. `rail` below takes the same phase and
+       reads both off it, `sin` for up the screen and `cos` for how near, and
+       the separation falls out as the first of the two. */
 
     /** How tall the field stands at this column: the floor, the lobe locked
         to the swell's primary wave, the one free cluster, and the roughness.
@@ -521,6 +563,17 @@ export function LoomWave({
       for (const grain of ROUGH) {
         reach += height * ROOM * grain.reach * Math.sin(i * grain.rate);
       }
+
+      /* And the tail. `sin` to an even power is positive everywhere and near
+         nought almost everywhere, so this adds nothing to most columns and a
+         great deal to the few it catches - which is what a spike is. Even, so
+         it never subtracts: a spike that could dig a hole is a gap. */
+      reach +=
+        height *
+        ROOM *
+        SPIKE.reach *
+        Math.sin(i * SPIKE.rate) ** SPIKE.sharpness;
+
       /* The floor is small enough now that the roughness can dig below it at
          a waist. A hair of thread rather than none: a column that vanished
          entirely would put a gap in the field, and the waists are pinched,
@@ -554,104 +607,62 @@ export function LoomWave({
         ctx.stroke();
       }
 
-      /* The pair, one column at a time.
+      /* The field: one column per thread, standing on the line.
 
-         Both strands are drawn for every thread rather than split between
-         them - a twist seen from the side still shows both strands at every
-         point along it, one nearer than the other, never one or the other. */
+         Not a pair and not a ladder. Both were tried - mirrored halves, then
+         a helix with rungs between two backbones - and both answer a question
+         this picture is not asking. A frequency plot is one row of columns
+         about one axis, and the moment there are two of anything the eye
+         starts reading the gap between them instead of the shape they make.
+
+         Each column is drawn twice: its whole length in the ramp pulled most
+         of the way to navy, then its middle half again in the ramp itself.
+         That is where the density in the reference comes from - the field is
+         solid and bright along the line and thins to ink at the tips, which
+         is one column doing what a gradient per column would cost six hundred
+         gradients a frame to do. */
       for (let i = 0; i < COUNT; i += 1) {
         const along = i / (COUNT - 1);
         const x = along * width;
         const middle = ride(along, t);
-        const apart = twist(along, t);
-
-        const reach = stand(along, i, t);
+        const reach = stand(along, i, t) * ringStretch(i, t, along);
 
         /* Thinned at both ends. An arch rather than a ramp, because the field
            has two ends and both of them should run out. */
         const edge = Math.sin(Math.PI * along);
+        const rung = ringing(i, t);
         const weight = i % 7 === 0 ? 2.1 : i % 3 === 0 ? 1.3 : 0.85;
         const alpha = (0.34 + edge * 0.64) * 0.85;
 
-        /* A struck thread vibrates rather than swelling and subsiding.
+        ctx.lineWidth = weight * (1 + rung * 0.7);
 
-           The envelope decides how much, the flutter decides which way this
-           frame: a cosine of the strike's age, at a rate that rises with the
-           note the thread carries, swings the extra length between full and
-           almost nothing while the envelope rings down - which is a string
-           seen from side on. The colour takes the envelope alone: brightness
-           dying smoothly while the length oscillates is one event with two
-           faces, and a colour that flickered with the flutter would read as
-           the thread blinking. */
-        const rung = ringing(i, t);
-        let stretch = 1;
-        if (rung > 0.02) {
-          const wobble = Math.cos(
-            (t - struck[i]) *
-              Math.PI *
-              2 *
-              (PLUCK.flutter + along * PLUCK.flutterRise),
-          );
-          stretch = 1 + rung * (0.5 + 0.5 * wobble);
-        }
+        ctx.strokeStyle = glow(sample(DIM_RGB, along), alpha * 0.9, rung);
+        ctx.beginPath();
+        ctx.moveTo(x, middle - reach);
+        ctx.lineTo(x, middle + reach);
+        ctx.stroke();
 
-        /** One strand: dark to its tips, lit through its waist, dotted.
+        ctx.strokeStyle = glow(
+          sample(RAMP_RGB, along),
+          Math.min(1, alpha * 1.2),
+          rung,
+        );
+        ctx.beginPath();
+        ctx.moveTo(x, middle - reach * 0.52);
+        ctx.lineTo(x, middle + reach * 0.52);
+        ctx.stroke();
 
-            Two strokes rather than a gradient. A per-column gradient would be
-            six hundred gradient objects a frame; the full length in the
-            dimmed ramp with the middle half restruck in the ramp itself reads
-            the same from any distance and costs two lines. */
-        const strand = (centre: number, at: number) => {
-          const span = reach * stretch;
-          ctx.lineWidth = weight * (1 + rung * 0.7);
-
-          ctx.strokeStyle = glow(sample(DIM_RGB, at), alpha * 0.9, rung);
+        /* A dot on some of the tips. It is the one thing here that is not a
+           thread, and it is what stops the tallest reading as scratches. */
+        if (i % 5 === 0 || i % 11 === 0) {
+          const dot = (i % 11 === 0 ? 1.35 : 0.92) * (1 + rung * 0.6);
+          ctx.fillStyle = css(sample(DIM_RGB, along), 0.4 + edge * 0.5);
           ctx.beginPath();
-          ctx.moveTo(x, centre - span);
-          ctx.lineTo(x, centre + span);
-          ctx.stroke();
-
-          ctx.strokeStyle = glow(
-            sample(RAMP_RGB, at),
-            Math.min(1, alpha * 1.2),
-            rung,
-          );
+          ctx.arc(x, middle - reach, dot, 0, Math.PI * 2);
+          ctx.fill();
           ctx.beginPath();
-          ctx.moveTo(x, centre - span * 0.52);
-          ctx.lineTo(x, centre + span * 0.52);
-          ctx.stroke();
-
-          /* A dot on some of the tips. It is the one thing here that is not a
-             thread, and it is what stops the tallest reading as scratches. In
-             the tips' own ink, because the tips are where it sits. */
-          if (i % 5 === 0 || i % 11 === 0) {
-            const dot = (i % 11 === 0 ? 1.35 : 0.92) * (1 + rung * 0.6);
-            ctx.fillStyle = css(sample(DIM_RGB, at), 0.4 + edge * 0.5);
-            ctx.beginPath();
-            ctx.arc(x, centre - span, dot, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(x, centre + span, dot * 0.9, 0, Math.PI * 2);
-            ctx.fill();
-          }
-        };
-
-        const centreA = middle + apart;
-        const centreB = middle - apart;
-
-        /* Whichever strand `apart` put on the far side is the one drawn
-           second, in front - and that swaps every time `apart` crosses
-           nought, which with `TWIST`'s own frequency is many times along the
-           field rather than the three or four the swell alone crossed at.
-           Column by column rather than strand by strand, or one of the two
-           would sit in front of the other along the whole field instead of
-           only half it. */
-        if (apart >= 0) {
-          strand(centreB, 1 - along);
-          strand(centreA, along);
-        } else {
-          strand(centreA, along);
-          strand(centreB, 1 - along);
+          ctx.arc(x, middle + reach, dot * 0.9, 0, Math.PI * 2);
+          ctx.fill();
         }
       }
 
@@ -663,11 +674,21 @@ export function LoomWave({
          a second time, thicker and brighter, rather than the one slow curve
          the whole field is bent to.
 
-         Four passes, widest and faintest first, which is a glow without a
-         blur filter - at this width four strokes is cheaper than asking the
-         canvas for one. Near-white rather than coloured, because everything
-         it crosses is coloured and a light line is the only mark that reads
-         at every point along it. */
+         Four passes, widest and faintest first, and the two soft ones are
+         genuinely blurred rather than only wide. A wide translucent stroke has
+         an edge, and four of them stacked is four edges - which at a glance is
+         a line with rings round it rather than a line that is glowing.
+         `shadowBlur` is the canvas's own gaussian: drawn with the stroke
+         itself transparent, what lands is the blur and nothing else.
+
+         The blur costs a full-canvas composite per pass, which is why only the
+         two soft passes take it and the two sharp ones do not - a crisp core
+         gains nothing from being blurred and would lose the crispness that
+         makes it the core.
+
+         Pale cyan rather than pure white. Everything it crosses is coloured,
+         and a white line over a blue field reads as a gap in the field; the
+         palest end of the mark's own teal reads as light on it. */
       const path = () => {
         ctx.beginPath();
         for (let n = 0; n <= 320; n += 1) {
@@ -680,22 +701,38 @@ export function LoomWave({
       };
 
       for (const pass of [
-        { wide: 14, tint: "142,241,255", alpha: 0.13 },
-        { wide: 7, tint: "216,253,255", alpha: 0.3 },
-        { wide: 3.7, tint: "255,255,255", alpha: 0.9 },
-        { wide: 1.2, tint: "247,255,255", alpha: 0.95 },
+        { wide: 9, tint: "142,241,255", alpha: 0.3, blur: 14 },
+        { wide: 5, tint: "216,253,255", alpha: 0.42, blur: 5 },
+        { wide: 3.4, tint: "232,255,255", alpha: 0.92, blur: 0 },
+        { wide: 1.2, tint: "247,255,255", alpha: 0.95, blur: 0 },
       ]) {
         /* The glow answers the playing; the core does not. While anything is
            ringing the two soft outer passes widen and brighten a little, the
            way a room holds the light of a sound - and the line itself stays
            the same line, because the swell has not changed, only the field
            ringing around it. */
-        const halo = pass.wide > 4 ? 1 + energy * 0.4 : 1;
-        ctx.strokeStyle = `rgba(${pass.tint},${Math.min(1, pass.alpha * halo)})`;
+        const halo = pass.blur ? 1 + energy * 0.4 : 1;
+        const paint = `rgba(${pass.tint},${Math.min(1, pass.alpha * halo)})`;
+
+        if (pass.blur) {
+          /* The stroke is drawn in nothing and its shadow is drawn in the
+             colour, offset by nought - so the only thing painted is the
+             blur. Stroking in the colour as well would put the hard line
+             back underneath the soft one. */
+          ctx.shadowBlur = pass.blur * halo;
+          ctx.shadowColor = paint;
+          ctx.strokeStyle = "rgba(0,0,0,0)";
+        } else {
+          ctx.shadowBlur = 0;
+          ctx.strokeStyle = paint;
+        }
+
         ctx.lineWidth = pass.wide * halo;
         path();
         ctx.stroke();
       }
+
+      ctx.shadowBlur = 0;
 
       /* The ends given away, by erasing rather than by painting.
 
