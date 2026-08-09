@@ -229,8 +229,14 @@ export function WaveDots({
          edge is a fifth of the way down and its near edge runs to the foot, so
          it covers the height rather than sitting in the lower half with white
          above it. */
-      const horizon = height * (0.2 - (held.y - 0.5) * 0.07 * lean);
-      const groundY = horizon + height * 0.82 * near;
+      /* The horizon, near the top edge rather than a fifth of the way down.
+
+         It sat at a fifth, which left the top of the card white and the sheet
+         reading as an object placed in it. The card is a window onto something
+         larger, and a window's top edge is not where the world stops - so the
+         far rows run up to it and the fade at the edge is what ends them. */
+      const horizon = height * (0.03 - (held.y - 0.5) * 0.07 * lean);
+      const groundY = horizon + height * 1.0 * near;
 
       /* Rows widen as they come forward, and the whole sheet slides with the
          pointer, so the far edge moves less than the near one. That difference
@@ -241,12 +247,14 @@ export function WaveDots({
          ends is how hard it does it. Four-fold read as a slightly narrower row;
          this is over ten-fold, which reads as distance.
 
-         Both ends are up a little, because the field was sitting inside the card
-         with white in the corners around it. Widened, the near rows run past the
-         sides and the far ones cover more of the top - so the surface is a piece
-         of something larger that the card is a window onto, rather than an
-         object placed in the middle of it. */
-      const spread = 0.22 + 2.05 * near;
+         Both ends are up, and the far one twice over. At a fifth of the width
+         the back of the sheet was a thin band in the middle of the card with
+         white either side of it; at half, it reaches the sides and the corners
+         go with it. Widened, the near rows run past the edges and the far ones
+         cover the top - so the surface is a piece of something larger that the
+         card is a window onto, rather than an object placed in the middle of
+         it. */
+      const spread = 0.52 + 1.95 * near;
       const slide = (held.x - 0.5) * width * 0.16 * near * lean;
       const x = width * (0.5 + SHIFT) + (along - 0.5) * width * spread + slide;
 

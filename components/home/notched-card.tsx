@@ -411,6 +411,12 @@ export function NotchedCard({ className }: { className?: string }) {
             edge and a block of type in the centre of the card are two different
             compositions arguing.
 
+            And it is thinner than it was. The field now covers the whole card
+            rather than sitting in the middle of it, so the wash is no longer
+            allowed to be white - it never reaches opaque anywhere, and the dots
+            run under the type instead of stopping at it. Enough to keep a
+            sentence readable, not enough to leave a hole in the picture.
+
             A gradient rather than a panel, either way: an edge here would be a
             box drawn round the words, and the whole point is that there is no
             box. */}
@@ -419,7 +425,7 @@ export function NotchedCard({ className }: { className?: string }) {
             className="absolute inset-0"
             style={{
               backgroundImage:
-                "radial-gradient(ellipse 46% 50% at 50% 50%, var(--color-field) 0%, var(--color-field) 22%, color-mix(in oklab, var(--color-field) 52%, transparent) 50%, transparent 76%)",
+                "radial-gradient(ellipse 40% 42% at 50% 50%, color-mix(in oklab, var(--color-field) 80%, transparent) 0%, color-mix(in oklab, var(--color-field) 66%, transparent) 34%, color-mix(in oklab, var(--color-field) 34%, transparent) 62%, transparent 84%)",
             }}
           />
         ) : null}
