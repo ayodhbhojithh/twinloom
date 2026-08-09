@@ -3,70 +3,61 @@
 import { useCallback, useEffect, useRef } from "react";
 
 /* ---------------------------------------------------------------------------
-   The loom, as a frequency read off a slow wave.
+   The loom, as a sheaf of threads under one slow wave.
 
-   One row of vertical threads standing on one travelling swell, with a bright
-   line drawn along the swell itself. It is a waveform and it is meant to be:
-   a loom's warp is a row of parallel threads, and a row of parallel threads
-   over a moving line is what this company is named after doing.
+   Sixty smooth curves, every one the same wave at a different phase, spread
+   evenly round a full turn and drawn over a travelling swell. Nothing here is
+   an outline: where the curves are turning they crowd together and where they
+   are steepest they spread apart, so the family draws its own bright edges and
+   leaves the middle open. The band is a caustic - the same reason a glass of
+   water throws a bright rim - and it gathers and thins on its own as the
+   envelope moves under it.
 
-   One row, and that is a decision this arrived at twice from the other side.
-   It was a mirrored pair for a while, then a full double helix - two
-   backbones half a turn apart with rungs between them and the near half drawn
-   over the far. Both were built and both came out wrong for the same reason:
-   a frequency plot is columns about one axis, and the moment there are two of
-   anything the eye starts reading the gap between them instead of the shape
-   they make. The shape is the whole picture.
+   A sheaf rather than columns, and that is the third answer this arrived at.
+   It was a field of vertical bars for a long time, ragged with per-thread
+   grain and sparse tall spikes; before that a mirrored pair, and before that a
+   full double helix with rungs. The bars are the closest relative of this and
+   the furthest from it in one respect that decides everything: grain. Bars
+   want it, because a bar is its own object and a neighbour that jumps reads as
+   texture. Curves cannot have it at all - consecutive samples along one curve
+   land on unrelated parts of any per-index noise, and a curve that jumps is
+   not textured, it is a zigzag. Smoothness here is not a setting; it is the
+   absence of anything varying faster than the eye follows.
 
    It plays, the way an earlier version did. That one wove a word out of its
    threads and struck a note for every one a pointer crossed; the word is gone
-   but the instrument is not - crossing a thread here still plucks it and still
+   but the instrument is not - crossing the field still plucks it and still
    sounds a note, on the same synthesised string. What is different is what is
    being played: there, a shape holding still until touched; here, a shape
    already moving, so a pluck is added to a swing rather than started from rest.
 
-   A strike vibrates a thread rather than lighting it. The length flutters at a
-   rate that rises with the note the thread carries, the way a shorter string
-   flutters faster; the strike spreads outward thread by thread rather than
-   arriving everywhere at once, so a pluck is a ripple leaving the point it
-   happened at; and while anything is ringing the centre line's glow widens a
-   little, the way a room is brighter while something in it is sounding. The
-   flutter is drawn from the strike's age each frame rather than accumulated,
-   so a dropped frame costs a frame and not the shape of the decay.
+   A strike widens the sheaf rather than lighting it. The width swings at a
+   rate that rises with the note, the way a shorter string flutters faster; the
+   strike spreads outward thread by thread rather than arriving everywhere at
+   once, so a pluck is a ripple leaving the point it happened at; and while
+   anything is ringing the centre line's glow widens a little, the way a room
+   is brighter while something in it is sounding. The swing runs on the drawing
+   clock rather than on the strike's age, so re-striking a live column changes
+   how far it swings and never where in the swing it is.
 
-   The height is the wave, heard as well as ridden. The envelope deciding how
-   tall each column stands is locked to the swell's own primary wave rather
-   than free-running: sin² of the same phase puts a lobe on every crest and
-   every trough and pinches the field at each crossing, which is what makes
-   the picture read as a sound wave rather than as a hedge under a ribbon. A
-   smaller free cluster, four per-thread roughnesses and a sparse spike keep
-   the lobes from coming out machined.
-
-   The grain matters as much as the envelope. A sum of sines is bounded and
-   spends its life near the middle of its range, so roughness alone gives a
-   soft edge and never the spikes standing clear of their neighbours that a
-   real plot has. Those come from `SPIKE`, which is a sine raised high enough
-   that it is nothing almost everywhere and briefly everything.
-
-   And each thread is ink at its tips and lit at its waist. The full length is
-   drawn in its ramp colour pulled most of the way to a deep navy, then the
-   middle half again on top in the colour itself - so the light hugs the line
-   the way it does in a rendered frequency picture, and the reach away from it
-   goes dark instead of carrying the same brightness to the tip.
-
-   And there is a ghost layer behind the field, standing taller than it and
-   drawn in pale grey-blue, so the band has something to sit in front of. One
-   layer of threads is a graph; a backdrop behind it is a picture of one.
-
-   The count is fixed rather than taken from the width, because the roughness is
-   indexed by thread - a field that changed its count with the window would
-   change its texture every time somebody dragged an edge.
+   The envelope is locked to the swell's own primary wave: sin² of the same
+   phase, so the ribbon opens over every crest and every trough and draws in
+   between them. One smaller free voice over it keeps the lobes from coming out
+   machined - and a floor under both keeps the narrowest part a waist rather
+   than a knot. Both voices are squared and so both reach nought, and where
+   they coincide the family would have nothing to multiply: every curve on one
+   y, the ribbon shut to a point with a cusp either side. `ENV.floor` is what
+   makes that impossible.
 --------------------------------------------------------------------------- */
 
-/** How many threads, whatever the box is. */
+/** How finely the pluck is resolved across the width.
+
+    Not a count of anything drawn any more - the sheaf has its own `lines`
+    and `samples`. This is the grid a pointer is snapped to and notes are
+    picked from, so it is still the resolution of the instrument. */
 const COUNT = 315;
 
-/** Where the middle of the field sits, as a share of the height. */
+/** Where the middle of the sheaf sits, as a share of the height. */
 const CENTRE = 0.5;
 
 /** The swell: one fast wave and one slow, both as shares of the height. */
@@ -75,24 +66,15 @@ const RIDE = [
   { reach: 0.027, turns: 2.55, phase: 0.6, speed: -0.085 },
 ] as const;
 
-/* No twist, and nothing that separates a pair.
-
-   There was one, and then a whole helix built on it: two backbones half a
-   turn apart with rungs between them and the near half drawn over the far.
-   Both are gone for the same reason. A frequency plot is one row of columns
-   about one axis - the moment there are two of anything, the eye reads the
-   gap between them instead of the shape they make, and the shape is the
-   whole picture. */
-
 /**
- * The envelope: a small floor every thread gets, and the lobes over it.
+ * The envelope: how wide the sheaf opens, along the width.
  *
  * `main` is not a wave of its own - it is sin² of the swell's primary wave,
- * same turns, same phase, same speed. Locked together like that, a lobe sits
- * on every crest and every trough and the field pinches to the floor exactly
- * where the line crosses its own centre, which is the shape a sound wave
- * actually has. A free-running envelope put lobes wherever its phase happened
- * to fall, and the picture read as a hedge with a ribbon through it.
+ * same turns, same phase, same speed. Locked together like that the ribbon
+ * opens over every crest and every trough and draws in between them, which
+ * is a wave breathing. A free-running envelope put its lobes wherever its
+ * own phase happened to fall, and the band wandered off the line it is
+ * supposed to belong to.
  *
  * `cluster` is the one free voice over it, kept small, so the lobes are not
  * machined copies of each other.
