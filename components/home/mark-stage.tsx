@@ -43,6 +43,20 @@ export function MarkStage({ className }: { className?: string }) {
         height={1254}
         aria-hidden
         draggable={false}
+        /* Loaded straight away rather than lazily.
+
+           This is the first screen of the landing card and the largest thing on
+           it, which makes it the Largest Contentful Paint - and the default is
+           `lazy`, so the browser was waiting to discover it in the body before
+           starting. `eager` is the right one of the three here rather than
+           `preload`: the docs say to prefer it, and a `<link>` in the head would
+           be preloading an image that four other screens of this card do not
+           show.
+
+           Not `priority`, which Next 16 has deprecated in favour of saying which
+           of these two behaviours you actually meant. */
+        loading="eager"
+        fetchPriority="high"
         sizes="(max-width: 1024px) 70vw, 52vw"
         /* Multiplied, not laid on.
 
