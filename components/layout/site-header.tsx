@@ -47,7 +47,10 @@ import { cn } from "@/lib/utils";
  */
 const FADE_OVER = 20;
 
-export function SiteHeader({ bare }: { bare?: boolean } = {}) {
+export function SiteHeader({
+  bare,
+  appear,
+}: { bare?: boolean; appear?: number } = {}) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -79,8 +82,19 @@ export function SiteHeader({ bare }: { bare?: boolean } = {}) {
 
     const settle = () => {
       frame = 0;
-      const gone = Math.min(Math.max(window.scrollY, 0) / FADE_OVER, 1);
+      const down = Math.max(window.scrollY, 0);
+      const gone = Math.min(down / FADE_OVER, 1);
       node.style.setProperty("--header-fade", String(1 - gone));
+
+      /* And whether the bar is here at all.
+
+         Only the copy that waits for the scroll has an `appear`, and it is a
+         threshold rather than a ramp: a bar that is a third of the way in is a
+         bar in the way. Written to the element for the same reason the fade is -
+         it is read on every scroll frame and it is one value. */
+      if (appear !== undefined) {
+        node.dataset.here = down > appear ? "yes" : "no";
+      }
     };
 
     const again = () => {
@@ -96,7 +110,7 @@ export function SiteHeader({ bare }: { bare?: boolean } = {}) {
       window.removeEventListener("resize", again);
       if (frame) cancelAnimationFrame(frame);
     };
-  }, []);
+  }, [appear]);
 
   /* No rule under it, and opaque. The two go together: a translucent bar shows the
      page sliding through it, and without a rule there is nothing left to mark where
@@ -122,9 +136,29 @@ export function SiteHeader({ bare }: { bare?: boolean } = {}) {
   return (
     <header
       ref={bar}
-      className={
-        bare ? "relative z-30" : "header-fade sticky top-0 z-40 bg-field"
-      }
+      className={cn(
+        bare
+          ? /* Inside the card, and the box that places it takes no clicks - so
+               this has to take its own, or every link in it is dead. */
+            "pointer-events-auto relative z-30"
+          : appear === undefined
+            ? "header-fade sticky top-0 z-40 bg-field"
+            : /* Fixed, not sticky, and that is the whole of it: a sticky element
+                 still takes its place in the flow, so this one reserved a bar's
+                 height at the top of the landing page and left an empty band
+                 above the card while it was translated out of sight. Fixed takes
+                 nothing, which is right for a bar that is not there yet. */
+              "header-fade fixed inset-x-0 top-0 z-40 bg-field",
+        /* The copy that waits for the scroll.
+
+           Off the top of the window and out of the pointer's way until the page
+           has moved past whatever is at the top of it, then down. A transition
+           on the transform and the opacity rather than on `display`, because a
+           bar that appears is a bar that was already there. */
+        appear !== undefined &&
+          "transition-[transform,opacity] duration-300 ease-out data-[here=no]:pointer-events-none data-[here=no]:-translate-y-full data-[here=no]:opacity-0",
+      )}
+      data-here={appear !== undefined ? "no" : undefined}
     >
       <div className="page-frame flex items-center gap-4 py-2.5">
         <div className="flex min-w-0 flex-1 items-center">

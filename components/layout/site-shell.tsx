@@ -43,11 +43,19 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      {/* Everywhere but the landing page. That page puts the header inside its
-          card - the card is the whole window there, and a bar above it would be
-          a bar above the page rather than part of it. `NotchedCard` renders it,
-          bare. */}
-      {pathname === ROUTES.home ? null : <SiteHeader />}
+      {/* Two arrangements, one component.
+
+          Everywhere but the landing page the bar is simply there, stuck to the
+          top of the window from the first pixel.
+
+          The landing page puts a header inside its card, because the card is the
+          whole window there and a bar above it would be a bar above the page
+          rather than part of it. That one scrolls away with the card it is in,
+          which leaves the rest of the page with no way back - so a second copy
+          waits off the top of the window and comes down once the card has gone.
+          It is the same component and the same links; what differs is that this
+          one is not there until it is needed. */}
+      {pathname === ROUTES.home ? <SiteHeader appear={240} /> : <SiteHeader />}
 
       <div className="flex flex-1 items-start">
         {/* No rail. Every page it carried is in the header now, and a docked

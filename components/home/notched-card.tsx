@@ -375,7 +375,7 @@ export function NotchedCard({ className }: { className?: string }) {
      because the bar sat below the cut; it is level with it now and split around
      it, so the notch takes no height of its own. Every pixel here is one the
      words below move down by, and the screens are centred in what is left. */
-  const head = NAV_HEIGHT + 8;
+  const head = NAV_HEIGHT + 15;
 
   /* The measurement that placed the name on the picture went with the name. It
      worked out whether the bottom edge had room for it beside the thumbnail, and
@@ -695,7 +695,24 @@ export function NotchedCard({ className }: { className?: string }) {
           them, it took every click meant for an arrow and the card stopped
           turning. The box is only here to place the bar, so it takes no clicks;
           the bar takes its own. */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-20">
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 z-20"
+        style={{
+          /* The header's own side padding, set to the card's.
+
+             It reads `--page-gutter`, which is the page's number and not this
+             card's - so the wordmark sat nearer the edge than every line of type
+             under it. Overriding it here puts the name, the claim and the
+             paragraph on one left edge, which is the only alignment on this
+             screen anybody will notice. */
+          ["--page-gutter" as string]: `${pad}px`,
+          /* And a little air above it. Level with the notch is right; touching
+             the top edge of the card is not - the arrows in the cut have the
+             cut's own depth around them and the bar either side of it had
+             nothing. */
+          paddingTop: 7,
+        }}
+      >
         <SiteHeader bare />
       </div>
 
