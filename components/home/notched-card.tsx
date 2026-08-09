@@ -20,21 +20,24 @@ import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 import { Ballpit } from "./ballpit";
-import { BeadTrail, MarkStage } from "./mark-stage";
+import { MarkStage } from "./mark-stage";
 import { GradientWaves } from "./gradient-waves";
 import { ProjectPanel } from "./project-panel";
 import { WaveDots } from "./wave-dots";
-import { HERO_SLIDES, type SlideView } from "./hero-slides";
+import { HERO_SLIDES } from "./hero-slides";
 import { type Project } from "./projects";
 
 /* ---------------------------------------------------------------------------
    A card with pieces taken out of it.
 
-   Three things sit against the card rather than on it: a bar of controls at the
-   top, the next project at the bottom left, and the way on at the bottom right.
-   The card is cut back around each, and the cuts curve outward where they meet
-   the edge, so the shape reads as one continuous surface with bites out of it
-   rather than as four rectangles overlapping.
+   Two things sit against the card rather than on it: a bar of controls at the
+   top, and the way on at the bottom right. The card is cut back around each, and
+   the cuts curve outward where they meet the edge, so the shape reads as one
+   continuous surface with bites out of it rather than as rectangles overlapping.
+
+   There were three. A thumbnail of the next slide stood in a third cut at the
+   bottom left, and it went with its cut - a cut is a hole, so a cut with nothing
+   in it shows the page through the corner.
 
    Those outward curves are the whole job. `border-radius` only ever bends a
    corner inward, and a mask made of gradients gets the straight edges right and
@@ -215,21 +218,6 @@ export function outline(w: number, h: number, cut: Cuts): string {
 const TOOL = 36;
 const BAR = TOOL * 3 + 2 * 2 + 6 * 2;
 
-/**
- * How far the next slide's thumbnail stands inside the bite.
- *
- * Three sides, not four. Its foot sits on the card's bottom edge, so the cut
- * reads as a corner the card gives up rather than as a window with a sill under
- * it - the same reason the bar in the notch stands in the top edge instead of
- * floating below it.
- *
- * The left inset is what keeps that safe. The card's bottom left corner is
- * rounded, and a square box set flush into a round corner is a box with its
- * bottom clipped; held clear of the curve, its foot lands on the straight part
- * of the edge. If it ever looks cut again, this is the number, not the foot.
- */
-const BITE_INSET = 13;
-
 export function NotchedCard({ className }: { className?: string }) {
   const box = useRef<HTMLDivElement>(null);
 
@@ -262,7 +250,6 @@ export function NotchedCard({ className }: { className?: string }) {
      the shape had no reason to know what was standing on it. The notch changed
      that: the picture screens do not cut one, so `outline` needs the view. */
   const shown = HERO_SLIDES[at];
-  const next = HERO_SLIDES[(at + 1) % HERO_SLIDES.length];
 
   /**
    * The four numbers that decide whether this looks drawn or assembled.
@@ -336,31 +323,18 @@ export function NotchedCard({ className }: { className?: string }) {
        around a 44px target. */
     const drop = Math.max(flare * 2 + 16, Math.min(w * 0.075, 96));
 
-    /* The bite, sized to the thumbnail standing in it, with the same flare and
-       the same corner as the notch above.
-
-       Wider than it is tall, by a quarter. The height is what the card can give
-       up out of its bottom edge, and that is the number to be careful with; the
-       width has the whole run to the corner cut to play with, and every picture
-       it holds is landscape. Square, the thumbnail was cropping a 16:9 frame to
-       a 1:1 hole and throwing away the sides of the very thing it is previewing.
-
-       Capped so it still leaves the corner cut at the other end and enough card
-       between the two that they read as two cuts rather than one long one. */
-    const bite = Math.max(96, Math.min(Math.min(w * 0.13, h * 0.26), 196));
-    const biteWidth = Math.min(
-      bite * 1.25,
-      Math.max(bite, w - drop - 2 * (radius + flare) - 24),
-    );
-
     return {
       radius,
       barWidth,
       barDepth,
       barRadius: barFlare,
       barFlare: barFlare,
-      biteWidth,
-      biteHeight: bite,
+      /* Nought, which `outline` reads as no cut at all - and the bottom left
+         corner comes back as an ordinary rounded one. The numbers above are
+         still worked out because the day something stands there again, what it
+         has to fit inside is the argument, not a fraction of the card. */
+      biteWidth: 0,
+      biteHeight: 0,
       biteRadius: flare,
       biteFlare: flare,
       dropWidth: drop,
@@ -1141,14 +1115,13 @@ export function NotchedCard({ className }: { className?: string }) {
                 </div>
               </div>
 
-              {/* The trail, and the sister company under it.
+              {/* No trail. A row of beads on a dotted line ran under all of
+                  this and it was one picture too many: the mark is already the
+                  picture on this screen, and a second one below the buttons put
+                  the eye somewhere after the doors rather than on them.
 
-                  Both are held back until there is room. On a card the height of
-                  a phone, the two-up above already fills it, and a picture and a
-                  footnote pushed in underneath would push the buttons off the
-                  bottom - which is the one thing on this screen that must not
-                  move. `hidden md:block` is the whole of that decision. */}
-              <BeadTrail className="hidden md:block" />
+                  The sister company stays, because it is a fact about who builds
+                  what and not decoration. */}
 
               <div className="hidden items-center justify-center gap-4 md:flex">
                 <Image
@@ -1178,67 +1151,17 @@ export function NotchedCard({ className }: { className?: string }) {
         </div>
       ) : null}
 
-      {/* The next slide, standing in the bite.
+      {/* Nothing stands in the bottom left any more.
 
-          A pair of buttons stood here for a moment and they are gone again: the
-          two ways into the site are already in the header, in the sheet behind
-          it and at the foot of the page, and the one cut on this card with room
-          for something is better spent showing what is coming than repeating
-          them a fourth time. */}
-      <button
-        type="button"
-        onClick={() => setAt((was) => (was + 1) % HERO_SLIDES.length)}
-        aria-label={`Next: ${next.name}`}
-        /* One inset, on all four sides, written once.
+          A thumbnail of the next slide did, and the card was cut back for it.
+          Both are gone together, and they had to go together: the cut is a hole
+          in the card, so a cut with nothing in it shows the page through the
+          bottom left corner - which is the fault the notch has and gets away
+          with because it is small and holds three arrows.
 
-           It was pinned to the card's bottom left corner and then made smaller,
-           so the whole of the difference came off the top and the right - its
-           bottom and left edges sat exactly on the card's own, where the outline
-           curves away, and a square box in a round corner reads as a box with
-           its bottom cut off.
-
-           The offset and the size are the same number now rather than two that
-           have to be kept in step, so the air around it is even and changing it
-           is changing one thing. */
-        className="group absolute z-10 cursor-pointer rounded-[20px] p-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-active"
-        style={{
-          left: BITE_INSET,
-          bottom: 0,
-          width: cut.biteWidth - BITE_INSET * 2,
-          height: cut.biteHeight - BITE_INSET,
-        }}
-      >
-        <span
-          /* No border. The bite around it is already the outline, and a second
-             one a few pixels inside reads as a sticker on the card rather than
-             as the thing the card was cut back for. */
-          className={cn(
-            "block size-full overflow-hidden rounded-[18px] transition-transform duration-300 group-hover:-translate-y-1",
-            next.image && "artwork",
-          )}
-          style={{ backgroundColor: next.tone }}
-        >
-          {/* What is actually next, drawn.
-
-              It showed `tone`, which for three screens with no photograph
-              between them is three white rectangles - a preview of nothing. Each
-              screen is a drawing, so the thumbnail draws it: the same components
-              at a fraction of the work, which is what makes this affordable at
-              all. A picture still wins where a slide has one. */}
-          {next.image ? (
-            <Image
-              src={next.image}
-              alt=""
-              fill
-              quality={100}
-              sizes="200px"
-              className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-            />
-          ) : (
-            <Preview view={next.view} />
-          )}
-        </span>
-      </button>
+          What it cost is the way on to the next screen, and that was already in
+          the arrows. What it bought is a card with one fewer thing on it, on a
+          screen that now carries a headline, a paragraph and four doors. */}
 
       {/* No caption on the picture.
 
@@ -1381,107 +1304,6 @@ function DotGround() {
       />
     </span>
   );
-}
-
-/**
- * The next screen, at the size of a thumbnail.
- *
- * The same three drawings, each asked to do far less. That is the whole design
- * of this: a preview that is a different drawing is not a preview, and a preview
- * that is the same drawing at full cost doubles what the card is already paying.
- *
- * So every one of them takes its own reduction. The field draws a third of its
- * lattice, because eleven thousand dots inside two hundred pixels costs the same
- * as the full field and looks like grey paper. The water drops to the low
- * raymarch tier, loses its grain and its parallax, and pulls the camera back so
- * a swell reads at this size. The pit keeps a sixth of its balls, which is still
- * a pit - and loses the cursor, because the pointer that matters here is the one
- * pressing the button this sits inside.
- *
- * Nothing here is interactive. It is a picture of a screen, and a picture that
- * answers the pointer is a control the button around it has to argue with.
- */
-function Preview({ view }: { view: SlideView }) {
-  if (view === "waves") {
-    return (
-      <GradientWaves
-        className="absolute inset-0"
-        horizonColor="#00b4e3"
-        waveColor="#0087ff"
-        crestColor="#0098ff"
-        speed={0.5}
-        amplitude={2.05}
-        waveScale={0.85}
-        waveRatio={0.9}
-        swell={35}
-        turbulence={20.5}
-        tilt={1.11}
-        zoom={0.72}
-        height={5.5}
-        fogDepth={15}
-        detail="low"
-        brightness={0.5}
-        opacity={1}
-        mouseInteraction={false}
-        grain={false}
-      />
-    );
-  }
-
-  if (view === "balls") {
-    return (
-      <Ballpit
-        className="absolute inset-0"
-        count={36}
-        gravity={0}
-        friction={1}
-        wallBounce={0.95}
-        followCursor={false}
-        colors={[0x2a98fe, 0x06dbaf]}
-        accents={[
-          [0xf5c518, 0xffa41a],
-          [0xff8a1a, 0xff4d1a],
-          [0xff5a5a, 0xe11d38],
-          [0x3ddc84, 0x0f9d58],
-          [0x4aa8ff, 0x1663d6],
-        ]}
-        accentShare={0.18}
-        ambientColor={0xffffff}
-        ambientIntensity={1}
-        lightIntensity={190}
-        minSize={0.5}
-        maxSize={1.1}
-        maxVelocity={0.05}
-        maxZ={1.6}
-      />
-    );
-  }
-
-  if (view === "wave") {
-    return <WaveDots className="absolute inset-0" density={0.34} />;
-  }
-
-  /* And the mark screen previews as the mark. It is the one view whose
-     thumbnail can be honest at any size, because there is nothing on it but one
-     object that was already centred. */
-  if (view === "mark") {
-    return (
-      <span className="absolute inset-0 flex items-center justify-center p-4">
-        <Image
-          src="/assets/logo.png"
-          alt=""
-          width={240}
-          height={240}
-          aria-hidden
-          draggable={false}
-          sizes="240px"
-          className="h-auto max-h-full w-[76%] object-contain"
-        />
-      </span>
-    );
-  }
-
-  return null;
 }
 
 function Tool({
