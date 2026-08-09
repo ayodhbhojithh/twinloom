@@ -236,8 +236,13 @@ export function NotchedCard({ className }: { className?: string }) {
     return () => watcher.disconnect();
   }, []);
 
-  /* const shown = HERO_SLIDES[at];
-     const next = HERO_SLIDES[(at + 1) % HERO_SLIDES.length]; */
+  /* Which slide is showing, read before the geometry rather than after it.
+
+     It used to come later, because the cuts were the same on every screen and
+     the shape had no reason to know what was standing on it. The notch changed
+     that: the picture screens do not cut one, so `outline` needs the view. */
+  const shown = HERO_SLIDES[at];
+  const next = HERO_SLIDES[(at + 1) % HERO_SLIDES.length];
 
   /**
    * The four numbers that decide whether this looks drawn or assembled.
@@ -265,6 +270,8 @@ export function NotchedCard({ className }: { className?: string }) {
    * wall between them, and the cut reads as a shallow shelf with a deeper notch
    * inside it rather than as one unbroken curve.
    */
+  const onField = shown.view === "wave";
+
   const cut: Cuts = ((): Cuts => {
     const w = Math.max(size.w, 1);
     const h = Math.max(size.h, 1);
@@ -349,14 +356,6 @@ export function NotchedCard({ className }: { className?: string }) {
      a surface that fills the window, so what it can afford at the sides is a
      question about the surface and not about the class of device. */
   const pad = Math.max(22, Math.min(size.w * 0.045, 72));
-
-  const shown = HERO_SLIDES[at];
-
-  /* Which screens stand on the dotted surface. One of the three does, and it is
-     asked once rather than the view name being repeated at each of the places
-     that need to know it. */
-  const onField = shown.view === "wave";
-  const next = HERO_SLIDES[(at + 1) % HERO_SLIDES.length];
 
   /* The measurement that placed the name on the picture went with the name. It
      worked out whether the bottom edge had room for it beside the thumbnail, and
@@ -633,7 +632,17 @@ export function NotchedCard({ className }: { className?: string }) {
 
       {/* The bar, standing in the top of the cut. No plate behind it: the notch
           is already the outline, and a pill drawn inside it is a second shape
-          inside the first. */}
+          inside the first.
+
+          The notch is cut on every screen, including the two that are pictures.
+          It was taken off those for a while, because the notch is the one cut
+          with nothing standing in it - the bite holds the thumbnail and the
+          corner holds the way on, so what shows through those is that thing,
+          while what shows through the notch is the page. On a white card nobody
+          can tell; on the water it is a lighter rectangle in the top edge. That
+          is what a cut in a card looks like, and the card is the same card on
+          all three screens: worth keeping over a top edge that changes shape
+          depending on what is drawn under it. */}
       <div
         className="absolute top-0 left-1/2 z-10 flex -translate-x-1/2 justify-center"
         style={{ width: cut.barWidth, height: cut.barDepth, paddingTop: 4 }}

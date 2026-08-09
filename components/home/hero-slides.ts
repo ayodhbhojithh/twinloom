@@ -18,15 +18,15 @@ import type { Project } from "./projects";
    branches on it - so an arrow does not change a picture, it changes what the
    card is.
 
-   The first is the wave: a horizon of dots with a claim set over it and the two
-   ways in underneath.
+   The second is the wave: a horizon of dots with a claim set over it and the two
+   ways in underneath. Dark ink on a white wash where the water is light type on
+   a dark one - same layout, opposite polarity, which is what makes them read as
+   two screens rather than one screen with the picture swapped.
 
-   The second is water: a raymarched swell filling the card, with its words
-   centred on it in white. Dark ink on a white wash is the first screen's
-   arrangement, and the water is far too strong a ground to bleach a hole in - so
-   this one goes the other way and sets light type on a dark one. Same layout,
-   opposite polarity, and that is what makes it read as a second screen rather
-   than as the first one with the picture swapped.
+   The first is water: a raymarched swell filling the card, with its words
+   centred on it in white. It leads because it is the one that looks like
+   something the moment it arrives - the dotted field takes a second to read as a
+   wave, and a front door does not get a second.
 
    The third is a field of glass beads that drift and get shoved around by the
    cursor, with dark type centred on it - light ground again, so it is set the
@@ -77,27 +77,7 @@ export interface HeroSlide extends Project {
 }
 
 export const HERO_SLIDES: readonly HeroSlide[] = [
-  {
-    id: "hero-1",
-    view: "wave",
-    name: "Tell us who your website is for",
-    kind: "The offer",
-    year: "2026",
-    summary:
-      "You answer one question. We send back a written scope in your own words, within two working days. It costs nothing and commits you to nothing.",
-    facts: [
-      { term: "Questions", value: "One, to start" },
-      { term: "Comes back", value: "Within two working days" },
-      { term: "Costs", value: "Nothing" },
-    ],
-    claim: ["Tell us who your website is for.", "We write the rest down."],
-    lead: "You answer one question. We send back a written scope in your own words, within two working days. It costs nothing and commits you to nothing.",
-    image: "",
-    alt: "",
-    tone: "#ffffff",
-  },
-
-  /* The second: the water, with its words set on it in white.
+  /* The first: the water, with its words set on it in white.
 
      Its own claim rather than the first screen's, because the two are different
      arguments for the same offer - the first says what you get, this says who
@@ -122,6 +102,26 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     alt: "",
     tone: "#ffffff",
   },
+  {
+    id: "hero-1",
+    view: "wave",
+    name: "Tell us who your website is for",
+    kind: "The offer",
+    year: "2026",
+    summary:
+      "You answer one question. We send back a written scope in your own words, within two working days. It costs nothing and commits you to nothing.",
+    facts: [
+      { term: "Questions", value: "One, to start" },
+      { term: "Comes back", value: "Within two working days" },
+      { term: "Costs", value: "Nothing" },
+    ],
+    claim: ["Tell us who your website is for.", "We write the rest down."],
+    lead: "You answer one question. We send back a written scope in your own words, within two working days. It costs nothing and commits you to nothing.",
+    image: "",
+    alt: "",
+    tone: "#ffffff",
+  },
+
   /* The third: how the work is agreed, over the pit.
 
      Dark type again, like the first screen, because the ground is light again -
