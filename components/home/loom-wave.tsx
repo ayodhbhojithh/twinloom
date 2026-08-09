@@ -131,49 +131,49 @@ const PLUCK = {
   flutterRise: 1.3,
 } as const;
 
-/**
- * The roughness, by thread, so the band's edge is ragged rather than drawn.
- *
- * Indexed by thread rather than by position, which is what makes it grain
- * instead of another wave: neighbouring columns land on unrelated parts of
- * these sines, so the edge jumps where a wave would slope.
- *
- * Four voices at rates that do not divide into each other, and the two fast
- * ones carry most of it. The reference is not a smooth envelope with a fuzzy
- * edge - it is a ragged field, spikes standing well clear of their
- * neighbours, and two slow voices could only ever make a soft one.
- */
-const ROUGH = [
-  { reach: 0.055, rate: 0.7 },
-  { reach: 0.042, rate: 1.87 },
-  { reach: 0.03, rate: 4.31 },
-  { reach: 0.022, rate: 9.13 },
-] as const;
+/* No roughness and no spikes.
+
+   Both were `sin(i * rate)` - a value per thread. That is grain while the
+   picture is three hundred separate columns, and it cannot survive the picture
+   becoming sixty continuous curves: consecutive samples along one curve would
+   land on unrelated parts of those sines and the curve would come out as a
+   zigzag. What made the column field look real is exactly what would stop
+   these being smooth. */
 
 /**
- * The spikes: a few threads a great deal taller than the rest.
+ * The sheaf: how many curves, how finely each is drawn, and how it turns.
  *
- * The reference has them and no amount of roughness produces them, because
- * roughness is bounded - every voice is a sine and a sum of sines spends its
- * life near the middle of its range. These are the tail: `sin` raised to a
- * high power is nearly nought almost everywhere and briefly one, so a handful
- * of columns stand right out and the rest are untouched.
+ * `lines` is the density of the caustic - too few and the crowding at the
+ * edges reads as separate strokes, too many and the whole band fills in and
+ * there is nothing left to see through. `turns` is how many times the family
+ * winds across the width, which is what makes the ribbon appear to twist.
+ *
+ * `samples` is per curve, so the cost here is `lines * samples` line segments
+ * a frame. Sixty by a hundred and sixty is under ten thousand, which a canvas
+ * does without noticing - and it is the reason the ramp is one gradient built
+ * once a frame rather than a colour per segment.
  */
-const SPIKE = { reach: 0.2, rate: 2.9, sharpness: 14 } as const;
+const RIBBON = {
+  lines: 60,
+  samples: 160,
+  turns: 5.5,
+  speed: 0.32,
+  weight: 0.85,
+  alpha: 0.3,
+} as const;
 
 /** How much further the ghosts reach than the field in front of them. */
 const GHOST = 0.092;
 const GHOST_ROUGH = 0.038;
 
 /**
- * How much of the box the field is allowed.
+ * How much of the box the ribbon is allowed.
  *
  * Not a number somebody picked. Every vertical figure above is a share of the
- * height and at their worst they all land on one thread: the swell at its
- * furthest from the middle, both clusters at full, both roughnesses at plus one,
- * and the ghosts' extra reach on top. Summed, that came to more than half the
- * box - so the tallest threads were sliced flat against the top edge, which is
- * exactly what it looked like.
+ * height, and at their worst they all land at the same place along the width:
+ * the swell at its furthest from the middle, and both envelope voices at full.
+ * Summed unchecked that came to more than half the box, and the widest part of
+ * the sheaf was sliced flat against the top edge.
  *
  * Setting a scale by hand fixes it until the next time one of those tables
  * changes. Adding them up here fixes it for good: `ROOM` is whatever makes the
@@ -181,21 +181,16 @@ const GHOST_ROUGH = 0.038;
  * the picture again.
  *
  * The pluck's stretch is deliberately outside the sum. Budgeting for it would
- * shrink the resting field by a third to reserve room for a peak that lasts a
- * fraction of a second on a thread somebody is touching - a struck string
- * overshoots, and a tip brushing the edge of the box mid-ring is the overshoot
- * showing, not the layout failing.
+ * narrow the resting ribbon by a third to reserve room for a peak that lasts a
+ * fraction of a second where somebody is touching it - a struck string
+ * overshoots, and a curve brushing the edge of the box mid-ring is the
+ * overshoot showing, not the layout failing.
  */
 const SAFE = 0.47;
 const WORST =
   RIDE.reduce((n, wave) => n + wave.reach, 0) +
-  FLOOR +
   ENV.main +
-  ENV.cluster.reach +
-  ROUGH.reduce((n, grain) => n + grain.reach, 0) +
-  SPIKE.reach +
-  GHOST +
-  GHOST_ROUGH;
+  ENV.cluster.reach;
 const ROOM = SAFE / WORST;
 
 /* The ramp, and the one behind it.
@@ -576,11 +571,23 @@ export function LoomWave({
        reads both off it, `sin` for up the screen and `cos` for how near, and
        the separation falls out as the first of the two. */
 
-    /** How tall the field stands at this column: the floor, the lobe locked
-        to the swell's primary wave, the one free cluster, and the roughness.
-        Shared by the ghosts and the pair, or the backdrop would stand on a
-        different envelope from the field in front of it. */
-    const stand = (along: number, i: number, t: number) => {
+    /**
+     * How wide the ribbon opens here: the floor, the lobe locked to the
+     * swell's primary wave, and the one free cluster over it.
+     *
+     * Nothing indexed by column any more. The roughness and the spike were
+     * `sin(i * rate)` - a value per thread, which is grain when the picture is
+     * three hundred separate columns and nonsense when it is sixty continuous
+     * curves: neighbouring samples on one curve would jump, and a curve that
+     * jumps is not smooth, it is a zigzag. Smoothness here is not a setting,
+     * it is the absence of anything that varies faster than the eye follows.
+     *
+     * No floor under it either, unlike the column field, which needed one so
+     * the waists kept a hair of thread. Here the waists are the point: the
+     * envelope reaching nought is what closes the ribbon to a line and lets it
+     * open the other way.
+     */
+    const envAt = (along: number, t: number) => {
       const main = Math.sin(
         along * Math.PI * RIDE[0].turns +
           RIDE[0].phase +
@@ -592,29 +599,11 @@ export function LoomWave({
           t * ENV.cluster.speed * speed,
       );
 
-      let reach =
+      return (
         height *
         ROOM *
-        (FLOOR + ENV.main * main * main + ENV.cluster.reach * free * free);
-      for (const grain of ROUGH) {
-        reach += height * ROOM * grain.reach * Math.sin(i * grain.rate);
-      }
-
-      /* And the tail. `sin` to an even power is positive everywhere and near
-         nought almost everywhere, so this adds nothing to most columns and a
-         great deal to the few it catches - which is what a spike is. Even, so
-         it never subtracts: a spike that could dig a hole is a gap. */
-      reach +=
-        height *
-        ROOM *
-        SPIKE.reach *
-        Math.sin(i * SPIKE.rate) ** SPIKE.sharpness;
-
-      /* The floor is small enough now that the roughness can dig below it at
-         a waist. A hair of thread rather than none: a column that vanished
-         entirely would put a gap in the field, and the waists are pinched,
-         not cut. */
-      return Math.max(reach, 1);
+        (ENV.main * main * main + ENV.cluster.reach * free * free)
+      );
     };
 
     const draw = (t: number) => {
@@ -623,84 +612,73 @@ export function LoomWave({
 
       ctx.lineCap = "round";
 
-      /* The ghosts, on the one wave rather than the pair - a backdrop does not
-         need its own twist, only something for the twist to stand in front of. */
-      for (let i = 0; i < COUNT; i += 1) {
-        const along = i / (COUNT - 1);
-        const x = along * width;
-        const middle = ride(along, t);
+      /* The ribbon: one family of curves, not a row of columns.
 
-        const reach =
-          stand(along, i, t) +
-          height * ROOM * (GHOST + GHOST_ROUGH * Math.sin(i * 0.41));
+         Every line is the same wave at a different phase, spread evenly round
+         a full turn. Where the sines are turning they crowd together and where
+         they are steepest they spread apart, so the family draws its own dense
+         edges and leaves the middle open - and that is the whole picture. The
+         bunching is a caustic, the same reason a glass of water throws a bright
+         rim: it is the density of curves, not a line anybody drew.
 
-        const edge = Math.sin(Math.PI * along);
-        ctx.strokeStyle = css(sample(GHOST_RGB, along), 0.16 + edge * 0.24);
-        ctx.lineWidth = i % 4 === 0 ? 0.9 : 0.6;
+         It is why this is a family and not one thick stroke. A band with a
+         drawn edge is a shape; a band whose edge is where the curves happen to
+         pile up is a wave, and it thins and gathers on its own as the envelope
+         moves under it.
+
+         Where the envelope pinches, every curve in the family meets - the
+         sines all have nothing to multiply - so the ribbon closes to a point
+         and opens again with its phases running the other way. That is the
+         twist in the reference, and nothing draws it: it falls out of an
+         envelope that reaches nought.
+
+         One gradient for all of them, built once a frame across the width. A
+         polyline takes a single stroke colour, so the alternative to this is
+         either a flat ribbon or a stroke per segment - and a stroke per
+         segment is sixty times a hundred and sixty of them. */
+      const paint = ctx.createLinearGradient(0, 0, width, 0);
+      for (const [at, hex] of RAMP) paint.addColorStop(at, hex);
+
+      ctx.strokeStyle = paint;
+      ctx.lineWidth = RIBBON.weight;
+
+      for (let k = 0; k < RIBBON.lines; k += 1) {
+        /* Round a full turn, so the family covers every phase once. Any less
+           and the band has a gap in it; any more and lines land on each other
+           and the crowding stops meaning anything. */
+        const turn = (k / RIBBON.lines) * Math.PI * 2;
+
+        /* Thinner and fainter towards the outside of the sheaf, which is what
+           gives it a near face and a far one rather than reading as flat. */
+        const across = Math.sin((k / RIBBON.lines) * Math.PI);
+        ctx.globalAlpha = RIBBON.alpha * (0.35 + across * 0.65);
+
         ctx.beginPath();
-        ctx.moveTo(x, middle - reach);
-        ctx.lineTo(x, middle + reach);
-        ctx.stroke();
-      }
+        for (let n = 0; n <= RIBBON.samples; n += 1) {
+          const along = n / RIBBON.samples;
+          const x = along * width;
 
-      /* The field: one column per thread, standing on the line.
+          /* The pluck reaches the ribbon through the same column map the
+             notes use, so the bulge lands under the pointer rather than
+             somewhere the maths happened to put it. */
+          const i = Math.round(along * (COUNT - 1));
+          const y =
+            ride(along, t) +
+            envAt(along, t) *
+              ringStretch(i, t, along) *
+              Math.sin(
+                along * Math.PI * RIBBON.turns +
+                  turn +
+                  t * RIBBON.speed * speed,
+              );
 
-         Not a pair and not a ladder. Both were tried - mirrored halves, then
-         a helix with rungs between two backbones - and both answer a question
-         this picture is not asking. A frequency plot is one row of columns
-         about one axis, and the moment there are two of anything the eye
-         starts reading the gap between them instead of the shape they make.
-
-         Each column is drawn twice: its whole length in the ramp pulled most
-         of the way to navy, then its middle half again in the ramp itself.
-         That is where the density in the reference comes from - the field is
-         solid and bright along the line and thins to ink at the tips, which
-         is one column doing what a gradient per column would cost six hundred
-         gradients a frame to do. */
-      for (let i = 0; i < COUNT; i += 1) {
-        const along = i / (COUNT - 1);
-        const x = along * width;
-        const middle = ride(along, t);
-        const reach = stand(along, i, t) * ringStretch(i, t, along);
-
-        /* Thinned at both ends. An arch rather than a ramp, because the field
-           has two ends and both of them should run out. */
-        const edge = Math.sin(Math.PI * along);
-        const rung = ringing(i, t);
-        const weight = i % 7 === 0 ? 2.1 : i % 3 === 0 ? 1.3 : 0.85;
-        const alpha = (0.34 + edge * 0.64) * 0.85;
-
-        ctx.lineWidth = weight * (1 + rung * 0.7);
-
-        ctx.strokeStyle = glow(sample(DIM_RGB, along), alpha * 0.9, rung);
-        ctx.beginPath();
-        ctx.moveTo(x, middle - reach);
-        ctx.lineTo(x, middle + reach);
-        ctx.stroke();
-
-        ctx.strokeStyle = glow(
-          sample(RAMP_RGB, along),
-          Math.min(1, alpha * 1.2),
-          rung,
-        );
-        ctx.beginPath();
-        ctx.moveTo(x, middle - reach * 0.52);
-        ctx.lineTo(x, middle + reach * 0.52);
-        ctx.stroke();
-
-        /* A dot on some of the tips. It is the one thing here that is not a
-           thread, and it is what stops the tallest reading as scratches. */
-        if (i % 5 === 0 || i % 11 === 0) {
-          const dot = (i % 11 === 0 ? 1.35 : 0.92) * (1 + rung * 0.6);
-          ctx.fillStyle = css(sample(DIM_RGB, along), 0.4 + edge * 0.5);
-          ctx.beginPath();
-          ctx.arc(x, middle - reach, dot, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.beginPath();
-          ctx.arc(x, middle + reach, dot * 0.9, 0, Math.PI * 2);
-          ctx.fill();
+          if (n === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
         }
+        ctx.stroke();
       }
+
+      ctx.globalAlpha = 1;
 
       /* And the one line through the middle of the pair.
 
