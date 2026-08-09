@@ -433,13 +433,21 @@ export function NotchedCard({ className }: { className?: string }) {
      started below the notch, and the name was pushed a notch's depth down the
      card to clear something a third of the width away from it. */
   const barTop = 10;
-  /* Level with the floor of the cut rather than clear of it.
+  /* Clear of the floor of the cut, not level with it.
 
-     There was six pixels of air past it, and the links sat a visible step
-     below a notch they only had to miss - the arcs at the notch's two bottom
-     corners curve away from its middle, so type set on the floor line is
-     already clear of the shape either side of the arrows. */
-  const headTop = cut.barDepth;
+     Level was tried and it is wrong, for a reason the arcs make easy to
+     miss: the notch's two bottom corners curve away from its middle, so the
+     cut is at its deepest exactly where the centred links are widest. Type
+     set on the floor line has the middle of the shape resting on its cap
+     height - which is what "How we work" was doing under the arrows.
+
+     Twelve, which is the notch's own corner radius at the sizes this card
+     runs at. A gap the size of the curve that made it is the one number here
+     that cannot read as arbitrary. */
+  const headTop = cut.barDepth + 12;
+  /* Where the links start, measured from the bar's own top edge.
+     `barTop` is what the bar has already come down by, so the links only have
+     to make up the rest of the way to `headTop`. */
   const navDrop = Math.max(0, headTop - barTop);
 
   /* How far down the card anything else can start.
@@ -1246,7 +1254,16 @@ export function NotchedCard({ className }: { className?: string }) {
                   doors on one row - so a headline broke into three and the last
                   button dropped onto a second line. The picture loses ten points
                   and reads no smaller for it; the words gain a column. */}
-              <div className="flex flex-1 flex-col items-center justify-center gap-8 lg:flex-row lg:items-center lg:gap-10">
+              {/* Centred in the room going, then biased up off the middle.
+
+                  Dead centre put the block low: the trail is drawn across the
+                  floor and the sister company's line sits on it, so the bottom
+                  of this screen is doing something and the top is not - and a
+                  block centred between a busy floor and an empty ceiling reads
+                  as having sunk. The padding is inside the centred box, so it
+                  takes half its own height off the middle and lifts the whole
+                  two-up by that much. */}
+              <div className="flex flex-1 flex-col items-center justify-center gap-8 pb-8 sm:pb-14 lg:flex-row lg:items-center lg:gap-10">
                 {/* Drawn wider than the room it takes, and grown leftward.
 
                     At a straight 52 per cent the mark was half the row and the

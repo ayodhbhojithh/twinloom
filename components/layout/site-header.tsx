@@ -66,9 +66,15 @@ export function SiteHeader({
    * whole bar to clear a cut that only overlaps its middle third pushes the
    * brand down for a collision it is not in.
    *
-   * A margin rather than a `top`, because the links are absolutely positioned
-   * with no offsets set: their static position is what centres them on the
-   * bar, and a margin shifts that where a `top` would replace it.
+   * A `top` rather than a margin, and measured from the bar's own top edge.
+   *
+   * It was a margin, shifting the links off the static position that centres
+   * them on the bar - which works, but the number it produces depends on the
+   * bar's height and on how a flex container happens to resolve the static
+   * position of an absolutely positioned child. Two subtleties to hold in
+   * your head to predict where one row of links lands. Set as a `top`, the
+   * offset is the offset: the links begin exactly this far below the bar,
+   * whatever the bar is doing.
    */
   navTop?: number;
 } = {}) {
@@ -199,7 +205,7 @@ export function SiteHeader({
             and a button, and it is hidden. */}
         <nav
           aria-label="Primary"
-          style={navTop ? { marginTop: navTop } : undefined}
+          style={navTop ? { top: navTop } : undefined}
           className="absolute left-1/2 hidden -translate-x-1/2 flex-nowrap items-center gap-x-5 xl:flex 2xl:gap-x-7"
         >
           {HEADER_NAV.map((item) => {
