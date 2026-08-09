@@ -230,6 +230,9 @@ const BAR = TOOL * 3 + 2 * 2 + 6 * 2;
  */
 const NAV_HEIGHT = 53;
 
+/** The other company's name, so the paragraph and the link cannot disagree. */
+const SISTER = "TwinCoreTech";
+
 export function NotchedCard({ className }: { className?: string }) {
   const box = useRef<HTMLDivElement>(null);
 
@@ -1085,7 +1088,7 @@ export function NotchedCard({ className }: { className?: string }) {
               className="flex w-full flex-col gap-5"
             >
               <div className="flex flex-col items-center gap-6 lg:flex-row lg:items-center lg:gap-10">
-                <MarkStage className="w-[58%] max-w-[250px] shrink-0 lg:order-2 lg:w-[43%] lg:max-w-none" />
+                <MarkStage className="w-[72%] max-w-[300px] shrink-0 lg:order-2 lg:w-[52%] lg:max-w-none" />
 
                 <div className="min-w-0 text-center lg:order-1 lg:flex-1 lg:text-left">
                   {/* The trades, as a list rather than a sentence. Dots between
@@ -1116,8 +1119,26 @@ export function NotchedCard({ className }: { className?: string }) {
                     {shown.lead}
                   </p>
 
-                  <p className="mx-auto mt-3.5 max-w-[58ch] text-[13.5px] leading-[1.62] text-quiet sm:text-[14.5px] lg:mx-0">
-                    {shown.note}
+                  {/* The paragraph, with the other company's name as a link.
+
+                      Split on the name rather than kept as three fields: the
+                      sentence is a sentence, and cutting it into pieces in the
+                      data so the middle one can be blue is a sentence that can no
+                      longer be rewritten without touching the markup. */}
+                  <p className="pointer-events-auto mx-auto mt-3.5 max-w-[58ch] text-[13.5px] leading-[1.62] text-quiet sm:text-[14.5px] lg:mx-0">
+                    {shown.note?.split(SISTER).map((part, n) => (
+                      <span key={n}>
+                        {n > 0 ? (
+                          <Link
+                            href={ROUTES.services}
+                            className="font-semibold text-mark hover:underline"
+                          >
+                            {SISTER}
+                          </Link>
+                        ) : null}
+                        {part}
+                      </span>
+                    ))}
                   </p>
 
                   {/* Four doors, one row, and the first one filled. Where they all
@@ -1174,13 +1195,13 @@ export function NotchedCard({ className }: { className?: string }) {
                 </div>
               </div>
 
-              {/* No trail. A row of beads on a dotted line ran under all of
-                  this and it was one picture too many: the mark is already the
-                  picture on this screen, and a second one below the buttons put
-                  the eye somewhere after the doors rather than on them.
+              {/* No trail under the buttons.
 
-                  The sister company stays, because it is a fact about who builds
-                  what and not decoration. */}
+                  A row of beads on a dotted line ran here, and it is one picture
+                  too many: the mark is already the picture on this screen, and a
+                  second one below the doors puts the eye past them rather than
+                  on them. The sister company stays - that is a fact about who
+                  builds what, not decoration. */}
 
               <div className="hidden items-center justify-center gap-4 md:flex">
                 <Image

@@ -37,14 +37,14 @@ import type { Project } from "./projects";
    off; the last one stops, and what is left is the sentence and the way in. A
    front door that never stops talking is one people stop reading.
 
-   The fifth is the mark staged - haloes and glass beads around it - with the
-   whole offer set beside it: the trades, the claim, the line under it, the
-   paragraph and all four ways in.
+   The first is the mark, rendered, with the whole offer set beside it: the
+   trades, the claim, the line under it, the paragraph and all four ways in. It
+   leads because it is the only one that says everything, and the screen somebody
+   arrives on cannot assume they will turn it.
 
-   Which is the shape of the card. The first four each make one argument and open
-   one door, because a card that turns should not ask for the same thing five
-   times. The fifth is the long version, for somebody who lands on it and turns
-   no further.
+   Which is the shape of the card. The first is the long version; the four behind
+   it each make one argument and open one door, because a card that turns should
+   not ask for the same thing five times.
 --------------------------------------------------------------------------- */
 
 /**
@@ -90,6 +90,41 @@ export interface HeroSlide extends Project {
 }
 
 export const HERO_SLIDES: readonly HeroSlide[] = [
+  /* The first: the mark staged, with the whole offer written beside it.
+
+     The one screen that says everything at once, and it leads for exactly that
+     reason. The four behind it each make a single argument and take a single way
+     on, which is right for a card that turns - but the screen somebody arrives
+     on cannot assume they will turn it. So the front door is the long version:
+     the trades along the top, the claim, the line under it, the paragraph, and
+     all four ways in. The rest are what they find if they stay. */
+  {
+    id: "hero-5",
+    view: "mark",
+    name: "Your website, your brand",
+    kind: "The whole of it",
+    year: "2026",
+    summary:
+      "Nobody hands you to an account manager. The people who scope the work are the people who build it, and they are the people you email a year later.",
+    facts: [
+      { term: "We build", value: "Sites and the software under them" },
+      { term: "Contracts", value: "One" },
+      { term: "Account managers", value: "None" },
+    ],
+    kicker: [
+      "Websites",
+      "Brand identity",
+      "Digital presence",
+      "Digital services",
+    ],
+    claim: ["Your website. Your brand.", "Connected to your systems."],
+    lead: "We build digital experiences that move you forward.",
+    note: "TwinLoom designs and builds websites, digital presence and brand-led experiences that connect the dots and deliver results. When you need more than a website, our sister company TwinCoreTech builds the custom software around your business, your systems and your future.",
+    image: "",
+    alt: "",
+    tone: "#ffffff",
+  },
+
   /* The first: the water, with its words set on it in white.
 
      Its own claim rather than the first screen's, because the two are different
@@ -181,41 +216,6 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     ],
     claim: ["Two working days.", "Then you decide."],
     lead: "Tell us what the site is for and we write the scope in your own words. It costs nothing, commits you to nothing, and you keep it either way.",
-    image: "",
-    alt: "",
-    tone: "#ffffff",
-  },
-
-  /* The fifth: the mark staged, with the whole offer written beside it.
-
-     The one screen that says everything at once. The four before it each make a
-     single argument and take a single way on, which is right for a card that
-     turns - but somebody who lands on this one and turns no further should still
-     have been told what this company does and been given every door. So this is
-     the long version: the trades along the top, the claim, the line under it,
-     the paragraph, and all four ways in. */
-  {
-    id: "hero-5",
-    view: "mark",
-    name: "Your website, your brand",
-    kind: "The whole of it",
-    year: "2026",
-    summary:
-      "Nobody hands you to an account manager. The people who scope the work are the people who build it, and they are the people you email a year later.",
-    facts: [
-      { term: "We build", value: "Sites and the software under them" },
-      { term: "Contracts", value: "One" },
-      { term: "Account managers", value: "None" },
-    ],
-    kicker: [
-      "Websites",
-      "Brand identity",
-      "Digital presence",
-      "Digital services",
-    ],
-    claim: ["Your website. Your brand.", "Connected to your systems."],
-    lead: "We build digital experiences that move you forward.",
-    note: "TwinLoom designs and builds websites, digital presence and brand-led experiences that connect the dots and deliver results. When you need more than a website, our sister company TwinCoreTech builds the custom software around your business, your systems and your future.",
     image: "",
     alt: "",
     tone: "#ffffff",
