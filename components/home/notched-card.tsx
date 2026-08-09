@@ -491,11 +491,11 @@ export function NotchedCard({ className }: { className?: string }) {
             something, and the one thing this is meant to say is nothing. Ash is
             the paper showing its weave, with no opinion about blue.
 
-            At a little over a third of the border grey it was not saying even
-            that: on a white card, a 1.3px dot at that strength is a dot you can
-            only find by looking for it. Nearly three quarters, one and a half
-            pixels, on a twenty pixel pitch - still quiet, and now actually
-            there.
+            Just over half the border grey, at one and a half pixels on a
+            twenty pixel pitch. A third was a dot you could only find by looking
+            for it and three quarters was a texture with an opinion; this is the
+            place between them, where you see that the surface is not blank and
+            never quite see what it is made of.
 
             The artwork gets its own clearing on top of this, a halo of the
             card's white inside `MarkStage`, because it sits in the last third
@@ -505,7 +505,7 @@ export function NotchedCard({ className }: { className?: string }) {
             aria-hidden
             className="absolute inset-0"
             style={{
-              ...GRID("--color-border", 72, 1.6, 20),
+              ...GRID("--color-border", 52, 1.5, 20),
               maskImage:
                 "radial-gradient(ellipse 62% 66% at 50% 50%, transparent 0%, transparent 22%, black 74%)",
               WebkitMaskImage:

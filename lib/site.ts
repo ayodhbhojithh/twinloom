@@ -112,23 +112,25 @@ export interface NavLink {
  * mistake rather than as emphasis.
  */
 export const HEADER_NAV: readonly NavLink[] = [
-  /* The order every site of this kind uses, and the order a reader has been
-     trained on by every other one they have visited: who we are, how we work,
-     who with, what we have written, what people ask, and then the two ways to
-     get hold of us at the far end with contact last.
+  /* What is being sold first, then what is being said, then who is saying it.
 
-     It is not the rail's reading order, which put contact in the middle
-     because the rail is a table of contents and this is a bar. A bar is
-     scanned from both ends - the name at one, the way to reach somebody at the
-     other - and an item in an unexpected place costs a reader a whole pass. */
+     Home, then the two pages somebody arrives wanting - what can be bought and
+     what has been written about it - then the questions, then the way to get
+     hold of us. How we work and About come after those, because they are read
+     by somebody already interested rather than by somebody deciding; Book a
+     meeting sits last, at the end a bar is scanned back from.
+
+     A bar is read from both ends: the name at one, the way to reach somebody at
+     the other, and an item in an unexpected place costs a reader a whole pass.
+     This is the order asked for, and it holds to that. */
   { label: "Home", href: ROUTES.home },
-  { label: "How we work", href: ROUTES.how },
   { label: "Services", href: ROUTES.services },
   { label: "Articles", href: ROUTES.blog },
   { label: "FAQs", href: ROUTES.faq },
-  { label: "Book a meeting", href: ROUTES.book },
   { label: "Contact", href: ROUTES.contact },
+  { label: "How we work", href: ROUTES.how },
   { label: "About", href: ROUTES.about },
+  { label: "Book a meeting", href: ROUTES.book },
 ];
 
 /** The one call to action in the chrome, and the site's only way in. */
