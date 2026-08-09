@@ -122,8 +122,13 @@ const ENV = {
 const PLUCK = {
   spread: 0.018,
   fade: 2.1,
-  flutter: 3.2,
-  flutterRise: 3.4,
+  /* Slow enough to read as a swing rather than a shudder.
+     It was 3.2 rising to 6.6, which is six and a half full cycles a second on
+     a column a couple of hundred pixels tall - past the rate an eye follows a
+     shape and into the rate it reads as noise. Halved, a strike is one clear
+     swing out and back per note instead of a blur. */
+  flutter: 1.5,
+  flutterRise: 1.3,
 } as const;
 
 /**
@@ -420,25 +425,34 @@ export function LoomWave({
     };
 
     /**
-     * What a strike does to the ladder's width, as a multiplier.
+     * What a strike does to a column's height, as a multiplier.
      *
-     * A struck rung swings wider and narrower rather than simply growing: the
-     * envelope decides how much and a cosine of the strike's age decides which
-     * way this frame, at a rate that rises with the note the column carries.
-     * The colour takes the envelope alone - brightness dying smoothly while
-     * the width oscillates is one event with two faces, where a colour
-     * flickering on the same clock would read as the rung blinking.
+     * A struck thread swings wider and narrower rather than simply growing.
+     * The envelope decides how much and a cosine decides which way this frame,
+     * at a rate that rises with the note the column carries. The colour takes
+     * the envelope alone - brightness dying smoothly while the height
+     * oscillates is one event with two faces, where a colour flickering on the
+     * same clock would read as the thread blinking.
+     *
+     * The cosine runs on the drawing clock, not on the strike's age, and that
+     * is the whole of why this stopped flickering. Measured from the strike,
+     * the phase jumped every time a column was re-struck - and a pointer
+     * crossing the field re-strikes forty columns several times a second, so
+     * the wobble was being restarted from a new place faster than one cycle
+     * could finish. On the clock it simply keeps turning: a strike changes how
+     * far a column swings, never where in the swing it is.
+     *
+     * The per-column offset is what stops the whole field breathing in
+     * lockstep, which is what a single global phase would give.
      */
     const ringStretch = (at: number, t: number, along: number) => {
       const rung = ringing(at, t);
       if (rung <= 0.02) return 1;
       const wobble = Math.cos(
-        (t - struck[at]) *
-          Math.PI *
-          2 *
-          (PLUCK.flutter + along * PLUCK.flutterRise),
+        t * Math.PI * 2 * (PLUCK.flutter + along * PLUCK.flutterRise) +
+          at * 0.7,
       );
-      return 1 + rung * (0.5 + 0.5 * wobble);
+      return 1 + rung * (0.34 + 0.3 * wobble);
     };
 
     /**
@@ -461,11 +475,33 @@ export function LoomWave({
         if (near < 0 || near >= COUNT) continue;
         const share = amount * (1 - Math.abs(off) / 21) ** 1.7;
         if (share <= 0.01) continue;
-        struck[near] = clock + Math.abs(off) * PLUCK.spread;
-        /* The louder of the two rings wins. Overwriting outright let a sweep's
-           trailing edge stamp a fresh quiet ring over a thread still loud from
-           its own strike, which read as the field flinching backwards. */
-        force[near] = Math.max(force[near] * 0.55, share);
+
+        /* What this column is doing right now, which is the only thing the new
+           strike may be compared against.
+
+           It was compared against `force`, and `force` is the value a column
+           was struck at rather than the value it has reached - by the time a
+           neighbour is re-struck the ring has decayed well below it. So the
+           `max` was picking a number that could sit under what was on screen,
+           and the column stepped down. A ring that drops when it is struck is
+           the flinch that read as flicker. */
+        const cur = ringing(near, clock);
+
+        if (cur <= 0.02) {
+          /* Quiet, so it takes the delay and rings from nothing. The delay is
+             the ripple: each thread out from the middle starts a little later,
+             so the disturbance leaves the point it happened at. */
+          struck[near] = clock + Math.abs(off) * PLUCK.spread;
+          force[near] = share;
+        } else if (share > cur) {
+          /* Already ringing, so it is topped up where it stands and never
+             delayed. Pushing a live column's strike into the future would make
+             `ringing` read it as not yet arrived and drop it to nothing until
+             the new one landed - a hole in the middle of a note, which is the
+             other half of the flicker. */
+          struck[near] = clock;
+          force[near] = share;
+        }
       }
 
       energy = Math.min(1, energy + 0.3);
