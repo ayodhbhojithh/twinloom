@@ -203,32 +203,33 @@ export function ServiceWall({
             the other axis `auto` too, so with the padding gone a card that
             moved up would be clipped by its own scroller. A shadow happens
             inside the box and needs none. */}
-        {SHOWN.map((entry, index) => (
+        {SHOWN.map((entry) => (
           <article
             key={entry.n}
-            className="group/card flex w-[clamp(238px,21vw,286px)] shrink-0 snap-start flex-col rounded-[22px] bg-field p-5 transition-shadow duration-300 hover:shadow-[0_10px_30px_rgba(24,39,75,0.08)]"
+            className="group/card relative w-[clamp(238px,21vw,286px)] shrink-0 snap-start overflow-hidden rounded-[22px] bg-field p-5 transition-shadow duration-300 hover:shadow-[0_10px_30px_rgba(24,39,75,0.08)]"
           >
-            {/* The drawing, whole, on the card's own white.
+            {/* The drawing, laid over the card rather than stacked on it.
 
-                  It was cropped to fill a 16:10 band and faded out at the
-                  bottom, which is how you treat a photograph - a photograph has
-                  no edges of its own and needs the card to give it some. These
-                  are not photographs. Each is one object floating in white, so
-                  cropping it cuts the object and fading it out fades the object,
-                  and what the card gained was a header band it did not need.
+                  It was the first thing in a flex column, so it took real
+                  height and every word under it started wherever that height
+                  ended. Laid over the top instead, it takes none: the text
+                  begins at one number on all seven cards, and the drawing is
+                  the same size on all seven whatever the words below it do.
 
-                  Contained instead, centred, on nothing. The picture's white and
-                  the card's white are the same white, so there is no seam to
-                  hide and no mask to hide it with.
+                  Contained, centred, on nothing. The picture's white and the
+                  card's white are the same white, so there is no seam to hide
+                  and no mask to hide it with - and out past the card's own
+                  padding, which the words need and the picture does not. */}
+            {/* Sized by its height, so that is the number to turn.
 
-                  Square, and wider than the card's own text column. `contain`
-                  fits by whichever side runs out first, and on a five-by-four
-                  box that was always the height - so the drawings were being
-                  sized by a number that had nothing to do with how big they
-                  could be. A square box gives back the quarter that was
-                  costing, and the negative margin lets them run into the
-                  padding the words need and the picture does not. */}
-            <span className="relative -mx-2 block aspect-square w-auto">
+                The box is wider than it is tall and the drawings are close to
+                square, so `contain` always fits them by the height and the
+                width never binds. Raising the height is the only thing that
+                makes them bigger; widening the box does nothing at all. */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 top-1 block h-[224px]"
+            >
               {entry.art ? (
                 <Image
                   src={entry.art}
@@ -241,7 +242,6 @@ export function ServiceWall({
               ) : (
                 <span className="absolute inset-0 flex items-center justify-center">
                   <entry.icon
-                    aria-hidden
                     className="size-12 text-mark transition-transform duration-500 group-hover/card:scale-[1.06]"
                     strokeWidth={1.5}
                   />
@@ -249,29 +249,28 @@ export function ServiceWall({
               )}
             </span>
 
-            {/* The number, in the line rather than on the picture.
+            {/* Clear of the drawing by the drawing's own height, so this is
+                the one number that decides where every card's type starts. */}
+            <div className="pt-[228px]">
+              {/* Two lines' worth of room whether the name needs it or not.
+                  Four of these run to one line and three to two, and with the
+                  box sized to its own words the sentences under them landed at
+                  four different heights along the row. */}
+              <h3 className="min-h-[2.4em] text-[17px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink">
+                {entry.n}
+              </h3>
 
-                  It sat in a frosted disc over the top left corner, which is a
-                  badge - a second object standing on the drawing. In the type it
-                  is what it always was: a count. */}
-            <span className="mt-4 block font-mono text-[10px] font-bold tracking-[0.16em] text-idx tabular-nums">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-
-            <h3 className="mt-2 text-[17px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink">
-              {entry.n}
-            </h3>
-
-            {/* The sentence, and nothing after it.
+              {/* The sentence, and nothing after it.
 
                   Four bullets of what each discipline covers stood here, which
                   is a wall of list drifting past that nobody can stop to
-                  read. The list belongs on the page this links to. Three lines,
-                  clamped, so every card is one height without any of them being
-                  padded to reach it. */}
-            <p className="mt-2 line-clamp-3 text-[13.5px] leading-[1.6] text-quiet">
-              {entry.sub}
-            </p>
+                  read. The list belongs on the page this links to. Three
+                  lines, clamped, so every card is one height without any of
+                  them being padded to reach it. */}
+              <p className="mt-1.5 line-clamp-3 text-[13.5px] leading-[1.6] text-quiet">
+                {entry.sub}
+              </p>
+            </div>
           </article>
         ))}
       </div>
