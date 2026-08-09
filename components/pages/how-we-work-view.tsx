@@ -1,4 +1,4 @@
-import { ArrowUpRight, CalendarClock, Check } from "lucide-react";
+import { ArrowUpRight, CalendarClock } from "lucide-react";
 import Link from "next/link";
 
 import { CutPanel } from "@/components/layout/cut-panel";
@@ -54,14 +54,6 @@ const ZONE_LINE: Record<string, string> = {
   build: "scope agreed up front, delivered in milestones",
   after: "chosen rather than assumed, and priced separately",
 };
-
-/** What holds across all thirteen. */
-const RULES = [
-  "Nothing is priced until there is a written scope to price.",
-  "You sign off each milestone as it lands, not all of it at the end.",
-  "Accounts are in your name from the day they are made.",
-  "A written record at every stage, so nothing rests on a conversation.",
-] as const;
 
 export function HowWeWorkView() {
   return (
@@ -273,53 +265,6 @@ export function HowWeWorkView() {
         })}
       </section>
 
-      {/* What holds across all thirteen. */}
-      <section className="page-frame pb-16">
-        <CutPanel
-          tone="field"
-          className="w-full"
-          toolbar={
-            <span className="flex h-10 w-full items-center justify-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
-              True at every step
-            </span>
-          }
-          corner={
-            <Link
-              href={ROUTES.build}
-              aria-label="Build your website"
-              title="Build your website"
-              className="flex size-11 items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
-            >
-              <ArrowUpRight className="size-[18px]" strokeWidth={2.2} />
-            </Link>
-          }
-        >
-          <h2 className="mx-auto mt-6 max-w-[26ch] text-center text-[clamp(21px,2vw,28px)] leading-[1.12] font-extrabold tracking-[-0.035em] text-ink">
-            The parts that do not move.
-          </h2>
-
-          <ul className="mx-auto mt-8 grid max-w-[76ch] gap-x-10 gap-y-3 sm:grid-cols-2">
-            {RULES.map((rule) => (
-              <li key={rule} className="flex gap-2.5">
-                <Check
-                  aria-hidden
-                  className="mt-[4px] size-3.5 flex-none text-mark"
-                  strokeWidth={3}
-                />
-                <span className="text-[14px] leading-[1.55] text-body">
-                  {rule}
-                </span>
-              </li>
-            ))}
-          </ul>
-
-          <p className="mx-auto mt-8 max-w-[64ch] text-center text-[12.5px] leading-[1.6] text-label">
-            After the last step the run usually starts again: the next piece of
-            work arrives as a new submission rather than as a change to a
-            finished one.
-          </p>
-        </CutPanel>
-      </section>
     </>
   );
 }

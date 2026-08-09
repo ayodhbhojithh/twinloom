@@ -1137,20 +1137,46 @@
      view. Nothing here is on the compositor's critical path: no layout, no
      paint, two properties, one element.
   --------------------------------------------------------------------------- */
-  @keyframes wave-breathe {
+  /* Two cycles rather than one, and deliberately out of step.
+
+     It was a single nineteen second keyframe carrying the slide and the fade
+     together, which meant the picture arrived back at the same place at the
+     same brightness every nineteen seconds - a metronome, and a slow one. Split
+     across two periods that do not divide into each other, the pair only agrees
+     once every couple of minutes and the motion reads as drift rather than as a
+     loop.
+
+     Two stops each, because two stops under `ease-in-out` is a sine and a sine
+     is the smoothest turnaround there is. Adding stops between them would put an
+     accelerate-and-decelerate into every leg and make it choppier, not smoother.
+
+     They can share an element because they animate different properties. Both
+     stay on the image itself: the transform makes a stacking context, which is
+     safe on the blended element and would isolate the blend on a wrapper. */
+  @keyframes wave-drift {
     0%,
     100% {
-      transform: translate3d(-0.8%, 0, 0) scale(1.02);
+      transform: translate3d(-1.1%, 0, 0) scale(1.03);
+    }
+    50% {
+      transform: translate3d(1.1%, 0, 0) scale(1.03);
+    }
+  }
+
+  @keyframes wave-glow {
+    0%,
+    100% {
       opacity: 0.9;
     }
     50% {
-      transform: translate3d(0.8%, 0, 0) scale(1.02);
       opacity: 1;
     }
   }
 
   .wave-breathe {
-    animation: wave-breathe 19s ease-in-out infinite;
+    animation:
+      wave-drift 8s ease-in-out infinite,
+      wave-glow 5.5s ease-in-out infinite;
   }
 
   /* Asked for less motion, and this is nothing but motion. */

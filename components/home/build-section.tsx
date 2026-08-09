@@ -102,6 +102,11 @@ export function BuildSection() {
             width={1916}
             height={422}
             draggable={false}
+            /* Undiminished. The picture is a field of hairline strokes a pixel
+               or two wide, which is exactly what a lossy encoder spends its
+               budget smoothing away - at the default 75 the threads pick up a
+               haze that reads as the image being slightly out of focus. */
+            quality={100}
             sizes="100vw"
             className="wave-breathe block h-auto w-full mix-blend-multiply"
             style={{ maskImage: WAVE_EDGE, WebkitMaskImage: WAVE_EDGE }}
