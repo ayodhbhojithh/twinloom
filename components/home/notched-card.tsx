@@ -12,7 +12,7 @@ import {
   CalendarDays,
   Code2,
   LayoutGrid,
-  Maximize2,
+  Expand,
   PencilLine,
 } from "lucide-react";
 
@@ -131,7 +131,7 @@ export function outline(w: number, h: number, cut: Cuts): string {
      straight edge between them at all. One curve runs out of the notch and
      straight into the corner, and the cut reads as a piece taken out of the
      corner rather than as a notch parked near one. */
-  const right = cut.barRight ? w - r - bf : (w + bw) / 2;
+  const right = cut.barRight ? w : (w + bw) / 2;
   const left = right - bw;
 
   /* A cut asked for at nothing is not a tiny cut - it is no cut, and the corner
@@ -183,26 +183,52 @@ export function outline(w: number, h: number, cut: Cuts): string {
         `A ${ff} ${ff} 0 0 1 ${footLeft - ff} ${h}`,
       ];
 
+  /* Held to the right, the notch is not a notch in the top edge at all - it is
+     the top right corner, taken out. The edge runs from the left, flares down
+     into the cut, crosses its floor, and then turns straight down the card's
+     right side. There is no top right corner left to draw: the card's own radius
+     is spent on the turn at the bottom of the cut instead, which is the corner
+     now.
+
+     Which is why this cannot be the centred version with different numbers. A
+     centred notch has card on both sides of it and needs a flare at each end; a
+     cornered one has card on one side and the window on the other. */
+  const cornerBar = [
+    `L ${left - bf} 0`,
+    `A ${bf} ${bf} 0 0 1 ${left} ${bf}`,
+    `L ${left} ${bd - br}`,
+    `A ${br} ${br} 0 0 0 ${left + br} ${bd}`,
+    `L ${w - r} ${bd}`,
+    `A ${r} ${r} 0 0 1 ${w} ${bd + r}`,
+  ];
+
   const bar = off(bw, bd)
     ? []
-    : [
-        `L ${left - bf} 0`,
-        `A ${bf} ${bf} 0 0 1 ${left} ${bf}`,
-        `L ${left} ${bd - br}`,
-        `A ${br} ${br} 0 0 0 ${left + br} ${bd}`,
-        `L ${right - br} ${bd}`,
-        `A ${br} ${br} 0 0 0 ${right} ${bd - br}`,
-        `L ${right} ${bf}`,
-        `A ${bf} ${bf} 0 0 1 ${right + bf} 0`,
-      ];
+    : cut.barRight
+      ? cornerBar
+      : [
+          `L ${left - bf} 0`,
+          `A ${bf} ${bf} 0 0 1 ${left} ${bf}`,
+          `L ${left} ${bd - br}`,
+          `A ${br} ${br} 0 0 0 ${left + br} ${bd}`,
+          `L ${right - br} ${bd}`,
+          `A ${br} ${br} 0 0 0 ${right} ${bd - br}`,
+          `L ${right} ${bf}`,
+          `A ${bf} ${bf} 0 0 1 ${right + bf} 0`,
+        ];
+
+  /* The top right corner, unless the notch has taken it. */
+  const topRight =
+    cut.barRight && !off(bw, bd)
+      ? []
+      : [`L ${w - r} 0`, `A ${r} ${r} 0 0 1 ${w} ${r}`];
 
   return [
     `M ${r} 0`,
     /* Top edge, and the notch in it where there is one. */
     ...bar,
     /* On to the top right corner and down the right side. */
-    `L ${w - r} 0`,
-    `A ${r} ${r} 0 0 1 ${w} ${r}`,
+    ...topRight,
     /* The bottom right corner, given up to the cut where there is one. */
     ...drop,
     /* Bottom edge, leftward: the notch in it where there is one, then the bite
@@ -779,12 +805,8 @@ export function NotchedCard({ className }: { className?: string }) {
       <div
         className="absolute top-0 z-30 flex justify-center"
         style={{
-          /* The same arithmetic the outline uses, so the controls stand in the
-             cut rather than near it. Written twice is written twice - but the
-             alternative is `outline` returning positions as well as a path, and
-             a shape that reports where its holes are is a shape doing two
-             jobs. */
-          right: cut.radius + cut.barFlare,
+          /* Hard against the corner, because that is where the cut is. */
+          right: 0,
           width: cut.barWidth,
           height: cut.barDepth,
           paddingTop: 4,
@@ -801,8 +823,15 @@ export function NotchedCard({ className }: { className?: string }) {
           >
             <ArrowLeft className="size-4" />
           </Tool>
+          {/* `Expand` rather than `Maximize2`.
+
+              The two arrows of `Maximize2` point the same way as the two
+              arrows either side of it, so all three read as one row of
+              direction and the middle one looks like a diagonal step rather
+              than a way in. Four arrows leaving a centre is the only one of
+              them that is not a direction. */}
           <Tool label={`Open ${shown.name}`} onClick={() => setOpen(shown)}>
-            <Maximize2 className="size-[15px]" />
+            <Expand className="size-4" />
           </Tool>
           <Tool
             label="Next project"
@@ -1132,10 +1161,15 @@ export function NotchedCard({ className }: { className?: string }) {
           four rows, which is fine - a row that scrolls sideways hides doors. */}
       {shown.view === "mark" ? (
         <div
-          className="pointer-events-none absolute inset-0 z-10 flex items-center"
+          className="pointer-events-none absolute inset-0 z-10 flex items-stretch"
           style={{
             paddingTop: head,
-            paddingBottom: cut.barDepth + 12,
+            /* Almost nothing at the foot. It used to clear the notch's depth,
+               which was right while the notch was in the top edge and one number
+               did both ends - the notch is in the corner now and the bottom edge
+               is straight, so all that clearance did was hold the last line off
+               the floor it is meant to be standing on. */
+            paddingBottom: 14,
             paddingLeft: pad,
             paddingRight: pad,
           }}
