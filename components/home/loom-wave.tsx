@@ -96,16 +96,16 @@ const RIDE = [
  *
  * `cluster` is the one free voice over it, kept small, so the lobes are not
  * machined copies of each other.
- *
- * The floor is what the waists keep, and it was five per cent - near enough
- * to nothing that the field went out between lobes and came back, which is a
- * row of separate tufts rather than one wave that rises and falls. The
- * reference pinches hard and still has short threads all the way through, and
- * that is the difference between a waist and a gap: a waist is the same cloth,
- * narrower.
  */
-const FLOOR = 0.115;
 const ENV = {
+  /* The width the ribbon keeps at its narrowest, and it must never be nought.
+     Without it the two envelope voices can both land on zero at the same
+     place, every curve in the family meets, and the ribbon collapses to a
+     single point - a hard node with a cusp either side of it, which is the one
+     thing a smooth wave cannot have. It is also the one place the whole
+     picture is a line rather than a band. A waist is the ribbon seen edge on;
+     a point is the ribbon gone. */
+  floor: 0.085,
   main: 0.29,
   cluster: { reach: 0.07, turns: 12.4, phase: 1.5, speed: -0.07 },
 } as const;
@@ -162,10 +162,6 @@ const RIBBON = {
   alpha: 0.3,
 } as const;
 
-/** How much further the ghosts reach than the field in front of them. */
-const GHOST = 0.092;
-const GHOST_ROUGH = 0.038;
-
 /**
  * How much of the box the ribbon is allowed.
  *
@@ -189,6 +185,7 @@ const GHOST_ROUGH = 0.038;
 const SAFE = 0.47;
 const WORST =
   RIDE.reduce((n, wave) => n + wave.reach, 0) +
+  ENV.floor +
   ENV.main +
   ENV.cluster.reach;
 const ROOM = SAFE / WORST;
@@ -211,77 +208,19 @@ const RAMP = [
   [1, "#3bd8c1"],
 ] as const;
 
-const GHOST_RAMP = [
-  [0, "#a8b8ff"],
-  [0.28, "#879bd7"],
-  [0.5, "#96e5ff"],
-  [0.75, "#8ab0da"],
-  [1, "#9fe5d2"],
-] as const;
+/* No per-colour arithmetic left in here.
 
-type Rgb = readonly [number, number, number];
+   There was a good deal of it: the ramp parsed into numbers once, a second
+   ramp mixed most of the way to navy for the tips, a sampler to read a colour
+   at a point along either, and a `glow` that mixed toward white for a struck
+   thread. All of it existed because a column takes one solid colour and there
+   were six hundred columns a frame to colour individually.
 
-const ink = (hex: string): Rgb => [
-  parseInt(hex.slice(1, 3), 16),
-  parseInt(hex.slice(3, 5), 16),
-  parseInt(hex.slice(5, 7), 16),
-];
-
-/** A ramp read into numbers once, so a frame is arithmetic rather than parsing. */
-const read = (ramp: readonly (readonly [number, string])[]) =>
-  ramp.map(([at, hex]) => [at, ink(hex)] as const);
-
-const RAMP_RGB = read(RAMP);
-const GHOST_RGB = read(GHOST_RAMP);
-
-/**
- * The ramp again, pulled most of the way to a deep navy - the tips.
- *
- * Precomputed as a second ramp rather than mixed per stroke: six hundred
- * strokes a frame each doing three multiplies for a colour that never changes
- * is arithmetic thrown away sixty times a second.
- */
-const INK_DEEP: Rgb = [10, 18, 46];
-const DIM_RGB = RAMP_RGB.map(
-  ([at, c]) =>
-    [
-      at,
-      [
-        c[0] + (INK_DEEP[0] - c[0]) * 0.62,
-        c[1] + (INK_DEEP[1] - c[1]) * 0.62,
-        c[2] + (INK_DEEP[2] - c[2]) * 0.62,
-      ] as const,
-    ] as const,
-);
-
-/** The colour at a point along a ramp. */
-function sample(ramp: readonly (readonly [number, Rgb])[], along: number) {
-  const u = along <= 0 ? 0 : along >= 1 ? 1 : along;
-  let n = 0;
-  while (n < ramp.length - 2 && ramp[n + 1][0] < u) n += 1;
-  const [fromAt, from] = ramp[n];
-  const [toAt, to] = ramp[n + 1];
-  const step = toAt === fromAt ? 0 : (u - fromAt) / (toAt - fromAt);
-  return [
-    from[0] + (to[0] - from[0]) * step,
-    from[1] + (to[1] - from[1]) * step,
-    from[2] + (to[2] - from[2]) * step,
-  ] as const;
-}
-
-const css = (c: Rgb, a: number) =>
-  `rgba(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])},${a})`;
-
-/** A colour, mixed toward white and alpha carried up to one - a struck
-    thread reads as lit rather than merely more opaque. */
-const glow = (c: Rgb, a: number, amount: number) => {
-  const lit: Rgb = [
-    c[0] + (255 - c[0]) * amount,
-    c[1] + (255 - c[1]) * amount,
-    c[2] + (255 - c[2]) * amount,
-  ];
-  return css(lit, Math.min(1, a + amount * (1 - a)));
-};
+   A curve is not a column. The whole family shares one horizontal gradient
+   built straight from `RAMP`, so the ramp is read by the canvas rather than by
+   us, and a strike changes how far a curve swings rather than what colour it
+   is - which is the better answer anyway: the light in this picture comes from
+   curves crowding, not from any one of them being brightened. */
 
 /**
  * A minor pentatonic, low to high, left to right.
@@ -582,10 +521,11 @@ export function LoomWave({
      * jumps is not smooth, it is a zigzag. Smoothness here is not a setting,
      * it is the absence of anything that varies faster than the eye follows.
      *
-     * No floor under it either, unlike the column field, which needed one so
-     * the waists kept a hair of thread. Here the waists are the point: the
-     * envelope reaching nought is what closes the ribbon to a line and lets it
-     * open the other way.
+     * `ENV.floor` is under all of it and is not optional. Both voices are
+     * squared, so both are nought at their own crossings, and where those
+     * coincide the sum is nought as well - the family has nothing to multiply,
+     * every curve lands on the same y, and the ribbon shuts to a point. The
+     * floor is what keeps the narrowest part a waist rather than a knot.
      */
     const envAt = (along: number, t: number) => {
       const main = Math.sin(
@@ -602,7 +542,7 @@ export function LoomWave({
       return (
         height *
         ROOM *
-        (ENV.main * main * main + ENV.cluster.reach * free * free)
+        (ENV.floor + ENV.main * main * main + ENV.cluster.reach * free * free)
       );
     };
 
