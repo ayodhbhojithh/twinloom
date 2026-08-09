@@ -295,7 +295,13 @@ export function NotchedCard({ className }: { className?: string }) {
     const w = Math.max(size.w, 1);
     const h = Math.max(size.h, 1);
 
-    const radius = Math.max(22, Math.min(w * 0.03 + 20, 48));
+    /* Down from a floor of twenty two and a ceiling of forty eight.
+
+       The card fills the window now, and a corner is read against what is left
+       of the page around it - there used to be a good deal of that and there is
+       almost none. At forty eight the card looked like a phone in a case; at
+       thirty four the edge is still soft and the shape is still a card. */
+    const radius = Math.max(18, Math.min(w * 0.018 + 14, 34));
 
     /* The one curve every cut on this card is made of. */
     const flare = Math.max(22, Math.min(h * 0.04, 34));
