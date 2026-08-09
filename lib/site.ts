@@ -127,9 +127,9 @@ export const HEADER_NAV: readonly NavLink[] = [
   { label: "Services", href: ROUTES.services },
   { label: "Articles", href: ROUTES.blog },
   { label: "FAQs", href: ROUTES.faq },
-  { label: "Contact", href: ROUTES.contact },
   { label: "How we work", href: ROUTES.how },
   { label: "About", href: ROUTES.about },
+  { label: "Contact", href: ROUTES.contact },
   { label: "Book a meeting", href: ROUTES.book },
 ];
 
