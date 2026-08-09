@@ -837,7 +837,10 @@ function Choose({
                 className="relative hidden size-[72px] flex-none items-center justify-center rounded-pill border border-hair sm:flex"
               >
                 <CalendarDays className="size-7 text-ink" strokeWidth={1.7} />
-                <span className="absolute top-1 right-1 size-3 rounded-pill bg-mark" />
+                {/* The brand's blue, not `--color-mark` - inside this tool
+                    that token is the green that means "answered", and a dot
+                    on a calendar is not an answer. */}
+                <span className="absolute top-1 right-1 size-3 rounded-pill bg-thread-blue" />
               </span>
 
               <div className="min-w-0">
@@ -1033,18 +1036,19 @@ function Door({
             is what makes the card look like it has been laid out rather than
             filled.
 
-            Both ends of each ramp are the site's own tokens rather than hex
-            picked to look near them: the deep accent into the brand's own
-            blue, and the same move on the green side. Two doors that have to
-            be told apart, drawn from one palette. */}
+            The first door carries the mark's own gradient, blue into teal, at
+            the angle the rest of the site sets it at - `.thread-fill` is that
+            ramp and this is that class. The second is the same move played
+            from the green end, so the two are one palette read in two
+            directions rather than two colours picked to differ. */}
         <button
           type="button"
           onClick={onClick}
           className={cn(
             "group/go mt-5 inline-flex w-fit cursor-pointer items-center gap-2.5 rounded-pill px-6 py-3.5 text-[15px] font-semibold text-white transition-opacity hover:opacity-90",
             blue
-              ? "bg-[linear-gradient(100deg,var(--color-mark),var(--color-thread-blue))]"
-              : "bg-[linear-gradient(100deg,var(--color-done),var(--color-thread-teal))]",
+              ? "thread-fill"
+              : "bg-[linear-gradient(100deg,var(--color-done),var(--color-thread-teal))] text-white",
           )}
         >
           {go}
