@@ -30,10 +30,8 @@ type Ink = keyof typeof INKS;
 /**
  * The mark inside a card, watermarked.
  *
- * Four per cent, which is the whole point of it: at any more it is a picture in
- * the corner of a card and the words have to work around it. Set high in the
- * strip rather than centred, so it sits above the words rather than behind
- * their middle.
+ * Set high in the strip rather than centred, so it sits above the words
+ * rather than behind their middle.
  */
 export function CardFlourish() {
   return (
@@ -48,7 +46,7 @@ export function CardFlourish() {
         height={320}
         draggable={false}
         sizes="320px"
-        className="absolute top-[6%] -right-[18%] h-auto w-[78%] object-contain opacity-[0.05]"
+        className="absolute top-[2%] -right-[22%] h-auto w-[105%] object-contain opacity-[0.1]"
       />
     </span>
   );
