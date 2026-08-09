@@ -71,7 +71,11 @@
       "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/strip.py\")",
       "Bash(cp \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/t.mjs\" ./__t.mjs)",
       "Bash(node ./__t.mjs)",
-      "Bash(rm -f ./__t.mjs)"
+      "Bash(rm -f ./__t.mjs)",
+      "Bash(cd \"c:/Users/prave/Desktop/PROJECTS/very-good-websites\" && sed -n '/{onField ? \\(/,/^      \\) : null}/p' components/home/notched-card.tsx | sed -n '1,20p' && echo \"...\" && grep -n 'max-w-\\\\[55ch\\\\]\\\\|max-w-\\\\[17ch\\\\]\\\\|max-w-\\\\[50ch\\\\]\\\\|mt-7 flex flex-wrap\\\\|linear-gradient\\(100deg' components/home/notched-card.tsx)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\prave\\Desktop\\PROJECTS\\very-good-websites\\components\\home"
     ]
   }
 }

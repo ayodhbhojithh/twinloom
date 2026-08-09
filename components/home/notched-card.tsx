@@ -399,23 +399,27 @@ export function NotchedCard({ className }: { className?: string }) {
           <WaveDots className="absolute inset-0" phase={at * 1.9} />
         ) : null}
 
-        {/* And the left of it taken back for the type. Only where there is type
-            and a field to take it back from.
+        {/* And the middle of it taken back for the type.
 
             The field runs across the whole card, and a headline set over moving
             dots is a headline read twice. This is the card's own white returning
-            across the half the words sit in - so the drawing is full width and
-            the sentence is still on paper.
+            under the words - so the drawing is full width and the sentence is
+            still on paper.
 
-            A gradient rather than a panel: an edge here would be a box drawn
-            round the words, and the whole point is that there is no box. Its
-            reach follows the words, which is all it was ever for. */}
+            It came in from the left while the words were left. They are centred
+            now, so it is a radial out of the middle: a wash that starts at one
+            edge and a block of type in the centre of the card are two different
+            compositions arguing.
+
+            A gradient rather than a panel, either way: an edge here would be a
+            box drawn round the words, and the whole point is that there is no
+            box. */}
         {onField ? (
           <div
             className="absolute inset-0"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, var(--color-field) 0%, var(--color-field) 17%, color-mix(in oklab, var(--color-field) 62%, transparent) 32%, transparent 47%)",
+                "radial-gradient(ellipse 56% 58% at 50% 50%, var(--color-field) 0%, var(--color-field) 34%, color-mix(in oklab, var(--color-field) 58%, transparent) 58%, transparent 82%)",
             }}
           />
         ) : null}
@@ -629,7 +633,7 @@ export function NotchedCard({ className }: { className?: string }) {
           a line of type sitting in it. */}
       {onField ? (
         <div
-          className="pointer-events-none absolute inset-0 z-10 flex items-center"
+          className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
           style={{
             paddingTop: cut.barDepth + 12,
             paddingBottom: Math.max(cut.biteHeight, cut.dropHeight) + 12,
@@ -637,13 +641,14 @@ export function NotchedCard({ className }: { className?: string }) {
             paddingRight: pad,
           }}
         >
-          {/* Three fifths of the card at the widest, all of it on a phone.
+          {/* Centred, and about half the card wide.
 
             The field runs under the whole surface either way; this only decides
-            how much of it the words are allowed to cross - and now that the
-            field itself sits right of centre, the words can have more of the
-            card without ever being set over its dense part. */}
-          <div className="w-full max-w-[55ch] lg:max-w-[57%]">
+            how much of it the words are allowed to cross. Wider than the block
+            was when it stood on the left, because a centred measure is read from
+            both ends and a narrow one in the middle of a wide card reads as a
+            column somebody forgot to fill. */}
+          <div className="w-full max-w-[74ch] text-center">
             <div className="pointer-events-auto min-w-0">
               {/* The claim, and the half of it that is the offer set in the
                 mark's own gradient. The same device the name in the header
@@ -677,14 +682,14 @@ export function NotchedCard({ className }: { className?: string }) {
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
                 >
-                  <h1 className="max-w-[17ch] text-[clamp(30px,4vw,56px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
+                  <h1 className="mx-auto max-w-[24ch] text-[clamp(32px,4.4vw,62px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
                     {shown.claim?.[0]}
                     <span className="thread-text block">
                       {shown.claim?.[1]}
                     </span>
                   </h1>
 
-                  <p className="mt-5 max-w-[50ch] text-[14.5px] leading-[1.65] text-quiet sm:text-[15.5px]">
+                  <p className="mx-auto mt-5 max-w-[64ch] text-[15px] leading-[1.65] text-quiet sm:text-[16.5px]">
                     {shown.lead}
                   </p>
                 </motion.div>
@@ -694,7 +699,7 @@ export function NotchedCard({ className }: { className?: string }) {
                 gradient; the quiet one is drawn as an outline rather than a
                 second fill, so the pair reads as one choice with a default
                 rather than as two buttons of equal weight. */}
-              <div className="mt-7 flex flex-wrap items-center gap-2.5">
+              <div className="mt-7 flex flex-wrap items-center justify-center gap-2.5">
                 <Link
                   href={ROUTES.build}
                   className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
