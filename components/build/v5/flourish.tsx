@@ -1,21 +1,15 @@
 import Image from "next/image";
 
-import { cn } from "@/lib/utils";
-
 /* ---------------------------------------------------------------------------
-   The chooser's decoration: dotted sweeps, glass beads, and the mark behind it.
+   The chooser's decoration: glass beads, a dotted curve, and the mark behind it.
 
    All SVG and one PNG, and all of it `aria-hidden`. Nothing here carries any
    information - it is the same argument the rest of this site makes with dots,
    made once more around a panel that is otherwise two boxes and a button.
 
-   Three pieces, and each is one idea:
-
-   - a sweep is a run of dotted arcs sharing a centre, so it reads as something
-     turning rather than as lines drawn side by side;
-   - a bead is a radial gradient with its light off centre and a shadow under
-     it, which is what a rendered sphere is once you stop rendering one;
-   - the watermark is the logo the header uses, at four per cent.
+   A bead is a radial gradient with its light off centre and a shadow under it,
+   which is what a rendered sphere is once you stop rendering one. The
+   watermark is the logo the header uses, at four per cent.
 
    Deterministic throughout. Every position is written down rather than
    scattered, because a decoration that lands somewhere new on each render is a
@@ -61,94 +55,6 @@ function Beads({ list }: { list: readonly Bead[] }) {
         />
       ))}
     </>
-  );
-}
-
-/**
- * A sweep of dotted arcs, sharing one centre.
- *
- * Dashes of almost nothing with round caps, which is a dot; anything longer is
- * a dash pretending. Each arc is fainter and finer than the one inside it, so
- * the sweep fades outward rather than stopping.
- */
-function Sweep({ className, flip }: { className?: string; flip?: boolean }) {
-  return (
-    <svg
-      viewBox="0 0 200 200"
-      className={cn("absolute", className)}
-      style={flip ? { transform: "scaleX(-1)" } : undefined}
-    >
-      <defs>
-        <linearGradient
-          id={`sweep-${flip ? "r" : "l"}`}
-          x1="0"
-          y1="0"
-          x2="1"
-          y2="1"
-        >
-          <stop offset="0%" stopColor="var(--color-thread-blue)" />
-          <stop offset="100%" stopColor="var(--color-thread-teal)" />
-        </linearGradient>
-      </defs>
-
-      {[
-        { r: 52, w: 2.6, o: 0.5 },
-        { r: 66, w: 2.2, o: 0.38 },
-        { r: 80, w: 1.8, o: 0.28 },
-        { r: 94, w: 1.5, o: 0.2 },
-        { r: 108, w: 1.2, o: 0.13 },
-      ].map((arc) => (
-        <circle
-          key={arc.r}
-          cx="20"
-          cy="30"
-          r={arc.r}
-          fill="none"
-          stroke={`url(#sweep-${flip ? "r" : "l"})`}
-          strokeWidth={arc.w}
-          strokeLinecap="round"
-          strokeDasharray="0.1 9"
-          strokeOpacity={arc.o}
-        />
-      ))}
-    </svg>
-  );
-}
-
-/**
- * What stands behind the whole panel: a sweep and some beads in each top
- * corner, mirrored.
- *
- * `overflow-hidden` on whatever holds this, or the sweeps run out into the
- * page - they are drawn larger than the corner they sit in on purpose, so what
- * shows is a piece of something bigger rather than a motif placed in a box.
- */
-export function ChooserFlourish() {
-  return (
-    <span aria-hidden className="pointer-events-none absolute inset-0">
-      {/* Hard into the corners and half outside them.
-
-          They used to be inset, which put a motif in the middle of the panel's
-          top edge on a wide screen with the heading between them - two things
-          the eye has to hold apart. Pushed past the corner and clipped by it,
-          each reads as the edge of something the panel is standing on. */}
-      <Sweep className="-top-[22%] -left-[10%] h-[92%] w-[30%]" />
-      <Sweep className="-top-[22%] -right-[10%] h-[92%] w-[30%]" flip />
-
-      {/* Beads to the outside of the sweeps, never inside them. The middle of
-          this edge belongs to the wordmark. */}
-      <Beads
-        list={[
-          { x: 4.5, y: 7, r: 1.1, ink: "blue" },
-          { x: 9, y: 13, r: 0.55, ink: "orange" },
-          { x: 2.6, y: 17, r: 0.62, ink: "green" },
-          { x: 7.5, y: 20, r: 0.5, ink: "violet" },
-          { x: 95.5, y: 6.5, r: 0.6, ink: "orange" },
-          { x: 92, y: 14, r: 1, ink: "green" },
-          { x: 97, y: 19, r: 0.5, ink: "blue" },
-        ]}
-      />
-    </span>
   );
 }
 

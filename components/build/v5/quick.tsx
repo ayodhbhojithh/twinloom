@@ -45,7 +45,7 @@ import { cn } from "@/lib/utils";
 import { isPicture, type Attached } from "@/lib/build/upload";
 
 import { DropZone } from "./drop";
-import { CardFlourish, ChooserFlourish, FootFlourish } from "./flourish";
+import { CardFlourish, FootFlourish } from "./flourish";
 import {
   AddRow,
   Chip,
@@ -723,9 +723,7 @@ function Choose({
   onFull: () => void;
 }) {
   return (
-    <div className="relative w-full overflow-hidden">
-      <ChooserFlourish />
-
+    <div className="relative w-full">
       {/* The words and the cards, held to a measure and centred.
 
           The panel itself takes the whole width, and it has to: the sweeps and
@@ -852,8 +850,8 @@ function Choose({
                 <p className="mt-2 max-w-[52ch] text-[13px] leading-[1.6] text-quiet">
                   You can book a meeting without completing a brief first. As
                   part of the booking you will have space to add a few lines
-                  about what you have in mind and what you would like to discuss,
-                  so we can prepare before the call.
+                  about what you have in mind and what you would like to
+                  discuss, so we can prepare before the call.
                 </p>
               </div>
             </div>
