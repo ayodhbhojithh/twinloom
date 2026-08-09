@@ -38,8 +38,8 @@ import { cn } from "@/lib/utils";
    are fat, the hollow is where they shrink to almost nothing. The shape is in
    the weight, which is legible at any density and is what makes a printed
    halftone a picture rather than a screen. */
-const ROWS = 48;
-const COLUMNS = 190;
+const ROWS = 54;
+const COLUMNS = 214;
 
 /* The spheres are gone.
 
@@ -235,8 +235,8 @@ export function WaveDots({
          reading as an object placed in it. The card is a window onto something
          larger, and a window's top edge is not where the world stops - so the
          far rows run up to it and the fade at the edge is what ends them. */
-      const horizon = height * (-0.06 - (held.y - 0.5) * 0.07 * lean);
-      const groundY = horizon + height * 1.2 * near;
+      const horizon = height * (-0.16 - (held.y - 0.5) * 0.07 * lean);
+      const groundY = horizon + height * 1.36 * near;
 
       /* Rows widen as they come forward, and the whole sheet slides with the
          pointer, so the far edge moves less than the near one. That difference
@@ -258,7 +258,7 @@ export function WaveDots({
          cover the top - so the surface is a piece of something larger that the
          card is a window onto, rather than an object placed in the middle of
          it. */
-      const spread = 1.1 + 2.1 * near;
+      const spread = 1.35 + 2.25 * near;
       const slide = (held.x - 0.5) * width * 0.16 * near * lean;
       const x = width * (0.5 + SHIFT) + (along - 0.5) * width * spread + slide;
 
