@@ -183,6 +183,13 @@ export function QuickPane({
               ? "asking"
               : "quick"
       }
+      /* The choice is its own cards on the page, not a surface holding them -
+         everything after it is a run-through of one form, which is. */
+      tone={
+        route === "choose" && !(answers.sent && answers.ref)
+          ? "plain"
+          : "canvas"
+      }
       className="min-h-[380px] w-full"
     >
       {/* The same column every step of the run-through gets.
@@ -724,18 +731,8 @@ function Choose({
 }) {
   return (
     <div className="relative w-full">
-      {/* The words and the cards, held to a measure and centred.
-
-          The panel itself takes the whole width, and it has to: the sweeps and
-          the beads are drawn into its corners, and a corner is only a corner
-          at the edge of something. What must not take the whole width is the
-          reading - two cards run edge to edge on a wide screen are two
-          paragraphs a foot apart with nothing holding them together.
-
-          So the decoration is the panel's and everything else is this
-          container's. One surface, two widths, and the padding is what keeps
-          the cards clear of the corners the decoration is standing in. */}
-      <div className="relative mx-auto w-full max-w-[1120px] px-2 sm:px-8">
+      {/* Held to the same measure the pane around it is, and centred. */}
+      <div className="relative mx-auto w-full max-w-[1320px] px-2 sm:px-8">
         {/* The lockup, and the one place on this panel the name is set.
 
             The header carries it and so does the foot of the page, so a third
@@ -889,14 +886,10 @@ function Choose({
 
             <Link
               href={ROUTES.book}
-              className="group/book inline-flex items-center justify-center gap-2.5 rounded-[14px] border border-ink bg-field px-6 py-3.5 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:bg-ink hover:text-white lg:justify-self-end"
+              className="group/book inline-flex items-center justify-center gap-2 rounded-pill border border-hair bg-field px-6 py-3.5 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink lg:justify-self-end"
             >
               Book a meeting
-              <CalendarDays
-                aria-hidden
-                className="size-[18px] shrink-0"
-                strokeWidth={1.9}
-              />
+              <CalendarDays aria-hidden className="size-4" strokeWidth={1.9} />
             </Link>
           </div>
         </div>
@@ -965,7 +958,7 @@ function Door({
 
   return (
     <div className="relative flex min-w-0 flex-col overflow-hidden rounded-card bg-field px-6 py-7 sm:px-8">
-      <CardFlourish tone={tone} />
+      <CardFlourish />
 
       <div className="relative flex items-center gap-3">
         <span
@@ -981,7 +974,9 @@ function Door({
         <Kicker
           className={cn(
             "rounded-pill px-3 py-1.5",
-            blue ? "bg-mark/10 text-mark" : "bg-[#0f9d58]/10 text-[#0b7c45]",
+            blue
+              ? "bg-[#1a4bff]/10 text-[#1a4bff]"
+              : "bg-[#0f9d58]/10 text-[#0b7c45]",
           )}
         >
           {kicker}
@@ -1010,7 +1005,9 @@ function Door({
               key={fact.say}
               className={cn(
                 "inline-flex items-center gap-2 rounded-pill px-3.5 py-2 text-[12.5px] font-semibold",
-                blue ? "bg-mark/8 text-mark" : "bg-[#0f9d58]/8 text-[#0b7c45]",
+                blue
+                  ? "bg-[#1a4bff]/8 text-[#1a4bff]"
+                  : "bg-[#0f9d58]/8 text-[#0b7c45]",
               )}
             >
               <fact.icon aria-hidden className="size-4" strokeWidth={1.9} />

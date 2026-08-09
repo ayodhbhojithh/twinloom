@@ -75,9 +75,11 @@ export function Stage({
   /**
    * The ground. `canvas` is the warm paper the run-through sits on; `field` is
    * white, for a surface that opens over the page and has to separate itself
-   * from the canvas behind it.
+   * from the canvas behind it. `plain` lays down no ground at all, for a step
+   * that is its own cards rather than one surface holding them - the page
+   * shows straight through and the cards do the separating.
    */
-  tone?: "canvas" | "field";
+  tone?: "canvas" | "field" | "plain";
   className?: string;
   children: React.ReactNode;
 }) {
@@ -240,8 +242,10 @@ export function Stage({
     };
   })();
 
-  const { barRoom, ...cut }: { barRoom: { width: number; depth: number } } & Cuts =
-    geo;
+  const {
+    barRoom,
+    ...cut
+  }: { barRoom: { width: number; depth: number } } & Cuts = geo;
 
   const path = size.w > 40 ? outline(size.w, size.h, cut) : "";
 
@@ -261,15 +265,20 @@ export function Stage({
   return (
     <div ref={box} className={cn("relative flex flex-col", className)}>
       {/* The ground. Nothing but a shape: it carries no content, so clipping
-          it costs nothing and the words above it stay whole. */}
-      <div
-        aria-hidden
-        className={cn(
-          "absolute inset-0",
-          tone === "field" ? "glass-pane" : "glass",
-        )}
-        style={{ clipPath: path ? `path("${path}")` : undefined }}
-      />
+          it costs nothing and the words above it stay whole.
+
+          Skipped for `plain` - there is no shape to want, because there is no
+          fill to clip it from. */}
+      {tone === "plain" ? null : (
+        <div
+          aria-hidden
+          className={cn(
+            "absolute inset-0",
+            tone === "field" ? "glass-pane" : "glass",
+          )}
+          style={{ clipPath: path ? `path("${path}")` : undefined }}
+        />
+      )}
 
       {/* The three slots sit above the content, not behind it. They are
           absolute and the content is in normal flow after them, so without a
@@ -370,7 +379,8 @@ export function Stage({
           /* Under the notch, not a whole band under it, and nothing at all
              where the bar is in the flow: there it has already taken its own
              room above this. */
-          paddingTop: stickyBar && toolbar ? 20 : toolbar ? barRoom.depth + 20 : pad,
+          paddingTop:
+            stickyBar && toolbar ? 20 : toolbar ? barRoom.depth + 20 : pad,
           /* What the heading may take before it would run under the bar. */
           ["--notch-free" as string]: headRoom,
           /* Clear of the bite and then some. The content only has to miss the
@@ -485,7 +495,8 @@ export function Disc({
         tone === "ink"
           ? "bg-ink text-white hover:opacity-85"
           : "text-quiet hover:bg-well hover:text-ink",
-        disabled && "cursor-default text-planned hover:bg-transparent hover:text-planned",
+        disabled &&
+          "cursor-default text-planned hover:bg-transparent hover:text-planned",
       )}
     >
       {children}
