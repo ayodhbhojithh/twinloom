@@ -115,10 +115,11 @@ export const HEADER_NAV: readonly NavLink[] = [
   /* What is being sold first, then what is being said, then who is saying it.
 
      Home, then the two pages somebody arrives wanting - what can be bought and
-     what has been written about it - then the questions, then the way to get
-     hold of us. How we work and About come after those, because they are read
-     by somebody already interested rather than by somebody deciding; Book a
-     meeting sits last, at the end a bar is scanned back from.
+     what has been written about it - then the questions. How we work and About
+     come after those, because they are read by somebody already interested
+     rather than by somebody deciding, and Contact follows them: the three ways
+     of getting hold of us sit together at the end rather than with the reading.
+     Book a meeting is last, at the end a bar is scanned back from.
 
      A bar is read from both ends: the name at one, the way to reach somebody at
      the other, and an item in an unexpected place costs a reader a whole pass.
