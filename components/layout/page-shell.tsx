@@ -41,7 +41,7 @@ export function PageShell({
     <div
       data-indexed={indexed || undefined}
       className={cn(
-        "page-frame pt-8 pb-14 sm:pt-11 sm:pb-20 lg:pb-[110px] xl:pt-14",
+        "page-frame pt-8 pb-14 max-sm:pt-5 max-sm:pb-9 sm:pt-11 sm:pb-20 lg:pb-[110px] xl:pt-14",
         className,
       )}
     >

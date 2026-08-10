@@ -48,6 +48,22 @@ const fade = (to: string) =>
 
 const MASK = { across: fade("right"), up: fade("bottom") } as const;
 
+/**
+ * How tall the picture is when it lies across the foot of a narrow surface.
+ *
+ * A number rather than a share of the panel, and that is the whole of the fix it
+ * represents. As a share it was measured against the thing it has to stay clear
+ * of - so a panel with a heading and three lines gave the picture more than half
+ * of itself, the band started under the heading, and the paragraph was set on
+ * top of a drawing.
+ *
+ * A hundred and seventy is enough of a picture to read as one at a phone's width
+ * and little enough that the card is still mostly what it says. The content
+ * above is padded by the same number, less the sixteen the fade at its top edge
+ * gives back.
+ */
+const PLATE = 170;
+
 export function CutPanel({
   toolbar,
   aside,
@@ -122,6 +138,11 @@ export function CutPanel({
      readable between them, so the foot gives up and goes back into the content
      above it. */
   const roomBelow = size.w >= 760;
+
+  /* Whether the picture is a band across the foot rather than a column on the
+     right - the same 1024 the two `<Image>` elements below are switched at, read
+     here as a number because the padding that clears it is a number. */
+  const plate = Boolean(image) && size.w > 0 && size.w < 1024;
   const notch = Boolean(foot) && footIn === "notch" && roomBelow;
   const band = Boolean(foot) && footIn === "band" && roomBelow;
 
@@ -266,12 +287,26 @@ export function CutPanel({
               the card had no picture at all on a phone: it was `lg:block` and a
               phone simply got the white.
 
+              A fixed band rather than a share of the surface. At 54 per cent it
+              was more than half of whatever the panel came out as - which on a
+              phone, where a heading and three lines is the whole of the panel,
+              began immediately under the heading and put the paragraph on top of
+              a drawing. What made that unreadable is that the share is measured
+              against the very thing it has to stay clear of: the shorter the
+              text, the higher the picture climbed.
+
+              `PLATE` is that band, and the content below is padded by exactly
+              the same number, so the two cannot overlap at any length of copy.
+
               At `lg` the card is wide enough to hold words and a picture side
               by side, so it takes the right fifty five and fades in from its
               own left edge. Stretched across the whole width and hidden under a
               wash it was still a full width picture - the left of it was being
               paid for and then painted over. */}
-          <div className="absolute inset-x-0 bottom-0 h-[54%] lg:hidden">
+          <div
+            className="absolute inset-x-0 bottom-0 lg:hidden"
+            style={{ height: PLATE }}
+          >
             <Image
               src={image}
               alt=""
@@ -428,14 +463,20 @@ export function CutPanel({
              neither is knowable from outside this component. */
           ["--panel-pad" as string]: `${Math.round(pad)}px`,
           ["--panel-radius" as string]: `${Math.round(cut.radius)}px`,
-          paddingBottom: band
-            ? 28
-            : Math.max(
-                notch ? (cut.footDepth ?? 0) + 6 : 0,
-                aside ? cut.biteHeight : 0,
-                corner ? cut.dropHeight : 0,
-                28,
-              ) + 28,
+          /* And clear of the plate, where there is one and the surface is too
+             narrow to stand it beside the words. `plate` is false from `lg` up,
+             where the picture is a column on the right and the text never
+             reaches it. */
+          paddingBottom:
+            (plate ? PLATE - 16 : 0) +
+            (band
+              ? 28
+              : Math.max(
+                  notch ? (cut.footDepth ?? 0) + 6 : 0,
+                  aside ? cut.biteHeight : 0,
+                  corner ? cut.dropHeight : 0,
+                  28,
+                ) + 28),
           paddingLeft: pad,
           paddingRight: pad,
         }}
