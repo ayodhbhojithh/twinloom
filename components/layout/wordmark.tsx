@@ -80,7 +80,9 @@ export function Wordmark({
           as === "link" && "group-hover/mark:opacity-70",
         )}
       >
-        <Mark className="h-[26px] w-[34.6px]" />
+        {/* Down by a fifth on a phone, and the two numbers move together
+            because the mark is 1.33 wide: scaling one alone would squash it. */}
+        <Mark className="h-[21px] w-[28px] sm:h-[26px] sm:w-[34.6px]" />
       </span>
 
       {/* One word, in two colours, and it is still one word.
@@ -96,7 +98,15 @@ export function Wordmark({
           One `span`, so the two halves are one line box: set as two blocks they
           could be broken between, and a name that wraps in the middle of itself
           is not a lockup. */}
-      <span className="truncate text-[20px] leading-none font-extrabold tracking-[-0.03em] text-ink">
+      {/* Seventeen on a phone, twenty from `sm`.
+
+          `truncate` is still here and is still the right last resort, but it was
+          doing the work: at twenty points beside a full-size mark the lockup was
+          wider than the room left by the notch in the middle of the bar and the
+          menu button at the end, so the name was being cut rather than fitted.
+          Sized to the space it actually has, the ellipsis is what it should be -
+          something that never happens. */}
+      <span className="truncate text-[17px] leading-none font-extrabold tracking-[-0.03em] text-ink sm:text-[20px]">
         {SITE.halves[0]}
         <span className="thread-text">{SITE.halves[1]}</span>
       </span>
@@ -105,7 +115,9 @@ export function Wordmark({
 
   if (as === "text") {
     return (
-      <span className={cn("flex min-w-0 items-center gap-2", className)}>
+      <span
+        className={cn("flex min-w-0 items-center gap-1.5 sm:gap-2", className)}
+      >
         {inner}
       </span>
     );
@@ -116,7 +128,7 @@ export function Wordmark({
       href={ROUTES.home}
       aria-label={`${SITE.name}, home`}
       className={cn(
-        "group/mark flex min-w-0 items-center gap-2 rounded-field",
+        "group/mark flex min-w-0 items-center gap-1.5 rounded-field sm:gap-2",
         className,
       )}
     >

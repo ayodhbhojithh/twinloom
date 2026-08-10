@@ -298,6 +298,28 @@ const TOOL = 36;
 const BAR = TOOL * 3 + 2 * 2 + 6 * 2;
 
 /**
+ * The same three controls, at the size a phone can spare.
+ *
+ * The notch is measured from what stands in it, so a 124-point bar cut a notch
+ * a third of the way across a 340-point card - and the wordmark on one side of
+ * it and the menu button on the other were left fighting for what was left. At
+ * thirty they take a quarter, which is the difference between three things
+ * sharing a row and three things crowding one.
+ *
+ * Twenty-six, which is under the forty a guideline would ask for and is the
+ * right number here anyway: these sit in a cut in the top edge of a card that
+ * fills the screen, with nothing within a thumb's width of them in any
+ * direction. What a size floor protects against is hitting the wrong thing, and
+ * there is no wrong thing to hit - so the cost of the extra points was a notch
+ * a third of the way across a phone, and no benefit against it.
+ */
+const TOOL_TIGHT = 26;
+const BAR_TIGHT = TOOL_TIGHT * 3 + 2 * 2 + 6 * 2;
+
+/** Where the card stops being able to afford the full-size bar. */
+const TIGHT = 640;
+
+/**
  * The header's own height, as the stylesheet sets it.
  *
  * A copy of `--nav-height`, and the only honest way to have one: this card lays
@@ -612,7 +634,8 @@ export function NotchedCard({ className }: { className?: string }) {
        thing standing in it, measured, not a fraction of the card. Held under the
        card's own flare as well, so on a short screen where the two agree the
        notch is drawn with the same curve as the bite and the corner. */
-    const barFlare = Math.min(flare, (TOOL + 12) / 2);
+    const tool = w < TIGHT ? TOOL_TIGHT : TOOL;
+    const barFlare = Math.min(flare, (tool + 12) / 2);
     const barDepth = barFlare * 2;
 
     /* Only as wide as the bar it holds, plus a little air. Wider and the notch
@@ -625,7 +648,7 @@ export function NotchedCard({ className }: { className?: string }) {
        edge left either side of it. */
 
     const barWidth = Math.min(
-      Math.max(BAR + 12, Math.min(w * 0.11, 178)),
+      Math.max((w < TIGHT ? BAR_TIGHT : BAR) + 12, Math.min(w * 0.11, 178)),
       Math.max(flare * 2 + 60, w - 2 * (radius + flare) - 24),
     );
 
@@ -1089,10 +1112,28 @@ export function NotchedCard({ className }: { className?: string }) {
              under it. Overriding it here puts the name, the claim and the
              paragraph on one left edge, which is the only alignment on this
              screen anybody will notice. */
-          ["--page-gutter" as string]: `${pad}px`,
+          /* Tighter than the card's own inset on a phone.
+
+             `pad` is the measure a line of type is held off the edge by, and a
+             wordmark is not a line of type - it is the object at the corner, and
+             an object indented as far as a paragraph reads as having drifted in
+             from it. On a wide card the two are far enough apart that sharing a
+             number costs nothing; on a narrow one the inset is most of what is
+             standing between the mark and the notch beside it. */
+          ["--page-gutter" as string]: `${
+            size.w < TIGHT ? Math.max(14, pad * 0.6) : pad
+          }px`,
           /* Clear of the notch, which is centred over the nav now rather than
-             off to one side of it - see `barTop` and `navDrop`. */
-          paddingTop: barTop,
+             off to one side of it - see `barTop` and `navDrop`. Nearer the top
+             edge on a phone, where the bar has a shallower notch beside it and
+             less room under it to spare.
+
+             Four was too near it. The notch's own floor is a dozen points down
+             from the top edge, and a wordmark level with the top of the cut sits
+             above everything the cut contains - so the bar read as hanging off
+             the edge rather than standing in the card. Fourteen puts the name on
+             about the same line as the arrows beside it. */
+          paddingTop: size.w < TIGHT ? 14 : barTop,
         }}
       >
         <SiteHeader bare navTop={navDrop} />
@@ -1120,7 +1161,10 @@ export function NotchedCard({ className }: { className?: string }) {
           paddingTop: 4,
         }}
       >
-        <div className="flex h-9 items-center gap-0.5 rounded-pill px-1.5">
+        {/* The row itself comes down with the notch it stands in - the cut is
+            measured from these, so a bar drawn at full size inside a smaller
+            hole would hang out of it. */}
+        <div className="flex h-[26px] items-center gap-0 rounded-pill px-1 sm:h-9 sm:gap-0.5 sm:px-1.5">
           <Tool
             label="Previous project"
             onClick={() =>
@@ -1129,7 +1173,7 @@ export function NotchedCard({ className }: { className?: string }) {
               )
             }
           >
-            <ArrowLeft className="size-4" />
+            <ArrowLeft className="size-3.5 sm:size-4" />
           </Tool>
           {/* `Expand` rather than `Maximize2`.
 
@@ -1139,13 +1183,13 @@ export function NotchedCard({ className }: { className?: string }) {
               than a way in. Four arrows leaving a centre is the only one of
               them that is not a direction. */}
           <Tool label={`Open ${shown.name}`} onClick={() => setOpen(shown)}>
-            <Expand className="size-4" />
+            <Expand className="size-3.5 sm:size-4" />
           </Tool>
           <Tool
             label="Next project"
             onClick={() => setAt((was) => (was + 1) % HERO_SLIDES.length)}
           >
-            <ArrowRight className="size-4" />
+            <ArrowRight className="size-3.5 sm:size-4" />
           </Tool>
         </div>
       </div>
@@ -1933,7 +1977,7 @@ function Tool({
       type="button"
       aria-label={label}
       onClick={onClick}
-      className="flex size-9 cursor-pointer items-center justify-center rounded-pill text-quiet transition-colors hover:bg-well hover:text-ink"
+      className="flex size-[26px] cursor-pointer items-center justify-center rounded-pill text-quiet transition-colors hover:bg-well hover:text-ink sm:size-9"
     >
       {children}
     </button>
