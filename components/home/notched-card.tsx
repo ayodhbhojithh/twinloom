@@ -1152,8 +1152,17 @@ export function NotchedCard({ className }: { className?: string }) {
           is what a cut in a card looks like, and the card is the same card on
           all three screens: worth keeping over a top edge that changes shape
           depending on what is drawn under it. */}
+      {/* `pointer-events-none` on the box, `auto` on the pill inside it.
+
+          This is a full-width band across the top of the card at `z-30`, there
+          only to centre the three controls in the notch - and sitting above the
+          header at `z-20`, it was taking every click meant for the menu button
+          at the far right of that row. On a phone that button is the only way
+          into the site, so it was the one control on the screen that did
+          nothing at all. A box whose whole job is to position something should
+          never be the thing that gets pressed. */}
       <div
-        className="absolute top-0 left-0 right-0 z-30 flex justify-center"
+        className="pointer-events-none absolute top-0 right-0 left-0 z-30 flex justify-center"
         style={{
           /* The full width rather than the notch's own, so the pill centres
              on the card - the notch it stands in is centred the same way. */
@@ -1164,7 +1173,7 @@ export function NotchedCard({ className }: { className?: string }) {
         {/* The row itself comes down with the notch it stands in - the cut is
             measured from these, so a bar drawn at full size inside a smaller
             hole would hang out of it. */}
-        <div className="flex h-[26px] items-center gap-0 rounded-pill px-1 sm:h-9 sm:gap-0.5 sm:px-1.5">
+        <div className="pointer-events-auto flex h-[26px] items-center gap-0 rounded-pill px-1 sm:h-9 sm:gap-0.5 sm:px-1.5">
           <Tool
             label="Previous project"
             onClick={() =>
