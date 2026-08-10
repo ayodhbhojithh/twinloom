@@ -1758,7 +1758,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       right at 62px of headline is mean at 32. */}
                   <motion.h1
                     variants={HERO_RISE}
-                    className="mx-auto mt-3 max-w-[26ch] text-[clamp(28px,3.4vw,62px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink max-sm:mt-2 max-sm:text-[25px] max-sm:leading-[1.08] sm:mt-4 lg:mx-0 lg:mt-5"
+                    className="mx-auto mt-3 max-w-[26ch] text-[clamp(28px,3.4vw,62px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink max-sm:mt-2.5 max-sm:max-w-none max-sm:text-[26px] max-sm:leading-[1.06] max-sm:tracking-[-0.042em] sm:mt-4 lg:mx-0 lg:mt-5"
                   >
                     {shown.claim?.[0]}
                     <span className="thread-text block">
@@ -1768,7 +1768,7 @@ export function NotchedCard({ className }: { className?: string }) {
 
                   <motion.p
                     variants={HERO_RISE}
-                    className="mx-auto mt-4 max-w-[44ch] text-[clamp(15px,1.3vw,24px)] leading-[1.4] font-bold tracking-[-0.022em] text-ink max-sm:mt-2.5 max-sm:text-[13.5px] sm:mt-5 lg:mx-0 lg:mt-6 2xl:mt-7"
+                    className="mx-auto mt-4 max-w-[44ch] text-[clamp(15px,1.3vw,24px)] leading-[1.4] font-bold tracking-[-0.022em] text-ink max-sm:mt-2 max-sm:max-w-[34ch] max-sm:text-[12.5px] max-sm:leading-[1.45] sm:mt-5 lg:mx-0 lg:mt-6 2xl:mt-7"
                   >
                     {shown.lead}
                   </motion.p>
