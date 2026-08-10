@@ -39,8 +39,47 @@ import { useEffect, useRef } from "react";
  */
 const RUN = 4;
 
-/** How many to settle for early, so a small scroll is never blank. */
-const AHEAD = 12;
+/* ---------------------------------------------------------------------------
+   How much of the reel is held in memory at once.
+
+   Every one of them, until now: a hundred and twenty stills fetched in order and
+   kept in an array for the life of the screen. On disk that is four and a half
+   megabytes, which is the number that was being reasoned about - but a JPEG in
+   an array is not a JPEG, it is a decoded bitmap, and 1280 by 720 at four bytes
+   a pixel is three and a half megabytes each. The whole reel resident is around
+   four hundred and forty.
+
+   That is the number behind a phone that runs the landing page smoothly and then
+   goes slow, or reloads the tab on the way back to it. It is not a slow
+   animation; it is a device out of room.
+
+   Three ideas, and together they hold about thirty frames instead of a hundred
+   and twenty - call it a hundred megabytes rather than four hundred and forty.
+--------------------------------------------------------------------------- */
+
+/** How far either side of the scroll to keep frames, ready to be drawn. */
+const HOLD = 12;
+
+/**
+ * One frame in every this many, kept whatever happens.
+ *
+ * A ladder up the whole reel, so a scroll from one end to the other always has
+ * something to draw at every point on the way - see `nearest`. Twelve of them,
+ * which is a tenth of the reel for a twelfth of the memory the whole of it took.
+ */
+const STEP = 10;
+
+/** How far ahead of the scroll to fetch, so moving forward is never blank. */
+const AHEAD = 14;
+
+/**
+ * How many stills to fetch at once.
+ *
+ * Three. One at a time cannot keep up with a wheel; all of them at once is a
+ * hundred and twenty requests competing with the frame on screen, which is what
+ * the queue this replaces was written to avoid.
+ */
+const AT_ONCE = 3;
 
 export function FilmStage({
   base,
@@ -75,9 +114,11 @@ export function FilmStage({
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
-    /* Every still, in one array, filled in as each arrives. A slot still empty
-       is skipped rather than waited for - see `nearest`. */
+    /* The reel, as far as it is in memory. A slot that is empty - never fetched,
+       or fetched and since let go - is skipped rather than waited for; see
+       `nearest`. */
     const shots: (HTMLImageElement | null)[] = new Array(frames).fill(null);
+    const going = new Set<number>();
     let alive = true;
     let want = 0;
     let drawn = -1;
@@ -149,10 +190,16 @@ export function FilmStage({
     const onScroll = () => {
       const room = scroller.scrollHeight - scroller.clientHeight;
       const along = room > 0 ? scroller.scrollTop / room : 0;
-      want = Math.min(
+      const to = Math.min(
         frames - 1,
         Math.max(0, Math.round(along * (frames - 1))),
       );
+
+      if (to !== want) {
+        want = to;
+        tend();
+      }
+
       settle();
 
       const step = Math.round(along * 50);
@@ -161,6 +208,65 @@ export function FilmStage({
         onProgress?.(step / 50);
       }
     };
+
+    /**
+     * Which frames are worth having, at this point in the reel.
+     *
+     * The ladder, plus a window around where the scroll is. The window is not
+     * centred: it reaches further forward than back, because a reel is scrolled
+     * forwards far more often than it is scrolled back, and a frame behind you
+     * is one you have already seen.
+     */
+    const wanted = (at: number) => {
+      const set = new Set<number>();
+
+      for (let n = 0; n < frames; n += STEP) set.add(n);
+      set.add(frames - 1);
+
+      const from = Math.max(0, at - HOLD);
+      const to = Math.min(frames - 1, at + AHEAD);
+      for (let n = from; n <= to; n += 1) set.add(n);
+
+      return set;
+    };
+
+    /**
+     * Let go of what is no longer worth holding, and fetch what is.
+     *
+     * Dropping the reference is the whole of the release: nothing else holds
+     * these, so the bitmap goes when the collector next runs. The file stays in
+     * the browser's own cache, so a scroll back over ground already covered is a
+     * decode rather than a download.
+     *
+     * Nearest first. When the wheel has jumped somewhere new, the frame under
+     * the reader's thumb is the one worth having first and the fourteen after it
+     * are worth having next; fetching the ladder ahead of either would be
+     * spending the same three connections on frames nobody is looking at.
+     */
+    function tend() {
+      if (!alive) return;
+
+      const keep = wanted(want);
+
+      for (let n = 0; n < frames; n += 1) {
+        if (shots[n] && !keep.has(n)) shots[n] = null;
+      }
+
+      const missing = [...keep]
+        .filter((n) => !shots[n] && !going.has(n))
+        .sort((a, b) => Math.abs(a - want) - Math.abs(b - want));
+
+      while (going.size < AT_ONCE && missing.length) {
+        const n = missing.shift() as number;
+        going.add(n);
+        void load(n).then(() => {
+          going.delete(n);
+          if (!alive) return;
+          settle();
+          tend();
+        });
+      }
+    }
 
     const measure = () => {
       const rect = outer.getBoundingClientRect();
@@ -183,22 +289,16 @@ export function FilmStage({
 
     measure();
 
-    /* The first frame, then the next dozen, then the rest - in the order they
-       are scrolled through. One at a time rather than all at once: a hundred and
-       twenty parallel requests is a hundred and twenty things competing with the
-       one that is on screen. */
-    void (async () => {
-      await load(0);
-      settle();
-
-      for (let n = 1; n < frames && alive; n += 1) {
-        await load(n);
-        if (n <= AHEAD) settle();
-      }
-    })();
+    tend();
 
     return () => {
       alive = false;
+      /* Emptied on the way out. The screen this draws is one of five on a card
+         somebody turns with an arrow, so it is unmounted and remounted rather
+         than left standing - and an array of bitmaps that outlives the canvas it
+         was drawn on is the leak this whole section is about. */
+      shots.fill(null);
+      going.clear();
       cancelAnimationFrame(ticking);
       bounds.disconnect();
       scroller.removeEventListener("scroll", onScroll);

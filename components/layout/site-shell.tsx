@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 
-import { DeskDock } from "@/components/build/v5/desk-dock";
 import type { Face } from "@/components/build/v5/dock";
 import { ROUTES } from "@/lib/site";
 
@@ -27,6 +27,26 @@ import { SiteHeader } from "./site-header";
  * Read by two things that must agree: the header, which appears at it, and the
  * desk, which starts below the header once it has. */
 const APPEAR = 240;
+
+/* The desk, fetched after the page it is standing beside.
+
+   It is on every route, so what it costs it costs everywhere: the panel, the
+   notes list, the page list, the cut surface they are drawn on and the uploader
+   behind the attach control - a couple of hundred kilobytes of tool, on a legal
+   page that is four paragraphs of text.
+
+   And none of it is needed to read anything. The desk is a flag against the
+   right edge until somebody presses it, so it can arrive a moment after the page
+   does without anybody being kept waiting for it - which is the opposite of the
+   arrangement it had, where every page waited for the desk.
+
+   `ssr: false` because there is nothing about it worth rendering on a server:
+   what it shows is read out of the reader's own saved answers, which the server
+   has never seen. It rendered an empty tab and then replaced it on hydration. */
+const DeskDock = dynamic(
+  () => import("@/components/build/v5/desk-dock").then((m) => m.DeskDock),
+  { ssr: false },
+);
 
 const NO_FOOTER: readonly string[] = [
   ROUTES.homeV1,
@@ -75,6 +95,32 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
      had not arrived, or fail to clear one that had. */
   const [past, setPast] = useState(false);
   const floating = pathname === ROUTES.home;
+
+  /* Whether the page has settled enough to go and get the desk.
+
+     Deferred behind a dynamic import alone it would still be fetched the moment
+     this component hydrates, which on a slow phone is exactly the busiest
+     stretch there is: the page is parsing, laying out and painting, and a
+     second bundle arriving in the middle of that competes with the thing
+     somebody is actually looking at.
+
+     So it waits for the browser to be idle, with a timeout as the floor - a
+     page that never goes idle is a page where the wait would otherwise be
+     forever. `requestIdleCallback` is not on every browser, and where it is
+     missing a plain delay says the same thing less precisely. */
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const idle = window.requestIdleCallback;
+
+    if (idle) {
+      const id = idle(() => setReady(true), { timeout: 2500 });
+      return () => window.cancelIdleCallback?.(id);
+    }
+
+    const soon = setTimeout(() => setReady(true), 1200);
+    return () => clearTimeout(soon);
+  }, []);
 
   useEffect(() => {
     if (!floating) return;
@@ -188,12 +234,14 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           `floating && !past` is exactly that state, and it is already worked out
           for the header - see `underHeader`. One measurement, two things that
           depend on it. */}
-      <DeskDock
-        face={face}
-        onFace={setFace}
-        underHeader={underHeader}
-        showTab={!(floating && !past)}
-      />
+      {ready ? (
+        <DeskDock
+          face={face}
+          onFace={setFace}
+          underHeader={underHeader}
+          showTab={!(floating && !past)}
+        />
+      ) : null}
     </>
   );
 }
