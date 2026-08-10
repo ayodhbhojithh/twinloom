@@ -32,7 +32,7 @@ export function BlogView() {
           </p>
 
           <h1 className="mt-3 max-w-[20ch] text-[clamp(28px,3vw,44px)] leading-[1.04] font-extrabold tracking-[-0.04em] text-ink">
-            Insight.
+            Insights.
           </h1>
         </div>
 

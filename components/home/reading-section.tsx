@@ -27,7 +27,7 @@ export function ReadingSection() {
           axis, so four stacked sections read as one page rather than as four
           layouts that happen to follow each other. */}
       <div className="flex flex-col items-center text-center">
-        <h2 className="reveal section-head max-w-[26ch] text-ink">Insight.</h2>
+        <h2 className="reveal section-head max-w-[26ch] text-ink">Insights.</h2>
 
         <Link
           href={ROUTES.insights}

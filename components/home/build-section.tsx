@@ -171,14 +171,16 @@ export function BuildSection() {
           <h2 className="max-w-[22ch] text-[clamp(34px,4.4vw,64px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
             Weave your digital presence.
           </h2>
+          {/* Nothing follows it. The tool below is what it introduces, and the
+              gap to that is set by the tool's own surface rather than by a
+              paragraph that is no longer here. */}
 
-          {/* Two commas rather than a dash. The sentence is one thing with an
-              aside folded into the middle of it, and a dash there would make the
-              aside the point. */}
-          <p className="mt-4 max-w-[52ch] text-[clamp(16px,1.4vw,21px)] leading-[1.45] text-quiet">
-            Your website, your brand and the systems behind them, woven into one
-            clear digital presence.
-          </p>
+          {/* The claim stands on its own.
+
+              A line restating it in longer words sat here, and the whole of what
+              it added was the list - website, brand, the systems behind them -
+              which the tool underneath asks about one at a time. Four words are
+              a claim; the same claim at twenty is a claim being explained. */}
         </div>
 
         {/* The run-through itself, not a shorter version of it. It reads the

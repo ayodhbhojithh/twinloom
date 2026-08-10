@@ -158,7 +158,7 @@ export const HEADER_NAV: readonly NavLink[] = [
      offered. Seven links also fit the bar at a width eight was crowding. */
   { label: "Home", href: ROUTES.home },
   { label: "Services", href: ROUTES.services },
-  { label: "Insight", href: ROUTES.insights },
+  { label: "Insights", href: ROUTES.insights },
   { label: "How we work", href: ROUTES.how },
   { label: "About", href: ROUTES.about },
   { label: "Contact", href: ROUTES.contact },
@@ -215,7 +215,7 @@ export const RAIL_PAGES: readonly RailPage[] = [
     children: [{ label: "Book a meeting", href: ROUTES.book }],
   },
   { label: "FAQs", href: ROUTES.faq },
-  { label: "Insight", href: ROUTES.insights },
+  { label: "Insights", href: ROUTES.insights },
 ];
 
 export const FOOTER_COLUMNS: readonly {
@@ -243,7 +243,7 @@ export const FOOTER_COLUMNS: readonly {
     title: "Reading",
     links: [
       { label: "FAQs", href: ROUTES.faq },
-      { label: "Insight", href: ROUTES.insights },
+      { label: "Insights", href: ROUTES.insights },
     ],
   },
 ];

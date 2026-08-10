@@ -80,9 +80,15 @@ export function ContactView() {
             Contact us
           </p>
 
+          {/* The heading says what the page is, and nothing more.
+
+              It read "Write, ring, or come and find us." - three verbs for the
+              three things listed underneath, which is a heading naming its own
+              contents before anybody has reached them. The kicker above already
+              says Contact us; saying it again in a sentence is the page
+              introducing itself twice. */}
           <h1 className="mt-3 max-w-[min(30ch,var(--notch-free,86ch))] text-[clamp(26px,2.9vw,42px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink">
-            Write, ring, or come
-            <span className="text-quiet"> and find us.</span>
+            Contact us.
           </h1>
 
           <p className="mt-4 text-[clamp(15px,1.2vw,17px)] leading-[1.6] text-body">

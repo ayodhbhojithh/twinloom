@@ -51,7 +51,7 @@ export default async function Page({
           articleLd(article),
           breadcrumbLd([
             { name: SITE.name, path: ROUTES.home },
-            { name: "Insight", path: ROUTES.insights },
+            { name: "Insights", path: ROUTES.insights },
             { name: article.title, path: `${ROUTES.insights}/${article.slug}` },
           ]),
         ]}

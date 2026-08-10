@@ -46,17 +46,7 @@ import { isPicture, type Attached } from "@/lib/build/upload";
 
 import { DropZone } from "./drop";
 import { CardFlourish } from "./flourish";
-import {
-  AddRow,
-  Chip,
-  Field,
-  H,
-  Kicker,
-  Pill,
-  RefText,
-  Sub,
-  TickSet,
-} from "./kit";
+import { AddRow, Chip, Field, H, Kicker, Pill, RefText, TickSet } from "./kit";
 import { FIELDS } from "./stages-c";
 import { Stage } from "./stage";
 
@@ -760,19 +750,28 @@ function Choose({
             aria-hidden
             draggable={false}
             sizes="192px"
-            className="size-16 flex-none object-contain sm:size-20"
+            className="size-14 flex-none object-contain sm:size-16"
           />
         </div>
 
-        <div className="relative mt-5 min-w-0 text-center sm:mt-7">
+        {/* The heading, and nothing under it.
+
+            A line explaining that there are two ways and a third stood here, and
+            the two cards below it say that better than a sentence can: they are
+            numbered, named, and each carries its own description. A sub-heading
+            that counts what is about to be shown is a caption on something not
+            yet read. */}
+        {/* Closer to the mark above it than it was.
+
+            The step was set for a heading with a line under it, and with that
+            line gone the mark, the heading and the cards had a paragraph's worth
+            of air between each - three things evenly spaced is a list, and this
+            is one thing with a label on it. */}
+        <div className="relative mt-3 min-w-0 text-center sm:mt-4">
           <H>Choose how you want to start.</H>
-          <Sub>
-            Two ways to brief, plus a fast way to talk. No commitment, just the
-            right starting point for you.
-          </Sub>
         </div>
 
-        <div className="relative mt-6 grid gap-3 sm:mt-9 sm:gap-4 lg:grid-cols-2">
+        <div className="relative mt-5 grid gap-3 sm:mt-6 sm:gap-4 lg:grid-cols-2">
           <Door
             n="01"
             kicker="Open brief"
