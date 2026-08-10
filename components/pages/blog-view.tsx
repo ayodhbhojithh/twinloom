@@ -86,11 +86,35 @@ export function BlogView() {
           </Link>
         }
       >
-        <p className="font-mono text-[9px] font-bold tracking-[0.16em] text-mark uppercase">
+        {/* The whole surface opens it, as the rows below do.
+
+            It was the headline and the corner disc, and nothing else - so the
+            one piece the page is leading on was the one piece where pressing the
+            card did nothing, and every other card on the page opens from
+            anywhere. A lead item that is harder to open than the three under it
+            is the wrong way round.
+
+            A link laid over the panel rather than a link wrapped round it.
+            `CutPanel` places its own slots - the plate in the notch, the count
+            in the bite, the disc in the corner - and an anchor round the lot of
+            them would swallow all three. Absolute and behind them, it covers the
+            surface and the slots keep their own presses.
+
+            The title stays marked up as a link as well. The overlay is what
+            makes the card pressable; this is what makes it navigable from a
+            keyboard and reads as the destination in a list of links. */}
+        <Link
+          href={`${ROUTES.insights}/${lead.slug}`}
+          aria-label={`Read ${lead.title}`}
+          className="absolute inset-0 z-10"
+          tabIndex={-1}
+        />
+
+        <p className="relative z-20 font-mono text-[9px] font-bold tracking-[0.16em] text-mark uppercase">
           {lead.topic}
         </p>
 
-        <h2 className="mt-3 max-w-[min(24ch,var(--notch-free,62ch))] text-[clamp(24px,2.6vw,38px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink">
+        <h2 className="relative z-20 mt-3 max-w-[min(24ch,var(--notch-free,62ch))] text-[clamp(24px,2.6vw,38px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink">
           <Link
             href={`${ROUTES.insights}/${lead.slug}`}
             className="transition-opacity hover:opacity-70"
@@ -99,7 +123,7 @@ export function BlogView() {
           </Link>
         </h2>
 
-        <p className="mt-4 max-w-[46ch] text-[15px] leading-[1.6] text-body lg:max-w-[42%]">
+        <p className="relative z-20 mt-4 max-w-[46ch] text-[15px] leading-[1.6] text-body lg:max-w-[42%]">
           {lead.lead}
         </p>
       </CutPanel>
