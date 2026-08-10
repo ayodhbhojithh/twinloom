@@ -1885,13 +1885,22 @@ export function NotchedCard({ className }: { className?: string }) {
                       them is wrong the day the other is fixed. */}
                   <motion.p
                     variants={HERO_RISE}
-                    /* Three lines on a phone and the rest cut. The paragraph is
-                       the one thing on this screen that repeats what the lead
-                       above it already said, so it is the right thing to shorten
-                       when the room runs out - and clamped rather than hidden,
-                       because a paragraph that vanishes below a breakpoint is a
-                       paragraph nobody knows they are missing. */
-                    className="pointer-events-auto mx-auto mt-4 max-w-[62ch] text-[13.5px] leading-[1.68] text-quiet max-sm:mt-2.5 max-sm:line-clamp-3 max-sm:text-[12px] max-sm:leading-[1.55] sm:mt-5 sm:text-[14.5px] lg:mx-0 lg:mt-6 lg:text-[15.5px] lg:leading-[1.75] 2xl:mt-7 2xl:text-[16.5px]"
+                    /* Off the phone entirely.
+
+                       It was clamped to three lines there, on the argument that
+                       a paragraph which vanishes below a breakpoint is one
+                       nobody knows they are missing. Three lines ending in an
+                       ellipsis is worse than either: it is a paragraph somebody
+                       can see has been cut and cannot finish, on the screen the
+                       site opens with.
+
+                       What it says is the only thing here that repeats - the
+                       lead above states the offer and this restates it at
+                       length, with the sister company named a second time. On a
+                       desk that is a paragraph earning its place under a
+                       headline; on a phone it is the fourth block of type in a
+                       column that already has three. */
+                    className="pointer-events-auto mx-auto mt-4 max-w-[62ch] text-[13.5px] leading-[1.68] text-quiet max-sm:hidden sm:mt-5 sm:text-[14.5px] lg:mx-0 lg:mt-6 lg:text-[15.5px] lg:leading-[1.75] 2xl:mt-7 2xl:text-[16.5px]"
                   >
                     <SisterSentence say={shown.note ?? ""} />
                   </motion.p>
