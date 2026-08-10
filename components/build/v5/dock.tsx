@@ -361,9 +361,17 @@ function DeskBody({
  * it stops short of the top of the screen so the page behind is still visible -
  * which is the same thing the desktop panel says by floating beside the page.
  *
- * It is capped at seven eighths of the screen rather than filling it, for the
- * same reason: a sheet that reaches the top is a page, and a page is something
- * you have navigated to rather than something you have opened.
+ * It is seven eighths of the screen rather than the whole of it, for the same
+ * reason: a sheet that reaches the top is a page, and a page is something you
+ * have navigated to rather than something you have opened.
+ *
+ * And that is a height rather than a ceiling. As `max-height` the sheet was as
+ * tall as whatever was in it - short on Notes with an empty desk, nearly the
+ * screen on Site with a page list - so pressing a tab moved the sheet as well as
+ * changing it, and the two tabs and the close button jumped under the thumb that
+ * had just pressed one of them. A panel that changes size when you change what
+ * is inside it is a panel arguing with its own contents. One height, and the
+ * list scrolls inside it.
  */
 function DockSheet({
   answers,
@@ -386,7 +394,7 @@ function DockSheet({
   const on = withSite ? face : "notes";
 
   return (
-    <div className="flex max-h-[87svh] w-full flex-col rounded-t-[22px] bg-field shadow-[0_-8px_40px_rgba(12,32,56,0.16)]">
+    <div className="flex h-[87svh] w-full flex-col rounded-t-[22px] bg-field shadow-[0_-8px_40px_rgba(12,32,56,0.16)]">
       {/* The handle. It does nothing - the sheet is not draggable - and it is
           still the right mark: it is how a phone says which edge this came from
           and which edge it goes back to. */}
