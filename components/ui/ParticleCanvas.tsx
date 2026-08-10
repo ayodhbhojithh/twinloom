@@ -398,10 +398,41 @@ export function ParticleCanvas() {
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    animationRef.current = requestAnimationFrame(animate);
+    /* Only while it is on screen.
+
+       This is a field of points redrawn sixty times a second, with a pass over
+       the pairs of them for the lines between - and it is one screen of a card
+       near the top of a long page. Scrolled past, it was still doing all of
+       that: a phone reading the footer was paying for a picture four screenfuls
+       above it, which on a weak device is the whole page feeling heavy for no
+       reason anybody can see.
+
+       Started and stopped rather than skipped inside the loop. A frame that
+       wakes only to decide it has nothing to do is still a frame, still a wake,
+       and on a battery still a cost. */
+    const start = () => {
+      if (!animationRef.current) {
+        animationRef.current = requestAnimationFrame(animate);
+      }
+    };
+
+    const stop = () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = 0;
+      }
+    };
+
+    const eye = new IntersectionObserver(
+      ([seen]) => (seen?.isIntersecting ? start() : stop()),
+      { threshold: 0 },
+    );
+
+    eye.observe(canvas);
 
     return () => {
-      cancelAnimationFrame(animationRef.current);
+      eye.disconnect();
+      stop();
     };
   }, [isDark]);
 
