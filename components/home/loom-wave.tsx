@@ -137,11 +137,32 @@ const PLUCK = {
  */
 const RIBBON = {
   lines: 60,
-  samples: 160,
+  /* Down from a hundred and sixty.
+
+     These are sines drawn across the whole width, and a sine has no detail to
+     lose: at a hundred and twenty the longest straight segment on the widest
+     screen is about sixteen pixels of a curve that turns through a few degrees
+     in that distance, which is under the width of the stroke drawing it. What
+     it saves is a quarter of every point in the picture - the family is drawn
+     `lines` times, so forty points off one curve is two and a half thousand
+     off the frame. */
+  samples: 120,
   turns: 5.5,
   speed: 0.32,
   weight: 0.85,
   alpha: 0.3,
+  /**
+   * How many alpha levels the sixty curves are sorted into.
+   *
+   * They fade towards the outside of the sheaf, and a fade is what a browser
+   * charges most for here: a stroke is one draw call however long its path is,
+   * so sixty different alphas is sixty calls where six is six. The alpha runs
+   * from about a tenth to three tenths across the whole family, so a sixth of
+   * that range is a step of three hundredths on a hairline - which is not a
+   * step anybody can find, and each bucket is stroked as one path of ten
+   * subpaths instead of ten paths.
+   */
+  shades: 6,
 } as const;
 
 /**
@@ -232,6 +253,16 @@ const ROOM_BARS =
    field is brightest and the quarter points are where it is nearly black, which
    is a decision about composition - not something a blend between two brand
    colours arrives at on its own. */
+/**
+ * What the sheaf's curves are stroked in before the ramp replaces it.
+ *
+ * Any opaque colour would do - `source-atop` overwrites every channel of it -
+ * so this is the middle of the ramp, on the principle that a drawing caught
+ * halfway through should look like a duller version of itself rather than a
+ * black scribble.
+ */
+const SHEAF_INK = "#1cc6ff";
+
 const RAMP = [
   [0, "#2a56ff"],
   [0.16, "#1f47d8"],
@@ -904,6 +935,41 @@ export function LoomWave({
     const spineX = new Float32Array(201);
     const spineY = new Float32Array(201);
 
+    /* What each curve in the family contributes, which depends on how many
+       there are and on nothing else.
+
+       Two sines and a floor per curve, and they were being worked out inside
+       the frame - a hundred and eighty trig calls a frame for three numbers
+       that only change when the window does. Kept against the count they were
+       built for, so a resize rebuilds them and nothing else does. */
+    const turnSin = new Float32Array(RIBBON.lines);
+    const turnCos = new Float32Array(RIBBON.lines);
+    const shadeOf = new Uint8Array(RIBBON.lines);
+    let sheafFor = -1;
+
+    const sheafSetup = (lines: number) => {
+      if (sheafFor === lines) return;
+      sheafFor = lines;
+
+      for (let k = 0; k < lines; k += 1) {
+        /* Round a full turn, so the family covers every phase once. Any less
+           and the band has a gap in it; any more and lines land on each other
+           and the crowding stops meaning anything. */
+        const turn = (k / lines) * Math.PI * 2;
+        turnSin[k] = Math.sin(turn);
+        turnCos[k] = Math.cos(turn);
+
+        /* Thinner and fainter towards the outside of the sheaf, which is what
+           gives it a near face and a far one rather than reading as flat -
+           now as one of `shades` levels rather than its own. */
+        const across = Math.sin((k / lines) * Math.PI);
+        shadeOf[k] = Math.min(
+          RIBBON.shades - 1,
+          Math.floor(across * RIBBON.shades),
+        );
+      }
+    };
+
     /** The sheaf: sixty smooth curves whose crowding is the picture. */
     const drawSheaf = (t: number) => {
       /* The ribbon: one family of curves, not a row of columns.
@@ -926,11 +992,23 @@ export function LoomWave({
          twist in the reference, and nothing draws it: it falls out of an
          envelope that reaches nought.
 
-         One gradient for all of them, built once a frame across the width. A
-         polyline takes a single stroke colour, so the alternative to this is
-         either a flat ribbon or a stroke per segment - and a stroke per
-         segment is sixty times a hundred and sixty of them. */
-      ctx.strokeStyle = ramp();
+         The colour is not on the strokes at all any more.
+
+         It was the ramp, set as the stroke style, so every one of the sixty
+         paths was shaded from a gradient along its whole length - and a
+         gradient is charged per pixel covered, so the family was paying for the
+         same left-to-right ramp sixty times over. They are stroked in one flat
+         colour now and the ramp is laid over the lot of them once, with
+         `source-atop`, which keeps the alpha the strokes built up and replaces
+         only the colour. The picture is identical: the ramp varies along x and
+         nothing else, so a pixel's colour never depended on which curve put it
+         there.
+
+         Which is safe here and would not be anywhere else in this file: the
+         frame is cleared immediately before this runs and the sheaf is the
+         first thing drawn, so there is nothing else on the canvas for
+         `source-atop` to find. The spine and the ends come after it. */
+      ctx.strokeStyle = SHEAF_INK;
       ctx.lineWidth = RIBBON.weight;
 
       /* Fewer curves and fewer points on a narrow box.
@@ -953,6 +1031,8 @@ export function LoomWave({
         72,
         Math.round(Math.min(RIBBON.samples, width / 5)),
       );
+
+      sheafSetup(lines);
 
       /* The column, worked out once for the whole family.
 
@@ -986,37 +1066,64 @@ export function LoomWave({
         atCos[n] = Math.cos(phase);
       }
 
-      for (let k = 0; k < lines; k += 1) {
-        /* Round a full turn, so the family covers every phase once. Any less
-           and the band has a gap in it; any more and lines land on each other
-           and the crowding stops meaning anything. */
-        const turn = (k / lines) * Math.PI * 2;
-        const turnSin = Math.sin(turn);
-        const turnCos = Math.cos(turn);
+      /* One path per shade, not one per curve.
 
-        /* Thinner and fainter towards the outside of the sheaf, which is what
-           gives it a near face and a far one rather than reading as flat. */
-        const across = Math.sin((k / lines) * Math.PI);
-        ctx.globalAlpha = RIBBON.alpha * (0.35 + across * 0.65);
-
+         A path may hold as many subpaths as it likes and they all take the one
+         stroke, so the ten-odd curves sharing a shade are walked into a single
+         path and drawn together. Same segments, same pixels, a tenth of the
+         draw calls - and the browser is not asked to change its state between
+         curves that differ in nothing. */
+      for (let shade = 0; shade < RIBBON.shades; shade += 1) {
+        let any = false;
         ctx.beginPath();
-        for (let n = 0; n <= samples; n += 1) {
-          const y =
-            atY[n] + atAmp[n] * (atSin[n] * turnCos + atCos[n] * turnSin);
-          if (n === 0) ctx.moveTo(atX[n], y);
-          else ctx.lineTo(atX[n], y);
+
+        for (let k = 0; k < lines; k += 1) {
+          if (shadeOf[k] !== shade) continue;
+          any = true;
+
+          const tc = turnCos[k];
+          const ts = turnSin[k];
+
+          ctx.moveTo(
+            atX[0],
+            atY[0] + atAmp[0] * (atSin[0] * tc + atCos[0] * ts),
+          );
+          for (let n = 1; n <= samples; n += 1) {
+            ctx.lineTo(
+              atX[n],
+              atY[n] + atAmp[n] * (atSin[n] * tc + atCos[n] * ts),
+            );
+          }
         }
+
+        if (!any) continue;
+
+        /* The middle of the band this shade stands for, so the family fades
+           across the same range it always did. */
+        const across = (shade + 0.5) / RIBBON.shades;
+        ctx.globalAlpha = RIBBON.alpha * (0.35 + across * 0.65);
         ctx.stroke();
       }
 
       ctx.globalAlpha = 1;
+
+      /* And the ramp, once, over everything the family just drew. */
+      ctx.globalCompositeOperation = "source-atop";
+      ctx.fillStyle = ramp();
+      ctx.fillRect(0, 0, width, height);
+      ctx.globalCompositeOperation = "source-over";
     };
 
     const draw = (t: number) => {
       ctx.clearRect(0, 0, width, height);
       if (width < 2 || height < 2) return;
 
-      ctx.lineCap = "round";
+      /* Round ends belong to the bars, which are short columns and read as
+         drawn objects. The sheaf's curves run the whole width and both their
+         ends are erased by the fade at the edges, so a cap on them is
+         geometry tessellated a hundred and twenty times a frame for something
+         nobody can see. */
+      ctx.lineCap = variant === "bars" ? "round" : "butt";
 
       if (variant === "bars") drawBars(t);
       else drawSheaf(t);
@@ -1124,7 +1231,16 @@ export function LoomWave({
     const size = () => {
       const rect = wrap.getBoundingClientRect();
       if (rect.width < 2 || rect.height < 2) return;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      /* One and a half, not two.
+
+         This is a picture made almost entirely of hairlines, and a hairline is
+         the one thing that does not repay a denser backing store: at 0.85 of a
+         pixel it is drawn by the antialiaser at any density, so what doubling
+         buys is a slightly crisper blur and four times the pixels to shade.
+         Every full-width stroke, the ramp over them and the fade at the ends
+         are all charged by area. Three quarters of the density is a bit over
+         half the work, and side by side the difference is not findable. */
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       width = rect.width;
       height = rect.height;
       /* Kept for the pointer, which used to ask for this itself on every
