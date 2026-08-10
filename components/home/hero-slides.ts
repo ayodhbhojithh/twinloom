@@ -229,26 +229,32 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
      No `claim` and no `lead`. A screen waiting for its design should not be
      carrying copy written for somebody else's, and a headline standing on a
      white card is a design - the wrong one, made by default. */
-  /* The fourth: a film, filling the card.
+  /* The fourth: a film, and what it is doing there.
 
-     Nothing over it. It is the one screen here that is footage rather than a
-     drawing, and a headline set across moving pictures is a headline read while
-     something else moves - what the card is asking for is said on the first
-     screen and again in the header. */
+     Nothing is set over the picture - a headline across moving footage is a
+     headline read while something else moves - so the words stand beside it
+     instead, and the film is the evidence for them. This is the one screen that
+     shows rather than says: the reel is ours, the page it is playing in is
+     ours, and both facts are made by the screen existing rather than by the
+     sentence claiming it. */
   {
     id: "hero-6",
     view: "film",
     video: "/assets/video/fashion.mp4",
-    name: "In motion",
+    name: "Film, and the page it moves in",
     kind: "Film",
     year: "2026",
     summary:
-      "A screen on the landing card given over to film. It turns to like any other and opens the same panel.",
+      "The reel is ours and so is the page it plays in. Fashion, product and brand film, shot, cut and graded here, then built into a site that moves as you read it.",
     facts: [
-      { term: "Screen", value: "Four of five" },
-      { term: "Holds", value: "One film" },
-      { term: "Opens", value: "What we do" },
+      { term: "Filmed", value: "By us" },
+      { term: "Built", value: "By us" },
+      { term: "Also", value: "Stills and artwork" },
     ],
+    kicker: ["Film", "Photography", "Motion"],
+    claim: ["We make the film,", "and the page it moves in."],
+    lead: "Fashion, product and brand - shot, cut and graded here.",
+    note: "Then built into a site that moves while you read it, rather than one that sits still and waits. The reel above is ours. So is the way it arrived on your screen.",
     image: "",
     alt: "",
     tone: "#ffffff",

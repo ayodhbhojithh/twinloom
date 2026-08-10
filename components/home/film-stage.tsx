@@ -38,7 +38,39 @@ import { outline, type Cuts } from "./notched-card";
  */
 const PLATE = 26;
 
-export function FilmStage({ src, kind }: { src: string; kind: string }) {
+/**
+ * How wide the film may ever be drawn: the file's own width.
+ *
+ * `fashion.mp4` is 1280 by 720. Anything past this is the browser inventing
+ * pixels, and a frame invented at half again its size is soft across the whole
+ * of it - which on a screen given over entirely to one picture is the only thing
+ * there is to look at.
+ *
+ * One number, in one place. Re-export the source wider and this is the edit.
+ */
+const NATIVE = 1280;
+
+export function FilmStage({
+  src,
+  kind,
+  corner = 0,
+}: {
+  src: string;
+  kind: string;
+  /**
+   * How much of the bottom right to give back to the card.
+   *
+   * The card has a corner cut of its own down there with the way on standing in
+   * it, and a film large enough to reach it covers both. Passed in rather than
+   * worked out here, because it is the card's number: this only has to know how
+   * much room to leave, not what is standing in it.
+   *
+   * Nought by default, which `outline` reads as no cut at all and gives back an
+   * ordinary rounded corner - so a film shown anywhere without a card under it
+   * is simply a film.
+   */
+  corner?: number;
+}) {
   const box = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
 
@@ -81,8 +113,8 @@ export function FilmStage({ src, kind }: { src: string; kind: string }) {
       biteHeight: 0,
       biteRadius: flare,
       biteFlare: flare,
-      dropWidth: 0,
-      dropHeight: 0,
+      dropWidth: corner,
+      dropHeight: corner,
       dropRadius: flare,
       dropFlare: flare,
     };
@@ -91,24 +123,25 @@ export function FilmStage({ src, kind }: { src: string; kind: string }) {
   const path = size.w > 40 ? outline(size.w, size.h, cut) : "";
 
   return (
-    /* The box is the film's own shape - sixteen by nine - and it grows with the
-       screen.
+    /* The box is the film's own shape - sixteen by nine - and never larger than
+       the file it plays.
 
-       It was held to 1280, the file's own width, so it could never be upscaled.
-       That is the right rule for a picture and the wrong one for this: on a
-       monitor the card is two thousand points across and a 1280 box in the
-       middle of it is a film being shown at arm's length, with more empty card
-       around it than picture. It goes to 1560 at `xl` and 1800 at `2xl`, which
-       is a stretch of about two fifths at the very widest - visible if you look
-       for it, and less costly than a screen that is mostly margin.
+       It grew with the screen for a while, up to two fifths past its own width,
+       on the argument that a 1280 box in the middle of a two thousand point card
+       is a film shown at arm's length. That argument loses to the picture: a
+       stretched frame is soft everywhere at once, and softness is the one fault
+       nobody has to look for.
 
-       A larger file removes the trade entirely. See the note in `notched-card`.
+       So the ceiling is the file. `NATIVE` is the source's own width, and the
+       only way past it is a wider source - change that number when there is one
+       and the film fills more of the card at exactly the same sharpness.
 
        The clip is drawn in the coordinates of the element it is set on, so the
        element has to be exactly the picture for the path to describe it. */
     <div
       ref={box}
-      className="relative aspect-video max-h-full w-full max-w-[1280px] xl:max-w-[1560px] 2xl:max-w-[1800px]"
+      className="relative aspect-video max-h-full w-full"
+      style={{ maxWidth: NATIVE }}
     >
       <video
         aria-hidden

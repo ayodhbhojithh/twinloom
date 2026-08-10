@@ -701,31 +701,6 @@ export function NotchedCard({ className }: { className?: string }) {
             wide this fills the card at full sharpness with nothing else to
             change, because the cap is the file's own dimensions rather than a
             number written here. */}
-        {shown.view === "film" && shown.video ? (
-          /* Centred in the room under the header, not in the card.
-
-             `inset-0` and `items-center` centre it on the card, and the top of
-             the card is the header - so the film came up under the row of links
-             with its notch touching them, and the space it left at the foot was
-             the height of the bar it was not clearing. The same `head` every
-             other screen's words clear the bar by, and the same air at the foot,
-             so what it centres in is what is actually free. */
-          <div
-            className="absolute inset-0 flex items-center justify-center"
-            style={{
-              paddingTop: head,
-              paddingBottom: cut.barDepth,
-              /* Half the gutter the words take. A measure is held off the edge
-                 so a line has somewhere to begin; a picture is held off it so
-                 the card is still a card round it, which takes less. */
-              paddingLeft: pad / 2,
-              paddingRight: pad / 2,
-            }}
-          >
-            <FilmStage src={shown.video} kind={shown.kind} />
-          </div>
-        ) : null}
-
         {/* The second screen: the water, full bleed and nothing over it.
 
             No claim, no buttons, and no white gradient taking part of the card
@@ -1028,6 +1003,112 @@ export function NotchedCard({ className }: { className?: string }) {
           </Tool>
         </div>
       </div>
+
+      {/* The fourth screen: the film, and the words that stand beside it.
+
+          A two-up rather than a picture with a caption laid over it. The film is
+          the point of the screen and the sentence is what it is evidence for, so
+          neither is on top of the other: the reel keeps its own frame and the
+          words keep their own measure.
+
+          The film leads on a narrow screen and takes the left on a wide one.
+          `order` moves it, so which one is read first and which one is drawn
+          first stay separate decisions - on a phone the picture says what this
+          is before a line of type has to.
+
+          Not inside the clipped layer with the drawings. It was, and everything
+          in there is `aria-hidden` scenery: the words would have been invisible
+          to anything reading the page out. Up here they are content, and the
+          film's own outline is what shapes it rather than the card's. */}
+      {shown.view === "film" && shown.video ? (
+        <div
+          className="pointer-events-none absolute inset-0 z-10 flex items-center"
+          style={{
+            paddingTop: head,
+            paddingBottom: cut.barDepth,
+            paddingLeft: pad / 2,
+            paddingRight: pad / 2,
+          }}
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={shown.id}
+              variants={HERO_RUN}
+              initial="hidden"
+              animate="shown"
+              exit={{ opacity: 0, y: -8, transition: { duration: 0.22 } }}
+              className="flex w-full flex-col items-center gap-6 lg:flex-row lg:items-center lg:gap-10 xl:gap-14"
+            >
+              <motion.div
+                variants={HERO_MARK}
+                className="flex w-full min-w-0 justify-center lg:w-[58%] xl:w-[60%]"
+              >
+                <FilmStage src={shown.video} kind={shown.kind} />
+              </motion.div>
+
+              <motion.div
+                variants={HERO_RUN}
+                className="min-w-0 text-center lg:flex-1 lg:text-left"
+              >
+                <motion.ul
+                  variants={HERO_RISE}
+                  className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 font-mono text-[10px] font-bold tracking-[0.15em] text-idx uppercase lg:justify-start lg:gap-x-3.5 lg:text-[11px]"
+                >
+                  {shown.kicker?.map((trade, n) => (
+                    <li key={trade} className="flex items-center gap-2.5">
+                      {n > 0 ? (
+                        <span
+                          aria-hidden
+                          className="size-1 rounded-pill bg-mark"
+                        />
+                      ) : null}
+                      {trade}
+                    </li>
+                  ))}
+                </motion.ul>
+
+                <motion.h1
+                  variants={HERO_RISE}
+                  className="mx-auto mt-3 max-w-[20ch] text-[clamp(26px,2.6vw,44px)] leading-[1.06] font-extrabold tracking-[-0.042em] text-ink lg:mx-0"
+                >
+                  {shown.claim?.[0]}
+                  <span className="thread-text block">{shown.claim?.[1]}</span>
+                </motion.h1>
+
+                <motion.p
+                  variants={HERO_RISE}
+                  className="mx-auto mt-4 max-w-[34ch] text-[clamp(14.5px,1.15vw,18px)] leading-[1.4] font-bold tracking-[-0.022em] text-ink lg:mx-0"
+                >
+                  {shown.lead}
+                </motion.p>
+
+                <motion.p
+                  variants={HERO_RISE}
+                  className="mx-auto mt-4 max-w-[46ch] text-[13.5px] leading-[1.68] text-quiet sm:text-[14.5px] lg:mx-0 lg:text-[15px]"
+                >
+                  {shown.note}
+                </motion.p>
+
+                <motion.div
+                  variants={HERO_RISE}
+                  className="mt-6 flex justify-center lg:mt-7 lg:justify-start"
+                >
+                  <a
+                    href={ROUTES.services}
+                    className="group/way pointer-events-auto inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90 lg:px-5 lg:py-3 lg:text-[14.5px]"
+                  >
+                    What we make
+                    <ArrowUpRight
+                      aria-hidden
+                      className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                    />
+                  </a>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      ) : null}
 
       {/* The second screen's words: centred, and set light on a dark ground.
 
