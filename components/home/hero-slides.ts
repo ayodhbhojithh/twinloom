@@ -28,11 +28,6 @@ import type { Project } from "./projects";
    first one is; what separates the two is the argument rather than the
    treatment.
 
-   The third is water: a raymarched swell filling the card, with its words
-   centred on it in white. The one screen set light on dark, and it closes the
-   run - two light grounds and then this one, rather than the polarity flipping
-   back and forth.
-
    The fourth is a film, edge to edge with nothing set over it.
 
    The fifth is white and empty, and waiting. It is in the run rather than held
@@ -53,7 +48,7 @@ import type { Project } from "./projects";
  * so this is the switch the card branches on, and adding the next one is a name
  * here and a case there.
  *
- * `waves` is the raymarched water and `balls` is the pit. `mark` is the logo at
+ * `balls` is the pit. `mark` is the logo at
  * the size of the card with the words beside it, and it is the only screen that
  * is not centred - the whole of it is the asymmetry.
  *
@@ -69,7 +64,7 @@ import type { Project } from "./projects";
  * anything - a moment a card in the middle of a turn does not have. `wave-dots`
  * is still on disk for whatever wants a field of dots next.
  */
-export type SlideView = "waves" | "balls" | "film" | "blank" | "mark";
+export type SlideView = "balls" | "film" | "blank" | "mark";
 
 /**
  * A slide, which is a `Project` and a few more things.
@@ -191,49 +186,6 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     overview: true,
   },
 
-  /* The third: the water, with its words set on it in white.
-
-     Its own claim rather than the opening screen's, because the two are
-     different arguments for the same offer - that one says what you get, this
-     says who you are getting it from. One way on and not two: the pair of
-     buttons belongs to the screen making the offer.
-
-     The only screen set light on dark, and it closes the run. Two light grounds
-     and then this one is what makes the turn onto it land; second, with a light
-     ground on either side, it would have been the odd one in the middle. */
-  {
-    id: "hero-2",
-    view: "waves",
-    name: "Two threads, woven",
-    kind: "What we are",
-    year: "2026",
-    summary:
-      "The site people see and the software behind it are one build, not two suppliers who blame each other. One contract, one invoice, and the same people to ask either way.",
-    facts: [
-      { term: "Threads", value: "Two" },
-      { term: "Contracts", value: "One" },
-      { term: "People to ask", value: "The same ones" },
-    ],
-    claim: ["Two threads.", "One piece of work."],
-    lead: "The site people see and the software behind it are one build, not two suppliers who blame each other. One contract, one invoice, and the same people to ask either way.",
-    image: "",
-    alt: "",
-    tone: "#ffffff",
-    overview: true,
-  },
-
-  /* The fourth and fifth: white, and nothing on them yet.
-
-     Everything a slide has to carry is here and only the drawing is missing -
-     no `view` branch renders for `blank`, so what shows is the card's own white
-     ground and the controls cut into it. They still open the company's panel,
-     because the expand control opens the same thing on every screen and a
-     screen that opened nothing would be the one that looked broken rather than
-     the one that looked empty.
-
-     No `claim` and no `lead`. A screen waiting for its design should not be
-     carrying copy written for somebody else's, and a headline standing on a
-     white card is a design - the wrong one, made by default. */
   /* The fourth: a film, and what it is doing there.
 
      Nothing is set over the picture - a headline across moving footage is a

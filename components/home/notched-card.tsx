@@ -23,7 +23,6 @@ import { Ballpit } from "./ballpit";
 import { DotField } from "./dot-field";
 import { FilmStage } from "./film-stage";
 import { BeadTrail, MarkStage } from "./mark-stage";
-import { GradientWaves } from "./gradient-waves";
 import { ProjectPanel } from "./project-panel";
 import { SiteHeader } from "@/components/layout/site-header";
 
@@ -701,59 +700,6 @@ export function NotchedCard({ className }: { className?: string }) {
             wide this fills the card at full sharpness with nothing else to
             change, because the cap is the file's own dimensions rather than a
             number written here. */}
-        {/* The second screen: the water, full bleed and nothing over it.
-
-            No claim, no buttons, and no white gradient taking part of the card
-            back. This screen is a picture rather than a page with a picture
-            behind it, and a sentence set across the middle of it would make it a
-            background. What the card is asking for is said on the first screen
-            and again in the header. */}
-        {shown.view === "waves" ? (
-          <GradientWaves
-            className="absolute inset-0"
-            horizonColor="#00b4e3"
-            waveColor="#0087ff"
-            crestColor="#0098ff"
-            speed={0.5}
-            amplitude={2.05}
-            waveScale={0.85}
-            waveRatio={0.9}
-            swell={35}
-            turbulence={20.5}
-            tilt={1.11}
-            zoom={1}
-            height={5.5}
-            fogDepth={15}
-            detail="medium"
-            brightness={0.5}
-            opacity={1}
-            mouseInteraction
-            parallaxStrength={0.5}
-            grain
-            grainIntensity={0.05}
-          />
-        ) : null}
-
-        {/* And a deepening under the words.
-
-            The mirror of the first screen's wash and it works the same way: a
-            radial, no edge, and it never reaches full strength. What differs is
-            which way it goes. The water is a strong blue, so bleaching a white
-            hole in it to carry dark type would take a hole you could see the
-            shape of - and would leave the card's two picture screens looking
-            like the same screen. Deepening it instead gives white type a ground
-            without taking the picture away: the swell still runs under every
-            word, a shade darker where the words are. */}
-        {shown.view === "waves" ? (
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "radial-gradient(ellipse 70% 64% at 50% 48%, color-mix(in oklab, #04223d 68%, transparent) 0%, color-mix(in oklab, #04223d 52%, transparent) 34%, color-mix(in oklab, #04223d 24%, transparent) 64%, transparent 88%)",
-            }}
-          />
-        ) : null}
-
         {/* The third screen: the pit, and nothing over it either.
 
             No gravity. With it, every ball ends up in a heap along the bottom
@@ -1068,7 +1014,7 @@ export function NotchedCard({ className }: { className?: string }) {
           className="pointer-events-none absolute z-10 flex justify-end"
           style={{
             right: pad,
-            bottom: cut.dropHeight - 22,
+            bottom: cut.dropHeight - 46,
           }}
         >
           <div className="flex w-max flex-col items-stretch gap-2">
@@ -1093,71 +1039,6 @@ export function NotchedCard({ className }: { className?: string }) {
                 className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
               />
             </a>
-          </div>
-        </div>
-      ) : null}
-
-      {/* The second screen's words: centred, and set light on a dark ground.
-
-          The same arrangement as the first screen and the opposite polarity. It
-          takes one way on rather than two, because the pair belongs to the
-          screen making the offer and a front door that asks three times is a
-          door people stop reading.
-
-          `pointer-events-none` on everything but the link. The water answers to
-          the pointer, and a block of type laid over it is a rectangle in the
-          middle of the card where the swell stops moving. */}
-      {shown.view === "waves" ? (
-        <div
-          className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
-          style={{
-            paddingTop: head,
-            /* The same at the foot as at the head, so the block sits in the
-               middle of the card rather than in the middle of what is left after
-               the cuts. It cleared whichever bottom cut was deeper, which is
-               right for words on the left - they run down into the bite. These
-               are centred, and both bottom cuts are in the corners, so all that
-               clearance was doing was pushing a centred block above centre. */
-            paddingBottom: cut.barDepth + 12,
-            paddingLeft: pad,
-            paddingRight: pad,
-          }}
-        >
-          <div className="w-full text-center">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={shown.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
-              >
-                <h1 className="mx-auto max-w-[19ch] text-[clamp(34px,5vw,74px)] leading-[1.01] font-extrabold tracking-[-0.048em] text-white">
-                  {shown.claim?.[0]}
-                  <span className="thread-light block">{shown.claim?.[1]}</span>
-                </h1>
-
-                <p className="mx-auto mt-5 max-w-[60ch] text-[15px] leading-[1.6] text-white/85 sm:text-[17px]">
-                  {shown.lead}
-                </p>
-
-                <div className="mt-6 flex justify-center">
-                  {/* Solid white, because everything around it is blue. An
-                      outline in white on this ground is a button you have to
-                      look for. */}
-                  <a
-                    href={ROUTES.services}
-                    className="group/way pointer-events-auto inline-flex items-center gap-2.5 rounded-pill bg-field px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-opacity hover:opacity-90"
-                  >
-                    What we do
-                    <ArrowUpRight
-                      aria-hidden
-                      className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
-                    />
-                  </a>
-                </div>
-              </motion.div>
-            </AnimatePresence>
           </div>
         </div>
       ) : null}
