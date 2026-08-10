@@ -275,14 +275,22 @@ export function ServiceWall({
                 {entry.n}
               </h3>
 
-              {/* The sentence, and nothing after it.
+              {/* The sentence, whole.
 
-                  Four bullets of what each discipline covers stood here, which
-                  is a wall of list drifting past that nobody can stop to
-                  read. The list belongs on the page this links to. Three
-                  lines, clamped, so every card is one height without any of
-                  them being padded to reach it. */}
-              <p className="mt-1 line-clamp-3 text-[10.5px] leading-[1.5] text-quiet sm:mt-1.5 sm:text-[13.5px] sm:leading-[1.6]">
+                  It was clamped to three lines, on the argument that it made
+                  every card one height. It did not: the cards are flex items
+                  in a row, so they were already stretching to the tallest of
+                  them whatever their contents did. What the clamp actually
+                  bought was a shorter row - and it charged three of the seven
+                  a sentence cut off mid-clause with an ellipsis, which reads
+                  as a page that has run out rather than as a card that is
+                  full.
+
+                  A sentence is the smallest thing on this card that is worth
+                  anything. Four bullets of what each discipline covers stood
+                  here once and those were right to go, because a list nobody
+                  can stop to read is furniture; a line of prose is not. */}
+              <p className="mt-1 text-[10.5px] leading-[1.5] text-quiet sm:mt-1.5 sm:text-[13.5px] sm:leading-[1.6]">
                 {entry.sub}
               </p>
             </div>
