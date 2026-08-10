@@ -68,11 +68,19 @@ export function StageStep({
           {/* One line, not two. The count and the name are one label - stacked
               they made the plate a block of text with arrows either side, and
               a bar this small has the width to say it in a row. */}
-          <span className="flex min-w-0 flex-1 items-baseline justify-center gap-2.5 px-2">
+          <span className="flex min-w-0 flex-1 items-baseline justify-center gap-2.5 px-2 max-sm:gap-2 max-sm:px-1">
             <span className="flex-none font-mono text-[9.5px] font-bold tracking-[0.12em] text-label tabular-nums">
               {String(at + 1).padStart(2, "0")}/{STEPS.length}
             </span>
-            <span className="truncate text-[13.5px] leading-none font-bold text-ink">
+            {/* Off on a phone, where the plate is not wide enough to hold it.
+
+                It came out as "Your or..." - a word cut in half with an
+                ellipsis after it, which reads as something broken rather than
+                as something abbreviated, and says less than the count beside it
+                already does. The step's name is the heading directly under this
+                bar in full, so nothing is lost by not repeating a third of
+                it. */}
+            <span className="truncate text-[13.5px] leading-none font-bold text-ink max-sm:hidden">
               {step.n}
             </span>
             {step.can ? null : (

@@ -68,7 +68,7 @@ export function H({ children }: { children: React.ReactNode }) {
     /* Centred over what it introduces, not held to the left of it. `notch-free`
        is gone from the cap with it: that number is the room beside the top cut,
        which only matters to a heading standing in that corner. */
-    <h2 className="mx-auto max-w-[26ch] text-center text-[clamp(20px,1.9vw,27px)] leading-[1.08] font-extrabold tracking-[-0.032em] text-ink">
+    <h2 className="mx-auto max-w-[26ch] text-center text-[clamp(20px,1.9vw,27px)] leading-[1.08] font-extrabold tracking-[-0.032em] text-ink max-sm:text-[18px]">
       {children}
     </h2>
   );
@@ -77,7 +77,7 @@ export function H({ children }: { children: React.ReactNode }) {
 /** The one line under it. Anything longer belongs in the document, not here. */
 export function Sub({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mx-auto mt-2 max-w-[62ch] text-center text-[13.5px] leading-[1.5] text-quiet sm:text-[14px]">
+    <p className="mx-auto mt-2 max-w-[62ch] text-center text-[13.5px] leading-[1.5] text-quiet max-sm:mt-1.5 max-sm:text-[12.5px] max-sm:leading-[1.55] sm:text-[14px]">
       {children}
     </p>
   );
@@ -96,7 +96,7 @@ export function SubTitle({
   return (
     <h3
       className={cn(
-        "mt-9 flex items-baseline gap-2.5 text-[16.5px] leading-[1.2] font-bold tracking-[-0.02em] text-ink",
+        "mt-9 flex items-baseline gap-2.5 text-[16.5px] leading-[1.2] font-bold tracking-[-0.02em] text-ink max-sm:mt-6 max-sm:text-[15px]",
         className,
       )}
     >
@@ -229,7 +229,13 @@ export function TickRow({
       aria-disabled={locked || undefined}
       onClick={locked ? undefined : onToggle}
       className={cn(
-        "group/tick flex w-full items-center gap-3.5 rounded-[12px] px-3 py-2.5 text-left transition-colors",
+        /* Tighter on a phone, and the padding goes before the gap does.
+           A row is a target as well as a line of type: the height it keeps is
+           what a thumb aims at, and the 21px mark beside the words is most of
+           what makes a set of these readable as a set. So the horizontal
+           padding comes off, the vertical padding comes off a little, and the
+           mark and the label step down one size each. */
+        "group/tick flex w-full items-center gap-3.5 rounded-[12px] px-3 py-2.5 text-left transition-colors max-sm:gap-2.5 max-sm:rounded-[10px] max-sm:px-2 max-sm:py-2",
         locked ? "cursor-default" : "cursor-pointer hover:bg-canvas",
         className,
       )}
@@ -237,7 +243,7 @@ export function TickRow({
       <span
         aria-hidden
         className={cn(
-          "flex size-[21px] flex-none items-center justify-center rounded-pill border-2 transition-colors",
+          "flex size-[21px] flex-none items-center justify-center rounded-pill border-2 transition-colors max-sm:size-[18px]",
           on
             ? "border-mark bg-mark text-white"
             : "border-planned text-transparent",
@@ -259,14 +265,14 @@ export function TickRow({
       <span className="min-w-0 flex-1">
         <span
           className={cn(
-            "block text-[14.5px] leading-[1.25] font-semibold transition-colors",
+            "block text-[14.5px] leading-[1.25] font-semibold transition-colors max-sm:text-[13.5px]",
             on ? "text-ink" : "text-body",
           )}
         >
           {name}
         </span>
         {note ? (
-          <span className="mt-0.5 block text-[12.5px] leading-[1.4] text-label">
+          <span className="mt-0.5 block text-[12.5px] leading-[1.4] text-label max-sm:text-[12px]">
             {note}
           </span>
         ) : null}
@@ -313,7 +319,12 @@ export function AttachChip({
           return;
         }
         addRef(
-          { kind: "To send", text: attach.label, tie: attach.key, where: where ?? { stepKey } },
+          {
+            kind: "To send",
+            text: attach.label,
+            tie: attach.key,
+            where: where ?? { stepKey },
+          },
           stepKey,
         );
       }}
@@ -361,9 +372,7 @@ export function Field({
           {label}
         </label>
         <Kicker
-          className={
-            bad ? "text-blocked" : required ? "text-mark" : undefined
-          }
+          className={bad ? "text-blocked" : required ? "text-mark" : undefined}
         >
           {required ? "Required" : "Optional"}
         </Kicker>
@@ -476,8 +485,8 @@ export function AddRow({
 
       {bad ? (
         <p className="w-full text-[12px] leading-[1.5] text-blocked">
-          That is not an address we can open. Try something like
-          twinloom.com, or add it as a note instead.
+          That is not an address we can open. Try something like twinloom.com,
+          or add it as a note instead.
         </p>
       ) : null}
     </form>
@@ -576,13 +585,7 @@ export function OwnList({
 }
 
 /** Every own-words box a step declares in the source, rendered from the data. */
-export function Misses({
-  step,
-  answers,
-}: {
-  step: string;
-  answers: Answers;
-}) {
+export function Misses({ step, answers }: { step: string; answers: Answers }) {
   const copy = STEP_COPY[step];
   if (!copy?.miss.length) return null;
 
@@ -621,7 +624,12 @@ export function TickSet({
   single,
   className,
 }: {
-  options: readonly { k: string; label: string; note?: string; mark?: string }[];
+  options: readonly {
+    k: string;
+    label: string;
+    note?: string;
+    mark?: string;
+  }[];
   isOn: (k: string) => boolean;
   onPick: (k: string) => void;
   /** Drawn as radios when only one of the set may be chosen. */
@@ -740,28 +748,48 @@ export function stepStatus(
     }
     case "sell": {
       const done = count("sell") + count("pay");
-      return { line: done ? `${done} picked` : "Nothing sold here", done, total: 13 };
+      return {
+        line: done ? `${done} picked` : "Nothing sold here",
+        done,
+        total: 13,
+      };
     }
     case "style": {
-      const done = count("feel") + count("colour") + count("mode") + count("type");
-      return { line: done ? `${done} chosen` : "Ours to choose", done, total: 17 };
+      const done =
+        count("feel") + count("colour") + count("mode") + count("type");
+      return {
+        line: done ? `${done} chosen` : "Ours to choose",
+        done,
+        total: 17,
+      };
     }
     case "have": {
       const done = Object.keys(answers.chip).filter(
-        (q) => q.startsWith("have.") && Object.values(answers.chip[q]).some(Boolean),
+        (q) =>
+          q.startsWith("have.") && Object.values(answers.chip[q]).some(Boolean),
       ).length;
-      return { line: done ? `${done} of 13 answered` : "Nothing yet", done, total: 13 };
+      return {
+        line: done ? `${done} of 13 answered` : "Nothing yet",
+        done,
+        total: 13,
+      };
     }
     case "refs": {
       const done = answers.refs.length;
-      return { line: done ? `${done} on the desk` : "Nothing added", done, total: 0 };
+      return {
+        line: done ? `${done} on the desk` : "Nothing added",
+        done,
+        total: 0,
+      };
     }
     case "read":
       return { line: "Everything, read back", done: 0, total: 0 };
     case "asking": {
-      const done = ["name", "company", "email"].filter(
-        (f) => (answers.ask[f] ?? "").length > 1,
-      ).length + (Object.values(answers.chip["ask.part"] ?? {}).some(Boolean) ? 1 : 0);
+      const done =
+        ["name", "company", "email"].filter(
+          (f) => (answers.ask[f] ?? "").length > 1,
+        ).length +
+        (Object.values(answers.chip["ask.part"] ?? {}).some(Boolean) ? 1 : 0);
       return { line: `${done} of 4 given`, done, total: 4 };
     }
     case "keep":
@@ -776,6 +804,10 @@ export function stepStatus(
         total: 1,
       };
     default:
-      return { line: answers.sent ? "Sent" : "Ready when you are", done: 0, total: 0 };
+      return {
+        line: answers.sent ? "Sent" : "Ready when you are",
+        done: 0,
+        total: 0,
+      };
   }
 }

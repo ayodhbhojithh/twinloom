@@ -114,7 +114,7 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
         way.
       </Sub>
 
-      <section className="mt-6 mx-auto max-w-[1100px]">
+      <section className="mt-6 mx-auto max-w-[1100px] max-sm:mt-4">
         <div className="grid gap-x-6 sm:grid-cols-2">
           {Object.entries(ORG_KINDS).map(([k, n]) => (
             <TickRow
@@ -135,7 +135,7 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
       <SubTitle className="justify-center" count={chosen.length || undefined}>
         The field you work in
       </SubTitle>
-      <p className="mx-auto mt-2 max-w-[74ch] text-center text-[13px] leading-[1.6] text-label">
+      <p className="mx-auto mt-2 max-w-[74ch] text-center text-[13px] leading-[1.6] text-label max-sm:text-[12px] max-sm:leading-[1.55]">
         Not a category for a form. It is what tells us the stock is perishable,
         or the goods are oversized, or that somebody is checking, before anybody
         has to explain it.
@@ -144,20 +144,23 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
       {/* A search over fifty-five rows, because thirteen headings still take
           scrolling and somebody who knows their trade should be able to type
           it. */}
-      <label className="mx-auto mt-5 flex w-full max-w-[620px] items-center gap-3 rounded-field bg-canvas px-4.5 py-3">
-        <Search aria-hidden className="size-4.5 flex-none text-idx" />
+      <label className="mx-auto mt-5 flex w-full max-w-[620px] items-center gap-3 rounded-field bg-canvas px-4.5 py-3 max-sm:mt-4 max-sm:gap-2.5 max-sm:px-3.5 max-sm:py-2.5">
+        <Search
+          aria-hidden
+          className="size-4.5 flex-none text-idx max-sm:size-4"
+        />
         <input
           value={find}
           onChange={(event) => setFind(event.target.value)}
           placeholder={`Search ${Object.keys(SECTORS).length} industries`}
-          className="min-w-0 flex-1 bg-transparent text-[14.5px] text-ink outline-none placeholder:text-label"
+          className="min-w-0 flex-1 bg-transparent text-[14.5px] text-ink outline-none placeholder:text-label max-sm:text-[13.5px]"
         />
       </label>
 
       {/* The families. Pressing one opens it and closes whatever was open:
           two open at once is most of the wall back again. */}
       {hunted ? null : (
-        <div className="mt-4 flex mx-auto max-w-[1100px] flex-wrap gap-2">
+        <div className="mt-4 flex mx-auto max-w-[1100px] flex-wrap gap-2 max-sm:mt-3 max-sm:justify-center max-sm:gap-1.5">
           {families.map(([name, rows]) => {
             const on = name === family;
             const has = rows.some((row) => isOn(answers, "sector", row.k));
@@ -169,7 +172,7 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
                 aria-pressed={on}
                 onClick={() => setFamily(on ? null : name)}
                 className={cn(
-                  "flex cursor-pointer items-center gap-2 rounded-pill px-3.5 py-1.5 text-[13px] font-semibold transition-colors",
+                  "flex cursor-pointer items-center gap-2 rounded-pill px-3.5 py-1.5 text-[13px] font-semibold transition-colors max-sm:gap-1.5 max-sm:px-3 max-sm:py-1 max-sm:text-[12px]",
                   on
                     ? "bg-ink text-white"
                     : "bg-canvas text-body hover:bg-hair hover:text-ink",
@@ -189,7 +192,7 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
         </div>
       )}
 
-      <div className="mt-5 grid mx-auto max-w-[1100px] gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-5 grid mx-auto max-w-[1100px] gap-x-10 gap-y-6 max-sm:mt-4 max-sm:gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
         {shown.map(([family, rows]) => (
           <section key={family} className="min-w-0">
             <Kicker className="block text-ink">{family}</Kicker>
@@ -213,7 +216,7 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
           family opened and nothing typed means no rows, so the screen opened
           by reporting that a search had failed before anybody had made one. */}
       {hunted && shown.length === 0 ? (
-        <p className="mt-4 text-center text-[13.5px] text-quiet">
+        <p className="mt-4 text-center text-[13.5px] text-quiet max-sm:text-[12.5px]">
           Nothing matches that. Leave it and tell us in your own words below.
         </p>
       ) : null}
