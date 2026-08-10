@@ -462,9 +462,14 @@ const TITLES = [
  * there is room for it, and only wraps where there genuinely is not.
  */
 const PLACE: Record<string, string> = {
-  "bottom-left": "bottom-[12%] left-0 max-w-[76%] text-left",
-  "top-left": "top-0 left-0 max-w-[76%] text-left",
-  "middle-right": "top-1/2 right-0 max-w-[54%] -translate-y-1/2 text-right",
+  /* The bottom two sit high on a phone, where the doors take the foot of the
+     frame - and the measures open to the whole width there, because a share of
+     a narrow screen is a column two words wide. */
+  "bottom-left":
+    "bottom-[34%] left-0 max-w-full text-left sm:bottom-[12%] sm:max-w-[76%]",
+  "top-left": "top-0 left-0 max-w-full text-left sm:max-w-[76%]",
+  "middle-right":
+    "top-1/2 right-0 max-w-[70%] -translate-y-1/2 text-right sm:max-w-[54%]",
 };
 
 /**
@@ -1058,21 +1063,23 @@ export function NotchedCard({ className }: { className?: string }) {
           them, it took every click meant for an arrow and the card stopped
           turning. The box is only here to place the bar, so it takes no clicks;
           the bar takes its own. */}
-      {/* Not on the film.
+      {/* Not on the two screens that are pictures.
 
-          Every other screen is white behind the bar, or has its own wash taking
-          the card back under the words. The reel has neither: it is a
-          photograph edge to edge, and a row of grey links over moving footage is
-          a row nobody can read on half the frames and nobody can ignore on the
-          rest. So that one screen gives the header up.
+          The rest are white behind the bar, or have a wash taking the card back
+          under the words. These two have neither. The reel is a photograph edge
+          to edge, and a row of grey links over moving footage is a row nobody
+          can read on half the frames and nobody can ignore on the rest. The pit
+          is worse in its own way: two hundred glass beads drift under the links
+          and the row is legible one second and gone the next, which is a bar
+          that flickers rather than one that is hard to read.
 
           Nothing is lost that cannot be reached. The arrows in the notch still
-          turn the card, and one turn puts the bar back - which is a fair trade
-          for the one screen that is a picture rather than a page. */}
+          turn the card, and one turn puts the bar back - a fair trade on the two
+          screens that are pictures rather than pages. */}
       <div
         className={cn(
           "pointer-events-none absolute inset-x-0 top-0 z-20",
-          shown.view === "film" && "hidden",
+          (shown.view === "film" || shown.view === "balls") && "hidden",
         )}
         style={{
           /* The header's own side padding, set to the card's.
@@ -1271,16 +1278,22 @@ export function NotchedCard({ className }: { className?: string }) {
                     The small half is not simply smaller: it is lighter and its
                     tracking opens, because type shrunk without either reads as
                     the same headline further away. */}
-                {/* The ceiling is what a wide screen actually gets.
+                {/* The ceiling is what a wide screen actually gets, and it is
+                    set for the widest ones rather than for a laptop.
 
-                    `7.8vw` passes a hundred and thirty two at about seventeen
-                    hundred points, so every screen wider than a laptop was
-                    getting the same size - the cap was the whole of what a
-                    monitor saw, and raising the slope would have changed nothing
-                    up there. Two hundred is where a title on a card two thousand
-                    points across reads as a title on it rather than as type
-                    somebody set and forgot. */}
-                <p className="mt-2 text-[clamp(40px,8.6vw,200px)] leading-[0.9] font-extrabold tracking-[-0.055em] sm:mt-3">
+                    `7.8vw` passed its old cap at about seventeen hundred points,
+                    so every screen above a laptop saw the same size - a 2K and a
+                    4K panel both got the number a fifteen-inch screen had
+                    already reached. The slope is what a small screen uses and
+                    the cap is what a large one gets, so raising the cap is the
+                    only thing a monitor feels.
+
+                    Three hundred, which the slope reaches at about thirty-five
+                    hundred points - so 2K is still fluid and climbing, and 4K
+                    settles just under it. The card is the height of the window
+                    on those screens too, so a title this size is a fraction of
+                    the frame rather than most of it. */}
+                <p className="mt-2 text-[clamp(40px,8.6vw,300px)] leading-[0.9] font-extrabold tracking-[-0.055em] sm:mt-3">
                   <span className="block text-[0.66em] leading-[1] font-extrabold tracking-[-0.04em] text-white drop-shadow-[0_2px_18px_rgba(24,32,44,0.5)]">
                     {line.lead}
                   </span>
@@ -1348,38 +1361,44 @@ export function NotchedCard({ className }: { className?: string }) {
           <div className="flex flex-wrap justify-end gap-2 sm:w-max sm:flex-col sm:items-stretch">
             <Link
               href={ROUTES.build}
-              className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+              className="group/way thread-fill inline-flex items-center gap-1.5 rounded-pill px-3 py-2 text-[11.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 sm:gap-2 sm:px-4.5 sm:py-2.5 sm:text-[13px]"
             >
-              <PencilLine aria-hidden className="size-4 shrink-0" />
+              <PencilLine aria-hidden className="size-3.5 shrink-0 sm:size-4" />
               Scope your website
               <ArrowRight
                 aria-hidden
-                className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
+                className="ml-auto size-3.5 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-4"
                 strokeWidth={2.4}
               />
             </Link>
 
             <a
               href={ROUTES.services}
-              className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
+              className="group/way inline-flex items-center gap-1.5 rounded-pill border border-hair bg-field px-3 py-2 text-[11.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink sm:gap-2 sm:px-4.5 sm:py-2.5 sm:text-[13px]"
             >
-              <LayoutGrid aria-hidden className="size-4 shrink-0 text-idx" />
+              <LayoutGrid
+                aria-hidden
+                className="size-3.5 shrink-0 text-idx sm:size-4"
+              />
               View our services
               <ArrowRight
                 aria-hidden
-                className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
+                className="ml-auto size-3.5 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-4"
               />
             </a>
 
             <Link
               href={ROUTES.book}
-              className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
+              className="group/way inline-flex items-center gap-1.5 rounded-pill border border-hair bg-field px-3 py-2 text-[11.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink sm:gap-2 sm:px-4.5 sm:py-2.5 sm:text-[13px]"
             >
-              <CalendarDays aria-hidden className="size-4 shrink-0 text-idx" />
+              <CalendarDays
+                aria-hidden
+                className="size-3.5 shrink-0 text-idx sm:size-4"
+              />
               Book a meeting
               <ArrowRight
                 aria-hidden
-                className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
+                className="ml-auto size-3.5 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-4"
               />
             </Link>
           </div>
@@ -1413,7 +1432,7 @@ export function NotchedCard({ className }: { className?: string }) {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
               >
-                <h1 className="mx-auto max-w-[20ch] text-[clamp(28px,3.8vw,54px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink">
+                <h1 className="mx-auto max-w-[20ch] text-[clamp(32px,5.4vw,92px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
                   {shown.claim?.[0]}
                   <span className="thread-text block">{shown.claim?.[1]}</span>
                 </h1>
