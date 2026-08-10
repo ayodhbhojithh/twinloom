@@ -1292,15 +1292,21 @@ export function NotchedCard({ className }: { className?: string }) {
                 className={cn("absolute", PLACE[line.place])}
                 style={title(reelAt, line.show, line.hide, line.from)}
               >
-                {/* A small line above the large one, set in the mark's blue.
+                {/* No kicker over the line any more.
 
-                    It is what fills the space the picture leaves without
-                    filling it with more shouting: a kicker is read in a glance
-                    and a second headline is not, so the frame gains a second
-                    line of information at no cost to the first. */}
-                <p className="font-mono text-[10px] font-bold tracking-[0.2em] text-white/70 uppercase drop-shadow-[0_1px_10px_rgba(24,32,44,0.5)] sm:text-[11px] lg:text-[13px] 2xl:text-[15px]">
-                  {line.over}
-                </p>
+                    There was one - four titles, each with a small uppercase
+                    label above it - and the case for it was that it filled the
+                    room the picture leaves without filling it with more
+                    shouting. What it actually did was announce each title before
+                    the title arrived, on a screen whose whole idea is that the
+                    words appear one at a time as the reel is scrolled. A caption
+                    read a beat before the thing it captions is a spoiler, and
+                    two lines fading up together is not a sequence.
+
+                    `over` is still written on each entry. It is four short
+                    phrases somebody wrote for these frames, and the day one of
+                    them is wanted again it should be the same words rather than
+                    words invented twice. */}
 
                 {/* Two colours in one sentence, and it is not decoration.
 
