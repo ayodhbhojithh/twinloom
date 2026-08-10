@@ -750,7 +750,7 @@ function Choose({
             aria-hidden
             draggable={false}
             sizes="192px"
-            className="size-14 flex-none object-contain sm:size-16"
+            className="size-14 flex-none object-contain max-sm:size-11 sm:size-16"
           />
         </div>
 
@@ -767,11 +767,11 @@ function Choose({
             line gone the mark, the heading and the cards had a paragraph's worth
             of air between each - three things evenly spaced is a list, and this
             is one thing with a label on it. */}
-        <div className="relative mt-3 min-w-0 text-center sm:mt-4">
+        <div className="relative mt-3 min-w-0 text-center max-sm:mt-2 sm:mt-4">
           <H>Choose how you want to start.</H>
         </div>
 
-        <div className="relative mt-5 grid gap-3 sm:mt-6 sm:gap-4 lg:grid-cols-2">
+        <div className="relative mt-5 grid gap-3 max-sm:mt-4 max-sm:gap-2.5 sm:mt-6 sm:gap-4 lg:grid-cols-2">
           <Door
             n="01"
             kicker="Open brief"
@@ -814,10 +814,10 @@ function Choose({
             It belongs to both doors, so it sits under both rather than being
             repeated inside each - and a line that appears in two cards is a line
             people read as two different promises. */}
-        <p className="mt-3 flex items-start justify-center gap-2.5 rounded-card bg-field px-4 py-3.5 text-center text-[12px] leading-[1.55] text-quiet sm:mt-4 sm:gap-3 sm:px-5 sm:py-4 sm:text-[13px] sm:leading-[1.6]">
+        <p className="mt-3 flex items-start justify-center gap-2.5 rounded-card bg-field px-4 py-3.5 text-center text-[12px] leading-[1.55] text-quiet max-sm:mt-2.5 max-sm:gap-2 max-sm:px-3.5 max-sm:py-3 max-sm:text-left max-sm:text-[11.5px] sm:mt-4 sm:gap-3 sm:px-5 sm:py-4 sm:text-[13px] sm:leading-[1.6]">
           <Info
             aria-hidden
-            className="mt-0.5 size-4 flex-none text-idx"
+            className="mt-0.5 size-4 flex-none text-idx max-sm:size-3.5"
             strokeWidth={2}
           />
           <span className="max-w-[92ch]">
@@ -838,8 +838,8 @@ function Choose({
             between the paragraph and the list - the two are a claim and the
             three things that make it good, which is a caption's relationship and
             a caption is set off by a line. */}
-        <div className="mt-3 rounded-card bg-field px-4 py-5 sm:mt-4 sm:px-8 sm:py-7">
-          <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,0.8fr)_auto] lg:items-center lg:gap-9">
+        <div className="mt-3 rounded-card bg-field px-4 py-5 max-sm:mt-2.5 max-sm:px-3.5 max-sm:py-4 sm:mt-4 sm:px-8 sm:py-7">
+          <div className="grid gap-7 max-sm:gap-4 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,0.8fr)_auto] lg:items-center lg:gap-9">
             <div className="flex min-w-0 items-start gap-5">
               <span
                 aria-hidden
@@ -853,10 +853,10 @@ function Choose({
               </span>
 
               <div className="min-w-0">
-                <b className="block text-[clamp(17px,1.5vw,21px)] leading-[1.15] font-extrabold tracking-[-0.03em] text-ink">
+                <b className="block text-[clamp(17px,1.5vw,21px)] leading-[1.15] font-extrabold tracking-[-0.03em] text-ink max-sm:text-[16px]">
                   Prefer to talk first?
                 </b>
-                <p className="mt-2 max-w-[52ch] text-[12.5px] leading-[1.55] text-quiet sm:text-[13px] sm:leading-[1.6]">
+                <p className="mt-2 max-w-[52ch] text-[12.5px] leading-[1.55] text-quiet max-sm:mt-1.5 max-sm:text-[12px] sm:text-[13px] sm:leading-[1.6]">
                   You can book a meeting without completing a brief first. As
                   part of the booking you will have space to add a few lines
                   about what you have in mind and what you would like to
@@ -870,7 +870,7 @@ function Choose({
               className="hidden w-px self-stretch bg-hair lg:block"
             />
 
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-3 max-sm:gap-2">
               {[
                 {
                   icon: MessageSquare,
@@ -884,7 +884,7 @@ function Choose({
               ].map((line) => (
                 <li
                   key={line.say}
-                  className="flex items-center gap-2.5 text-[12.5px] leading-[1.5] text-body sm:gap-3 sm:text-[13px]"
+                  className="flex items-center gap-2.5 text-[12.5px] leading-[1.5] text-body max-sm:gap-2 max-sm:text-[12px] sm:gap-3 sm:text-[13px]"
                 >
                   <line.icon
                     aria-hidden
@@ -898,7 +898,7 @@ function Choose({
 
             <Link
               href={ROUTES.book}
-              className="group/book inline-flex items-center justify-center gap-2 rounded-pill border border-hair bg-field px-5 py-3 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink sm:px-6 sm:py-3.5 sm:text-[14.5px] lg:justify-self-end"
+              className="group/book inline-flex items-center justify-center gap-2 rounded-pill border border-hair bg-field px-5 py-3 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:w-full max-sm:px-4 max-sm:py-2.5 max-sm:text-[12.5px] sm:px-6 sm:py-3.5 sm:text-[14.5px] lg:justify-self-end"
             >
               Book a meeting
               <CalendarDays aria-hidden className="size-4" strokeWidth={1.9} />
@@ -953,10 +953,10 @@ function Door({
   const blue = tone === "blue";
 
   return (
-    <div className="relative flex min-w-0 flex-col overflow-hidden rounded-card bg-field px-4 py-5 sm:px-8 sm:py-7">
+    <div className="relative flex min-w-0 flex-col overflow-hidden rounded-card bg-field px-4 py-5 max-sm:px-3.5 max-sm:py-4 sm:px-8 sm:py-7">
       <CardFlourish />
 
-      <div className="relative flex items-center gap-3">
+      <div className="relative flex items-center gap-3 max-sm:gap-2">
         {/* The brand's own two ends, named directly rather than through
             `--color-mark`.
 
@@ -969,7 +969,7 @@ function Door({
         <span
           aria-hidden
           className={cn(
-            "flex size-8 items-center justify-center rounded-pill font-mono text-[11px] font-bold text-white tabular-nums",
+            "flex size-8 items-center justify-center rounded-pill font-mono text-[11px] font-bold text-white tabular-nums max-sm:size-7 max-sm:text-[10px]",
             blue ? "bg-thread-blue" : "bg-done",
           )}
         >
@@ -978,7 +978,7 @@ function Door({
 
         <Kicker
           className={cn(
-            "rounded-pill px-3 py-1.5",
+            "rounded-pill px-3 py-1.5 max-sm:px-2.5 max-sm:py-1",
             blue
               ? "bg-thread-blue/12 text-thread-blue"
               : "bg-done/10 text-done",
@@ -988,14 +988,14 @@ function Door({
         </Kicker>
       </div>
 
-      <b className="relative mt-4 block text-[clamp(19px,2.1vw,27px)] leading-[1.12] font-extrabold tracking-[-0.03em] text-ink sm:mt-5">
+      <b className="relative mt-4 block text-[clamp(19px,2.1vw,27px)] leading-[1.12] font-extrabold tracking-[-0.03em] text-ink max-sm:mt-3 max-sm:text-[18px] sm:mt-5">
         {title}
       </b>
 
       {notes.map((note) => (
         <p
           key={note}
-          className="relative mt-3 max-w-[52ch] text-[12.5px] leading-[1.6] text-quiet sm:mt-3.5 sm:text-[13.5px] sm:leading-[1.62]"
+          className="relative mt-3 max-w-[52ch] text-[12.5px] leading-[1.6] text-quiet max-sm:mt-2.5 max-sm:text-[12px] max-sm:leading-[1.55] sm:mt-3.5 sm:text-[13.5px] sm:leading-[1.62]"
         >
           {note}
         </p>
@@ -1003,19 +1003,23 @@ function Door({
 
       {/* Pushed to the foot, so two cards with different amounts to say still
           line their buttons up. */}
-      <div className="relative mt-auto pt-5 sm:pt-7">
-        <div className="flex flex-wrap gap-2">
+      <div className="relative mt-auto pt-5 max-sm:pt-4 sm:pt-7">
+        <div className="flex flex-wrap gap-2 max-sm:gap-1.5">
           {facts.map((fact) => (
             <span
               key={fact.say}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[11.5px] font-semibold sm:gap-2 sm:px-3.5 sm:py-2 sm:text-[12.5px]",
+                "inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[11.5px] font-semibold max-sm:gap-1 max-sm:px-2.5 max-sm:py-1 max-sm:text-[11px] sm:gap-2 sm:px-3.5 sm:py-2 sm:text-[12.5px]",
                 blue
                   ? "bg-thread-blue/10 text-thread-blue"
                   : "bg-done/8 text-done",
               )}
             >
-              <fact.icon aria-hidden className="size-4" strokeWidth={1.9} />
+              <fact.icon
+                aria-hidden
+                className="size-4 max-sm:size-3.5"
+                strokeWidth={1.9}
+              />
               {fact.say}
             </span>
           ))}
@@ -1033,12 +1037,21 @@ function Door({
             the angle the rest of the site sets it at - `.thread-fill` is that
             ramp and this is that class. The second is the same move played
             from the green end, so the two are one palette read in two
-            directions rather than two colours picked to differ. */}
+            directions rather than two colours picked to differ.
+
+            All of which is a wide card's argument, and on a phone it is the
+            wrong one. There the two cards are stacked rather than side by side,
+            so the buttons are read one under the other - and "Write your brief"
+            beside "Start the guided journey" sized to their own words is two
+            pills of visibly different length in a column, which reads as two
+            different kinds of thing rather than the same choice made twice. Full
+            width on a phone, where the card is narrow enough that a pill across
+            it is still a button, and both doors end the same way. */}
         <button
           type="button"
           onClick={onClick}
           className={cn(
-            "group/go mt-4 inline-flex w-fit cursor-pointer items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13px] font-semibold text-white transition-opacity hover:opacity-90 sm:mt-5 sm:gap-2.5 sm:px-6 sm:py-3.5 sm:text-[15px]",
+            "group/go mt-4 inline-flex w-fit cursor-pointer items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13px] font-semibold text-white transition-opacity hover:opacity-90 max-sm:mt-3.5 max-sm:w-full max-sm:justify-center max-sm:px-4 max-sm:py-2.5 max-sm:text-[12.5px] sm:mt-5 sm:gap-2.5 sm:px-6 sm:py-3.5 sm:text-[15px]",
             blue
               ? "thread-fill"
               : "bg-[linear-gradient(100deg,var(--color-done),var(--color-thread-teal))] text-white",
