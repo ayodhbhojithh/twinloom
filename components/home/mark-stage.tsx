@@ -78,7 +78,7 @@ export function BeadTrail({ className }: { className?: string }) {
     <svg
       aria-hidden
       viewBox="0 0 1200 130"
-      className={cn("block h-auto w-full", className)}
+      className={cn("block h-auto w-full overflow-visible", className)}
     >
       <defs>
         <linearGradient id="trail-thread" x1="0" y1="0" x2="1" y2="0">
@@ -103,29 +103,62 @@ export function BeadTrail({ className }: { className?: string }) {
       </defs>
 
       {/* The path, as dots. Round caps on a one-unit dash is a dot; anything
-          longer is a dash pretending. */}
+          longer is a dash pretending.
+
+          It arrives first and on its own, because the beads land on it: a bead
+          resting on a line that is not there yet is resting on nothing. */}
       <path
+        className="trail-line"
         d={CURVE}
         fill="none"
         stroke="url(#trail-thread)"
         strokeWidth="3.5"
         strokeLinecap="round"
         strokeDasharray="0.1 16"
-        opacity="0.5"
       />
 
+      {/* Dropped in, one after another from the left.
+
+          Each bead falls from above the line and settles on it, and its shadow
+          is a separate animation rather than a passenger: a shadow that fell
+          with the ball would be glued to it, where one that grows and darkens
+          as the ball nears reads as the gap closing. That pair is the whole
+          trick - a ball with a shadow that never changes is a sticker.
+
+          The ball overshoots very slightly and comes back, which is the only
+          part of this that says the thing has weight. The shadow is set a
+          shade later than the ball so it is still arriving as the ball
+          touches.
+
+          `overflow-visible` on the surface above, because they start higher
+          than the strip is tall - and the card's own outline clips them, so
+          they fall out of the top of the picture rather than out of nowhere.
+
+          The delay is the index, so the run reads left to right along the
+          thread. Every value is written here rather than in the stylesheet
+          because it is per bead, and a stylesheet cannot hold ten of them
+          without ten classes. */}
       {TRAIL.map((bead, n) => (
         <g key={n}>
           {/* Its shadow first, so the bead sits on the line rather than beside
               it. Flat and wide, because the light is high and in front. */}
           <ellipse
+            className="trail-shade"
+            style={{ animationDelay: `${0.5 + n * 0.085}s` }}
             cx={bead.x}
             cy={bead.y + bead.r * 1.05}
             rx={bead.r * 1.5}
             ry={bead.r * 0.34}
             fill="rgba(12,32,56,0.16)"
           />
-          <circle cx={bead.x} cy={bead.y} r={bead.r} fill={`url(#bead-${n})`} />
+          <circle
+            className="trail-bead"
+            style={{ animationDelay: `${0.42 + n * 0.085}s` }}
+            cx={bead.x}
+            cy={bead.y}
+            r={bead.r}
+            fill={`url(#bead-${n})`}
+          />
         </g>
       ))}
     </svg>

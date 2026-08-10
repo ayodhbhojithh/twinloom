@@ -1263,11 +1263,27 @@ export function NotchedCard({ className }: { className?: string }) {
               no margin to escape with, and nothing to overrun. Drawn before
               the words so it paints under them, and taking no clicks, because
               it is scenery on the surface the sentence beside it stands on. */}
+          {/* Cut to the card, not to the box.
+
+              `inset-0` of the card is a rectangle; the card is not. Its shape
+              is the clipped ground underneath - rounded at three corners and
+              bitten at the fourth - and only the ground was ever cut to it, so
+              a trail running the full width of the rectangle carried on past
+              the curve and left its last beads sitting on the page.
+
+              The outer box takes the card's own outline, which is why it is
+              `inset-0` rather than pinned to the bottom: `path()` is drawn in
+              the coordinates of the element it is set on, so the element has
+              to be the whole card for the path to describe it. The trail is
+              then hung off the bottom of that. */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 bottom-0 hidden md:block"
+            className="pointer-events-none absolute inset-0 hidden md:block"
+            style={{ clipPath: path ? `path("${path}")` : undefined }}
           >
-            <BeadTrail />
+            <div className="absolute inset-x-0 bottom-0">
+              <BeadTrail />
+            </div>
           </div>
 
           {/* `initial` left on, unlike the other screens.

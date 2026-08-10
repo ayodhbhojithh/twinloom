@@ -1117,6 +1117,90 @@
      `transition-property` from a later cascade layer - it would win, and the
      reveal on those two would simply not run. Nothing sets `animation`.
   --------------------------------------------------------------------------- */
+  /* ---------------------------------------------------------------------------
+     The bead trail, arriving.
+
+     The line fades up first and the beads drop onto it afterwards, each a
+     little after the one to its left, so the whole thing reads as being strung
+     rather than switched on.
+
+     Three details carry it, and none of them is the fall itself:
+
+     - the ball overshoots by a hair and comes back, which is the only part of
+       this that says it has weight. A ball that stops dead where it lands is a
+       shape whose position changed;
+     - the shadow is its own animation on its own clock, starting a shade
+       later and growing from small and faint to wide and firm. A shadow that
+       travelled with the ball would be glued to it; one that spreads as the
+       ball nears is the gap closing;
+     - both are `backwards`, so a bead waiting its turn is held at the top of
+       its fall rather than sitting in place until its delay is up.
+
+     `transform-box: fill-box` is what makes the shadow's scale work at all.
+     An SVG element's transform origin is the origin of the whole user space by
+     default, so scaling the shadow without it would swing it across the
+     picture from the top left corner instead of growing it where it lies.
+  --------------------------------------------------------------------------- */
+  @keyframes trail-line {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes trail-bead {
+    from {
+      transform: translateY(-46px);
+      opacity: 0;
+    }
+    55% {
+      opacity: 1;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes trail-shade {
+    from {
+      transform: scaleX(0.35);
+      opacity: 0;
+    }
+    to {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+  }
+
+  .trail-line {
+    opacity: 0.5;
+    animation: trail-line 0.6s ease-out backwards;
+  }
+
+  .trail-bead {
+    /* Just past one on the overshoot, which is a bounce you feel rather than
+       one you watch. Anything more and ten of them read as a toy. */
+    animation: trail-bead 0.72s cubic-bezier(0.34, 1.42, 0.64, 1) backwards;
+  }
+
+  .trail-shade {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: trail-shade 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+
+  /* Asked for less motion: the trail is simply strung already. */
+  @media (prefers-reduced-motion: reduce) {
+    .trail-line,
+    .trail-bead,
+    .trail-shade {
+      animation: none;
+    }
+  }
+
   @keyframes reveal {
     from {
       opacity: 0;
