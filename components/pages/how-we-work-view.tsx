@@ -65,7 +65,7 @@ export function HowWeWorkView() {
             that means the same thing is the page introducing itself twice. */}
         <h1 className="section-head mx-auto max-w-[22ch] text-ink">
           How we
-          <span className="text-quiet"> normally work.</span>
+          <span className="text-quiet"> Work.</span>
         </h1>
 
         <p className="mx-auto mt-5 max-w-[70ch] text-[clamp(15px,1.2vw,17px)] leading-[1.6] text-quiet">

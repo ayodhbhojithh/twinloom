@@ -95,13 +95,18 @@ export interface HeroSlide extends Project {
   /** The paragraph under the lead, where a screen has more to say than a line. */
   note?: string;
   /**
-   * The film this screen plays, for a `film` view.
+   * The reel this screen scrubs, for a `film` view.
+   *
+   * A folder of stills and how many there are, rather than one video file. The
+   * frames are scrolled through rather than played - see `film-stage` for why a
+   * set of JPEGs beats seeking an MP4 - so what a slide names is where they live
+   * and how far the sequence runs.
    *
    * On the slide rather than in the view, for the same reason the claim is: the
-   * card branches on what a screen *is*, and which file it plays is what that
-   * screen is made of. A second film is a second slide, not a second branch.
+   * card branches on what a screen *is*, and which reel it holds is what that
+   * screen is made of. A second reel is a second slide, not a second branch.
    */
-  video?: string;
+  reel?: { base: string; frames: number };
 }
 
 /*
@@ -240,7 +245,7 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
   {
     id: "hero-6",
     view: "film",
-    video: "/assets/video/fashion.mp4",
+    reel: { base: "/assets/film/fashion", frames: 120 },
     name: "Film, and the page it moves in",
     kind: "Film",
     year: "2026",

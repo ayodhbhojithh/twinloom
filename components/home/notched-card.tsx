@@ -1020,7 +1020,7 @@ export function NotchedCard({ className }: { className?: string }) {
           in there is `aria-hidden` scenery: the words would have been invisible
           to anything reading the page out. Up here they are content, and the
           film's own outline is what shapes it rather than the card's. */}
-      {shown.view === "film" && shown.video ? (
+      {shown.view === "film" && shown.reel ? (
         <div
           className="pointer-events-none absolute inset-0 z-10 flex items-center"
           style={{
@@ -1043,7 +1043,11 @@ export function NotchedCard({ className }: { className?: string }) {
                 variants={HERO_MARK}
                 className="flex w-full min-w-0 justify-center lg:w-[58%] xl:w-[60%]"
               >
-                <FilmStage src={shown.video} kind={shown.kind} />
+                <FilmStage
+                  base={shown.reel.base}
+                  frames={shown.reel.frames}
+                  kind={shown.kind}
+                />
               </motion.div>
 
               <motion.div

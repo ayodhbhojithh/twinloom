@@ -142,7 +142,10 @@
       "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/revert.py\")",
       "Bash(awk 'NR>=660 && NR<=670 {printf \"%d: %s\\\\n\", NR, $0}' components/home/ballpit.tsx)",
       "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/film.py\")",
-      "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/promo.py\")"
+      "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/promo.py\")",
+      "PowerShell($c = Get-Command ffmpeg -ErrorAction SilentlyContinue; if \\($c\\) { $c.Source } else { \"no ffmpeg on PATH\" }; winget --version 2>$null)",
+      "Bash(node -e \"console.log\\(require\\('ffmpeg-static'\\)\\)\")",
+      "Bash(\"node_modules/ffmpeg-static/ffmpeg.exe\" -hide_banner -loglevel error -i \"public/assets/video/fashion.mp4\" -vf \"fps=12,scale=1280:-2\" -q:v 6 \"public/assets/film/fashion/%03d.jpg\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\prave\\Desktop\\PROJECTS\\very-good-websites\\components\\home",
