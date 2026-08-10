@@ -604,7 +604,26 @@ export function NotchedCard({ className }: { className?: string }) {
   /* How far through the reel the film screen has been scrolled, so the words
      over it arrive with it rather than sitting there from the first frame.
      Nought on every other screen, which never sets it. */
-  const [reelAt, setReelAt] = useState(0);
+  /* Where the film has been scrolled to, and it is deliberately not state here.
+
+     It was: one number, set fifty times over the length of the reel, held on
+     this component. This component is two thousand lines and five screens, so
+     every one of those fifty was a full reconciliation of the card - its cut
+     recomputed, all five screens diffed - to move a headline a few pixels. On a
+     desk that is invisible; on a mid-range phone it is the wheel feeling heavy
+     exactly while somebody is scrubbing a film.
+
+     The number goes straight to the one component that draws with it instead.
+     `FilmWords` hands its own setter up through `bind`, this holds it in a ref,
+     and the reel calls it - so a scrub re-renders four lines of type and nothing
+     else. */
+  const reel = useRef<((along: number) => void) | null>(null);
+
+  const bindReel = useCallback((tell: ((along: number) => void) | null) => {
+    reel.current = tell;
+  }, []);
+
+  const tellReel = useCallback((along: number) => reel.current?.(along), []);
 
   /* No clock. The card turns when somebody turns it - the arrows, the thumbnail
      and the keyboard all do it - and nothing moves it on its own. A carousel
@@ -1165,7 +1184,7 @@ export function NotchedCard({ className }: { className?: string }) {
           <FilmStage
             base={shown.reel.base}
             frames={shown.reel.frames}
-            onProgress={setReelAt}
+            onProgress={tellReel}
           />
         </div>
       ) : null}
@@ -1283,132 +1302,7 @@ export function NotchedCard({ className }: { className?: string }) {
           notch by its depth - not by `head`, which also allows for the row of
           links, and there are no links on this screen. */}
       {shown.view === "film" ? (
-        <div
-          className="pointer-events-none absolute inset-0 z-10"
-          style={{
-            paddingTop: cut.barDepth + 26,
-            paddingBottom: 26,
-            paddingLeft: pad,
-            paddingRight: pad,
-          }}
-        >
-          <div className="relative size-full">
-            {/* What to do, said once and then got out of the way.
-
-                Nothing else on this card answers to a scroll, so nobody would
-                try it unasked - and the whole screen depends on somebody trying
-                it. It is set large because it is an instruction on a picture
-                rather than a label on a control, and there is nothing at the top
-                right of the frame competing with it.
-
-                It leaves on the first turn of the wheel. An instruction that
-                stays after it has been followed is a sign nobody took down; this
-                is gone by a twentieth of the reel, which is about one notch, and
-                the arrow drifts down as it goes so the last thing it does is
-                point the way it was asking for. */}
-            <div
-              aria-hidden
-              className="absolute top-0 right-0 flex items-center gap-3 text-right"
-              style={{
-                opacity: Math.max(0, 1 - reelAt / 0.05),
-                transform: `translateY(${Math.min(1, reelAt / 0.05) * 18}px)`,
-              }}
-            >
-              <span className="font-mono text-[13px] font-bold tracking-[0.24em] text-white uppercase drop-shadow-[0_2px_14px_rgba(24,32,44,0.55)] sm:text-[16px]">
-                Scroll down
-              </span>
-              <ArrowDown
-                className="size-5 shrink-0 text-white drop-shadow-[0_2px_14px_rgba(24,32,44,0.55)] sm:size-6"
-                strokeWidth={2.4}
-              />
-            </div>
-
-            {TITLES.map((line) => (
-              <div
-                key={line.lead}
-                className={cn("absolute", PLACE[line.place])}
-                style={title(reelAt, line.show, line.hide, line.from)}
-              >
-                {/* No kicker over the line any more.
-
-                    There was one - four titles, each with a small uppercase
-                    label above it - and the case for it was that it filled the
-                    room the picture leaves without filling it with more
-                    shouting. What it actually did was announce each title before
-                    the title arrived, on a screen whose whole idea is that the
-                    words appear one at a time as the reel is scrolled. A caption
-                    read a beat before the thing it captions is a spoiler, and
-                    two lines fading up together is not a sequence.
-
-                    `over` is still written on each entry. It is four short
-                    phrases somebody wrote for these frames, and the day one of
-                    them is wanted again it should be the same words rather than
-                    words invented twice. */}
-
-                {/* Two colours in one sentence, and it is not decoration.
-
-                    This reel is pale and busy: white type holds against the
-                    shadowed folds and disappears against the bright floor, and
-                    ink does the opposite. Splitting the sentence gives each half
-                    the colour that survives where it sits - and what falls out of
-                    that is a sentence with a stress in it, where the second half
-                    is the half that lands.
-
-                    The white half carries a shadow and the ink half does not.
-                    Ink on a pale frame needs no help; a shadow under it would be
-                    a grey edge on a black letter. */}
-                {/* Two sizes as well as two colours, and the jump is the point.
-
-                    Set at one size the two halves are one sentence broken over
-                    two lines, which is a headline that happens to wrap. At two -
-                    the first about two fifths of the second - they become a
-                    qualifier and the thing it qualifies: small "Your clothing",
-                    enormous "store." The eye lands on the noun and picks up the
-                    rest on the way back, which is how a poster is read and not
-                    how a paragraph is.
-
-                    Two fifths was too far apart. At that ratio the white half
-                    stopped being the first half of a sentence and became a
-                    label above a word - and it is the half carrying "Your", so
-                    losing it costs the line the thing that makes it about the
-                    reader. Two thirds keeps the jump doing its work and keeps
-                    both halves reading as type of the same size family.
-
-                    The halves are sized in `em` off the block, so one clamp still
-                    decides the scale of the whole thing and the ratio between
-                    them holds at every width. Two clamps would be two curves
-                    crossing somewhere in the middle of the breakpoints.
-
-                    The small half is not simply smaller: it is lighter and its
-                    tracking opens, because type shrunk without either reads as
-                    the same headline further away. */}
-                {/* The ceiling is what a wide screen actually gets, and it is
-                    set for the widest ones rather than for a laptop.
-
-                    `7.8vw` passed its old cap at about seventeen hundred points,
-                    so every screen above a laptop saw the same size - a 2K and a
-                    4K panel both got the number a fifteen-inch screen had
-                    already reached. The slope is what a small screen uses and
-                    the cap is what a large one gets, so raising the cap is the
-                    only thing a monitor feels.
-
-                    Three hundred, which the slope reaches at about thirty-five
-                    hundred points - so 2K is still fluid and climbing, and 4K
-                    settles just under it. The card is the height of the window
-                    on those screens too, so a title this size is a fraction of
-                    the frame rather than most of it. */}
-                <p className="mt-2 text-[clamp(40px,8.6vw,300px)] leading-[0.9] font-extrabold tracking-[-0.055em] sm:mt-3">
-                  <span className="block text-[0.66em] leading-[1] font-extrabold tracking-[-0.04em] text-white drop-shadow-[0_2px_18px_rgba(24,32,44,0.5)]">
-                    {line.lead}
-                  </span>
-                  <span className="mt-[0.06em] block text-ink">
-                    {line.tail}
-                  </span>
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <FilmWords bind={bindReel} barDepth={cut.barDepth} pad={pad} />
       ) : null}
 
       {/* The fourth screen's ways on, and nothing else.
@@ -2235,6 +2129,162 @@ function FilmDoors({ onSize }: { onSize: (w: number, h: number) => void }) {
           className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-[18px]"
         />
       </Link>
+    </div>
+  );
+}
+
+/**
+ * The words over the film, and the only thing a scrub redraws.
+ *
+ * All of it is driven by one number - how far through the reel the scroll has
+ * got - and that number changes fifty times over the length of the screen. Held
+ * on the card, each change re-rendered the card; held here, it re-renders four
+ * lines of type and a scroll cue.
+ *
+ * The setter is handed upward rather than the number downward, which is the
+ * whole of the trick: the card keeps a reference to it and the reel calls it
+ * directly, so nothing between the two has any reason to render at all.
+ */
+function FilmWords({
+  bind,
+  barDepth,
+  pad,
+}: {
+  bind: (tell: ((along: number) => void) | null) => void;
+  barDepth: number;
+  pad: number;
+}) {
+  const [at, setAt] = useState(0);
+
+  useEffect(() => {
+    bind(setAt);
+    return () => bind(null);
+  }, [bind]);
+
+  return (
+    <div
+      className="pointer-events-none absolute inset-0 z-10"
+      style={{
+        paddingTop: barDepth + 26,
+        paddingBottom: 26,
+        paddingLeft: pad,
+        paddingRight: pad,
+      }}
+    >
+      <div className="relative size-full">
+        {/* What to do, said once and then got out of the way.
+
+            Nothing else on this card answers to a scroll, so nobody would
+            try it unasked - and the whole screen depends on somebody trying
+            it. It is set large because it is an instruction on a picture
+            rather than a label on a control, and there is nothing at the top
+            right of the frame competing with it.
+
+            It leaves on the first turn of the wheel. An instruction that
+            stays after it has been followed is a sign nobody took down; this
+            is gone by a twentieth of the reel, which is about one notch, and
+            the arrow drifts down as it goes so the last thing it does is
+            point the way it was asking for. */}
+        <div
+          aria-hidden
+          className="absolute top-0 right-0 flex items-center gap-3 text-right"
+          style={{
+            opacity: Math.max(0, 1 - at / 0.05),
+            transform: `translateY(${Math.min(1, at / 0.05) * 18}px)`,
+          }}
+        >
+          <span className="font-mono text-[13px] font-bold tracking-[0.24em] text-white uppercase drop-shadow-[0_2px_14px_rgba(24,32,44,0.55)] sm:text-[16px]">
+            Scroll down
+          </span>
+          <ArrowDown
+            className="size-5 shrink-0 text-white drop-shadow-[0_2px_14px_rgba(24,32,44,0.55)] sm:size-6"
+            strokeWidth={2.4}
+          />
+        </div>
+
+        {TITLES.map((line) => (
+          <div
+            key={line.lead}
+            className={cn("absolute", PLACE[line.place])}
+            style={title(at, line.show, line.hide, line.from)}
+          >
+            {/* No kicker over the line any more.
+
+                There was one - four titles, each with a small uppercase
+                label above it - and the case for it was that it filled the
+                room the picture leaves without filling it with more
+                shouting. What it actually did was announce each title before
+                the title arrived, on a screen whose whole idea is that the
+                words appear one at a time as the reel is scrolled. A caption
+                read a beat before the thing it captions is a spoiler, and
+                two lines fading up together is not a sequence.
+
+                `over` is still written on each entry. It is four short
+                phrases somebody wrote for these frames, and the day one of
+                them is wanted again it should be the same words rather than
+                words invented twice. */}
+
+            {/* Two colours in one sentence, and it is not decoration.
+
+                This reel is pale and busy: white type holds against the
+                shadowed folds and disappears against the bright floor, and
+                ink does the opposite. Splitting the sentence gives each half
+                the colour that survives where it sits - and what falls out of
+                that is a sentence with a stress in it, where the second half
+                is the half that lands.
+
+                The white half carries a shadow and the ink half does not.
+                Ink on a pale frame needs no help; a shadow under it would be
+                a grey edge on a black letter. */}
+            {/* Two sizes as well as two colours, and the jump is the point.
+
+                Set at one size the two halves are one sentence broken over
+                two lines, which is a headline that happens to wrap. At two -
+                the first about two fifths of the second - they become a
+                qualifier and the thing it qualifies: small "Your clothing",
+                enormous "store." The eye lands on the noun and picks up the
+                rest on the way back, which is how a poster is read and not
+                how a paragraph is.
+
+                Two fifths was too far apart. At that ratio the white half
+                stopped being the first half of a sentence and became a
+                label above a word - and it is the half carrying "Your", so
+                losing it costs the line the thing that makes it about the
+                reader. Two thirds keeps the jump doing its work and keeps
+                both halves reading as type of the same size family.
+
+                The halves are sized in `em` off the block, so one clamp still
+                decides the scale of the whole thing and the ratio between
+                them holds at every width. Two clamps would be two curves
+                crossing somewhere in the middle of the breakpoints.
+
+                The small half is not simply smaller: it is lighter and its
+                tracking opens, because type shrunk without either reads as
+                the same headline further away. */}
+            {/* The ceiling is what a wide screen actually gets, and it is
+                set for the widest ones rather than for a laptop.
+
+                `7.8vw` passed its old cap at about seventeen hundred points,
+                so every screen above a laptop saw the same size - a 2K and a
+                4K panel both got the number a fifteen-inch screen had
+                already reached. The slope is what a small screen uses and
+                the cap is what a large one gets, so raising the cap is the
+                only thing a monitor feels.
+
+                Three hundred, which the slope reaches at about thirty-five
+                hundred points - so 2K is still fluid and climbing, and 4K
+                settles just under it. The card is the height of the window
+                on those screens too, so a title this size is a fraction of
+                the frame rather than most of it. */}
+            <p className="mt-2 text-[clamp(40px,8.6vw,300px)] leading-[0.9] font-extrabold tracking-[-0.055em] sm:mt-3">
+              <span className="block text-[0.66em] leading-[1] font-extrabold tracking-[-0.04em] text-white drop-shadow-[0_2px_18px_rgba(24,32,44,0.5)]">
+                {line.lead}
+              </span>
+              <span className="mt-[0.06em] block text-ink">{line.tail}</span>
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

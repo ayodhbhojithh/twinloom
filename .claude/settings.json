@@ -161,7 +161,12 @@
       "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/hero.py\")",
       "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/doors2.py\")",
       "Bash(grep -n \"const \\\\[size, setSize\\\\]\\\\|const size = \\\\|useState\\({ w\" components/home/notched-card.tsx)",
-      "Bash(xargs -I{} sh -c 'printf \"%8s  %s\\\\n\" $\\(du -k \"{}\" | cut -f1\\) \"{}\"')"
+      "Bash(xargs -I{} sh -c 'printf \"%8s  %s\\\\n\" $\\(du -k \"{}\" | cut -f1\\) \"{}\"')",
+      "Bash(awk '{printf \"%6.1f MB  %s\\\\n\", $1/1048576, $2}')",
+      "Bash(xargs -I{} sh -c 'printf \"%6s KB  %s\\\\n\" $\\(du -k \"{}\" | cut -f1\\) \"{}\"')",
+      "Bash(node -e \"console.log\\('sharp', require\\('./node_modules/sharp/package.json'\\).version\\)\")",
+      "Bash(node \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/measure.js\")",
+      "Bash(awk 'NR>=1380 && NR<=1430' components/home/notched-card.tsx)"
     ],
     "additionalDirectories": [
       "c:\\Users\\prave\\Desktop\\PROJECTS\\very-good-websites\\components\\home",
