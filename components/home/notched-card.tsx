@@ -1329,15 +1329,19 @@ export function NotchedCard({ className }: { className?: string }) {
           one is at the top and all three are as wide as the longest label. */}
       {shown.view === "film" ? (
         <div
-          className="pointer-events-none absolute z-10 flex justify-end"
+          /* Bottom left on a phone, bottom right on anything wider.
+
+             The card gives up its bottom right corner, and the way down the page
+             stands in it. On a wide card a narrow stack sits beside that cut
+             with room to spare; on a phone the same stack is most of the width,
+             so it ran into the corner and came out sliced by the outline. The
+             other end of the same edge is uncut and empty, which is where it
+             goes. */
+          className="pointer-events-none absolute z-10 flex justify-start sm:justify-end"
           style={{
             right: pad,
-            /* Down onto the floor of the card, clear of the corner cut only by
-               the air the cut already leaves. They were most of a cut's height
-               above it, which on a screen that is one picture put them in the
-               middle of the frame rather than at the foot of it. */
-            bottom: 18,
             left: pad,
+            bottom: 18,
           }}
         >
           {/* The same three the first screen offers, in the same order and
@@ -1358,7 +1362,11 @@ export function NotchedCard({ className }: { className?: string }) {
               given to controls; in a row they take one line and wrap to two,
               and `justify-end` keeps whatever lands on the second line against
               the same edge as the first. */}
-          <div className="flex flex-wrap justify-end gap-2 sm:w-max sm:flex-col sm:items-stretch">
+          {/* Stacked at every width now. A wrapping row was what put a second
+              line across the foot of a phone in the first place, and three pills
+              down one side is the same three in a column narrow enough to leave
+              the picture visible either side of it. */}
+          <div className="flex w-max flex-col items-stretch gap-2">
             <Link
               href={ROUTES.build}
               className="group/way thread-fill inline-flex items-center gap-1.5 rounded-pill px-3 py-2 text-[11.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 sm:gap-2 sm:px-4.5 sm:py-2.5 sm:text-[13px]"
