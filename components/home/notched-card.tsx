@@ -10,7 +10,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   CalendarDays,
-  Code2,
   LayoutGrid,
   Expand,
   PencilLine,
@@ -543,17 +542,13 @@ export function NotchedCard({ className }: { className?: string }) {
         className="absolute inset-0 overflow-hidden bg-field"
         style={{ clipPath: path ? `path("${path}")` : undefined }}
       >
-        {/* The fourth screen's ground. Inside the clipped layer with the other
-            three drawings, so the card's outline cuts it like everything else on
-            it. */}
-        {shown.view === "blank" ? <DotGround /> : null}
-
         {/* The ground: one grid, edge to edge, and barely there.
 
-            Not the ringed arrangement the blank screen uses. That one is a
-            picture made of dots and wants shaping; this is paper, and paper does
-            not fade out in the middle - a texture with a hole in it reads as a
-            spotlight nobody switched on.
+            Not a picture made of dots, which is what the mark drawn as a
+            halftone was on the screen that used to close this card - that one
+            wanted shaping. This is paper, and paper does not fade out in the
+            middle: a texture with a hole in it reads as a spotlight nobody
+            switched on.
 
             Held to the edges, though. Uniform, it ran under the headline, the
             paragraph and the buttons, and a texture behind a block of type is a
@@ -994,67 +989,9 @@ export function NotchedCard({ className }: { className?: string }) {
         </div>
       ) : null}
 
-      {/* The fourth screen's words: centred on nothing at all.
+      {/* The first screen: the mark staged, with the whole offer beside it.
 
-          The same block again, and the only one with no drawing under it and no
-          wash over it - there is nothing to take the card back from. Which is
-          why this is the screen the ask goes on: it is the only one where the
-          words are not competing with anything. */}
-      {shown.view === "blank" ? (
-        <div
-          className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
-          style={{
-            paddingTop: head,
-            paddingBottom: cut.barDepth + 12,
-            paddingLeft: pad,
-            paddingRight: pad,
-          }}
-        >
-          <div className="w-full text-center">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={shown.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
-              >
-                {/* No logo above the claim. There is one behind it, at eight
-                    times the size and made of dots, and the same mark twice on
-                    one screen is the screen saying the name and then saying it
-                    again in case. */}
-
-                <h1 className="mx-auto max-w-[20ch] text-[clamp(28px,3.8vw,54px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink">
-                  {shown.claim?.[0]}
-                  <span className="thread-text block">{shown.claim?.[1]}</span>
-                </h1>
-
-                <p className="mx-auto mt-4 max-w-[56ch] text-[14px] leading-[1.62] text-quiet sm:text-[15px]">
-                  {shown.lead}
-                </p>
-
-                <div className="mt-6 flex justify-center">
-                  <Link
-                    href={ROUTES.build}
-                    className="group/way thread-fill pointer-events-auto inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
-                  >
-                    Start yours
-                    <ArrowRight
-                      aria-hidden
-                      className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
-                      strokeWidth={2.4}
-                    />
-                  </Link>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
-      ) : null}
-
-      {/* The fifth screen: the mark staged, with the whole offer beside it.
-
-          The long version, and the only screen here that is. The four before it
+          The long version, and the only screen here that is. The two behind it
           each make one argument and open one door - right for a card that turns,
           wrong for the one somebody might not turn past. This one names the
           trades, makes the claim, says the line under it, gives the paragraph
@@ -1289,12 +1226,18 @@ export function NotchedCard({ className }: { className?: string }) {
                     ))}
                   </motion.p>
 
-                  {/* Four doors, one row, and the first one filled. Where they all
-                    look the same there is no first choice, and a row of four
-                    equal buttons is four decisions rather than one. */}
+                  {/* Three doors, one row, and the first one filled. Where they
+                    all look the same there is no first choice, and a row of
+                    equal buttons is three decisions rather than one.
+
+                    "Custom software" was a fourth, and it pointed at the same
+                    place "View our services" does - two of four doors onto one
+                    page, which is a row that looks like a choice and is not
+                    one. The sister company is named in the paragraph above with
+                    that link on it, and again on the line at the foot. */}
                   {/* Wrapping below `lg`, one row at and above it.
 
-                      Four doors on two lines is four decisions in two groups,
+                      Doors on two lines are decisions in two groups,
                       and the group a button falls into is decided by whatever
                       width the picture beside it happened to leave. On a wide
                       card they hold one line; on a narrow one, where there is
@@ -1327,11 +1270,6 @@ export function NotchedCard({ className }: { className?: string }) {
                         at: ROUTES.book,
                         icon: CalendarDays,
                         say: "Book a meeting",
-                      },
-                      {
-                        at: ROUTES.services,
-                        icon: Code2,
-                        say: "Custom software",
                       },
                     ].map((way) => {
                       const className =
@@ -1469,95 +1407,10 @@ export function NotchedCard({ className }: { className?: string }) {
 }
 
 /** One of the three controls that stand in the notch. */
-/* The fourth screen's ground: the mark, in dots, too big for the card.
-
-   The obvious version of this screen was a logo above a headline over a field of
-   dots, and it is the version every card like this already is. This is the same
-   two things arranged so that neither is decoration: the dots are the mark, and
-   the mark is far larger than the card, so what shows is a piece of it - the
-   crossing in the middle and both loops running off the sides.
-
-   How it is made is the whole trick, and it is two lines of CSS. A grid of dots
-   is a repeating radial gradient; the logo is a PNG with a real alpha channel;
-   so the logo masks the grid, and what is left is dots in the shape of the mark.
-   No canvas, no SVG path, no second copy of the artwork to keep in step with the
-   one in the header - the file the header uses is the file that cuts this.
-
-   Standing still is the point of it. Three screens of this card are drawing every
-   frame; the fourth is the one that stops, and a static pattern is not a cheaper
-   animation - it is the quiet at the end. */
 const GRID = (tint: string, share: number, dot: number, gap: number) => ({
   backgroundImage: `radial-gradient(circle, color-mix(in oklab, var(${tint}) ${share}%, transparent) ${dot}px, transparent ${dot + 0.7}px)`,
   backgroundSize: `${gap}px ${gap}px`,
 });
-
-function DotGround() {
-  return (
-    <span aria-hidden className="absolute inset-0 overflow-hidden">
-      {/* The card's own weather: a fine grid across all of it, thinned only out
-          of the middle so the mark has somewhere to be read against.
-
-          It used to fade out again before the edges, and what that left was a
-          band of dots with white either side of it - the card looked as though
-          the pattern had been cut to fit rather than as though it carried on.
-          It runs to the corners now, and the only thing shaping it is the hole
-          in the middle where the words are. */}
-      <span
-        className="absolute inset-0"
-        style={{
-          ...GRID("--color-thread-blue", 58, 1.2, 17),
-          maskImage:
-            "radial-gradient(circle at 50% 50%, transparent 14%, black 52%)",
-          WebkitMaskImage:
-            "radial-gradient(circle at 50% 50%, transparent 14%, black 52%)",
-        }}
-      />
-
-      {/* And the mark, in the mark's own two colours.
-
-          Which needed the whole thing turning inside out. It was a grid of teal
-          dots with the logo cutting a shape out of it - and a background can
-          only be one gradient, so a grid of dots that runs blue into green is
-          not a thing a background can be.
-
-          So the colour is the background and both the shape and the dots are the
-          mask. Two mask layers, the logo and the dot grid, composited to their
-          intersection: what survives is the part of the sheet that is inside the
-          mark and inside a dot. The gradient underneath never has to know it is
-          being drawn as dots. */}
-      <span
-        className="absolute top-1/2 left-1/2 aspect-square w-[104%] -translate-x-1/2 -translate-y-1/2"
-        style={{
-          backgroundImage:
-            "linear-gradient(100deg, color-mix(in oklab, var(--color-thread-blue) 72%, transparent), color-mix(in oklab, var(--color-thread-teal) 72%, transparent))",
-          maskImage:
-            "url(/assets/logo.png), radial-gradient(circle, #000 2.1px, transparent 2.8px)",
-          maskSize: "contain, 15px 15px",
-          maskPosition: "center, center",
-          maskRepeat: "no-repeat, repeat",
-          maskComposite: "intersect",
-          WebkitMaskImage:
-            "url(/assets/logo.png), radial-gradient(circle, #000 2.1px, transparent 2.8px)",
-          WebkitMaskSize: "contain, 15px 15px",
-          WebkitMaskPosition: "center, center",
-          WebkitMaskRepeat: "no-repeat, repeat",
-          WebkitMaskComposite: "source-in",
-        }}
-      />
-
-      {/* The card's white, back in the middle. The mark is a picture and the
-          words are the point, and the one thing a halftone must not do is make a
-          sentence work for it. */}
-      <span
-        className="absolute inset-0"
-        style={{
-          backgroundImage:
-            "radial-gradient(ellipse 62% 56% at 50% 50%, color-mix(in oklab, var(--color-field) 92%, transparent) 0%, color-mix(in oklab, var(--color-field) 78%, transparent) 38%, color-mix(in oklab, var(--color-field) 36%, transparent) 66%, transparent 88%)",
-        }}
-      />
-    </span>
-  );
-}
 
 function Tool({
   label,

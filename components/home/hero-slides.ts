@@ -13,7 +13,7 @@ import type { Project } from "./projects";
    fields. Only the list is separate - one type, two lists, and the type is the
    thing that keeps them interchangeable if a slide ever is a project.
 
-   Four screens, and they are meant to be four different screens rather than
+   Three screens, and they are meant to be three different screens rather than
    one screen with its contents swapped. Each carries a `view`, and the card
    branches on it - so an arrow does not change a picture, it changes what the
    card is.
@@ -23,22 +23,19 @@ import type { Project } from "./projects";
    leads because it is the only one that says everything, and the screen somebody
    arrives on cannot assume they will turn it.
 
-   The second is water: a raymarched swell filling the card, with its words
-   centred on it in white - the one screen set light on dark.
-
-   The third is a field of glass beads that drift and get shoved around by the
-   cursor, with dark type centred on it. Light ground again, so it is set the way
-   the first one is; what separates the two is the argument rather than the
+   The second is a field of glass beads that drift and get shoved around by the
+   cursor, with dark type centred on it. Light ground, so it is set the way the
+   first one is; what separates the two is the argument rather than the
    treatment.
 
-   The fourth is white and empty behind its words, and that is the design rather
-   than the absence of one. Three screens of drawing in a row is a card showing
-   off; the last one stops, and what is left is the sentence and the way in. A
-   front door that never stops talking is one people stop reading.
+   The third is water: a raymarched swell filling the card, with its words
+   centred on it in white. The one screen set light on dark, and it closes the
+   run - two light grounds and then this one, rather than the polarity flipping
+   back and forth.
 
-   Which is the shape of the card. The first is the long version; the three
-   behind it each make one argument and open one door, because a card that turns
-   should not ask for the same thing four times.
+   Which is the shape of the card. The first is the long version; the two behind
+   it each make one argument and open one door, because a card that turns should
+   not ask for the same thing three times.
 --------------------------------------------------------------------------- */
 
 /**
@@ -51,17 +48,17 @@ import type { Project } from "./projects";
  *
  * `waves` is the raymarched water and `balls` is the pit. `mark` is the logo at
  * the size of the card with the words beside it, and it is the only screen that
- * is not centred - the whole of it is the asymmetry. `blank` is a white card and
- * nothing else - not a placeholder graphic and not a greyed panel, because
- * either of those is a design decision made in advance of the design.
+ * is not centred - the whole of it is the asymmetry.
  *
- * There was a `wave` as well: a claim set over a horizon of dots, third in the
- * order. It made the same argument as the screen two along from it and made it
- * on a drawing that takes a moment to resolve into anything, which is a moment a
- * card in the middle of a turn does not have. Its drawing is still in
- * `wave-dots`, unimported, for whatever wants a field of dots next.
+ * Two others have gone. `wave` was a claim set over a horizon of dots, and it
+ * made the same argument as a screen two along from it on a drawing that takes a
+ * moment to resolve into anything - a moment a card in the middle of a turn does
+ * not have. `blank` was a white card with the ask on it and the mark behind it
+ * as a halftone; it was the quiet at the end of a run of four, and a run of
+ * three does not need one. `wave-dots` is still on disk for whatever wants a
+ * field of dots next.
  */
-export type SlideView = "waves" | "balls" | "blank" | "mark";
+export type SlideView = "waves" | "balls" | "mark";
 
 /**
  * A slide, which is a `Project` and a few more things.
@@ -88,6 +85,20 @@ export interface HeroSlide extends Project {
   note?: string;
 }
 
+/*
+   All three carry `overview`, which is what the expand control opens.
+
+   Without it a slide opens the panel a piece of work opens: a picture down one
+   side, a summary, and three facts. None of these is a piece of work - they are
+   three arguments for the same company - so two of them were opening a panel
+   with an empty grey half where the photograph would go, and three facts
+   restating the line already on the card behind it.
+
+   The company's own panel is the honest answer for all three. The card turns to
+   change what it argues; pressing into it asks the one question every argument
+   leads to, which is what this company actually does. That does not change with
+   the slide, so neither does the panel.
+*/
 export const HERO_SLIDES: readonly HeroSlide[] = [
   /* The first: the mark staged, with the whole offer written beside it.
 
@@ -125,38 +136,16 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     overview: true,
   },
 
-  /* The first: the water, with its words set on it in white.
+  /* The second: how the work is agreed, over the pit.
 
-     Its own claim rather than the first screen's, because the two are different
-     arguments for the same offer - the first says what you get, this says who
-     you are getting it from. One way on and not two: the pair of buttons belongs
-     to the screen making the offer. */
-  {
-    id: "hero-2",
-    view: "waves",
-    name: "Two threads, woven",
-    kind: "What we are",
-    year: "2026",
-    summary:
-      "The site people see and the software behind it are one build, not two suppliers who blame each other. One contract, one invoice, and the same people to ask either way.",
-    facts: [
-      { term: "Threads", value: "Two" },
-      { term: "Contracts", value: "One" },
-      { term: "People to ask", value: "The same ones" },
-    ],
-    claim: ["Two threads.", "One piece of work."],
-    lead: "The site people see and the software behind it are one build, not two suppliers who blame each other. One contract, one invoice, and the same people to ask either way.",
-    image: "",
-    alt: "",
-    tone: "#ffffff",
-  },
+     Dark type again, like the screen before it, because the ground is light
+     again - a field of glass beads on white. What separates the two is not the
+     treatment, it is the argument: the first says what we build, this one says
+     what you get before anybody agrees to anything.
 
-  /* The third: how the work is agreed, over the pit.
-
-     Dark type again, like the first screen, because the ground is light again -
-     a field of glass beads on white. What separates it from the first is not the
-     treatment, it is the argument: that one makes the offer, this one says what
-     you get before anybody agrees to anything. */
+     It follows the mark rather than the water because it is the answer to the
+     question the mark leaves: a front door that has just said what it does
+     should say next how it does it, not change the subject to who we are. */
   {
     id: "hero-3",
     view: "balls",
@@ -175,30 +164,37 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     image: "",
     alt: "",
     tone: "#ffffff",
+    overview: true,
   },
 
-  /* The fourth: white, with the ask on it.
+  /* The third: the water, with its words set on it in white.
 
-     No drawing at all. It is last for the same reason a room goes quiet before
-     somebody says the thing they came to say, and the words are the plainest on
-     the card: what it costs, how long it takes, and what you are committing to. */
+     Its own claim rather than the opening screen's, because the two are
+     different arguments for the same offer - that one says what you get, this
+     says who you are getting it from. One way on and not two: the pair of
+     buttons belongs to the screen making the offer.
+
+     The only screen set light on dark, and it closes the run. Two light grounds
+     and then this one is what makes the turn onto it land; second, with a light
+     ground on either side, it would have been the odd one in the middle. */
   {
-    id: "hero-4",
-    view: "blank",
-    name: "Two working days",
-    kind: "The ask",
+    id: "hero-2",
+    view: "waves",
+    name: "Two threads, woven",
+    kind: "What we are",
     year: "2026",
     summary:
-      "Tell us what the site is for and we write the scope in your own words. It costs nothing, commits you to nothing, and you keep it either way.",
+      "The site people see and the software behind it are one build, not two suppliers who blame each other. One contract, one invoice, and the same people to ask either way.",
     facts: [
-      { term: "Comes back", value: "Within two working days" },
-      { term: "Costs", value: "Nothing" },
-      { term: "Commits you to", value: "Nothing" },
+      { term: "Threads", value: "Two" },
+      { term: "Contracts", value: "One" },
+      { term: "People to ask", value: "The same ones" },
     ],
-    claim: ["Two working days.", "Then you decide."],
-    lead: "Tell us what the site is for and we write the scope in your own words. It costs nothing, commits you to nothing, and you keep it either way.",
+    claim: ["Two threads.", "One piece of work."],
+    lead: "The site people see and the software behind it are one build, not two suppliers who blame each other. One contract, one invoice, and the same people to ask either way.",
     image: "",
     alt: "",
     tone: "#ffffff",
+    overview: true,
   },
 ];
