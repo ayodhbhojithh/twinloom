@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 import { DeskDock } from "@/components/build/v5/desk-dock";
@@ -21,6 +21,13 @@ import { SiteHeader } from "./site-header";
  * two, and a page that scrolls and then simply stops is a page missing its
  * end.
  */
+/**
+ * How far the landing page travels before its second header comes down.
+ *
+ * Read by two things that must agree: the header, which appears at it, and the
+ * desk, which starts below the header once it has. */
+const APPEAR = 240;
+
 const NO_FOOTER: readonly string[] = [
   ROUTES.homeV1,
   ROUTES.homeV2,
@@ -52,11 +59,49 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
      back, and neither can be changed without the other. */
   const [face, setFace] = useState<Face | null>(null);
 
-  /* The landing page carries its header inside its own card rather than
-     above the page, so at the top of it there is no bar for the desk to start
-     below - and starting below one that is not there leaves a strip of empty
-     window above the panel. */
-  const underHeader = pathname !== ROUTES.home;
+  /* Whether there is a bar at the top of the window for the desk to start
+     below.
+
+     Everywhere but the landing page, always: the header is stuck to the top
+     from the first pixel. On the landing page it is neither always nor never.
+     The card carries its own header inside it, so at the top of that page
+     there is no bar and the desk should take the whole height - and once the
+     card has scrolled away a second copy comes down, which the desk then has
+     to clear or it is cut off by it.
+
+     So the same threshold the header itself appears at, read the same way it
+     reads it. One number, `APPEAR`, passed to the header and compared here -
+     written twice they would part company and the desk would clear a bar that
+     had not arrived, or fail to clear one that had. */
+  const [past, setPast] = useState(false);
+  const floating = pathname === ROUTES.home;
+
+  useEffect(() => {
+    if (!floating) return;
+
+    let frame = 0;
+
+    const settle = () => {
+      frame = 0;
+      setPast(window.scrollY > APPEAR);
+    };
+
+    const again = () => {
+      if (!frame) frame = requestAnimationFrame(settle);
+    };
+
+    settle();
+    window.addEventListener("scroll", again, { passive: true });
+    window.addEventListener("resize", again);
+
+    return () => {
+      window.removeEventListener("scroll", again);
+      window.removeEventListener("resize", again);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [floating]);
+
+  const underHeader = floating ? past : true;
 
   return (
     <>
@@ -72,7 +117,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           waits off the top of the window and comes down once the card has gone.
           It is the same component and the same links; what differs is that this
           one is not there until it is needed. */}
-      {pathname === ROUTES.home ? <SiteHeader appear={240} /> : <SiteHeader />}
+      {floating ? <SiteHeader appear={APPEAR} /> : <SiteHeader />}
 
       {/* Aside, rather than under.
 

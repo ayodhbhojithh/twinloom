@@ -248,10 +248,10 @@ export function DockPanel({
         </div>
       }
       corner={
-        {/* Filled, not bare. It stands in the corner cut - a piece taken out
-            of the surface - so on the quiet tone it was a grey mark on the page
-            showing through, with nothing to say it was a control at all. Ink is
-            what the site's other corner discs are. */}
+        /* Filled, not bare. It stands in the corner cut - a piece taken out of
+           the surface - so on the quiet tone it was a grey mark on the page
+           showing through, with nothing to say it was a control at all. Ink is
+           what the site's other corner discs are. */
         <Disc label="Close the panel" onClick={onClose} tone="ink">
           <X className="size-4" />
         </Disc>
