@@ -533,6 +533,17 @@ const HERO_MARK = {
   },
 } as const;
 
+/**
+ * The air around the film screen's doors, on every side of the cut they stand
+ * in.
+ *
+ * Twenty-two. The cut is drawn from the stack, so this is the only number that
+ * decides how much room the three of them are given - and it is one number
+ * rather than four, because the point of measuring a cut from its contents is
+ * that nothing about the corner has to be re-agreed when a label changes.
+ */
+const AIR = 22;
+
 export function NotchedCard({ className }: { className?: string }) {
   const box = useRef<HTMLDivElement>(null);
 
@@ -691,7 +702,9 @@ export function NotchedCard({ className }: { className?: string }) {
     const dropW = held
       ? Math.max(drop, Math.min(doors.w + 28, w - 2 * (radius + flare) - 24))
       : drop;
-    const dropH = held ? Math.max(drop, Math.min(doors.h + 28, h * 0.5)) : drop;
+    const dropH = held
+      ? Math.max(drop, Math.min(doors.h + AIR * 2, h * 0.5))
+      : drop;
 
     return {
       radius,
