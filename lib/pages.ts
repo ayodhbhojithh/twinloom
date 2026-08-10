@@ -86,7 +86,7 @@ export const FRAMEWORK_PAGES: readonly FrameworkPage[] = [
     ],
   },
   {
-    href: ROUTES.blog,
+    href: ROUTES.insights,
     tag: "Insight",
     title: "Insight",
     lead: "What we have written.",

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-import { ARTICLES } from "@/lib/articles";
+import { INSIGHTS } from "@/lib/insights";
 import { NOINDEX, SITE_URL } from "@/lib/seo";
 import { ROUTES } from "@/lib/site";
 
@@ -31,7 +31,7 @@ const PAGES: readonly {
 }[] = [
   { path: ROUTES.home, priority: 1, changeFrequency: "weekly" },
   { path: ROUTES.build, priority: 1, changeFrequency: "monthly" },
-  { path: ROUTES.blog, priority: 0.9, changeFrequency: "weekly" },
+  { path: ROUTES.insights, priority: 0.9, changeFrequency: "weekly" },
   { path: ROUTES.about, priority: 0.8, changeFrequency: "monthly" },
   { path: ROUTES.contact, priority: 0.7, changeFrequency: "yearly" },
   { path: ROUTES.book, priority: 0.7, changeFrequency: "yearly" },
@@ -66,8 +66,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }),
   );
 
-  const articles = ARTICLES.map((article) => ({
-    url: `${SITE_URL}${ROUTES.blog}/${article.slug}`,
+  const articles = INSIGHTS.map((article) => ({
+    url: `${SITE_URL}${ROUTES.insights}/${article.slug}`,
     lastModified: built,
     changeFrequency: "yearly" as const,
     priority: 0.7,

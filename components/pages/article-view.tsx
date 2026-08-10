@@ -3,8 +3,8 @@ import Link from "next/link";
 
 import { CutPanel } from "@/components/layout/cut-panel";
 import { PageShell } from "@/components/layout";
-import { ArticleBody } from "@/components/articles/bodies";
-import { ARTICLES, plateFor, type Article } from "@/lib/articles";
+import { Written } from "@/components/articles/render";
+import { INSIGHTS, plateFor, type Insight } from "@/lib/insights";
 import { ROUTES } from "@/lib/site";
 
 /**
@@ -32,8 +32,8 @@ import { ROUTES } from "@/lib/site";
  * start of on every line, and in a column of terms beside their meanings it
  * put two edges in the middle of the page with nothing on either one.
  */
-export function ArticleView({ article }: { article: Article }) {
-  const next = ARTICLES.filter((entry) => entry.slug !== article.slug).slice(
+export function ArticleView({ article }: { article: Insight }) {
+  const next = INSIGHTS.filter((entry) => entry.slug !== article.slug).slice(
     0,
     2,
   );
@@ -49,7 +49,7 @@ export function ArticleView({ article }: { article: Article }) {
         image={plateFor(article.slug)}
         toolbar={
           <Link
-            href={ROUTES.blog}
+            href={ROUTES.insights}
             className="group/back flex h-10 w-full items-center justify-center gap-2 text-[13px] font-semibold text-quiet transition-colors hover:text-ink"
           >
             <ArrowLeft
@@ -107,7 +107,7 @@ export function ArticleView({ article }: { article: Article }) {
           square one. */}
       <div className="mt-10 overflow-hidden rounded-[28px] bg-field px-5 py-10 sm:px-10 sm:py-14 lg:px-14">
         <article className="mx-auto max-w-measure text-[16.5px] leading-[1.75] [&>*:first-child]:mt-0">
-          <ArticleBody slug={article.slug} />
+          <Written lead={article.lead} sections={article.sections} />
         </article>
       </div>
 
@@ -121,7 +121,7 @@ export function ArticleView({ article }: { article: Article }) {
           {next.map((entry) => (
             <Link
               key={entry.slug}
-              href={`${ROUTES.blog}/${entry.slug}`}
+              href={`${ROUTES.insights}/${entry.slug}`}
               className="group/next flex flex-col rounded-[18px] bg-canvas p-5 transition-colors hover:bg-canvas-firm"
             >
               <span className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">

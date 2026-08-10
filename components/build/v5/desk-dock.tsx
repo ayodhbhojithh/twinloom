@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -69,16 +69,27 @@ export function DeskDock({
      Keyed on the count rather than the name, so asking twice for the same
      panel is heard twice.
 
-     Adjusted during render rather than in an effect. An effect would be a
-     second render pass after paint - the panel would flick open a frame late -
-     and this is not synchronising with anything outside React, it is deriving
-     one piece of state from another. React restarts the render when state is
-     set this way, before anything is committed. */
-  const [seen, setSeen] = useState(desk.asked);
-  if (desk.asked !== seen) {
-    setSeen(desk.asked);
+     In an effect, and it has to be. This was adjusted during render, on the
+     argument that setting state from state is what React allows there and an
+     effect would open the panel a frame late. Both halves of that were true
+     and the conclusion was wrong: the state being set is not this component's,
+     it is the shell's, and setting a parent's state while rendering a child is
+     the one thing that rule does not cover. React said so - "cannot update a
+     component while rendering a different component" - and it is not being
+     fussy: the parent has already rendered this frame, so the update it is
+     being handed cannot be part of it.
+
+     The count is kept in a ref rather than in state, because nothing about it
+     is rendered. It only exists to answer whether this ask is the same one as
+     last time, and a piece of state whose change must not cause a render is a
+     ref. */
+  const answered = useRef(desk.asked);
+
+  useEffect(() => {
+    if (desk.asked === answered.current) return;
+    answered.current = desk.asked;
     if (desk.wants) onFace(desk.wants);
-  }
+  }, [desk.asked, desk.wants, onFace]);
 
   /* Shut on the way back.
 

@@ -39,7 +39,7 @@ const MARKS: Record<string, LucideIcon> = {
   [ROUTES.how]: Route,
   [ROUTES.contact]: Mail,
   [ROUTES.faq]: CircleHelp,
-  [ROUTES.blog]: Newspaper,
+  [ROUTES.insights]: Newspaper,
 };
 
 /**
@@ -299,8 +299,7 @@ interface Tip {
  * as its label. Read out here as well it would be the same name twice.
  */
 function StripTip({ tip }: { tip: Tip }) {
-  const rtl =
-    getComputedStyle(document.documentElement).direction === "rtl";
+  const rtl = getComputedStyle(document.documentElement).direction === "rtl";
 
   return createPortal(
     <span

@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { CutPanel } from "@/components/layout/cut-panel";
 import { PageShell } from "@/components/layout";
-import { ARTICLES, TOPICS, plateFor } from "@/lib/articles";
+import { INSIGHTS, TOPICS, plateFor } from "@/lib/insights";
 import { ROUTES } from "@/lib/site";
 
 /**
@@ -21,14 +21,14 @@ import { ROUTES } from "@/lib/site";
  * card uses for the thing it wants you to open.
  */
 export function BlogView() {
-  const [lead, ...rest] = ARTICLES;
+  const [lead, ...rest] = INSIGHTS;
 
   return (
     <PageShell>
       <header className="mb-9 flex flex-wrap items-end justify-between gap-x-12 gap-y-5">
         <div className="min-w-0">
           <p className="font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase">
-            {ARTICLES.length} pieces · {TOPICS.length} subjects
+            {INSIGHTS.length} pieces · {TOPICS.length} subjects
           </p>
 
           <h1 className="mt-3 max-w-[20ch] text-[clamp(28px,3vw,44px)] leading-[1.04] font-extrabold tracking-[-0.04em] text-ink">
@@ -78,7 +78,7 @@ export function BlogView() {
         }
         corner={
           <Link
-            href={`${ROUTES.blog}/${lead.slug}`}
+            href={`${ROUTES.insights}/${lead.slug}`}
             aria-label={`Read ${lead.title}`}
             className="flex size-11 items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
           >
@@ -92,7 +92,7 @@ export function BlogView() {
 
         <h2 className="mt-3 max-w-[min(24ch,var(--notch-free,62ch))] text-[clamp(24px,2.6vw,38px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink">
           <Link
-            href={`${ROUTES.blog}/${lead.slug}`}
+            href={`${ROUTES.insights}/${lead.slug}`}
             className="transition-opacity hover:opacity-70"
           >
             {lead.title}
@@ -112,7 +112,7 @@ export function BlogView() {
         {rest.map((article, n) => (
           <li key={article.slug}>
             <Link
-              href={`${ROUTES.blog}/${article.slug}`}
+              href={`${ROUTES.insights}/${article.slug}`}
               className="group/piece relative block overflow-hidden rounded-[22px] bg-field transition-colors hover:bg-well"
             >
               {/* The picture, on the right and faded into the ground it sits

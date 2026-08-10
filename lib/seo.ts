@@ -237,7 +237,9 @@ export const websiteLd = () => ({
  * draws these in place of the URL in a result, so a wrong trail is a wrong
  * address shown to everybody who searches.
  */
-export const breadcrumbLd = (trail: readonly { name: string; path: string }[]) => ({
+export const breadcrumbLd = (
+  trail: readonly { name: string; path: string }[],
+) => ({
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: trail.map((step, at) => ({
@@ -261,8 +263,8 @@ export const articleLd = (article: {
   headline: article.title,
   description: article.note,
   abstract: article.lead,
-  url: absolute(`${ROUTES.blog}/${article.slug}`),
-  mainEntityOfPage: absolute(`${ROUTES.blog}/${article.slug}`),
+  url: absolute(`${ROUTES.insights}/${article.slug}`),
+  mainEntityOfPage: absolute(`${ROUTES.insights}/${article.slug}`),
   inLanguage: LOCALE.tag,
   timeRequired: `PT${article.minutes}M`,
   author: { "@id": `${SITE_URL}/#organisation` },

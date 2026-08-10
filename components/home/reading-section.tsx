@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { CutPanel } from "@/components/layout/cut-panel";
-import { ARTICLES, plateFor } from "@/lib/articles";
+import { INSIGHTS, plateFor } from "@/lib/insights";
 import { ROUTES } from "@/lib/site";
 
 /**
@@ -19,7 +19,7 @@ import { ROUTES } from "@/lib/site";
  * considered pieces, and the shape should say that before a word is read.
  */
 export function ReadingSection() {
-  const [lead, ...rest] = ARTICLES;
+  const [lead, ...rest] = INSIGHTS;
 
   return (
     <section className="page-frame pt-14 pb-12 sm:pt-20 sm:pb-16 lg:pt-32 lg:pb-20">
@@ -27,15 +27,13 @@ export function ReadingSection() {
           axis, so four stacked sections read as one page rather than as four
           layouts that happen to follow each other. */}
       <div className="flex flex-col items-center text-center">
-        <h2 className="reveal section-head max-w-[26ch] text-ink">
-          Insight.
-        </h2>
+        <h2 className="reveal section-head max-w-[26ch] text-ink">Insight.</h2>
 
         <Link
-          href={ROUTES.blog}
+          href={ROUTES.insights}
           className="group/all reveal mt-6 inline-flex items-center gap-2 rounded-pill bg-field px-4.5 py-2 text-[13.5px] font-semibold text-ink transition-colors [--step:1] hover:bg-hair"
         >
-          All {ARTICLES.length} pieces
+          All {INSIGHTS.length} pieces
           <ArrowUpRight
             aria-hidden
             className="size-4 transition-transform group-hover/all:translate-x-0.5 group-hover/all:-translate-y-0.5"
@@ -52,7 +50,7 @@ export function ReadingSection() {
           image={plateFor(lead.slug)}
           corner={
             <Link
-              href={`${ROUTES.blog}/${lead.slug}`}
+              href={`${ROUTES.insights}/${lead.slug}`}
               aria-label={`Read ${lead.title}`}
               className="flex size-11 items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
             >
@@ -67,7 +65,7 @@ export function ReadingSection() {
 
             <h3 className="mt-3 max-w-[18ch] text-[clamp(20px,2vw,29px)] leading-[1.08] font-extrabold tracking-[-0.035em] text-ink">
               <Link
-                href={`${ROUTES.blog}/${lead.slug}`}
+                href={`${ROUTES.insights}/${lead.slug}`}
                 className="transition-opacity hover:opacity-70"
               >
                 {lead.title}
@@ -85,7 +83,7 @@ export function ReadingSection() {
           {rest.map((article) => (
             <li key={article.slug} className="flex-1">
               <Link
-                href={`${ROUTES.blog}/${article.slug}`}
+                href={`${ROUTES.insights}/${article.slug}`}
                 className="group/piece flex h-full items-center gap-4 overflow-hidden rounded-[20px] bg-field p-4 transition-colors hover:bg-hair sm:p-5"
               >
                 <span className="min-w-0 flex-1">

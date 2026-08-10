@@ -3,13 +3,13 @@ import { notFound } from "next/navigation";
 
 import { ArticleView } from "@/components/pages/article-view";
 import { JsonLd } from "@/components/seo/json-ld";
-import { ARTICLES, articleBy } from "@/lib/articles";
+import { INSIGHTS, insightBy } from "@/lib/insights";
 import { articleLd, breadcrumbLd, pageMeta } from "@/lib/seo";
 import { ROUTES, SITE } from "@/lib/site";
 
 /** Four articles, known at build time, so all four are rendered ahead of it. */
 export function generateStaticParams() {
-  return ARTICLES.map((article) => ({ slug: article.slug }));
+  return INSIGHTS.map((article) => ({ slug: article.slug }));
 }
 
 export async function generateMetadata({
@@ -17,7 +17,7 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const article = articleBy((await params).slug);
+  const article = insightBy((await params).slug);
   /* An unknown slug renders the 404 below, so it must describe itself as
      nothing at all. A title here would give a soft 404 a real listing. */
   if (!article) return {};
@@ -25,7 +25,7 @@ export async function generateMetadata({
   return pageMeta({
     title: article.title,
     description: article.note,
-    path: `${ROUTES.blog}/${article.slug}`,
+    path: `${ROUTES.insights}/${article.slug}`,
     /* `article` rather than `website`. It is what puts a piece into the
        surfaces that treat writing differently from pages, instead of into the
        pile where everything looks like a home page. */
@@ -38,7 +38,7 @@ export default async function Page({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const article = articleBy((await params).slug);
+  const article = insightBy((await params).slug);
   if (!article) notFound();
 
   return (
@@ -51,8 +51,8 @@ export default async function Page({
           articleLd(article),
           breadcrumbLd([
             { name: SITE.name, path: ROUTES.home },
-            { name: "Insight", path: ROUTES.blog },
-            { name: article.title, path: `${ROUTES.blog}/${article.slug}` },
+            { name: "Insight", path: ROUTES.insights },
+            { name: article.title, path: `${ROUTES.insights}/${article.slug}` },
           ]),
         ]}
       />

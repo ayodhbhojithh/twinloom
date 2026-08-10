@@ -94,7 +94,11 @@ export const ROUTES = {
   contact: "/contact",
   book: "/book",
   faq: "/faqs",
-  blog: "/blog",
+  /* Was `/blog`, and the pieces themselves link to each other as
+     `/insights/...`. A section called Insight, served from `/blog`, whose own
+     writing points at an address that 404s, is three names for one thing. The
+     old address is redirected in `next.config.ts` rather than dropped. */
+  insights: "/insights",
 
   /* The way into the other seven, and where the company details are set out. */
   legal: "/legal",
@@ -147,7 +151,7 @@ export const HEADER_NAV: readonly NavLink[] = [
      This is the order asked for, and it holds to that. */
   { label: "Home", href: ROUTES.home },
   { label: "Services", href: ROUTES.services },
-  { label: "Insight", href: ROUTES.blog },
+  { label: "Insight", href: ROUTES.insights },
   { label: "FAQs", href: ROUTES.faq },
   { label: "How we work", href: ROUTES.how },
   { label: "About", href: ROUTES.about },
@@ -205,7 +209,7 @@ export const RAIL_PAGES: readonly RailPage[] = [
     children: [{ label: "Book a meeting", href: ROUTES.book }],
   },
   { label: "FAQs", href: ROUTES.faq },
-  { label: "Insight", href: ROUTES.blog },
+  { label: "Insight", href: ROUTES.insights },
 ];
 
 export const FOOTER_COLUMNS: readonly {
@@ -233,7 +237,7 @@ export const FOOTER_COLUMNS: readonly {
     title: "Reading",
     links: [
       { label: "FAQs", href: ROUTES.faq },
-      { label: "Insight", href: ROUTES.blog },
+      { label: "Insight", href: ROUTES.insights },
     ],
   },
 ];

@@ -12,6 +12,16 @@ const nextConfig: NextConfig = {
     return [
       { source: "/partners", destination: "/#services", permanent: true },
       { source: "/services", destination: "/#services", permanent: true },
+      /* `/blog` became `/insights`. The section has been called Insight in the
+         bar for a while and the pieces link to each other by that name, so the
+         address was the last thing still calling it a blog. Every old URL keeps
+         whatever it had earned. */
+      { source: "/blog", destination: "/insights", permanent: true },
+      {
+        source: "/blog/:slug",
+        destination: "/insights/:slug",
+        permanent: true,
+      },
     ];
   },
 
