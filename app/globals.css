@@ -130,7 +130,13 @@
      a strip of itself underneath it.
 
      Nought on a phone. There is no room to stand aside on a narrow screen, so
-     the desk covers the page there and the page does not move at all. */
+     the desk covers the page there and the page does not move at all.
+
+     Narrower than it was by about a fifth, along with everything on the landing
+     card. What it holds is a field one line high, a drop zone and a list of
+     short notes - none of which wanted five hundred pixels - and every pixel it
+     takes is one the page beside it gives up, because the page stands aside by
+     exactly this number. */
   --desk-width: 0px;
 
   /* How much of that room is actually being taken, right now.
@@ -299,7 +305,7 @@
   @media (min-width: 64rem) {
     :root {
       --page-gutter: 48px;
-      --desk-width: 520px;
+      --desk-width: 430px;
     }
   }
 
@@ -312,7 +318,7 @@
   @media (min-width: 96rem) {
     :root {
       --page-gutter: 80px;
-      --desk-width: 580px;
+      --desk-width: 470px;
     }
   }
 

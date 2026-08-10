@@ -469,7 +469,7 @@ export function NotchedCard({ className }: { className?: string }) {
      card sets that variable to this number when it renders the bar. The two
      agree either way, so this can be whatever the card wants rather than
      whatever the page happens to use. */
-  const pad = Math.max(28, Math.min(size.w * 0.07, 132));
+  const pad = Math.max(24, Math.min(size.w * 0.06, 112));
 
   /* Where the bar sits, and where the links inside it sit.
 
@@ -995,14 +995,14 @@ export function NotchedCard({ className }: { className?: string }) {
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
                 >
-                  <h1 className="mx-auto max-w-[38ch] text-[clamp(36px,5.6vw,82px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
+                  <h1 className="mx-auto max-w-[38ch] text-[clamp(30px,4.5vw,66px)] leading-[1.03] font-extrabold tracking-[-0.045em] text-ink">
                     {shown.claim?.[0]}
                     <span className="thread-text block">
                       {shown.claim?.[1]}
                     </span>
                   </h1>
 
-                  <p className="mx-auto mt-5 max-w-[92ch] text-[16px] leading-[1.6] text-quiet sm:text-[17.5px]">
+                  <p className="mx-auto mt-4 max-w-[92ch] text-[14.5px] leading-[1.6] text-quiet sm:text-[15.5px]">
                     {shown.lead}
                   </p>
                 </motion.div>
@@ -1012,10 +1012,10 @@ export function NotchedCard({ className }: { className?: string }) {
                 gradient; the quiet one is drawn as an outline rather than a
                 second fill, so the pair reads as one choice with a default
                 rather than as two buttons of equal weight. */}
-              <div className="mt-7 flex flex-wrap items-center justify-center gap-2.5">
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
                 <Link
                   href={ROUTES.build}
-                  className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+                  className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
                 >
                   Build your website
                   <ArrowRight
@@ -1027,7 +1027,7 @@ export function NotchedCard({ className }: { className?: string }) {
 
                 <Link
                   href={ROUTES.book}
-                  className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field/70 px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink backdrop-blur-sm transition-colors hover:border-ink"
+                  className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field/70 px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink backdrop-blur-sm transition-colors hover:border-ink"
                 >
                   Book a meeting
                   <ArrowUpRight
@@ -1076,27 +1076,27 @@ export function NotchedCard({ className }: { className?: string }) {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
               >
-                <h1 className="mx-auto max-w-[19ch] text-[clamp(40px,6.2vw,92px)] leading-[1.0] font-extrabold tracking-[-0.048em] text-white">
+                <h1 className="mx-auto max-w-[19ch] text-[clamp(34px,5vw,74px)] leading-[1.01] font-extrabold tracking-[-0.048em] text-white">
                   {shown.claim?.[0]}
                   <span className="thread-light block">{shown.claim?.[1]}</span>
                 </h1>
 
-                <p className="mx-auto mt-6 max-w-[60ch] text-[16.5px] leading-[1.6] text-white/85 sm:text-[19px]">
+                <p className="mx-auto mt-5 max-w-[60ch] text-[15px] leading-[1.6] text-white/85 sm:text-[17px]">
                   {shown.lead}
                 </p>
 
-                <div className="mt-7 flex justify-center">
+                <div className="mt-6 flex justify-center">
                   {/* Solid white, because everything around it is blue. An
                       outline in white on this ground is a button you have to
                       look for. */}
                   <a
                     href={ROUTES.services}
-                    className="group/way pointer-events-auto inline-flex items-center gap-2.5 rounded-pill bg-field px-6 py-3.5 text-[16px] font-semibold whitespace-nowrap text-ink transition-opacity hover:opacity-90"
+                    className="group/way pointer-events-auto inline-flex items-center gap-2.5 rounded-pill bg-field px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-opacity hover:opacity-90"
                   >
                     What we do
                     <ArrowUpRight
                       aria-hidden
-                      className="size-[18px] shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                      className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
                     />
                   </a>
                 </div>
@@ -1133,22 +1133,22 @@ export function NotchedCard({ className }: { className?: string }) {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
               >
-                <h1 className="mx-auto max-w-[20ch] text-[clamp(32px,4.6vw,64px)] leading-[1.04] font-extrabold tracking-[-0.042em] text-ink">
+                <h1 className="mx-auto max-w-[20ch] text-[clamp(28px,3.8vw,54px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink">
                   {shown.claim?.[0]}
                   <span className="thread-text block">{shown.claim?.[1]}</span>
                 </h1>
 
-                <p className="mx-auto mt-5 max-w-[56ch] text-[15px] leading-[1.62] text-quiet sm:text-[16.5px]">
+                <p className="mx-auto mt-4 max-w-[56ch] text-[14px] leading-[1.62] text-quiet sm:text-[15px]">
                   {shown.lead}
                 </p>
 
-                <div className="mt-7 flex justify-center">
+                <div className="mt-6 flex justify-center">
                   {/* Solid ink, because everything around it is pale. The
                       outline the first screen uses for its second way in is a
                       button you have to look for on a ground like this. */}
                   <Link
                     href={ROUTES.how}
-                    className="group/way pointer-events-auto inline-flex items-center gap-2 rounded-pill bg-ink px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90"
+                    className="group/way pointer-events-auto inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90"
                   >
                     How we work
                     <ArrowUpRight
@@ -1193,19 +1193,19 @@ export function NotchedCard({ className }: { className?: string }) {
                     one screen is the screen saying the name and then saying it
                     again in case. */}
 
-                <h1 className="mx-auto max-w-[20ch] text-[clamp(32px,4.6vw,64px)] leading-[1.04] font-extrabold tracking-[-0.042em] text-ink">
+                <h1 className="mx-auto max-w-[20ch] text-[clamp(28px,3.8vw,54px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink">
                   {shown.claim?.[0]}
                   <span className="thread-text block">{shown.claim?.[1]}</span>
                 </h1>
 
-                <p className="mx-auto mt-5 max-w-[56ch] text-[15px] leading-[1.62] text-quiet sm:text-[16.5px]">
+                <p className="mx-auto mt-4 max-w-[56ch] text-[14px] leading-[1.62] text-quiet sm:text-[15px]">
                   {shown.lead}
                 </p>
 
-                <div className="mt-7 flex justify-center">
+                <div className="mt-6 flex justify-center">
                   <Link
                     href={ROUTES.build}
-                    className="group/way thread-fill pointer-events-auto inline-flex items-center gap-2 rounded-pill px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+                    className="group/way thread-fill pointer-events-auto inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
                   >
                     Start yours
                     <ArrowRight
@@ -1320,7 +1320,7 @@ export function NotchedCard({ className }: { className?: string }) {
                  beats static content in the same stacking context however
                  early in the markup it appears - the beads came out on top of
                  the sentence they are meant to be under. */
-              className="relative flex h-full w-full flex-col gap-7"
+              className="relative flex h-full w-full flex-col gap-5"
             >
               {/* The words take the larger share, not the picture.
 
@@ -1338,7 +1338,7 @@ export function NotchedCard({ className }: { className?: string }) {
                   as having sunk. The padding is inside the centred box, so it
                   takes half its own height off the middle and lifts the whole
                   two-up by that much. */}
-              <div className="flex flex-1 flex-col items-center justify-center gap-8 pb-8 sm:pb-14 lg:flex-row lg:items-center lg:gap-10">
+              <div className="flex flex-1 flex-col items-center justify-center gap-6 pb-6 sm:pb-10 lg:flex-row lg:items-center lg:gap-8">
                 {/* Drawn wider than the room it takes, and grown leftward.
 
                     At a straight 52 per cent the mark was half the row and the
@@ -1365,7 +1365,7 @@ export function NotchedCard({ className }: { className?: string }) {
                     as twice. */}
                 <motion.div
                   variants={HERO_MARK}
-                  className="pointer-events-none w-[86%] max-w-[380px] shrink-0 lg:order-2 lg:-ml-[12%] lg:w-[54%] lg:max-w-none"
+                  className="pointer-events-none w-[84%] max-w-[320px] shrink-0 lg:order-2 lg:-ml-[12%] lg:w-[54%] lg:max-w-none"
                 >
                   <MarkStage />
                 </motion.div>
@@ -1383,7 +1383,7 @@ export function NotchedCard({ className }: { className?: string }) {
                     label. */}
                   <motion.ul
                     variants={HERO_RISE}
-                    className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 font-mono text-[11px] font-bold tracking-[0.15em] text-idx uppercase lg:justify-start"
+                    className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 font-mono text-[10px] font-bold tracking-[0.15em] text-idx uppercase lg:justify-start"
                   >
                     {shown.kicker?.map((trade, n) => (
                       <li key={trade} className="flex items-center gap-2.5">
@@ -1418,7 +1418,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       right at 62px of headline is mean at 32. */}
                   <motion.h1
                     variants={HERO_RISE}
-                    className="mx-auto mt-3.5 max-w-[26ch] text-[clamp(32px,4.2vw,62px)] leading-[1.04] font-extrabold tracking-[-0.042em] text-ink lg:mx-0"
+                    className="mx-auto mt-3 max-w-[26ch] text-[clamp(28px,3.4vw,51px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink lg:mx-0"
                   >
                     {shown.claim?.[0]}
                     <span className="thread-text block">
@@ -1428,7 +1428,7 @@ export function NotchedCard({ className }: { className?: string }) {
 
                   <motion.p
                     variants={HERO_RISE}
-                    className="mx-auto mt-5 max-w-[44ch] text-[clamp(17px,1.6vw,24px)] leading-[1.36] font-bold tracking-[-0.022em] text-ink sm:mt-6 lg:mx-0"
+                    className="mx-auto mt-4 max-w-[44ch] text-[clamp(15px,1.3vw,19.5px)] leading-[1.38] font-bold tracking-[-0.022em] text-ink sm:mt-5 lg:mx-0"
                   >
                     {shown.lead}
                   </motion.p>
@@ -1441,7 +1441,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       longer be rewritten without touching the markup. */}
                   <motion.p
                     variants={HERO_RISE}
-                    className="pointer-events-auto mx-auto mt-5 max-w-[62ch] text-[15px] leading-[1.7] text-quiet sm:mt-6 sm:text-[16px] lg:mx-0"
+                    className="pointer-events-auto mx-auto mt-4 max-w-[62ch] text-[13.5px] leading-[1.68] text-quiet sm:mt-5 sm:text-[14.5px] lg:mx-0"
                   >
                     {shown.note?.split(SISTER).map((part, n) => (
                       <span key={n}>
@@ -1471,16 +1471,13 @@ export function NotchedCard({ className }: { className?: string }) {
                       did. */}
                   <motion.div
                     variants={HERO_RISE}
-                    className="pointer-events-auto mt-8 flex flex-wrap justify-center gap-2.5 sm:mt-10 lg:flex-nowrap lg:justify-start"
+                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 sm:mt-8 lg:flex-nowrap lg:justify-start"
                   >
                     <Link
                       href={ROUTES.build}
-                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-5.5 py-3.5 text-[15px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
                     >
-                      <PencilLine
-                        aria-hidden
-                        className="size-[18px] shrink-0"
-                      />
+                      <PencilLine aria-hidden className="size-4 shrink-0" />
                       Scope your website
                       <ArrowRight
                         aria-hidden
@@ -1507,7 +1504,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       },
                     ].map((way) => {
                       const className =
-                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-5.5 py-3.5 text-[15px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink";
+                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink";
                       const body = (
                         <>
                           <way.icon
@@ -1542,7 +1539,7 @@ export function NotchedCard({ className }: { className?: string }) {
               {/* The floor line arrives last, after everything it sits under. */}
               <motion.div
                 variants={HERO_RISE}
-                className="hidden items-center justify-center gap-4 md:flex"
+                className="hidden items-center justify-center gap-3.5 md:flex"
               >
                 <Image
                   src="/assets/logo.png"
@@ -1552,21 +1549,21 @@ export function NotchedCard({ className }: { className?: string }) {
                   aria-hidden
                   draggable={false}
                   sizes="64px"
-                  className="size-8 flex-none object-contain"
+                  className="size-7 flex-none object-contain"
                 />
-                <span className="text-[15.5px] font-bold tracking-[-0.02em] text-ink">
+                <span className="text-[14px] font-bold tracking-[-0.02em] text-ink">
                   TwinCoreTech
                 </span>
                 {/* A rule between them, not a bullet. The two are a name and a
                     description of it, which is a caption - and a caption is set
                     off by a line. */}
-                <span aria-hidden className="h-6 w-px flex-none bg-hair" />
+                <span aria-hidden className="h-5 w-px flex-none bg-hair" />
                 {/* Wide enough for the whole sentence on one line where there
                     is room for one. At forty-six characters it broke after
                     "more than", which puts "a website." alone on a second line -
                     a two word orphan under a caption that is one sentence long.
                     Seventy-six is the sentence. */}
-                <span className="max-w-[76ch] text-[13.5px] leading-[1.5] text-quiet">
+                <span className="max-w-[76ch] text-[12.5px] leading-[1.5] text-quiet">
                   Custom software development for businesses that need more than
                   a website.
                 </span>
