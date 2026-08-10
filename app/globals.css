@@ -1266,6 +1266,12 @@
      quadratic, so most of the drop happens at a speed the eye can follow
      instead of in the last few frames.
 
+     One and six tenths rather than one and nine. The proportions are untouched,
+     so the fall is still the same shape at the same share of the run - it is
+     only that the whole thing is over sooner. Below about one and a half the
+     accelerate has to be steep enough that the landing goes back to being a
+     stop, which is the thing this was tuned away from.
+
      Three bounces, each about a third of the last, and they get quicker as they
      shrink - which is the one thing a bouncing ball does that a shrinking
      wobble does not. */
@@ -1318,7 +1324,7 @@
     /* `linear` on purpose - the keyframes above set their own curve per
        segment, and anything here would be applied on top of every one of
        them. */
-    animation: trail-bead 1.9s linear backwards;
+    animation: trail-bead 1.6s linear backwards;
   }
 
   /* And one under the pointer, picked up off the thread and put back.

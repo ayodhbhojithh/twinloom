@@ -195,14 +195,18 @@ export function BeadTrail({ className }: { className?: string }) {
           Sharing the clock is what keeps them meeting.
 
           The delay is the index, so the run reads left to right along the
-          thread. A tenth of a second between them: enough that they land one
-          after another rather than as a shower.
+          thread. Three quarters of a tenth of a second between them: enough that
+          they land one after another rather than as a shower, short enough that
+          the seven of them are a run rather than a queue.
 
-          They start a second in, after the words above them rather than under
-          them. Twenty SVG elements moving at once is not free, and it was
-          costing frames from the one thing on this screen the eye is actually
-          on - and even if it were free, a headline arriving while ten balls
-          rain past it is two performances at once and neither gets watched. Every value is written here rather than
+          They start almost at once. They were held back a full second, so that
+          twenty SVG elements moving at their own transforms would not cost
+          frames from the words arriving above them - and at the time they would
+          have, because the texture behind them was redrawing at a denser buffer
+          and the mark was recompositing a blend group every frame. Neither is
+          true now. What the delay bought was a screen that loaded, settled, and
+          then started doing something a second later, which reads as the page
+          being slow rather than as a sequence. Every value is written here rather than
           in the stylesheet because it is per bead, and a stylesheet cannot hold
           ten of them without ten classes. */}
       {TRAIL.map((bead, n) => (
@@ -330,7 +334,7 @@ function Bead({
       >
         <circle
           className="trail-bead"
-          style={{ animationDelay: `${1 + n * 0.1}s` }}
+          style={{ animationDelay: `${0.28 + n * 0.075}s` }}
           cx={bead.x}
           cy={bead.y}
           r={bead.r}
