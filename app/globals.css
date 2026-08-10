@@ -445,9 +445,19 @@
   }
 
   /* The white surfaces that stand on the glass: plates, cards and the panel.
-     Lighter, because they are meant to read as solid things resting on it. */
+     Lighter, because they are meant to read as solid things resting on it.
+
+     It was mixing `--color-canvas`, which is the tinted ground the page is
+     made of - so the one class named for the white surfaces was the only one
+     painting them grey. Everything that asked for it got the opposite of what
+     it asked for: `Stage`'s own `field` tone says "white, for a surface that
+     opens over the page and has to separate itself from the canvas behind
+     it", and what it opened was a pane of the canvas on the canvas.
+
+     `--color-field` at 96, a shade firmer than `.glass` at 94, because this is
+     the layer that sits on top of that one and has to be told apart from it. */
   .glass-pane {
-    background-color: color-mix(in oklab, var(--color-canvas) 88%, transparent);
+    background-color: color-mix(in oklab, var(--color-field) 96%, transparent);
     backdrop-filter: blur(22px) saturate(140%);
     -webkit-backdrop-filter: blur(22px) saturate(140%);
     box-shadow:
