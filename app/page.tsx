@@ -67,16 +67,25 @@ export default function LandingPage() {
              edge with something above it rather than the window, so it wants
              less than the other three - but it wants some. */
           paddingTop: "var(--sill-top)",
-          /* A shade under the sides rather than exactly them.
+          /* The same as the head, and no longer more than it.
 
-             On paper this was already the gutter and so already equal to the
-             left and right. On the screen it was not reading that way, and the
-             reason is that a gap between an object and the bottom of the window
-             is bounded on one side only: the sides are read against the page
-             either side of the card, and this is read against nothing. The eye
-             adds the rest, so four equal numbers do not give four equal gaps. A
-             fifth under the sides is where it settles. */
-          paddingBottom: "var(--sill-bottom)",
+             It used to be a fifth over the sides, on the argument that a gap
+             between an object and the bottom of the window is bounded on one
+             side only - the sides are read against the page either side of the
+             card and this is read against nothing, so the eye adds the rest.
+             That held while the card was the whole window.
+
+             It is not the whole window now: there is a bar above it, and the
+             card sits between that bar and the fold. A gap read against a
+             header at one end and the fold at the other is bounded at both, so
+             the two want the same number - and the smaller one, because the
+             room the card lost to the bar has to come from somewhere.
+
+             Then under even that. Half the head is enough to keep the card off
+             the fold and read as an inset rather than a bleed, and every point
+             it gives up goes to the card - which is the only thing on this
+             screen anybody came for. */
+          paddingBottom: "calc(var(--sill-top) / 2)",
         }}
         /* The whole window, not the window less the header - the header is
            inside the card on this page, so there is nothing above it to take
@@ -92,7 +101,17 @@ export default function LandingPage() {
 
            So the ceiling comes off below `sm` and nowhere else. Everything from
            `sm` up is the height it was, to the pixel. */
-        className="flex flex-col overflow-clip max-sm:min-h-svh sm:h-svh"
+        /* A screenful less the bar, now that there is a bar.
+
+           The header used to be inside the card, so the card was the window and
+           `100svh` was the right height for it. It is above the card in the
+           layout now - see `site-shell` - and it takes its own room in the flow,
+           so a card still asking for a whole screen made the page a screen and a
+           bar tall and pushed its own foot past the fold.
+
+           `--nav-height` is the bar's own number, read from the stylesheet
+           rather than measured here, so the two cannot drift. */
+        className="flex flex-col overflow-clip max-sm:min-h-[calc(100svh-var(--nav-height))] sm:h-[calc(100svh-var(--nav-height))]"
       >
         {/* No heading here. The card carries the `h1` now - it says the same
             claim, on the screen, where the words and the two ways in sit inside
@@ -115,7 +134,7 @@ export default function LandingPage() {
             when the section was `h-svh`, and being a minimum is what lets it
             grow past that when the contents need it to. */}
         <div className="page-frame w-full flex-1 max-sm:min-h-fit sm:min-h-0">
-          <NotchedCard className="h-full w-full max-sm:h-auto max-sm:min-h-[calc(100svh-var(--sill-top)-var(--sill-bottom))]" />
+          <NotchedCard className="h-full w-full max-sm:h-auto max-sm:min-h-[calc(100svh-var(--nav-height)-var(--sill-top)-var(--sill-top)/2)]" />
         </div>
       </section>
 

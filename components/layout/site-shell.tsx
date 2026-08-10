@@ -105,19 +105,26 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      {/* Two arrangements, one component.
+      {/* One bar, on every page, from the first pixel.
 
-          Everywhere but the landing page the bar is simply there, stuck to the
-          top of the window from the first pixel.
+          It used to be two arrangements. The landing page put a header inside
+          its card - the card is the whole window there, and the argument was
+          that a bar above it would be a bar above the page rather than part of
+          it - and because that copy scrolled away with the card it was in, a
+          second one waited off the top of the window and came down once the card
+          had gone.
 
-          The landing page puts a header inside its card, because the card is the
-          whole window there and a bar above it would be a bar above the page
-          rather than part of it. That one scrolls away with the card it is in,
-          which leaves the rest of the page with no way back - so a second copy
-          waits off the top of the window and comes down once the card has gone.
-          It is the same component and the same links; what differs is that this
-          one is not there until it is needed. */}
-      {floating ? <SiteHeader appear={APPEAR} /> : <SiteHeader />}
+          Two copies of one bar is two of everything: two places a link can be
+          wrong, two sets of paddings, and a card whose top edge had to be
+          measured around a row of links standing in it. It also meant the name
+          and the nav were inside the one element on the page that turns, so they
+          sat on a photograph on one screen and a moving field on the next, and
+          two of the five screens had to hide them outright.
+
+          Now it is simply the header, above the card, the same as everywhere
+          else. The card keeps its notch and the three controls in it, which are
+          about the card rather than about the site. */}
+      <SiteHeader />
 
       {/* Aside, rather than under.
 

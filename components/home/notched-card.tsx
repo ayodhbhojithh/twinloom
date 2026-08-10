@@ -25,7 +25,6 @@ import { ParticleCanvas } from "@/components/ui/ParticleCanvas";
 import { FilmStage } from "./film-stage";
 import { BeadTrail, MarkStage } from "./mark-stage";
 import { ProjectPanel } from "./project-panel";
-import { SiteHeader } from "@/components/layout/site-header";
 
 import { HERO_SLIDES } from "./hero-slides";
 import { type Project } from "./projects";
@@ -319,16 +318,6 @@ const BAR_TIGHT = TOOL_TIGHT * 3 + 2 * 2 + 6 * 2;
 
 /** Where the card stops being able to afford the full-size bar. */
 const TIGHT = 640;
-
-/**
- * The header's own height, as the stylesheet sets it.
- *
- * A copy of `--nav-height`, and the only honest way to have one: this card lays
- * its screens out in JavaScript from measured pixels, and a CSS variable is not
- * a number until the browser has one. Kept beside the other measurements so the
- * day the bar changes height, both places are one screen apart.
- */
-const NAV_HEIGHT = 53;
 
 /**
  * How the first screen arrives: one thing after another, up into place.
@@ -694,19 +683,6 @@ export function NotchedCard({ className }: { className?: string }) {
      whatever the page happens to use. */
   const pad = Math.max(24, Math.min(size.w * 0.06, 112));
 
-  /* Where the bar sits, and where the links inside it sit.
-
-     Two numbers, because the notch only lands on one part of the bar. It is
-     centred and so are the links; the name is out at the gutter and the menu
-     button is at the far end, and neither goes anywhere near it. So the bar
-     itself sits near the top edge where the name belongs, and the links alone
-     drop past the cut's own floor - `barTop` is the whole bar, `navDrop` is
-     what `SiteHeader` adds to the middle of it.
-
-     The alternative was one number for both, which is what this was: the bar
-     started below the notch, and the name was pushed a notch's depth down the
-     card to clear something a third of the width away from it. */
-  const barTop = 10;
   /* Clear of the floor of the cut, not level with it.
 
      Level was tried and it is wrong, for a reason the arcs make easy to
@@ -719,18 +695,15 @@ export function NotchedCard({ className }: { className?: string }) {
      runs at. A gap the size of the curve that made it is the one number here
      that cannot read as arbitrary. */
   const headTop = cut.barDepth + 12;
-  /* Where the links start, measured from the bar's own top edge.
-     `barTop` is what the bar has already come down by, so the links only have
-     to make up the rest of the way to `headTop`. */
-  const navDrop = Math.max(0, headTop - barTop);
 
   /* How far down the card anything else can start.
 
-     The links, which are the lowest thing in the bar, and nothing else. Every
-     pixel here is one the words below move down by, and the screens are
-     centred in what is left - so it clears wherever the links actually end,
-     plus the eight pixels of air the original number already held past it. */
-  const head = headTop + NAV_HEIGHT + 8;
+     The floor of the notch and a little air, and nothing else. It used to add
+     the height of a row of links as well, because the links stood in this edge;
+     they are in the page's own header now, above the card, so there is nothing
+     up here to clear but the cut itself - and every pixel this reserved was one
+     the words below were pushed down by. */
+  const head = headTop + 8;
 
   /* The measurement that placed the name on the picture went with the name. It
      worked out whether the bottom edge had room for it beside the thumbnail, and
@@ -1102,78 +1075,13 @@ export function NotchedCard({ className }: { className?: string }) {
         </div>
       ) : null}
 
-      {/* The site's header, inside the card.
+      {/* No header in here any more.
 
-          Everywhere else it is a bar across the top of the window with the page
-          under it. Here the card is the window, so a bar above it would be a bar
-          above the page rather than part of it - `SiteShell` renders nothing on
-          this route and this renders it instead, bare: no sticky, no white
-          ground of its own, no fade under it. It is standing on the card's white
-          already.
-
-          Held clear of the notch, which is centred in the same edge. The notch
-          is measured, so this is measured from it rather than guessed at - a
-          number here would be a number to fix the day the bar in the notch
-          changes size. */}
-      {/* `pointer-events-none` on the box, not on the bar inside it.
-
-          The box runs the whole width of the top edge, and the notch with the
-          three arrows in it is in the middle of that same edge. Sitting above
-          them, it took every click meant for an arrow and the card stopped
-          turning. The box is only here to place the bar, so it takes no clicks;
-          the bar takes its own. */}
-      {/* Not on the two screens that are pictures.
-
-          The rest are white behind the bar, or have a wash taking the card back
-          under the words. These two have neither. The reel is a photograph edge
-          to edge, and a row of grey links over moving footage is a row nobody
-          can read on half the frames and nobody can ignore on the rest. The pit
-          is worse in its own way: two hundred glass beads drift under the links
-          and the row is legible one second and gone the next, which is a bar
-          that flickers rather than one that is hard to read.
-
-          Nothing is lost that cannot be reached. The arrows in the notch still
-          turn the card, and one turn puts the bar back - a fair trade on the two
-          screens that are pictures rather than pages. */}
-      <div
-        className={cn(
-          "pointer-events-none absolute inset-x-0 top-0 z-20",
-          (shown.view === "film" || shown.view === "balls") && "hidden",
-        )}
-        style={{
-          /* The header's own side padding, set to the card's.
-
-             It reads `--page-gutter`, which is the page's number and not this
-             card's - so the wordmark sat nearer the edge than every line of type
-             under it. Overriding it here puts the name, the claim and the
-             paragraph on one left edge, which is the only alignment on this
-             screen anybody will notice. */
-          /* Tighter than the card's own inset on a phone.
-
-             `pad` is the measure a line of type is held off the edge by, and a
-             wordmark is not a line of type - it is the object at the corner, and
-             an object indented as far as a paragraph reads as having drifted in
-             from it. On a wide card the two are far enough apart that sharing a
-             number costs nothing; on a narrow one the inset is most of what is
-             standing between the mark and the notch beside it. */
-          ["--page-gutter" as string]: `${
-            size.w < TIGHT ? Math.max(14, pad * 0.6) : pad
-          }px`,
-          /* Clear of the notch, which is centred over the nav now rather than
-             off to one side of it - see `barTop` and `navDrop`. Nearer the top
-             edge on a phone, where the bar has a shallower notch beside it and
-             less room under it to spare.
-
-             Four was too near it. The notch's own floor is a dozen points down
-             from the top edge, and a wordmark level with the top of the cut sits
-             above everything the cut contains - so the bar read as hanging off
-             the edge rather than standing in the card. Fourteen puts the name on
-             about the same line as the arrows beside it. */
-          paddingTop: size.w < TIGHT ? 14 : barTop,
-        }}
-      >
-        <SiteHeader bare navTop={navDrop} />
-      </div>
+          It carried one for a long time, `bare`, with its gutter overridden to
+          the card's and its links dropped past the floor of the notch. It is in
+          the layout now, above the card, like every other page - see
+          `site-shell`. What is left in this edge is the notch and the three
+          controls standing in it, which is what it was cut for. */}
 
       {/* The bar, standing in the top of the cut. No plate behind it: the notch
           is already the outline, and a pill drawn inside it is a second shape
@@ -1639,7 +1547,7 @@ export function NotchedCard({ className }: { className?: string }) {
              where one was wanted, and a hand's depth of empty card under the
              last button. Its height is its contents; the card is what holds the
              floor, and the card gets that from the section it fills. */
-          className="pointer-events-none absolute inset-0 z-10 flex items-stretch max-sm:relative max-sm:inset-auto max-sm:min-h-[calc(100svh-var(--sill-top)-var(--sill-bottom))]"
+          className="pointer-events-none absolute inset-0 z-10 flex items-stretch max-sm:relative max-sm:inset-auto max-sm:min-h-[calc(100svh-var(--nav-height)-var(--sill-top)-var(--sill-top)/2)]"
           style={{
             /* `head` clears the row of links, and there is no row of links on a
                phone - the bar is a wordmark and a menu button, and the notch

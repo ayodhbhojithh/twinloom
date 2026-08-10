@@ -170,7 +170,20 @@ export function SiteHeader({
                this has to take its own, or every link in it is dead. */
             "pointer-events-auto relative z-30"
           : appear === undefined
-            ? "header-fade sticky top-0 z-40 bg-field"
+            ? /* The page's own ground, not white, and no fade under it.
+
+                 It was `bg-field` with `header-fade` - a white bar with white
+                 running out below it, which is right when the thing scrolling
+                 underneath is white and wrong here: the page is canvas, so what
+                 read was a white strip laid across the top of it with a soft
+                 edge, and the card underneath started again a few pixels lower.
+                 On the canvas it is not a bar at all, it is the top of the page,
+                 which is what a header on this site should be.
+
+                 It keeps a ground rather than going transparent, because it is
+                 sticky: everything below scrolls under it, and type sliding
+                 beneath type is the one thing a fixed bar must not allow. */
+              "sticky top-0 z-40 bg-canvas"
             : /* Fixed, not sticky, and that is the whole of it: a sticky element
                  still takes its place in the flow, so this one reserved a bar's
                  height at the top of the landing page and left an empty band
@@ -188,7 +201,10 @@ export function SiteHeader({
       )}
       data-here={appear !== undefined ? "no" : undefined}
     >
-      <div className="page-frame relative flex items-center gap-4 py-2.5">
+      {/* No padding under the row. The thing below it is the card, which
+          carries its own inset from the window on every side - so a bar with
+          space beneath it was two gaps where the page needed one. */}
+      <div className="page-frame relative flex items-center gap-4 pt-2.5 pb-0">
         <div className="flex min-w-0 flex-1 items-center">
           <Wordmark />
         </div>
