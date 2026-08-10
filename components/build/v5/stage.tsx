@@ -251,8 +251,15 @@ export function Stage({
        function came out as two shapes. Same formulas here means a corner on
        the desk and a corner on the card curve by the same amount at the same
        size, which is the whole of what makes them read as one drawing. */
-    const radius = Math.max(18, Math.min(w * 0.018 + 14, 34));
-    const flare = Math.max(22, Math.min(h * 0.04, 34));
+    /* Where the surface stops being wide enough to spend a third of its
+       bottom edge on two corners. */
+    const tight = w < 520;
+
+    const radius = Math.max(14, Math.min(w * 0.018 + 14, tight ? 22 : 34));
+    const flare = Math.max(
+      tight ? 15 : 22,
+      Math.min(h * 0.04, tight ? 22 : 34),
+    );
 
     /* Except the notch, which takes its curve from what stands in it.
 
@@ -292,7 +299,23 @@ export function Stage({
        where the two arcs meet, and ninety-six is what the card settles at.
        The width only gets a say on something too narrow to give it - and a
        panel that narrow is a phone, where the desk covers the page anyway. */
-    const cut = Math.max(flare * 2 + 16, Math.min(96, w * 0.34));
+    /* Both bottom cuts, and on a narrow surface they have to come down.
+
+       Ninety-six is the right size against a card the width of a window: it is
+       read as a corner given up, and the 44px control standing in it has air
+       round it. On a phone the same number is two hundred of a three hundred
+       and forty point edge - so the count sat in one corner, the way on in the
+       other, and the send button was left to fit between them in what was left.
+       It did not.
+
+       Scaled to the surface rather than switched at a breakpoint, because what
+       decides it is how much edge there is to give away. The floor is still the
+       control: `flare * 2` is where the two arcs meet, and the twelve on top of
+       it is the air round a target a thumb has to hit. */
+    const cut = Math.max(
+      flare * 2 + (tight ? 10 : 16),
+      Math.min(tight ? 64 : 96, w * (tight ? 0.2 : 0.34)),
+    );
     const bite = cut;
     const drop = cut;
 
