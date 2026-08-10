@@ -370,6 +370,15 @@ const HERO_RISE = {
  * sequence, which is what a title card is. So this is four of them, each with
  * its own place on the frame, its own moment, and its own way in and out.
  *
+ * And every one of them is about a website.
+ *
+ * They read "TwinLoom film", "on set", "filmed, cut and graded here" - which is
+ * true, and is the wrong thing to be true on this page. A visitor who lands on a
+ * reel captioned like a production company concludes we are one, and the four
+ * words they take away are about a shoot rather than about what we sell. The
+ * footage is the demonstration, not the offer: what this screen is showing is
+ * the kind of site a clothing shop gets, so that is what its titles say.
+ *
  * The first is already on screen before anybody touches the wheel - its window
  * opens before nought - because a picture with nothing on it gives no reason to
  * scroll, and the whole point of this screen is that somebody does.
@@ -394,7 +403,7 @@ const HERO_RISE = {
  */
 const TITLES = [
   {
-    over: "TwinLoom film",
+    over: "A website we built",
     lead: "Your clothing",
     tail: "store.",
     place: "bottom-left",
@@ -403,27 +412,27 @@ const TITLES = [
     hide: [0.16, 0.24],
   },
   {
-    over: "On set",
-    lead: "Filmed, cut",
-    tail: "and graded here.",
+    over: "Brand, shop, checkout",
+    lead: "Built as",
+    tail: "one piece.",
     place: "top-left",
     from: "left",
     show: [0.26, 0.34],
     hide: [0.46, 0.54],
   },
   {
-    over: "Frame by frame",
-    lead: "Every frame",
-    tail: "is a still.",
+    over: "Made to move",
+    lead: "Your scroll",
+    tail: "runs it.",
     place: "middle-right",
     from: "right",
     show: [0.56, 0.64],
     hide: [0.74, 0.82],
   },
   {
-    over: "Which makes you",
-    lead: "Your scroll",
-    tail: "is the shutter.",
+    over: "Whatever you sell",
+    lead: "Yours could",
+    tail: "look like this.",
     place: "bottom-left",
     from: "scale",
     show: [0.84, 0.92],
@@ -1338,25 +1347,15 @@ export function NotchedCard({ className }: { className?: string }) {
                   <span className="thread-text block">{shown.claim?.[1]}</span>
                 </h1>
 
-                <p className="mx-auto mt-4 max-w-[56ch] text-[14px] leading-[1.62] text-quiet sm:text-[15px]">
-                  {shown.lead}
-                </p>
+                {/* The claim, and nothing under it.
 
-                <div className="mt-6 flex justify-center">
-                  {/* Solid ink, because everything around it is pale. The
-                      outline the first screen uses for its second way in is a
-                      button you have to look for on a ground like this. */}
-                  <Link
-                    href={ROUTES.how}
-                    className="group/way pointer-events-auto inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90"
-                  >
-                    How we work
-                    <ArrowUpRight
-                      aria-hidden
-                      className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
-                    />
-                  </Link>
-                </div>
+                    A paragraph and a button stood here. Both were explaining a
+                    screen that explains itself: the beads answer to the pointer,
+                    so the invitation to play with the design is the field, not a
+                    sentence about the field. And the card already carries every
+                    way on it needs - four of them on the first screen, three on
+                    the fourth - so a fifth here was the same door offered
+                    again. */}
               </motion.div>
             </AnimatePresence>
           </div>
