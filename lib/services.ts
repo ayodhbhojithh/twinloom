@@ -7,7 +7,6 @@ import {
   FileText,
   Gauge,
   Globe,
-  Infinity as Loop,
   LifeBuoy,
   LineChart,
   Lock,
@@ -152,29 +151,6 @@ export const SERVICES: readonly Service[] = [
       "Photography and film of the actual business",
       "Copywriting, where the words have to be written rather than edited",
       "The rules for using any of it afterwards",
-    ],
-  },
-  /* The seventh, and the only one that is not a discipline.
-
-     Every card above it names a thing that can be bought on its own. This one
-     names what happens when they are not bought on their own, which is the
-     argument the whole page is making - and it is the reason the picture is the
-     mark rather than a drawing of an object. There is no object: the thing being
-     described is that there is one supplier and not four.
-
-     Last in the list on purpose. It reads as the sum of what is above it, and a
-     sum put first is a claim nobody has been given the parts of yet. */
-  {
-    icon: Loop,
-    art: "/assets/services/one-partner.png",
-    n: "One partner, the whole build",
-    sub: "The site, the software behind it and everything that runs alongside, from one company. One contract, one invoice, and the same people to ask either way.",
-    by: "By us",
-    covers: [
-      "One proposal covering all of it",
-      "One invoice, whoever does the work",
-      "Specialists named before the work starts",
-      "Nobody to hand you between",
     ],
   },
   {

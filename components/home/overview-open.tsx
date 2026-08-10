@@ -20,18 +20,21 @@ import { INCLUDED, OFFER, SERVICES } from "@/lib/services";
 /**
  * The six, in the order the reference sets them.
  *
- * What we build first, then what sits behind it, then the four that run
- * alongside. "One partner, the whole build" is deliberately not in it: it is
- * not a seventh discipline, it is the sum of the other six, and it has the line
- * at the foot rather than a card of its own.
+ * What we build first, then what sits behind it, then the ones that run
+ * alongside. There is no filter here any more: "One partner, the whole build"
+ * used to be dropped by name, because it was the sum of the others rather than
+ * one of them and it says the same thing as the line at the foot. It is off the
+ * list itself now, so there is nothing to drop.
  *
  * Each card is the discipline's own drawing rather than its Lucide icon. The
  * icon is the fallback the services page keeps for a discipline whose picture
  * has not been made yet, and all six of these have one.
  */
-const CARDS = [...OFFER, ...SERVICES]
-  .filter((entry) => entry.n !== "One partner, the whole build")
-  .map((entry) => ({ art: entry.art, name: entry.n, say: entry.sub }));
+const CARDS = [...OFFER, ...SERVICES].map((entry) => ({
+  art: entry.art,
+  name: entry.n,
+  say: entry.sub,
+}));
 
 export function OverviewOpen() {
   return (

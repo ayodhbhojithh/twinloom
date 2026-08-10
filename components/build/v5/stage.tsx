@@ -25,6 +25,16 @@ import { cn } from "@/lib/utils";
    is that the site is drawn by one hand.
 --------------------------------------------------------------------------- */
 
+/**
+ * How tall the bar standing in the notch is.
+ *
+ * The notch is cut to hold it, so this is the number the cut is measured from
+ * rather than a number the cut happens to allow. Written from what the plate
+ * actually is - a row of pill buttons at 12.5px with their own padding - so a
+ * change there is a change here and the hole follows the thing in it.
+ */
+const PLATE = 34;
+
 export function Stage({
   toolbar,
   stickyBar,
@@ -210,29 +220,55 @@ export function Stage({
     const w = Math.max(size.w, 1);
     const h = Math.max(size.h, 1);
 
-    const radius = Math.max(20, Math.min(w * 0.02 + 14, 32));
-    const flare = Math.max(22, Math.min(h * 0.03, 28));
+    /* The landing card's own two numbers, not a second pair near them.
+
+       This surface and that card are drawn by the same `outline`, and they had
+       different radii and different flares - so two shapes built from one
+       function came out as two shapes. Same formulas here means a corner on
+       the desk and a corner on the card curve by the same amount at the same
+       size, which is the whole of what makes them read as one drawing. */
+    const radius = Math.max(18, Math.min(w * 0.018 + 14, 34));
+    const flare = Math.max(22, Math.min(h * 0.04, 34));
+
+    /* Except the notch, which takes its curve from what stands in it.
+
+       A notch cannot be shallower than twice its own flare - that is where its
+       two arcs meet - so on a panel the height of the window the card's flare
+       gave a cut fifty-four deep to hold a bar of thirty-four, and twenty
+       pixels of it were nothing but hole. Capped by the bar, the cut is the
+       size of the thing in it. */
+    const barFlare = Math.min(flare, (PLATE + 6) / 2);
 
     /* Collapsed when nothing stands in it, exactly as the other two cuts are.
        A notch with nothing in it is not a quieter version of the toolbar - it
        is a bite taken out of the top edge for no reason, and it reads as a
        surface that has broken rather than one that was drawn. */
-    const barDepth = toolbar ? flare * 2 : 0.01;
+    const barDepth = toolbar ? barFlare * 2 : 0.01;
     /* The bar takes what it needs and no more. It held two fifths of the top
        edge, which on a middling screen left too little either side of it for
        the heading to stand beside it - so the heading dropped underneath and
        the whole left corner sat empty. */
     const barWidth = toolbar
       ? Math.min(
-          Math.max(flare * 2 + 170, Math.min(w * 0.3, 380)),
-          Math.max(flare * 2 + 60, w - 2 * (radius + flare) - 8),
+          Math.max(barFlare * 2 + 170, Math.min(w * 0.3, 380)),
+          Math.max(barFlare * 2 + 60, w - 2 * (radius + barFlare) - 8),
         )
       : 0.01;
 
-    /* One size for both cuts. The corner needs `flare * 2` before its arcs
-       overlap, and the fourteen on top of that is the air round a 44px
-       control. */
-    const cut = Math.max(flare * 2 + 22, Math.min(w * 0.08, 96));
+    /* One size for both cuts, and the same size the landing card's are.
+
+       A share of the width is the wrong measure for this. The card is the
+       window wide and the desk is five hundred, so the same expression gave
+       the card ninety-six and the desk thirty-nine - two cuts built from one
+       formula that came out visibly different, standing side by side on the
+       same screen.
+
+       What actually decides the size is the control standing in it, and that
+       is a 44px disc on both. So it is a number: `flare * 2` is the floor,
+       where the two arcs meet, and ninety-six is what the card settles at.
+       The width only gets a say on something too narrow to give it - and a
+       panel that narrow is a phone, where the desk covers the page anyway. */
+    const cut = Math.max(flare * 2 + 16, Math.min(96, w * 0.34));
     const bite = cut;
     const drop = cut;
 
@@ -242,8 +278,8 @@ export function Stage({
       radius,
       barWidth: inNotch ? barWidth : 0.01,
       barDepth: inNotch ? barDepth : 0.01,
-      barRadius: inNotch ? flare : 0.01,
-      barFlare: inNotch ? flare : 0.01,
+      barRadius: inNotch ? barFlare : 0.01,
+      barFlare: inNotch ? barFlare : 0.01,
       biteWidth: aside ? bite : 0.01,
       biteHeight: aside ? bite : 0.01,
       biteRadius: aside ? flare : 0.01,
