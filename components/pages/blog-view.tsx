@@ -139,16 +139,30 @@ export function BlogView() {
                   }}
                 />
 
-                {/* A wash of the row's own colour over the picture. The mask
-                    thins it out towards the words; this puts what is left
-                    behind the row rather than on top of it, so the left of
-                    every card is the same shade as the card.
+                {/* A wash of the row's own colour, and only where the picture
+                    meets the words.
 
-                    It has to follow the hover, not just the resting colour.
-                    Held at white while the card went grey, the two met in a
-                    line down the middle of the row and the card looked like
-                    two cards. */}
-                <span className="absolute inset-0 bg-field/35 transition-colors group-hover/piece:bg-well/35" />
+                    It was a flat thirty-five per cent over the whole picture,
+                    which put every drawing on every row at two thirds strength -
+                    including the right of it, standing in the open with nothing
+                    to blend into. It runs out over the same third the mask does
+                    now, so the picture arrives out of the row at the left and is
+                    itself at the right.
+
+                    Masked rather than tinted, so the one gradient can follow the
+                    hover: the fill is the row's colour and the mask decides how
+                    much of it there is. Held at white while the card went grey,
+                    the two met in a line down the middle and the row looked like
+                    two rows. */}
+                <span
+                  className="absolute inset-0 bg-field/35 transition-colors group-hover/piece:bg-well/35"
+                  style={{
+                    maskImage:
+                      "linear-gradient(to right, black 0%, rgba(0,0,0,0.55) 16%, rgba(0,0,0,0.2) 26%, transparent 38%)",
+                    WebkitMaskImage:
+                      "linear-gradient(to right, black 0%, rgba(0,0,0,0.55) 16%, rgba(0,0,0,0.2) 26%, transparent 38%)",
+                  }}
+                />
               </span>
 
               <span className="relative grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-5 gap-y-3 p-6 sm:p-7 lg:max-w-[68%]">

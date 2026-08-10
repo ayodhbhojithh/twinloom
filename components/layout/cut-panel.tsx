@@ -308,19 +308,39 @@ export function CutPanel({
             />
           </div>
 
-          {/* A wash of the surface's own white, over both picture layers.
+          {/* A wash of the surface's own white, and only where the picture is
+              meeting the words.
 
-              It has to come after them in the markup. Sat between the two it
-              covered the one meant for a phone and was painted over by the one
-              meant for a laptop, so the desktop card kept a full strength
-              picture and only the phone got the wash.
+              It was `inset-0` at thirty-five per cent: a sheet of the card's
+              white over the whole picture, on the argument that it puts the
+              photograph behind the page rather than on top of it. That is right
+              at the end the type is on and wrong everywhere else - the picture
+              was being drawn at two thirds strength across the entire card, so
+              the part standing in clear white, which is the part anybody is
+              looking at, was the part being faded for no reason.
 
-              The mask already thins the photograph out towards the words; this
-              puts what is left behind the page rather than on top of it, and
-              costs nothing where the mask has taken the picture away. */}
+              It runs out over the same third the mask does, so the two do one
+              job between them: the picture arrives out of the surface at the
+              left and is itself at the right. Placed after both picture layers
+              in the markup, because between them it covered the one meant for a
+              phone and was painted over by the one meant for a laptop.
+
+              To the bottom on a phone rather than to the right, for the same
+              reason the mask turns: down there the words are above the picture,
+              not beside it. */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 bg-field/35"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage: `linear-gradient(to bottom, var(--color-field) 0%, color-mix(in oklab, var(--color-field) 40%, transparent) 18%, transparent 38%)`,
+            }}
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 hidden lg:block"
+            style={{
+              backgroundImage: `linear-gradient(to right, var(--color-field) 0%, color-mix(in oklab, var(--color-field) 40%, transparent) 18%, transparent 38%)`,
+            }}
           />
         </div>
       ) : null}
