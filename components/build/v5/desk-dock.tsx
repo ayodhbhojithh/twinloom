@@ -41,11 +41,14 @@ import { DockPanel, DockTab, type Face } from "./dock";
 export function DeskDock({
   face,
   onFace,
+  underHeader = true,
 }: {
   /* Owned by the shell, because opening the desk moves the page aside -
      and the thing that lays the page out has to be the thing that knows. */
   face: Face | null;
   onFace: (face: Face | null) => void;
+  /** Whether there is a bar at the top of the window to start below. */
+  underHeader?: boolean;
 }) {
   const answers = useSyncExternalStore(
     subscribeAnswers,
@@ -113,11 +116,18 @@ export function DeskDock({
               A surface whose controls are cut out of its edge cannot have its
               edge at the edge of anything.
 
+              Only where there is a bar to start below. The landing page keeps
+              its header inside its own card, so there the panel takes the whole
+              height and the offset would be a strip of empty window.
+
               Held off the sides and the floor as well: the inset is what makes
               it read as a panel resting against the page rather than a second
               column the page was built with. Full width on a phone, where
               there is no room to float anything. */}
-          <div className="fixed top-(--nav-height) right-0 bottom-0 z-50 flex w-full max-w-[560px] flex-col p-2 sm:p-3 lg:w-(--desk-width) lg:max-w-none">
+          <div
+            className="fixed right-0 bottom-0 z-50 flex w-full max-w-[560px] flex-col p-2 sm:p-3 lg:w-(--desk-width) lg:max-w-none"
+            style={{ top: underHeader ? "var(--nav-height)" : 0 }}
+          >
             <DockPanel
               answers={answers}
               where={desk.where}

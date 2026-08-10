@@ -52,6 +52,12 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
      back, and neither can be changed without the other. */
   const [face, setFace] = useState<Face | null>(null);
 
+  /* The landing page carries its header inside its own card rather than
+     above the page, so at the top of it there is no bar for the desk to start
+     below - and starting below one that is not there leaves a strip of empty
+     window above the panel. */
+  const underHeader = pathname !== ROUTES.home;
+
   return (
     <>
       {/* Two arrangements, one component.
@@ -118,7 +124,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           Below the header in the markup and above it in nothing: the tab and
           the panel carry their own z, and the header's menu sheet is higher
           than both, so a menu open over the desk still covers it. */}
-      <DeskDock face={face} onFace={setFace} />
+      <DeskDock face={face} onFace={setFace} underHeader={underHeader} />
     </>
   );
 }
