@@ -196,7 +196,7 @@ export function HowWeWorkView() {
                     />
 
                     <ol>
-                      {zone.stops.map((stop, n) => (
+                      {zone.stops.map((stop) => (
                         <li
                           key={stop.ix}
                           /* Row and column, and on a phone the mark sits beside
