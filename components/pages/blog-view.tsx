@@ -128,7 +128,9 @@ export function BlogView() {
                   fill
                   quality={100}
                   sizes="(min-width: 1024px) 46vw, 0px"
-                  className="object-cover object-center"
+                  /* Right edge, as the panel above it - the crop belongs at the
+                     end that is fading out, not the end standing in the open. */
+                  className="object-cover object-right"
                   style={{
                     maskImage:
                       "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.06) 6%, rgba(0,0,0,0.2) 11%, rgba(0,0,0,0.42) 16%, rgba(0,0,0,0.66) 22%, rgba(0,0,0,0.86) 29%, black 36%)",

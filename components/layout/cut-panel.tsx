@@ -290,7 +290,17 @@ export function CutPanel({
                  exactly what shows. */
               quality={100}
               sizes="(min-width: 1024px) 55vw, 0px"
-              className="object-cover object-center"
+              /* Held to its right edge, not its middle.
+                 
+                 The box is a little over half the card and the pictures are
+                 twice as wide as they are tall, so `cover` always crops
+                 sideways - and centred, it took the same amount off both ends.
+                 The left is where the picture fades into the surface anyway, so
+                 what that cost was the right: the edge of the drawing, against
+                 the edge of the card, which is the one part of it standing in
+                 clear white. Anchored right, the crop comes off the faded end
+                 instead. */
+              className="object-cover object-right"
               style={{
                 maskImage: MASK.across,
                 WebkitMaskImage: MASK.across,
