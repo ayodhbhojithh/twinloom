@@ -252,12 +252,14 @@ export function ServiceWall({
                 are. Every one of them is the mark - twice as wide as it is high
                 - sitting in a square file, so a square box was reserving the
                 file's own white margin rather than any of the picture. At
-                sixteen-to-ten what is given up is that margin, and the drawing
-                comes down only a little; what the words gain is a third of the
-                card. */}
+                two-to-one what is given up is that margin and very little
+                else - the mark is about that ratio itself, so the box is now
+                near enough the shape of the thing inside it, and a box the shape
+                of its contents is a box with nothing spare in it. The words take
+                everything that was spare. */}
             <span
               aria-hidden
-              className="relative -mx-1 block aspect-4/3 shrink-0 sm:aspect-16/10"
+              className="relative -mx-1 block aspect-3/2 shrink-0 sm:aspect-2/1"
             >
               {entry.art ? (
                 <Image
