@@ -362,6 +362,107 @@ const HERO_RISE = {
  * have: it is on the element itself, and the blend and the mask this file has
  * fought over twice are on the image inside it.
  */
+/**
+ * The film's titles, and where each one stands.
+ *
+ * Not one headline revealed word by word. That is a reveal, and a reveal
+ * happens once; a reel that runs for four screenfuls of scrolling wants a
+ * sequence, which is what a title card is. So this is four of them, each with
+ * its own place on the frame, its own moment, and its own way in and out.
+ *
+ * The first is already on screen before anybody touches the wheel - its window
+ * opens before nought - because a picture with nothing on it gives no reason to
+ * scroll, and the whole point of this screen is that somebody does.
+ *
+ * No two arrive the same way or in the same place. Four lines fading up from
+ * one corner is a slideshow; one rising off the floor, one entering from the
+ * left, one from the right and one settling in the middle is a film with
+ * titles on it. The direction is chosen against the place - a line at the left
+ * edge comes in from the left, so it enters from off the frame rather than from
+ * nowhere.
+ *
+ * Windows are `[in, out]` as shares of the reel, and the last one has no exit:
+ * whatever is on screen when the scrolling stops should be the thing worth
+ * being left with.
+ */
+const TITLES = [
+  {
+    text: "Your clothing store.",
+    place: "bottom-left",
+    from: "up",
+    show: [-0.04, 0.02],
+    hide: [0.16, 0.24],
+  },
+  {
+    text: "Filmed, cut and graded here.",
+    place: "top-left",
+    from: "left",
+    show: [0.26, 0.34],
+    hide: [0.46, 0.54],
+  },
+  {
+    text: "Every frame is a still.",
+    place: "middle-right",
+    from: "right",
+    show: [0.56, 0.64],
+    hide: [0.74, 0.82],
+  },
+  {
+    text: "Your scroll is the shutter.",
+    place: "bottom-left",
+    from: "scale",
+    show: [0.84, 0.92],
+    hide: null,
+  },
+] as const;
+
+/** Where on the frame a title stands. */
+const PLACE: Record<string, string> = {
+  "bottom-left": "bottom-[16%] left-0 text-left",
+  "top-left": "top-0 left-0 text-left",
+  "middle-right": "top-1/2 right-0 -translate-y-1/2 text-right",
+};
+
+/**
+ * A title's opacity and offset at this point in the reel.
+ *
+ * Two ramps rather than one: what fraction of the way in it is, and what
+ * fraction of the way back out. Multiplying them gives a line that arrives,
+ * holds while neither ramp is running, and leaves - which is what a title card
+ * does and what a single fade cannot.
+ *
+ * Both are cubed at the end so a line settles rather than stops. The offset is
+ * only on the way in: a title that slides out the way it came reads as a
+ * mistake being undone, where one that simply goes has been read.
+ */
+const title = (
+  at: number,
+  show: readonly [number, number],
+  hide: readonly [number, number] | null,
+  from: string,
+) => {
+  const ramp = (a: number, b: number) =>
+    Math.min(1, Math.max(0, (at - a) / (b - a)));
+
+  const inAt = 1 - (1 - ramp(show[0], show[1])) ** 3;
+  const outAt = hide ? ramp(hide[0], hide[1]) : 0;
+  const away = 1 - inAt;
+
+  const move =
+    from === "left"
+      ? `translateX(${-away * 46}px)`
+      : from === "right"
+        ? `translateX(${away * 46}px)`
+        : from === "scale"
+          ? `scale(${1 - away * 0.06})`
+          : `translateY(${away * 34}px)`;
+
+  return {
+    opacity: inAt * (1 - outAt),
+    transform: move,
+  };
+};
+
 const HERO_MARK = {
   hidden: { opacity: 0, scale: 0.94 },
   shown: {
@@ -377,6 +478,11 @@ export function NotchedCard({ className }: { className?: string }) {
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [at, setAt] = useState(0);
   const [open, setOpen] = useState<Project | null>(null);
+
+  /* How far through the reel the film screen has been scrolled, so the words
+     over it arrive with it rather than sitting there from the first frame.
+     Nought on every other screen, which never sets it. */
+  const [reelAt, setReelAt] = useState(0);
 
   /* No clock. The card turns when somebody turns it - the arrows, the thumbnail
      and the keyboard all do it - and nothing moves it on its own. A carousel
@@ -880,7 +986,11 @@ export function NotchedCard({ className }: { className?: string }) {
           className="absolute inset-0 z-[5]"
           style={{ clipPath: path ? `path("${path}")` : undefined }}
         >
-          <FilmStage base={shown.reel.base} frames={shown.reel.frames} />
+          <FilmStage
+            base={shown.reel.base}
+            frames={shown.reel.frames}
+            onProgress={setReelAt}
+          />
         </div>
       ) : null}
 
@@ -989,7 +1099,68 @@ export function NotchedCard({ className }: { className?: string }) {
         </div>
       </div>
 
-      {/* The fourth screen's two ways on, and nothing else.
+      {/* The fourth screen's own words, over the film.
+
+          Set on the picture, which is the one screen here where that is the
+          right answer: there is nothing else on it, and a caption beside a
+          full-bleed reel would be a caption about a picture rather than a title
+          on one. The header is off this screen, so the top of the card is free
+          for them.
+
+          White, and shadowed rather than washed. The other screens take the
+          card back under their type with a radial of the card's own ground;
+          that cannot work here, because this reel is nearly white and a white
+          wash on a white frame is a smear. A drop shadow does the same job on
+          the letters alone and leaves the picture untouched.
+
+          Cleared of the notch by its own depth rather than by `head`, which
+          also allows for the row of links - and there are no links up there on
+          this screen. */}
+      {/* The film's titles, running with the scroll.
+
+          Four lines rather than one, each in its own place on the frame and
+          each with its own moment - see `TITLES`. The reel answers to the
+          reader, so the words on it do too: they are not revealed once and left,
+          they arrive, hold and go as the film runs, which is what titles on a
+          film do.
+
+          White and shadowed rather than washed. The other screens take the card
+          back under their type with a radial of the card's own ground; that
+          cannot work here, because this reel is nearly white and a white wash on
+          a white frame is a smear. A shadow does the same job on the letters
+          alone and leaves the picture untouched.
+
+          The whole run is inset by the card's own gutter and cleared of the
+          notch by its depth - not by `head`, which also allows for the row of
+          links, and there are no links on this screen. */}
+      {shown.view === "film" ? (
+        <div
+          className="pointer-events-none absolute inset-0 z-10"
+          style={{
+            paddingTop: cut.barDepth + 26,
+            paddingBottom: 26,
+            paddingLeft: pad,
+            paddingRight: pad,
+          }}
+        >
+          <div className="relative size-full">
+            {TITLES.map((line) => (
+              <p
+                key={line.text}
+                className={cn(
+                  "absolute max-w-[13ch] text-[clamp(30px,4.4vw,66px)] leading-[1.04] font-extrabold tracking-[-0.045em] text-white drop-shadow-[0_2px_18px_rgba(24,32,44,0.45)]",
+                  PLACE[line.place],
+                )}
+                style={title(reelAt, line.show, line.hide, line.from)}
+              >
+                {line.text}
+              </p>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {/* The fourth screen's ways on, and nothing else.
 
           The film is the whole screen - it fills the card and takes the card's
           own shape - so these stand on the picture rather than in a cut of their
@@ -1008,37 +1179,75 @@ export function NotchedCard({ className }: { className?: string }) {
 
           Stacked and one width: in a row the eye reads left to right and the
           loud one goes first; in a stack it reads top to bottom, so the filled
-          one is at the top and both are as wide as the longer label. */}
+          one is at the top and all three are as wide as the longest label. */}
       {shown.view === "film" ? (
         <div
           className="pointer-events-none absolute z-10 flex justify-end"
           style={{
             right: pad,
-            bottom: cut.dropHeight - 46,
+            /* Down onto the floor of the card, clear of the corner cut only by
+               the air the cut already leaves. They were most of a cut's height
+               above it, which on a screen that is one picture put them in the
+               middle of the frame rather than at the foot of it. */
+            bottom: 18,
+            left: pad,
           }}
         >
-          <div className="flex w-max flex-col items-stretch gap-2">
+          {/* The same three the first screen offers, in the same order and
+              with the same icons.
+
+              They were two of their own - "What we make" and "Send us a
+              message" - which is a third and fourth way of saying what the card
+              already says twice. A visitor turning from the first screen to this
+              one should find the doors where they left them; a card that offers
+              different ways on depending on which picture is showing is a card
+              asking somebody to read the same menu twice.
+
+              Stacked and at one width, because they stand in a corner rather
+              than on a row. The filled one leads, since a stack is read top to
+              bottom. */}
+          {/* Stacked where there is room to stack and wrapped where there is
+              not. Three pills down the side of a phone is most of the screen
+              given to controls; in a row they take one line and wrap to two,
+              and `justify-end` keeps whatever lands on the second line against
+              the same edge as the first. */}
+          <div className="flex flex-wrap justify-end gap-2 sm:w-max sm:flex-col sm:items-stretch">
+            <Link
+              href={ROUTES.build}
+              className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+            >
+              <PencilLine aria-hidden className="size-4 shrink-0" />
+              Scope your website
+              <ArrowRight
+                aria-hidden
+                className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
+                strokeWidth={2.4}
+              />
+            </Link>
+
             <a
               href={ROUTES.services}
-              className="group/way pointer-events-auto inline-flex items-center justify-between gap-4 rounded-pill bg-ink px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90"
+              className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
             >
-              What we make
-              <ArrowUpRight
+              <LayoutGrid aria-hidden className="size-4 shrink-0 text-idx" />
+              View our services
+              <ArrowRight
                 aria-hidden
-                className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
               />
             </a>
 
-            <a
-              href={ROUTES.contact}
-              className="group/way pointer-events-auto inline-flex items-center justify-between gap-4 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
+            <Link
+              href={ROUTES.book}
+              className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
             >
-              Send us a message
-              <ArrowUpRight
+              <CalendarDays aria-hidden className="size-4 shrink-0 text-idx" />
+              Book a meeting
+              <ArrowRight
                 aria-hidden
-                className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
               />
-            </a>
+            </Link>
           </div>
         </div>
       ) : null}

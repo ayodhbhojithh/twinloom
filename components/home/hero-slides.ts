@@ -218,7 +218,7 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
       { term: "Frames", value: "120, scrubbed" },
     ],
     kicker: ["Filmed", "Cut", "Built"],
-    claim: ["You are not watching this.", "You are scrolling it."],
+    claim: ["Your clothing store,", "filmed and built by us."],
     lead: "Every frame is a still, and your scroll is the shutter.",
     note: "We shot it, cut it and graded it - fashion, product, brand. Then took it apart frame by frame and built it back into the page, so it runs at your pace instead of its own. That is the difference between a website with a film on it and a website that moves.",
     image: "",

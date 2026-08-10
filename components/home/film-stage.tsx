@@ -45,11 +45,22 @@ const AHEAD = 12;
 export function FilmStage({
   base,
   frames,
+  onProgress,
 }: {
   /** The folder the stills are in, without a trailing slash. */
   base: string;
   /** How many there are. They are named `001.jpg` upward. */
   frames: number;
+  /**
+   * How far through the reel the scroll has got, from 0 to 1.
+   *
+   * Reported so whatever is drawn over the film can move with it. Quantised to
+   * fiftieths before it is sent: a wheel fires far more often than the screen
+   * refreshes, and a parent that sets state on every event re-renders the whole
+   * card dozens of times a second to move a headline by a pixel. A fiftieth is
+   * finer than anything an eye can follow across a fade.
+   */
+  onProgress?: (along: number) => void;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
@@ -133,6 +144,8 @@ export function FilmStage({
       if (!ticking) ticking = requestAnimationFrame(paint);
     };
 
+    let told = -1;
+
     const onScroll = () => {
       const room = scroller.scrollHeight - scroller.clientHeight;
       const along = room > 0 ? scroller.scrollTop / room : 0;
@@ -141,6 +154,12 @@ export function FilmStage({
         Math.max(0, Math.round(along * (frames - 1))),
       );
       settle();
+
+      const step = Math.round(along * 50);
+      if (step !== told) {
+        told = step;
+        onProgress?.(step / 50);
+      }
     };
 
     const measure = () => {
@@ -184,7 +203,7 @@ export function FilmStage({
       bounds.disconnect();
       scroller.removeEventListener("scroll", onScroll);
     };
-  }, [base, frames]);
+  }, [base, frames, onProgress]);
 
   return (
     /* The whole of whatever it is given. The card clips it, so there is no
