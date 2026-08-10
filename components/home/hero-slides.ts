@@ -13,38 +13,32 @@ import type { Project } from "./projects";
    fields. Only the list is separate - one type, two lists, and the type is the
    thing that keeps them interchangeable if a slide ever is a project.
 
-   Five screens, and they are meant to be five different screens rather than
+   Four screens, and they are meant to be four different screens rather than
    one screen with its contents swapped. Each carries a `view`, and the card
    branches on it - so an arrow does not change a picture, it changes what the
    card is.
-
-   The second is the wave: a horizon of dots with a claim set over it and the two
-   ways in underneath. Dark ink on a white wash where the water is light type on
-   a dark one - same layout, opposite polarity, which is what makes them read as
-   two screens rather than one screen with the picture swapped.
-
-   The first is water: a raymarched swell filling the card, with its words
-   centred on it in white. It leads because it is the one that looks like
-   something the moment it arrives - the dotted field takes a second to read as a
-   wave, and a front door does not get a second.
-
-   The third is a field of glass beads that drift and get shoved around by the
-   cursor, with dark type centred on it - light ground again, so it is set the
-   way the first one is.
-
-   The fourth is white and empty behind its words, and that is the design rather
-   than the absence of one. Three screens of drawing in a row is a card showing
-   off; the last one stops, and what is left is the sentence and the way in. A
-   front door that never stops talking is one people stop reading.
 
    The first is the mark, rendered, with the whole offer set beside it: the
    trades, the claim, the line under it, the paragraph and all four ways in. It
    leads because it is the only one that says everything, and the screen somebody
    arrives on cannot assume they will turn it.
 
-   Which is the shape of the card. The first is the long version; the four behind
-   it each make one argument and open one door, because a card that turns should
-   not ask for the same thing five times.
+   The second is water: a raymarched swell filling the card, with its words
+   centred on it in white - the one screen set light on dark.
+
+   The third is a field of glass beads that drift and get shoved around by the
+   cursor, with dark type centred on it. Light ground again, so it is set the way
+   the first one is; what separates the two is the argument rather than the
+   treatment.
+
+   The fourth is white and empty behind its words, and that is the design rather
+   than the absence of one. Three screens of drawing in a row is a card showing
+   off; the last one stops, and what is left is the sentence and the way in. A
+   front door that never stops talking is one people stop reading.
+
+   Which is the shape of the card. The first is the long version; the three
+   behind it each make one argument and open one door, because a card that turns
+   should not ask for the same thing four times.
 --------------------------------------------------------------------------- */
 
 /**
@@ -55,14 +49,19 @@ import type { Project } from "./projects";
  * so this is the switch the card branches on, and adding the next one is a name
  * here and a case there.
  *
- * `wave` is a claim over the dotted surface with the two ways in beneath it.
  * `waves` is the raymarched water and `balls` is the pit. `mark` is the logo at
  * the size of the card with the words beside it, and it is the only screen that
- * is not centred - the whole of it is the asymmetry. `blank` is a white card and nothing else - not a placeholder graphic and not a
- * greyed panel, because either of those is a design decision made in advance of
- * the design.
+ * is not centred - the whole of it is the asymmetry. `blank` is a white card and
+ * nothing else - not a placeholder graphic and not a greyed panel, because
+ * either of those is a design decision made in advance of the design.
+ *
+ * There was a `wave` as well: a claim set over a horizon of dots, third in the
+ * order. It made the same argument as the screen two along from it and made it
+ * on a drawing that takes a moment to resolve into anything, which is a moment a
+ * card in the middle of a turn does not have. Its drawing is still in
+ * `wave-dots`, unimported, for whatever wants a field of dots next.
  */
-export type SlideView = "wave" | "waves" | "balls" | "blank" | "mark";
+export type SlideView = "waves" | "balls" | "blank" | "mark";
 
 /**
  * A slide, which is a `Project` and a few more things.
@@ -147,25 +146,6 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     ],
     claim: ["Two threads.", "One piece of work."],
     lead: "The site people see and the software behind it are one build, not two suppliers who blame each other. One contract, one invoice, and the same people to ask either way.",
-    image: "",
-    alt: "",
-    tone: "#ffffff",
-  },
-  {
-    id: "hero-1",
-    view: "wave",
-    name: "Tell us who your website is for",
-    kind: "The offer",
-    year: "2026",
-    summary:
-      "You answer one question. We send back a written scope in your own words, within two working days. It costs nothing and commits you to nothing.",
-    facts: [
-      { term: "Questions", value: "One, to start" },
-      { term: "Comes back", value: "Within two working days" },
-      { term: "Costs", value: "Nothing" },
-    ],
-    claim: ["Tell us who your website is for.", "We write the rest down."],
-    lead: "You answer one question. We send back a written scope in your own words, within two working days. It costs nothing and commits you to nothing.",
     image: "",
     alt: "",
     tone: "#ffffff",

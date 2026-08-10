@@ -25,7 +25,6 @@ import { GradientWaves } from "./gradient-waves";
 import { ProjectPanel } from "./project-panel";
 import { SiteHeader } from "@/components/layout/site-header";
 
-import { WaveDots } from "./wave-dots";
 import { HERO_SLIDES } from "./hero-slides";
 import { type Project } from "./projects";
 
@@ -384,8 +383,6 @@ export function NotchedCard({ className }: { className?: string }) {
    * wall between them, and the cut reads as a shallow shelf with a deeper notch
    * inside it rather than as one unbroken curve.
    */
-  const onField = shown.view === "wave";
-
   const cut: Cuts = ((): Cuts => {
     const w = Math.max(size.w, 1);
     const h = Math.max(size.h, 1);
@@ -546,50 +543,6 @@ export function NotchedCard({ className }: { className?: string }) {
         className="absolute inset-0 overflow-hidden bg-field"
         style={{ clipPath: path ? `path("${path}")` : undefined }}
       >
-        {onField ? (
-          <WaveDots className="absolute inset-0" phase={at * 1.9} />
-        ) : null}
-
-        {/* And the middle of it taken back for the type.
-
-            The field runs across the whole card, and a headline set over moving
-            dots is a headline read twice. This is the card's own white returning
-            under the words - so the drawing is full width and the sentence is
-            still on paper.
-
-            It came in from the left while the words were left. They are centred
-            now, so it is a radial out of the middle: a wash that starts at one
-            edge and a block of type in the centre of the card are two different
-            compositions arguing.
-
-            Thinner than it was, and wider. The field now covers the whole card
-            rather than sitting in the middle of it, so the wash is no longer
-            allowed to be white - it never reaches opaque anywhere, and the dots
-            run under the type instead of stopping at it. What it gives up in
-            strength it takes back in reach: it has to cover a claim running
-            most of the card, a lead under it and two buttons, so the ellipse is
-            two thirds of the width rather than four tenths and its last stop is
-            almost at the edge. A small hard wash leaves a hole in the picture; a
-            large soft one is weather.
-
-            Its middle is nearly white all the same. The field is dense enough
-            now that a sentence set straight on it is a sentence read twice, and
-            legibility is not the thing to trade for a few more dots - so the
-            core holds and the fade does the work of putting them back.
-
-            A gradient rather than a panel, either way: an edge here would be a
-            box drawn round the words, and the whole point is that there is no
-            box. */}
-        {onField ? (
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "radial-gradient(ellipse 68% 62% at 50% 48%, color-mix(in oklab, var(--color-field) 94%, transparent) 0%, color-mix(in oklab, var(--color-field) 84%, transparent) 32%, color-mix(in oklab, var(--color-field) 46%, transparent) 62%, transparent 88%)",
-            }}
-          />
-        ) : null}
-
         {/* The fourth screen's ground. Inside the clipped layer with the other
             three drawings, so the card's outline cuts it like everything else on
             it. */}
@@ -918,128 +871,6 @@ export function NotchedCard({ className }: { className?: string }) {
           </Tool>
         </div>
       </div>
-
-      {/* Each screen is its own arrangement, not one arrangement with the
-          contents changed. There is one so far - the wave, below - and the other
-          two are white cards waiting for designs of their own. */}
-      {/* What the card is for, inside the card.
-
-          The words and the two ways in were a band above this, and the band is
-          gone: a headline over a full height picture leaves two things half
-          read, and the card is the page.
-
-          Left, and only left. The field is the whole card rather than a panel
-          beside them, so what the measure is doing is leaving the right of it
-          clear - a sentence set across a moving surface is a sentence read
-          twice.
-
-          Held clear of all three cuts by the numbers that made them. The notch
-          is in the top edge and the two cuts are in the bottom corners, so the
-          top inset clears the bar and the bottom one clears whichever of the two
-          is deeper - measured rather than picked, or a change to any cut leaves
-          a line of type sitting in it. */}
-      {onField ? (
-        <div
-          className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
-          style={{
-            paddingTop: head,
-            /* The same at the foot as at the head, so the block sits in the
-               middle of the card rather than in the middle of what is left after
-               the cuts. It cleared whichever bottom cut was deeper, which is
-               right for words on the left - they run down into the bite. These
-               are centred, and both bottom cuts are in the corners, so all that
-               clearance was doing was pushing a centred block above centre. */
-            paddingBottom: cut.barDepth + 12,
-            paddingLeft: pad,
-            paddingRight: pad,
-          }}
-        >
-          {/* Centred, and about half the card wide.
-
-            The field runs under the whole surface either way; this only decides
-            how much of it the words are allowed to cross. Wider than the block
-            was when it stood on the left, because a centred measure is read from
-            both ends and a narrow one in the middle of a wide card reads as a
-            column somebody forgot to fill. */}
-          <div className="w-full text-center">
-            <div className="pointer-events-auto min-w-0">
-              {/* The claim, and the half of it that is the offer set in the
-                mark's own gradient. The same device the name in the header
-                uses, for the same reason: it is one sentence, and the colour
-                marks which part of it is the promise rather than adding a
-                second idea. */}
-              {/* The slide's own claim, not the card's.
-
-                It was one sentence written into the markup, so the arrows moved
-                the drawing and nothing else - the page said the same thing on
-                all four screens, which is the fault. Each slide carries its own
-                now, and each is a different way in to the same offer: a front
-                door that argues four different things is four front doors.
-
-                Keyed on the slide, so React replaces the words rather than
-                editing them, and they arrive with the fade below.
-
-                Seventeen characters.
-
-                Fifteen was set for a card whose right half was a picture, and it
-                was the thing breaking this into four lines rather than the
-                column it sits in - a four line claim reads as a paragraph
-                somebody has emboldened. Nineteen went the other way and left the
-                type running most of the card. Seventeen is where it holds three
-                lines without reaching for the field beside it. */}
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={shown.id}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
-                >
-                  <h1 className="mx-auto max-w-[38ch] text-[clamp(30px,4.5vw,66px)] leading-[1.03] font-extrabold tracking-[-0.045em] text-ink">
-                    {shown.claim?.[0]}
-                    <span className="thread-text block">
-                      {shown.claim?.[1]}
-                    </span>
-                  </h1>
-
-                  <p className="mx-auto mt-4 max-w-[92ch] text-[14.5px] leading-[1.6] text-quiet sm:text-[15.5px]">
-                    {shown.lead}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Two ways in, and they are the only two. The loud one carries the
-                gradient; the quiet one is drawn as an outline rather than a
-                second fill, so the pair reads as one choice with a default
-                rather than as two buttons of equal weight. */}
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-                <Link
-                  href={ROUTES.build}
-                  className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
-                >
-                  Build your website
-                  <ArrowRight
-                    aria-hidden
-                    className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
-                    strokeWidth={2.4}
-                  />
-                </Link>
-
-                <Link
-                  href={ROUTES.book}
-                  className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field/70 px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink backdrop-blur-sm transition-colors hover:border-ink"
-                >
-                  Book a meeting
-                  <ArrowUpRight
-                    aria-hidden
-                    className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
-                  />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : null}
 
       {/* The second screen's words: centred, and set light on a dark ground.
 
