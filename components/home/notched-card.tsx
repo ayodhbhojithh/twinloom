@@ -1704,14 +1704,17 @@ export function NotchedCard({ className }: { className?: string }) {
                     label. */}
                   <motion.ul
                     variants={HERO_RISE}
-                    className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 font-mono text-[10px] font-bold tracking-[0.15em] text-idx uppercase max-sm:gap-x-2 max-sm:text-[8.5px] max-sm:tracking-[0.12em] lg:justify-start lg:gap-x-3.5 lg:text-[11px] 2xl:text-[11.5px]"
+                    className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 font-mono text-[10px] font-bold tracking-[0.15em] text-idx uppercase max-sm:gap-x-1.5 max-sm:gap-y-1 max-sm:text-[7.5px] max-sm:tracking-[0.1em] lg:justify-start lg:gap-x-3.5 lg:text-[11px] 2xl:text-[11.5px]"
                   >
                     {shown.kicker?.map((trade, n) => (
-                      <li key={trade} className="flex items-center gap-2.5">
+                      <li
+                        key={trade}
+                        className="flex items-center gap-2.5 max-sm:gap-1.5"
+                      >
                         {n > 0 ? (
                           <span
                             aria-hidden
-                            className="size-1 rounded-pill bg-mark"
+                            className="size-1 rounded-pill bg-mark max-sm:size-[3px]"
                           />
                         ) : null}
                         {trade}
