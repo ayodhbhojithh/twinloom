@@ -148,11 +148,17 @@ export const HEADER_NAV: readonly NavLink[] = [
 
      A bar is read from both ends: the name at one, the way to reach somebody at
      the other, and an item in an unexpected place costs a reader a whole pass.
-     This is the order asked for, and it holds to that. */
+     This is the order asked for, and it holds to that.
+
+     FAQs is not here, and that is a decision rather than an omission. A top bar
+     is for the places somebody might be going; a list of answers is somewhere
+     they end up when something has gone unanswered, which is the moment they
+     are already looking at the foot of a page. It is in both footer lists and
+     the page is unchanged - the only thing that has moved is where it is
+     offered. Seven links also fit the bar at a width eight was crowding. */
   { label: "Home", href: ROUTES.home },
   { label: "Services", href: ROUTES.services },
   { label: "Insight", href: ROUTES.insights },
-  { label: "FAQs", href: ROUTES.faq },
   { label: "How we work", href: ROUTES.how },
   { label: "About", href: ROUTES.about },
   { label: "Contact", href: ROUTES.contact },
