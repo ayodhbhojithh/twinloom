@@ -1309,64 +1309,6 @@
     }
   }
 
-  /* The shadow, on the same clock and the same keyframes.
-
-     It is not a passenger: a shadow that fell with the ball would be glued to
-     it. This one is the gap between the two, so it is small and faint while the
-     ball is high and full every time the ball is down - which means it has to
-     pulse on each bounce rather than simply arrive. The percentages are the
-     bead's own, and the two run at one duration and one delay so they cannot
-     drift apart.
-
-     It scales both ways now rather than only across. A shadow that only
-     stretched sideways was a bar that grew wider, where a real one opens from
-     a point in every direction at once - and the ellipse it is drawn on is
-     already flat, so scaling it evenly keeps it flat. */
-  @keyframes trail-shade {
-    0% {
-      transform: scale(0.16);
-      opacity: 0;
-      animation-timing-function: cubic-bezier(0.4, 0, 0.75, 0.5);
-    }
-    30% {
-      transform: scale(0.26);
-      opacity: 0.22;
-      animation-timing-function: cubic-bezier(0.4, 0, 0.75, 0.5);
-    }
-    60% {
-      transform: scale(1);
-      opacity: 1;
-      animation-timing-function: cubic-bezier(0.15, 0.6, 0.4, 1);
-    }
-    73% {
-      transform: scale(0.6);
-      opacity: 0.48;
-      animation-timing-function: cubic-bezier(0.6, 0, 0.85, 0.45);
-    }
-    85% {
-      transform: scale(1);
-      opacity: 1;
-      animation-timing-function: cubic-bezier(0.15, 0.6, 0.4, 1);
-    }
-    92% {
-      transform: scale(0.82);
-      opacity: 0.72;
-      animation-timing-function: cubic-bezier(0.6, 0, 0.85, 0.45);
-    }
-    97% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    98.8% {
-      transform: scale(0.94);
-      opacity: 0.9;
-    }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
-
   .trail-line {
     opacity: 0.5;
     animation: trail-line 0.6s ease-out backwards;
@@ -1377,12 +1319,6 @@
        segment, and anything here would be applied on top of every one of
        them. */
     animation: trail-bead 1.9s linear backwards;
-  }
-
-  .trail-shade {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: trail-shade 1.9s linear backwards;
   }
 
   /* And one under the pointer, picked up off the thread and put back.
@@ -1415,9 +1351,11 @@
      first: a bounce that returns almost nothing reads as the animation stopping,
      where a third reads as a bounce dying.
 
-     The shadow answers on the same clock - tight and pale at the top of the hop,
-     open again on the way down - because it is the gap between the bead and the
-     thread rather than a shape attached to either. */
+     There is no shadow answering it any more. One went under every bead, and it
+     was the right call while they were lit spheres - a shaded ball with nothing
+     under it floats. Flat discs at five units across are marks on a surface
+     rather than objects above one, and a soft grey smudge under a mark is a
+     shadow cast by something that is not there. */
   @keyframes trail-hop {
     0% {
       transform: translateY(0);
@@ -1440,33 +1378,6 @@
     }
   }
 
-  @keyframes trail-hop-shade {
-    0% {
-      transform: scale(1);
-      opacity: 1;
-      animation-timing-function: cubic-bezier(0.34, 0.12, 0.28, 1);
-    }
-    40% {
-      transform: scale(0.68);
-      opacity: 0.52;
-      animation-timing-function: cubic-bezier(0.5, 0, 0.78, 0.52);
-    }
-    72% {
-      transform: scale(1);
-      opacity: 1;
-      animation-timing-function: cubic-bezier(0.28, 0.3, 0.3, 1);
-    }
-    87% {
-      transform: scale(0.88);
-      opacity: 0.82;
-      animation-timing-function: cubic-bezier(0.5, 0, 0.78, 0.52);
-    }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
-
   /* `all`, not `auto`. On an SVG shape `auto` means `visiblePainted`, which asks
      whether the pixel under the pointer was actually painted - and this one is
      deliberately not. */
@@ -1479,16 +1390,9 @@
      target that already covers it, and a shadow that can be hovered is a shape
      nobody can see being pressed. */
   .trail-hop,
-  .trail-hop-shade,
   .trail-bead,
-  .trail-shade,
   .trail-line {
     pointer-events: none;
-  }
-
-  .trail-hop-shade {
-    transform-box: fill-box;
-    transform-origin: center;
   }
 
   /* Promoted while the pointer is over one, and not before.
@@ -1508,17 +1412,12 @@
      hang off does not move, and the pointer entering it is what both raises this
      and fires the hop - so the layer is made on the event rather than in advance
      of it, and never for a bead nobody has gone near. */
-  .trail-pick:hover .trail-hop,
-  .trail-pick:hover .trail-hop-shade {
-    will-change: transform, opacity;
+  .trail-pick:hover .trail-hop {
+    will-change: transform;
   }
 
   .trail-hop.trail-hopping {
     animation: trail-hop 0.8s linear;
-  }
-
-  .trail-hop-shade.trail-hopping {
-    animation: trail-hop-shade 0.8s linear;
   }
 
   /* Asked for less motion: the trail is simply strung already, and nothing
@@ -1526,9 +1425,7 @@
   @media (prefers-reduced-motion: reduce) {
     .trail-line,
     .trail-bead,
-    .trail-shade,
-    .trail-hop.trail-hopping,
-    .trail-hop-shade.trail-hopping {
+    .trail-hop.trail-hopping {
       animation: none;
     }
   }

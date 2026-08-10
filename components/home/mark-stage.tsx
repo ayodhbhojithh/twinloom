@@ -47,7 +47,7 @@ import { cn } from "@/lib/utils";
  */
 const WIDE = 1200;
 const BASE = 84;
-const RADIUS = 6.5;
+const RADIUS = 5;
 
 /**
  * How far the row stands off each end of the strip.
@@ -83,17 +83,18 @@ const PAD = 390;
 /**
  * The colours, in the order they run.
  *
- * The one thing kept from the placed version, because it is the one thing that
- * was never about position: no two neighbours share a colour, and the sequence
- * does not repeat inside the width. Equal size and equal spacing is what makes
- * a row read as one object - the colour is what stops it reading as one object
- * stamped eight times.
+ * Seven, each used once. Eleven distinct colours is a spectrum, and a spectrum
+ * across the foot of a page is a chart of something - the eye starts looking for
+ * what the eleventh is that the first is not. Seven is a handful: enough that no
+ * colour comes back, few enough that the row reads as a few coloured dots rather
+ * than as a scale.
  *
- * Eleven of them, which is how the gaps are set. The count is the only thing
- * that decides them once the two ends are fixed - the step is whatever divides
- * the span between them - so the row went to eight when it shortened to the
- * width of the line below, and back to eleven when the beads came down a size.
- * Eight beads at six and a half is a row with more gap in it than beads.
+ * The count is also what sets the gaps. Once the two ends are fixed the step is
+ * whatever divides the span between them, so taking four out opens the row
+ * rather than shortening it.
+ *
+ * Ours first and the plain rest after, with no two neighbours in the same
+ * family: blue, green, violet, orange, cyan, red, amber.
  */
 const INKS = [
   "#2a98fe",
@@ -102,11 +103,7 @@ const INKS = [
   "#ff7a1a",
   "#22bde8",
   "#ff4d5e",
-  "#10c996",
-  "#2a98fe",
-  "#7c4dff",
-  "#ff7a1a",
-  "#22bde8",
+  "#ffc53d",
 ] as const;
 
 const STEP = (WIDE - PAD * 2) / (INKS.length - 1);
@@ -124,16 +121,18 @@ const CURVE = `M ${PAD} ${BASE} L ${WIDE - PAD} ${BASE}`;
 /**
  * A dotted thread with glass beads along it.
  *
- * Every bead is one radial gradient and one ellipse: the gradient puts the
- * highlight off centre at a third across and a quarter down, which is where a
- * light high and in front would put it, and runs out to a mix of the bead's
- * own colour and the ink blue rather than to black - a sphere's dark side is
- * still its colour, and a black edge reads as a hole.
+ * Every bead is one flat disc. They were shaded spheres - a radial gradient
+ * putting a highlight off centre at a third across and a quarter down, running
+ * out to a mix of the bead's own colour and the ink blue - and eleven lit
+ * spheres in a row is eleven small pictures. At this size the shading is a
+ * smudge of white on one side rather than a light anybody reads, and what it
+ * costs is the colour: a graded ball is never quite the colour it is, so eleven
+ * of them are eleven approximations. Flat, each one is exactly its own.
  *
- * The shadow is drawn before the bead and is flat and wide for the same
- * reason: the light is high, so the shadow is a squashed ellipse under the
- * bead rather than a circle behind it. Without it the beads float beside the
- * line instead of resting on it.
+ * The shadow stays, and is the one thing still doing depth. It is drawn before
+ * the bead, flat and wide because the light is high, and it is what the drop
+ * and the hop are measured against - without it the beads float beside the line
+ * rather than resting on it.
  */
 export function BeadTrail({ className }: { className?: string }) {
   return (
@@ -147,39 +146,6 @@ export function BeadTrail({ className }: { className?: string }) {
           <stop offset="0%" stopColor="var(--color-thread-blue)" />
           <stop offset="100%" stopColor="var(--color-thread-teal)" />
         </linearGradient>
-
-        {/* The shadow, as light that runs out rather than as a grey shape.
-
-            It was a flat ellipse at sixteen per cent, and a flat fill has an
-            edge - so what sat under each ball was a small hard disc with a rim,
-            which is a sticker rather than a shadow. Real contact shadows are
-            darkest where the ball nearly touches and gone a ball's width away,
-            which is a radial that fades to nothing.
-
-            One gradient for all ten, because it is drawn in the ellipse's own
-            box: `objectBoundingBox` is the default, so each one is stretched to
-            whatever ellipse uses it. */}
-        <radialGradient id="trail-shade-fill" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#0c2038" stopOpacity="0.2" />
-          <stop offset="45%" stopColor="#0c2038" stopOpacity="0.13" />
-          <stop offset="75%" stopColor="#0c2038" stopOpacity="0.05" />
-          <stop offset="100%" stopColor="#0c2038" stopOpacity="0" />
-        </radialGradient>
-
-        {TRAIL.map((bead, n) => (
-          <radialGradient key={n} id={`bead-${n}`} cx="34%" cy="28%" r="78%">
-            <stop offset="0%" stopColor="#ffffff" />
-            <stop
-              offset="16%"
-              stopColor={`color-mix(in oklab, ${bead.ink} 34%, #ffffff)`}
-            />
-            <stop offset="56%" stopColor={bead.ink} />
-            <stop
-              offset="100%"
-              stopColor={`color-mix(in oklab, ${bead.ink} 60%, #0b1f38)`}
-            />
-          </radialGradient>
-        ))}
       </defs>
 
       {/* The path, as dots. Round caps on a one-unit dash is a dot; anything
@@ -345,33 +311,12 @@ function Bead({
 
   return (
     <g>
-      {/* Its shadow first, so the bead sits on the line rather than beside it.
-          Flat and wide, because the light is high and in front.
+      {/* The bead sits in a group of its own, and the group is what hops.
 
-          The shadow and the bead each sit in a group of their own, and the
-          groups are what hops. Both elements already carry an animation - the
-          drop - and a second `animation` on the same element replaces it rather
-          than adding to it, so a bead hopped while it was still falling would
-          have had its fall cancelled. One element, one animation. */}
-      <g className={cn("trail-hop-shade", hop && "trail-hopping")}>
-        <ellipse
-          className="trail-shade"
-          style={{ animationDelay: `${1 + n * 0.1}s` }}
-          cx={bead.x}
-          cy={bead.y + bead.r * 1.02}
-          /* Wider and taller than the flat one it replaces, because most of the
-             extra is the fade. A gradient shadow measured to the same size as a
-             flat one reads smaller than it. */
-          rx={bead.r * 1.9}
-          ry={bead.r * 0.52}
-          fill="url(#trail-shade-fill)"
-        />
-      </g>
-
-      {/* The bead's own group is what carries the end of the hop, because it is
-          the one the eye is on. The shadow runs the same length on the same
-          curve, so either would do - but two listeners for one event is two
-          places for the flag to be cleared from. */}
+          The circle already carries an animation - the drop - and a second
+          `animation` on the same element replaces it rather than adding to it,
+          so a bead hopped while it was still falling would have had its fall
+          cancelled. One element, one animation. */}
       <g
         className={cn("trail-hop", hop && "trail-hopping")}
         onAnimationEnd={() => setHop(false)}
@@ -382,7 +327,7 @@ function Bead({
           cx={bead.x}
           cy={bead.y}
           r={bead.r}
-          fill={`url(#bead-${n})`}
+          fill={bead.ink}
         />
       </g>
 
