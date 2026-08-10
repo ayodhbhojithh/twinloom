@@ -262,7 +262,25 @@ function parse(slug: string, source: string): Insight {
  * the pictures arrive with it; in development, a replaced file wants the dev
  * server restarted and the page hard-reloaded, and that is the whole of it.
  */
-export const plateFor = (slug: string) => `/assets/insights/${slug}.png`;
+/* JPEG rather than PNG, and the difference is not subtle.
+
+   These are photographic - a room, a screen, a surface with light falling across
+   it - and PNG stores a photograph losslessly, pixel by pixel. Each of the five
+   was around two and a quarter megabytes; the same picture at JPEG 88 is around
+   three hundred kilobytes, and at the size any of them is ever shown the two are
+   indistinguishable.
+
+   What a reader downloads was never the two megabytes: `next/image` re-encodes
+   these and serves a webp or avif cut to the width asked for. What the two
+   megabytes cost is everything around that - eleven megabytes in the repository
+   and in every deploy, and an optimiser reading and decoding a two megabyte PNG
+   the first time each size of each picture is asked for.
+
+   JPEG rather than webp for the source, because this address is also the picture
+   named in the page's own metadata: it is what a link to an insight unfurls as
+   in a message or a post, and the things doing that unfurling are not browsers
+   and do not all read webp. */
+export const plateFor = (slug: string) => `/assets/insights/${slug}.jpg`;
 
 /**
  * Every piece, in the order the folder gives them.
