@@ -1048,21 +1048,37 @@ export function NotchedCard({ className }: { className?: string }) {
                   frames={shown.reel.frames}
                   kind={shown.kind}
                   foot={
-                    /* Two, and the pair is the whole point of the shape being
-                       this size: one bite out of the picture holding both ways
-                       on reads as the page reaching into the film, where two
-                       buttons on the surface would be two stickers.
+                    /* Two, stacked, and the pair is the point of the shape
+                       being this size: one bite out of the picture holding both
+                       ways on reads as the page reaching into the film, where
+                       two buttons on the surface would be two stickers.
 
-                       Wrapping right to left. When there is not room for one
-                       row the second drops under the first and both stay
-                       against the corner, which is the edge the cut is opening
-                       from. */
-                    <div className="flex flex-wrap items-center justify-end gap-2">
+                       Stacked rather than in a row. A row is as wide as both
+                       labels together, and the cut is sized from what stands in
+                       it - so a row took a fifth of the film's width out of the
+                       picture to hold two words each. Stacked, the bite is one
+                       button wide and reaches down instead of across, which is
+                       the corner giving way rather than the bottom edge being
+                       shortened.
+
+                       Right aligned, because the corner they stand in opens
+                       from the right, and a stack ragged on that side would be
+                       two buttons that do not know which edge they belong
+                       to. */
+                    /* `items-stretch` inside a box that sizes to its widest
+                       child, so both come out the width of the longer label.
+                       Two pills of different lengths stacked are two shapes; two
+                       of one width are a pair. */
+                    <div className="flex w-max flex-col items-stretch gap-2">
+                      {/* The filled one first, which is the other half of
+                          stacking them: in a row the eye reads left to right and
+                          the loud one goes first; in a stack it reads top to
+                          bottom and the loud one goes at the top. */}
                       <a
-                        href={ROUTES.contact}
-                        className="group/way pointer-events-auto inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
+                        href={ROUTES.services}
+                        className="group/way pointer-events-auto inline-flex items-center justify-between gap-4 rounded-pill bg-ink px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90"
                       >
-                        Send us a message
+                        What we make
                         <ArrowUpRight
                           aria-hidden
                           className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
@@ -1070,10 +1086,10 @@ export function NotchedCard({ className }: { className?: string }) {
                       </a>
 
                       <a
-                        href={ROUTES.services}
-                        className="group/way pointer-events-auto inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90"
+                        href={ROUTES.contact}
+                        className="group/way pointer-events-auto inline-flex items-center justify-between gap-4 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
                       >
-                        What we make
+                        Send us a message
                         <ArrowUpRight
                           aria-hidden
                           className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"

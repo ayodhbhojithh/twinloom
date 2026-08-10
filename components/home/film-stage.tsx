@@ -73,7 +73,7 @@ const CUT_WIDE = 0.22;
 const CUT_DEEP = 0.26;
 
 /** The air between what stands in the cut and the two edges it meets. */
-const FOOT_AIR = 26;
+const FOOT_AIR = 32;
 
 /**
  * How wide the film may ever be drawn: the source's own width.
@@ -315,7 +315,15 @@ export function FilmStage({
       dropHeight: foot
         ? Math.min(Math.max(need.h + FOOT_AIR, h * CUT_DEEP), h * 0.5)
         : 0,
-      dropRadius: foot ? flare : flare,
+      /* A larger inner corner than the card's, and only here.
+
+         The card's cuts are small bites out of a big surface, where the radius
+         that matters is the flare sweeping out to the edge. This one is a
+         quarter of the picture: at the card's radius its inner corner is a sharp
+         turn in the middle of a long run, which reads as a rectangle removed
+         rather than a corner given way. Half again is where the two arcs and the
+         straight between them read as one curve. */
+      dropRadius: foot ? Math.min(flare * 1.6, 34) : flare,
       dropFlare: foot ? flare : flare,
     };
   })();
