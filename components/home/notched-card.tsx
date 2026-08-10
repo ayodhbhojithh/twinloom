@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -19,14 +20,50 @@ import { SisterSentence } from "@/components/blocks";
 import { ROUTES, SISTER } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-import { Ballpit } from "./ballpit";
 import { DotField } from "./dot-field";
-import { ParticleCanvas } from "@/components/ui/ParticleCanvas";
-import { FilmStage } from "./film-stage";
 import { BeadTrail, MarkStage } from "./mark-stage";
 import { ProjectPanel } from "./project-panel";
 
 import { HERO_SLIDES } from "./hero-slides";
+
+/* ---------------------------------------------------------------------------
+   The three grounds that cost something, fetched when they are first shown.
+
+   This card has five screens and four of them are cheap: type, a drawing, a
+   field of dots drawn once. The other three are not - and until now all three
+   were in the same bundle as the card itself, so every visitor downloaded the
+   lot before the first screen could be interactive, whether or not they ever
+   turned to the second.
+
+   The pit is the expensive one by a distance: it is a WebGL scene, and three.js
+   is around three quarters of a megabyte of JavaScript before a single sphere is
+   drawn. It sat on the critical path of the landing page to draw the second
+   slide of five. On a mid-range phone that is a second or so of parsing before
+   anything on the page answers to a touch.
+
+   Split out, each arrives when its own screen is first asked for. The cost is a
+   moment of ground colour the first time somebody turns to one of them, which is
+   the honest place to spend it: it is paid by the person who asked for that
+   screen, once, instead of by everybody on arrival.
+
+   `ssr: false` on all three because all three are canvases. There is nothing for
+   a server to render and nothing to hydrate - rendering them on the server would
+   emit an empty element and then throw it away.
+--------------------------------------------------------------------------- */
+
+const Ballpit = dynamic(() => import("./ballpit").then((m) => m.Ballpit), {
+  ssr: false,
+});
+
+const ParticleCanvas = dynamic(
+  () => import("@/components/ui/ParticleCanvas").then((m) => m.ParticleCanvas),
+  { ssr: false },
+);
+
+const FilmStage = dynamic(
+  () => import("./film-stage").then((m) => m.FilmStage),
+  { ssr: false },
+);
 import { type Project } from "./projects";
 
 /* ---------------------------------------------------------------------------
