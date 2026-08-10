@@ -8,13 +8,27 @@ import { cn } from "@/lib/utils";
 import { LoomWave, type WaveVariant } from "./loom-wave";
 
 /**
- * The two drawings, and what each is called on the switch.
+ * The drawings, and what each is called on the switch.
  *
  * Named by number rather than by what they are, because "sheaf" and "bars"
  * are the words for how they are built and nobody choosing between them is
- * choosing a construction - they are looking at two pictures. */
+ * choosing a construction - they are looking at two pictures.
+ *
+ * There are two, and one of them is not offered.
+ *
+ * `sheaf` is sixty smooth curves redrawn every frame, and however much came off
+ * it - one flat stroke colour with the ramp laid over the lot, six draw calls
+ * instead of sixty, no trigonometry in the inner loop - it is still an order of
+ * magnitude more work than a field of bars, and on the page it still drags. A
+ * switch offering a version that stutters is a switch inviting people to find
+ * the slow one.
+ *
+ * Commented rather than deleted, because the drawing is not the problem: it is
+ * the nicest of the two and the cost is understood. `WaveVariant` still carries
+ * `sheaf`, `drawSheaf` is untouched, and putting it back is this line.
+ */
 const VERSIONS: readonly { id: WaveVariant; label: string }[] = [
-  { id: "sheaf", label: "Version 1" },
+  // { id: "sheaf", label: "Version 1" },
   { id: "bars", label: "Version 2" },
 ];
 
@@ -31,7 +45,7 @@ const VERSIONS: readonly { id: WaveVariant; label: string }[] = [
  * this page already has one, so the same words are set as an `h2` instead.
  */
 export function BuildSection() {
-  const [version, setVersion] = useState<WaveVariant>("sheaf");
+  const [version, setVersion] = useState<WaveVariant>(VERSIONS[0].id);
 
   /* The landing hero's down arrow points at this section's id, so it carries a
      scroll margin: without one the anchor lands the heading underneath the
@@ -96,10 +110,19 @@ export function BuildSection() {
             changes: the reveal moves it vertically and both its width and its
             left edge are what they were. */}
         <div className="reveal [--step:0]">
+          {/* Hidden while there is one of them.
+
+              A radio group with a single radio in it is not a choice, it is a
+              label that looks pressable - and the one thing worse than a
+              control nobody needs is a control that appears to do something and
+              does not. It comes back with the second version. */}
           <div
             role="radiogroup"
             aria-label="Wave version"
-            className="mb-4 flex justify-center gap-1 rounded-pill"
+            className={cn(
+              "mb-4 justify-center gap-1 rounded-pill",
+              VERSIONS.length > 1 ? "flex" : "hidden",
+            )}
           >
             {VERSIONS.map((entry) => {
               const on = entry.id === version;
