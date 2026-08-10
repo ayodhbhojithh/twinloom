@@ -216,6 +216,22 @@ export function SiteHeader({
                 ? pathname === item.href
                 : pathname.startsWith(item.href);
 
+            /* The last one is the one thing in the bar that asks rather than
+               points, and as the eighth word in a row of eight identical greys
+               it read as one more page. It is the reason the row is ordered to
+               end here: a bar is scanned back from its far end.
+
+               The gradient is in the letters, not behind them. As a filled pill
+               it was a button parked in a row of words - a second kind of object
+               in a bar that has only ever held one, and the loudest thing on a
+               header that is meant to be quiet. Painted through the type it is
+               still the only coloured item in the row and still reads first,
+               without the bar growing a control in it. Same device the wordmark
+               beside it uses, which is the argument for it: this bar says the
+               name in the gradient and the ask in the gradient, and everything
+               in between is grey. */
+            const cta = item.href === ROUTES.book;
+
             const className = cn(
               /* One size, not two.
 
@@ -224,8 +240,15 @@ export function SiteHeader({
                  every width, which is what the buttons under it are set at -
                  a bar of links smaller than every other line on the page
                  reads as a bar somebody shrank to make it fit. */
-              "text-[15px] whitespace-nowrap hover:underline",
-              on ? "font-semibold text-mark" : "text-quiet hover:text-ink",
+              "text-[15px] whitespace-nowrap",
+              cta
+                ? "thread-text font-bold transition-opacity hover:opacity-80"
+                : cn(
+                    "hover:underline",
+                    on
+                      ? "font-semibold text-mark"
+                      : "text-quiet hover:text-ink",
+                  ),
             );
 
             /* A section of a page rather than a page, and `Link` does not

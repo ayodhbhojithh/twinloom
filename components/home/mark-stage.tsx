@@ -86,6 +86,24 @@ export function BeadTrail({ className }: { className?: string }) {
           <stop offset="100%" stopColor="var(--color-thread-teal)" />
         </linearGradient>
 
+        {/* The shadow, as light that runs out rather than as a grey shape.
+
+            It was a flat ellipse at sixteen per cent, and a flat fill has an
+            edge - so what sat under each ball was a small hard disc with a rim,
+            which is a sticker rather than a shadow. Real contact shadows are
+            darkest where the ball nearly touches and gone a ball's width away,
+            which is a radial that fades to nothing.
+
+            One gradient for all ten, because it is drawn in the ellipse's own
+            box: `objectBoundingBox` is the default, so each one is stretched to
+            whatever ellipse uses it. */}
+        <radialGradient id="trail-shade-fill" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#0c2038" stopOpacity="0.2" />
+          <stop offset="45%" stopColor="#0c2038" stopOpacity="0.13" />
+          <stop offset="75%" stopColor="#0c2038" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#0c2038" stopOpacity="0" />
+        </radialGradient>
+
         {TRAIL.map((bead, n) => (
           <radialGradient key={n} id={`bead-${n}`} cx="34%" cy="28%" r="78%">
             <stop offset="0%" stopColor="#ffffff" />
@@ -150,10 +168,13 @@ export function BeadTrail({ className }: { className?: string }) {
             className="trail-shade"
             style={{ animationDelay: `${0.35 + n * 0.1}s` }}
             cx={bead.x}
-            cy={bead.y + bead.r * 1.05}
-            rx={bead.r * 1.5}
-            ry={bead.r * 0.34}
-            fill="rgba(12,32,56,0.16)"
+            cy={bead.y + bead.r * 1.02}
+            /* Wider and taller than the flat one it replaces, because most of
+               the extra is the fade. A gradient shadow measured to the same
+               size as a flat one reads smaller than it. */
+            rx={bead.r * 1.9}
+            ry={bead.r * 0.52}
+            fill="url(#trail-shade-fill)"
           />
           <circle
             className="trail-bead"

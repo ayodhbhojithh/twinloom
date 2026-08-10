@@ -676,9 +676,12 @@ export function NotchedCard({ className }: { className?: string }) {
             not so many that the two colours that are ours stop being what the
             card is made of.
 
-                        The point light takes the middle of the ramp, so the colour the
-            cursor drags around the field is the one between the two rather than
-            either end of them. */}
+            The key light is fixed, above and in front, and it takes the
+            middle of the ramp so the colour lighting the field is the one
+            between the two rather than either end of them. It used to ride on
+            sphere zero, which is the sphere the pointer drags about - so the
+            brightest part of the card followed the cursor around it, which is a
+            torch rather than a room. */}
         {shown.view === "balls" ? (
           <Ballpit
             className="absolute inset-0"
@@ -698,7 +701,7 @@ export function NotchedCard({ className }: { className?: string }) {
             accentShare={0.18}
             ambientColor={0xffffff}
             ambientIntensity={1}
-            lightIntensity={190}
+            lightIntensity={2.4}
             minSize={0.3}
             maxSize={0.7}
             size0={1.1}
@@ -707,16 +710,33 @@ export function NotchedCard({ className }: { className?: string }) {
           />
         ) : null}
 
-        {/* And the middle taken back for the type, the way the first screen
-            does it. Light ground, dark words, white wash - the pit is a field of
-            pale glass and the one thing it is not is a surface you can read
-            small type off. */}
+        {/* And the middle taken back for the type. Light ground, dark words,
+            white wash - the pit is a field of pale glass and the one thing it is
+            not is a surface you can read small type off.
+
+            Only as large as the words, though.
+
+            It was a radius of sixty-eight per cent of the width, which is an
+            ellipse most of the card across - so the pit was a border of balls
+            round a white middle, and the picture the screen is made of was
+            pushed out to the edges. The block it exists for is a headline, two
+            lines of paragraph and one button: about a sixth of the card wide and
+            a seventh of it tall.
+
+            Thirty-six by thirty is that block with room to fade in. The stops
+            matter as much as the size - the wash holds near full strength to
+            most of its own radius and does all of its fading in the last
+            quarter, so the type sits on white rather than on the shoulder of a
+            gradient, and the balls come back within a hand's width of it.
+
+            No edge, still. Anything harder here would be a panel drawn round the
+            words, and the whole point is that there is no panel. */}
         {shown.view === "balls" ? (
           <div
             className="absolute inset-0"
             style={{
               backgroundImage:
-                "radial-gradient(ellipse 68% 62% at 50% 48%, color-mix(in oklab, var(--color-field) 94%, transparent) 0%, color-mix(in oklab, var(--color-field) 84%, transparent) 32%, color-mix(in oklab, var(--color-field) 46%, transparent) 62%, transparent 88%)",
+                "radial-gradient(ellipse 36% 30% at 50% 47%, color-mix(in oklab, var(--color-field) 94%, transparent) 0%, color-mix(in oklab, var(--color-field) 90%, transparent) 46%, color-mix(in oklab, var(--color-field) 52%, transparent) 74%, transparent 100%)",
             }}
           />
         ) : null}

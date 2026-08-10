@@ -1240,39 +1240,68 @@
      Three bounces, each about a third of the last, and they get quicker as
      they shrink - which is the one thing a bouncing ball does that a shrinking
      wobble does not. */
+  /* A ball dropped from the top of the card, landing on the thread.
+
+     The lengths are SVG user units, not screen pixels: these are set on
+     children of a `0 0 1200 130` viewBox drawn at the full width of the card,
+     so one unit is about a seven-hundredth of the window and 560 of them is a
+     drop from somewhere above the top edge. Above it on purpose - the card's
+     own outline clips the trail, so a ball that starts higher than the card
+     simply enters the picture already falling, which is what falling into shot
+     looks like. Tie the number to the strip's own height and the drop would
+     shorten every time the strip did.
+
+     Every segment carries its own timing function, which is the whole of what
+     makes this read as gravity. A fall accelerates and a rise decelerates, so
+     the two halves of a bounce take opposite curves; one ease across the lot of
+     it is a ball on a spring. The overall timing on the class is `linear` for
+     exactly that reason - it would otherwise be applied on top of each of these
+     and slur them together.
+
+     The fall takes three fifths of the run rather than half of it. Over the
+     same distance, a quicker fall arrives faster, and a ball that arrives
+     faster has to be stopped harder - which is what read as a jolt at the
+     bottom rather than as a landing. The curve on it is gentler for the same
+     reason: `(0.4, 0, 0.75, 0.5)` is a shallower accelerate than a true
+     quadratic, so most of the drop happens at a speed the eye can follow
+     instead of in the last few frames.
+
+     Three bounces, each about a third of the last, and they get quicker as they
+     shrink - which is the one thing a bouncing ball does that a shrinking
+     wobble does not. */
   @keyframes trail-bead {
     0% {
       transform: translateY(-560px);
       opacity: 0;
-      animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+      animation-timing-function: cubic-bezier(0.4, 0, 0.75, 0.5);
     }
-    6% {
+    8% {
       opacity: 1;
-      animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+      animation-timing-function: cubic-bezier(0.4, 0, 0.75, 0.5);
     }
-    52% {
+    60% {
       transform: translateY(0);
-      animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+      animation-timing-function: cubic-bezier(0.15, 0.6, 0.4, 1);
     }
-    67% {
-      transform: translateY(-52px);
-      animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+    73% {
+      transform: translateY(-46px);
+      animation-timing-function: cubic-bezier(0.6, 0, 0.85, 0.45);
     }
-    81% {
+    85% {
       transform: translateY(0);
-      animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+      animation-timing-function: cubic-bezier(0.15, 0.6, 0.4, 1);
     }
-    89% {
-      transform: translateY(-17px);
-      animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+    92% {
+      transform: translateY(-15px);
+      animation-timing-function: cubic-bezier(0.6, 0, 0.85, 0.45);
     }
-    95% {
+    97% {
       transform: translateY(0);
-      animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+      animation-timing-function: cubic-bezier(0.15, 0.6, 0.4, 1);
     }
-    98% {
-      transform: translateY(-5px);
-      animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+    98.8% {
+      transform: translateY(-4px);
+      animation-timing-function: cubic-bezier(0.6, 0, 0.85, 0.45);
     }
     100% {
       transform: translateY(0);
@@ -1287,42 +1316,53 @@
      ball is high and full every time the ball is down - which means it has to
      pulse on each bounce rather than simply arrive. The percentages are the
      bead's own, and the two run at one duration and one delay so they cannot
-     drift apart. */
+     drift apart.
+
+     It scales both ways now rather than only across. A shadow that only
+     stretched sideways was a bar that grew wider, where a real one opens from
+     a point in every direction at once - and the ellipse it is drawn on is
+     already flat, so scaling it evenly keeps it flat. */
   @keyframes trail-shade {
     0% {
-      transform: scaleX(0.16);
+      transform: scale(0.16);
       opacity: 0;
+      animation-timing-function: cubic-bezier(0.4, 0, 0.75, 0.5);
     }
     30% {
-      transform: scaleX(0.24);
-      opacity: 0.2;
+      transform: scale(0.26);
+      opacity: 0.22;
+      animation-timing-function: cubic-bezier(0.4, 0, 0.75, 0.5);
     }
-    52% {
-      transform: scaleX(1);
+    60% {
+      transform: scale(1);
+      opacity: 1;
+      animation-timing-function: cubic-bezier(0.15, 0.6, 0.4, 1);
+    }
+    73% {
+      transform: scale(0.6);
+      opacity: 0.48;
+      animation-timing-function: cubic-bezier(0.6, 0, 0.85, 0.45);
+    }
+    85% {
+      transform: scale(1);
+      opacity: 1;
+      animation-timing-function: cubic-bezier(0.15, 0.6, 0.4, 1);
+    }
+    92% {
+      transform: scale(0.82);
+      opacity: 0.72;
+      animation-timing-function: cubic-bezier(0.6, 0, 0.85, 0.45);
+    }
+    97% {
+      transform: scale(1);
       opacity: 1;
     }
-    67% {
-      transform: scaleX(0.58);
-      opacity: 0.46;
-    }
-    81% {
-      transform: scaleX(1);
-      opacity: 1;
-    }
-    89% {
-      transform: scaleX(0.8);
-      opacity: 0.7;
-    }
-    95% {
-      transform: scaleX(1);
-      opacity: 1;
-    }
-    98% {
-      transform: scaleX(0.93);
-      opacity: 0.88;
+    98.8% {
+      transform: scale(0.94);
+      opacity: 0.9;
     }
     100% {
-      transform: scaleX(1);
+      transform: scale(1);
       opacity: 1;
     }
   }
@@ -1336,13 +1376,13 @@
     /* `linear` on purpose - the keyframes above set their own curve per
        segment, and anything here would be applied on top of every one of
        them. */
-    animation: trail-bead 1.45s linear backwards;
+    animation: trail-bead 1.9s linear backwards;
   }
 
   .trail-shade {
     transform-box: fill-box;
     transform-origin: center;
-    animation: trail-shade 1.45s linear backwards;
+    animation: trail-shade 1.9s linear backwards;
   }
 
   /* Asked for less motion: the trail is simply strung already. */

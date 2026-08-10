@@ -15,7 +15,7 @@ import {
   PerspectiveCamera,
   Plane,
   PMREMGenerator,
-  PointLight,
+  DirectionalLight,
   Raycaster,
   RGBAFormat,
   Scene,
@@ -533,7 +533,9 @@ const DEFAULTS: PitConfig = {
   accentShare: 0,
   ambientColor: 0xffffff,
   ambientIntensity: 1,
-  lightIntensity: 200,
+  /* Directional, so this is a plain multiplier rather than candela - see the
+     light itself in `Beads`. */
+  lightIntensity: 2.4,
   materialParams: {
     metalness: 0.5,
     roughness: 0.5,
@@ -624,7 +626,7 @@ const placing = new Object3D();
 class Beads extends Group {
   config: PitConfig;
   physics: Physics;
-  glow: PointLight;
+  glow: DirectionalLight;
 
   /** The field, and the odd one out. */
   private shells: InstancedMesh[];
@@ -714,19 +716,42 @@ class Beads extends Group {
 
     this.add(new AmbientLight(config.ambientColor, config.ambientIntensity));
 
-    /* The light takes the middle of the field's ramp rather than one end,
+    /* The key light: fixed, and above and in front of the field.
+
+       It was a point light parked inside the field on sphere zero, which is the
+       sphere the pointer drags around - so the brightest part of the picture
+       was wherever the cursor happened to be, and moving the mouse across the
+       card dragged a bright patch through it. That is a torch, and this is
+       meant to be a room.
+
+       Directional rather than a point light moved somewhere else, because a
+       point light has a position and therefore a falloff: parked anywhere in
+       the field it makes a hot spot, and parked outside it goes out. A
+       directional light has only an angle, so every ball in the field is lit
+       the same way from the same side - which is what makes a hundred spheres
+       read as one material rather than as a hundred separately staged objects.
+
+       Its intensity is not the old number. Point lights are given in candela
+       and fall off with the square of the distance; a directional light does
+       not fall off at all, so the two are not the same scale and 190 of these
+       would be a white card.
+
+       The colour takes the middle of the field's ramp rather than one end,
        because it is what the whole box is lit by and neither end is the box. */
     const mid = (BANDS >> 1) * 4;
     const lit = ribbon(
       config.colors.length > 1 ? config.colors : [0xffffff, 0xffffff],
     ).data;
-    this.glow = new PointLight(0xffffff, config.lightIntensity);
+    this.glow = new DirectionalLight(0xffffff, config.lightIntensity);
     this.glow.color.setRGB(
       lit[mid] / 255,
       lit[mid + 1] / 255,
       lit[mid + 2] / 255,
       SRGBColorSpace,
     );
+    /* Up, to the left and towards the viewer, which is where the highlight
+       already sits on every ball in the field. */
+    this.glow.position.set(-6, 9, 12);
     this.add(this.glow);
   }
 
@@ -738,7 +763,6 @@ class Beads extends Group {
       placing.scale.setScalar(hidden ? 0 : this.physics.sizeData[i]);
       placing.updateMatrix();
       this.shells[this.lane[i]].setMatrixAt(this.seat[i], placing.matrix);
-      if (i === 0) this.glow.position.copy(placing.position);
     }
     for (const shell of this.shells) shell.instanceMatrix.needsUpdate = true;
   }
