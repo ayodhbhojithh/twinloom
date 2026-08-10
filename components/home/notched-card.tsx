@@ -1183,6 +1183,36 @@ export function NotchedCard({ className }: { className?: string }) {
           }}
         >
           <div className="relative size-full">
+            {/* What to do, said once and then got out of the way.
+
+                Nothing else on this card answers to a scroll, so nobody would
+                try it unasked - and the whole screen depends on somebody trying
+                it. It is set large because it is an instruction on a picture
+                rather than a label on a control, and there is nothing at the top
+                right of the frame competing with it.
+
+                It leaves on the first turn of the wheel. An instruction that
+                stays after it has been followed is a sign nobody took down; this
+                is gone by a twentieth of the reel, which is about one notch, and
+                the arrow drifts down as it goes so the last thing it does is
+                point the way it was asking for. */}
+            <div
+              aria-hidden
+              className="absolute top-0 right-0 flex items-center gap-3 text-right"
+              style={{
+                opacity: Math.max(0, 1 - reelAt / 0.05),
+                transform: `translateY(${Math.min(1, reelAt / 0.05) * 18}px)`,
+              }}
+            >
+              <span className="font-mono text-[13px] font-bold tracking-[0.24em] text-white uppercase drop-shadow-[0_2px_14px_rgba(24,32,44,0.55)] sm:text-[16px]">
+                Scroll down
+              </span>
+              <ArrowDown
+                className="size-5 shrink-0 text-white drop-shadow-[0_2px_14px_rgba(24,32,44,0.55)] sm:size-6"
+                strokeWidth={2.4}
+              />
+            </div>
+
             {TITLES.map((line) => (
               <div
                 key={line.lead}
