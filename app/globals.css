@@ -1394,45 +1394,6 @@
     }
   }
 
-  /* The artwork, breathing.
-
-     Everything on the first screen arrives, settles, and then stops - and a
-     screen that stops dead a second after it loads is a picture of a page
-     rather than a page. This is the one thing on it that may keep moving: it
-     is a drawing rather than something to read, and four pixels over seven
-     seconds is under the speed anything is noticed at. What it does is stop
-     the screen from being still, which is not the same as being animated.
-
-     Seven seconds and an ease at both ends, so there is no moment where it
-     changes direction sharply enough to be caught doing it. In percent rather
-     than pixels, so the drift is the same share of the mark at every width -
-     four pixels is a breath on a desk and a lurch on a phone.
-
-     Set on the image itself and not on a box around it. That image carries
-     `mix-blend-multiply` and its own mask, and a transform on any ancestor
-     makes a stacking context, which cuts the blend group and paints the
-     picture's white ground back in as a square. This file has come back as
-     that square twice; on the element itself there is no ancestor to cut. */
-  @keyframes hero-float {
-    0%,
-    100% {
-      transform: translateY(-0.85%);
-    }
-    50% {
-      transform: translateY(0.85%);
-    }
-  }
-
-  .hero-float {
-    animation: hero-float 7s ease-in-out infinite;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero-float {
-      animation: none;
-    }
-  }
-
   @keyframes reveal {
     from {
       opacity: 0;

@@ -156,8 +156,13 @@ export function BeadTrail({ className }: { className?: string }) {
 
           The delay is the index, so the run reads left to right along the
           thread. A tenth of a second between them: enough that they land one
-          after another rather than as a shower, and the whole run is over in
-          about two and a half seconds. Every value is written here rather than
+          after another rather than as a shower.
+
+          They start a second in, after the words above them rather than under
+          them. Twenty SVG elements moving at once is not free, and it was
+          costing frames from the one thing on this screen the eye is actually
+          on - and even if it were free, a headline arriving while ten balls
+          rain past it is two performances at once and neither gets watched. Every value is written here rather than
           in the stylesheet because it is per bead, and a stylesheet cannot hold
           ten of them without ten classes. */}
       {TRAIL.map((bead, n) => (
@@ -166,7 +171,7 @@ export function BeadTrail({ className }: { className?: string }) {
               it. Flat and wide, because the light is high and in front. */}
           <ellipse
             className="trail-shade"
-            style={{ animationDelay: `${0.35 + n * 0.1}s` }}
+            style={{ animationDelay: `${1 + n * 0.1}s` }}
             cx={bead.x}
             cy={bead.y + bead.r * 1.02}
             /* Wider and taller than the flat one it replaces, because most of
@@ -178,7 +183,7 @@ export function BeadTrail({ className }: { className?: string }) {
           />
           <circle
             className="trail-bead"
-            style={{ animationDelay: `${0.35 + n * 0.1}s` }}
+            style={{ animationDelay: `${1 + n * 0.1}s` }}
             cx={bead.x}
             cy={bead.y}
             r={bead.r}
@@ -233,7 +238,22 @@ export function MarkStage({ className }: { className?: string }) {
            It works because the card behind it is white. On a coloured screen
            this would darken rather than blend, and the honest fix there would be
            a file with an alpha channel rather than a different blend mode. */
-        className="hero-float relative h-full w-full object-cover mix-blend-multiply"
+        /* Still, and it has to be.
+
+           It carried a slow float for a while, and that float is what made the
+           whole first screen stutter. This image is `mix-blend-multiply` with a
+           mask over it: the browser composites the blend group and re-applies
+           the mask every time the element moves, and at half a window wide that
+           is a full-size recomposite sixty times a second, for ever, on the
+           same thread as the entrance run and the canvas behind it.
+
+           There is no cheap version of it either. Move it and the blend group
+           moves; put the transform on a parent and the group is cut and the
+           file's white ground comes back as a square. So the movement on this
+           screen belongs to the things that can afford it - the words arriving,
+           the beads dropping, the texture behind - and the mark is the still
+           point they are arranged around. */
+        className="relative h-full w-full object-cover mix-blend-multiply"
         style={{
           /* And the edges given away. Even multiplied, the file's outer corners
              carry enough noise to draw a rectangle in the right light; faded to

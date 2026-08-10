@@ -20,6 +20,7 @@ import { ROUTES, SISTER } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 import { Ballpit } from "./ballpit";
+import { DotField } from "./dot-field";
 import { BeadTrail, MarkStage } from "./mark-stage";
 import { GradientWaves } from "./gradient-waves";
 import { ProjectPanel } from "./project-panel";
@@ -328,6 +329,12 @@ const NAV_HEIGHT = 53;
  * one thing arriving in order - and a stagger nobody can follow is a stagger
  * paying for nothing. The extra tenth is what makes it legible as a sequence.
  *
+ * And a shorter travel over that longer time, which is the other half of
+ * smoothness. A block covering eighteen pixels in half a second moves fast
+ * enough that a dropped frame is a visible step; the same block covering twelve
+ * in seven tenths moves at under half that speed, where a dropped frame is a
+ * pause nobody can find. The distance was never the point - the arriving is.
+ *
  * The ease is nearly all at the end: things start quickly and settle slowly,
  * which is how a thing with weight comes to rest. A symmetrical curve spends
  * half its time getting going and reads as hesitation.
@@ -338,11 +345,11 @@ const HERO_RUN = {
 } as const;
 
 const HERO_RISE = {
-  hidden: { opacity: 0, y: 18 },
+  hidden: { opacity: 0, y: 12 },
   shown: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.62, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
   },
 } as const;
 
@@ -608,6 +615,20 @@ export function NotchedCard({ className }: { className?: string }) {
             place between them, where you see that the surface is not blank and
             never quite see what it is made of.
 
+            And a swell running through it now, which is why it is drawn rather
+            than set as a background. `background-position` slides a whole sheet,
+            which is a pattern being dragged; the dots only move against each
+            other if each one is placed, so `DotField` draws the same grid on a
+            canvas and lifts every dot by a travelling wave. Same pitch, same
+            dot, same grey - the texture is unchanged and the surface it is
+            printed on is no longer flat.
+
+            The mask stays out here rather than going into the drawing. Where a
+            texture fades is a decision about this screen's composition - it
+            clears the middle so the words are not read through it - and the
+            thing that draws dots has no business holding an opinion about where
+            the type is.
+
             The artwork gets its own clearing on top of this, a halo of the
             card's white inside `MarkStage`, because it sits in the last third
             too and the mask cannot know that. */}
@@ -616,13 +637,14 @@ export function NotchedCard({ className }: { className?: string }) {
             aria-hidden
             className="absolute inset-0"
             style={{
-              ...GRID("--color-border", 52, 1.5, 20),
               maskImage:
                 "radial-gradient(ellipse 62% 66% at 50% 50%, transparent 0%, transparent 22%, black 74%)",
               WebkitMaskImage:
                 "radial-gradient(ellipse 62% 66% at 50% 50%, transparent 0%, transparent 22%, black 74%)",
             }}
-          />
+          >
+            <DotField className="absolute inset-0" />
+          </span>
         ) : null}
 
         {/* The second screen: the water, full bleed and nothing over it.
@@ -1493,11 +1515,6 @@ export function NotchedCard({ className }: { className?: string }) {
 }
 
 /** One of the three controls that stand in the notch. */
-const GRID = (tint: string, share: number, dot: number, gap: number) => ({
-  backgroundImage: `radial-gradient(circle, color-mix(in oklab, var(${tint}) ${share}%, transparent) ${dot}px, transparent ${dot + 0.7}px)`,
-  backgroundSize: `${gap}px ${gap}px`,
-});
-
 function Tool({
   label,
   onClick,
