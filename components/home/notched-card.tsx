@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowDown,
@@ -537,6 +537,19 @@ export function NotchedCard({ className }: { className?: string }) {
   const box = useRef<HTMLDivElement>(null);
 
   const [size, setSize] = useState({ w: 0, h: 0 });
+
+  /* How big the film screen's three doors came out.
+     
+     Read back from the stack rather than declared, because the cut they stand in
+     is measured from them - see `dropW` below. Nought on every other screen, and
+     nought on the first frame of that one, which is what makes the corner fall
+     back to the size it is for a disc. */
+  const [doors, setDoors] = useState({ w: 0, h: 0 });
+
+  const takeDoors = useCallback((w: number, h: number) => {
+    setDoors((was) => (was.w === w && was.h === h ? was : { w, h }));
+  }, []);
+
   const [at, setAt] = useState(0);
   const [open, setOpen] = useState<Project | null>(null);
 
@@ -648,6 +661,38 @@ export function NotchedCard({ className }: { className?: string }) {
        around a 44px target. */
     const drop = Math.max(flare * 2 + 16, Math.min(w * 0.075, 96));
 
+    /* And on the film, what stands there is not a 44px target.
+
+       That screen replaces the way down the page with the three doors, and the
+       rule this card is built on is that anything you can press stands in a
+       piece cut out of the card rather than on top of it. So the cut is not a
+       fixed square that the doors are then kept clear of - it is measured from
+       them: whatever the stack came out as, plus the same air the disc has, and
+       the corner opens to hold it.
+
+       Held under what the card can actually give up. A cut wider than the edge
+       it is taken out of is not a cut, it is a card with a corner missing, and
+       `outline` would fold the path through itself drawing it. The floor is the
+       disc's own size, so before the stack has been measured - the first frame,
+       and any width where it comes out smaller - the corner is exactly what it
+       has always been.
+       And on that screen only. The measurement is kept in state, so it is still
+       there once the card has been turned to the next slide - gated on the view
+       as well, or every other screen inherits a corner cut the size of three
+       buttons that are no longer standing in it.
+
+       Twenty-eight on both, which is fourteen a side once the stack is centred
+       in it. One number for all four edges: the plate is inset from the card's
+       bottom by exactly what it is inset from the card's right, and the air
+       above and left of it - where the picture is - matches. An extra allowance
+       at the foot was tried and it is the thing that reads as wrong, because
+       there is nothing at that edge for the extra to be clearing. */
+    const held = shown.view === "film" && doors.w > 0 && doors.h > 0;
+    const dropW = held
+      ? Math.max(drop, Math.min(doors.w + 28, w - 2 * (radius + flare) - 24))
+      : drop;
+    const dropH = held ? Math.max(drop, Math.min(doors.h + 28, h * 0.5)) : drop;
+
     return {
       radius,
       barWidth,
@@ -662,8 +707,8 @@ export function NotchedCard({ className }: { className?: string }) {
       biteHeight: 0,
       biteRadius: flare,
       biteFlare: flare,
-      dropWidth: drop,
-      dropHeight: drop,
+      dropWidth: dropW,
+      dropHeight: dropH,
       dropRadius: flare,
       dropFlare: flare,
     };
@@ -1330,89 +1375,25 @@ export function NotchedCard({ className }: { className?: string }) {
           Stacked and one width: in a row the eye reads left to right and the
           loud one goes first; in a stack it reads top to bottom, so the filled
           one is at the top and all three are as wide as the longest label. */}
+      {/* The three doors, standing in the corner the way down the page used to.
+
+          Not laid over the picture near that corner, which is what they were
+          doing: a stack floating on the film a few pixels inside the cut, with
+          the disc beside it, so the screen offered four ways on in two different
+          idioms - one set on the picture and one set in the card.
+
+          This card's rule is that anything you can press has a piece cut out for
+          it to stand in. The disc obeyed it and the doors did not, so the doors
+          take the disc's place: the cut opens to their measure, they stand in
+          it, and on this screen there is no disc at all. Outside the card's
+          surface rather than on top of it, on the page, exactly as the disc
+          was. */}
       {shown.view === "film" ? (
         <div
-          /* Bottom left on a phone, bottom right on anything wider.
-
-             The card gives up its bottom right corner, and the way down the page
-             stands in it. On a wide card a narrow stack sits beside that cut
-             with room to spare; on a phone the same stack is most of the width,
-             so it ran into the corner and came out sliced by the outline. The
-             other end of the same edge is uncut and empty, which is where it
-             goes. */
-          className="pointer-events-none absolute z-10 flex justify-start sm:justify-end"
-          style={{
-            right: pad,
-            left: pad,
-            bottom: 18,
-          }}
+          className="absolute right-0 bottom-0 z-10 flex items-center justify-center"
+          style={{ width: cut.dropWidth, height: cut.dropHeight }}
         >
-          {/* The same three the first screen offers, in the same order and
-              with the same icons.
-
-              They were two of their own - "What we make" and "Send us a
-              message" - which is a third and fourth way of saying what the card
-              already says twice. A visitor turning from the first screen to this
-              one should find the doors where they left them; a card that offers
-              different ways on depending on which picture is showing is a card
-              asking somebody to read the same menu twice.
-
-              Stacked and at one width, because they stand in a corner rather
-              than on a row. The filled one leads, since a stack is read top to
-              bottom. */}
-          {/* Stacked where there is room to stack and wrapped where there is
-              not. Three pills down the side of a phone is most of the screen
-              given to controls; in a row they take one line and wrap to two,
-              and `justify-end` keeps whatever lands on the second line against
-              the same edge as the first. */}
-          {/* Stacked at every width now. A wrapping row was what put a second
-              line across the foot of a phone in the first place, and three pills
-              down one side is the same three in a column narrow enough to leave
-              the picture visible either side of it. */}
-          <div className="flex w-max flex-col items-stretch gap-2">
-            <Link
-              href={ROUTES.build}
-              className="group/way thread-fill inline-flex items-center gap-1.5 rounded-pill px-3 py-2 text-[11.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 sm:gap-2 sm:px-4.5 sm:py-2.5 sm:text-[13px]"
-            >
-              <PencilLine aria-hidden className="size-3.5 shrink-0 sm:size-4" />
-              Scope your website
-              <ArrowRight
-                aria-hidden
-                className="ml-auto size-3.5 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-4"
-                strokeWidth={2.4}
-              />
-            </Link>
-
-            <a
-              href={ROUTES.services}
-              className="group/way inline-flex items-center gap-1.5 rounded-pill border border-hair bg-field px-3 py-2 text-[11.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink sm:gap-2 sm:px-4.5 sm:py-2.5 sm:text-[13px]"
-            >
-              <LayoutGrid
-                aria-hidden
-                className="size-3.5 shrink-0 text-idx sm:size-4"
-              />
-              View our services
-              <ArrowRight
-                aria-hidden
-                className="ml-auto size-3.5 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-4"
-              />
-            </a>
-
-            <Link
-              href={ROUTES.book}
-              className="group/way inline-flex items-center gap-1.5 rounded-pill border border-hair bg-field px-3 py-2 text-[11.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink sm:gap-2 sm:px-4.5 sm:py-2.5 sm:text-[13px]"
-            >
-              <CalendarDays
-                aria-hidden
-                className="size-3.5 shrink-0 text-idx sm:size-4"
-              />
-              Book a meeting
-              <ArrowRight
-                aria-hidden
-                className="ml-auto size-3.5 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-4"
-              />
-            </Link>
-          </div>
+          <FilmDoors onSize={takeDoors} />
         </div>
       ) : null}
 
@@ -2050,35 +2031,37 @@ export function NotchedCard({ className }: { className?: string }) {
           An anchor rather than a scroll handler. It works before the JavaScript
           arrives, it can be opened in a new tab or copied, and the smooth part
           is the browser's job through `scroll-behavior`. */}
-      <div
-        className="absolute right-0 bottom-0 flex items-center justify-center"
-        style={{ width: cut.dropWidth, height: cut.dropHeight }}
-      >
-        <a
-          href="#build"
-          aria-label="Go to Build your website"
-          className="group/down relative flex size-11 cursor-pointer items-center justify-center overflow-hidden rounded-pill bg-ink text-white transition-opacity hover:opacity-90 hover:[--drip:1s]"
+      {shown.view === "film" ? null : (
+        <div
+          className="absolute right-0 bottom-0 flex items-center justify-center"
+          style={{ width: cut.dropWidth, height: cut.dropHeight }}
         >
-          {/* The column above the arrowhead. One class, three indexes: `--i`
-              both places a dot and delays it, so the cascade always runs top to
-              bottom at the spacing it is drawn at. Hidden from anything reading
-              the page out, because it is the button's rhythm and not part of
-              what the button says. */}
-          {[0, 1, 2].map((i) => (
-            <span
-              key={i}
-              aria-hidden
-              className="drip"
-              style={{ "--i": i } as React.CSSProperties}
-            />
-          ))}
+          <a
+            href="#build"
+            aria-label="Go to Build your website"
+            className="group/down relative flex size-11 cursor-pointer items-center justify-center overflow-hidden rounded-pill bg-ink text-white transition-opacity hover:opacity-90 hover:[--drip:1s]"
+          >
+            {/* The column above the arrowhead. One class, three indexes: `--i`
+                both places a dot and delays it, so the cascade always runs top
+                to bottom at the spacing it is drawn at. Hidden from anything
+                reading the page out, because it is the button's rhythm and not
+                part of what the button says. */}
+            {[0, 1, 2].map((i) => (
+              <span
+                key={i}
+                aria-hidden
+                className="drip"
+                style={{ "--i": i } as React.CSSProperties}
+              />
+            ))}
 
-          <ArrowDown
-            className="relative size-[18px] transition-transform duration-300 group-hover/down:translate-y-0.5"
-            strokeWidth={2.2}
-          />
-        </a>
-      </div>
+            <ArrowDown
+              className="relative size-[18px] transition-transform duration-300 group-hover/down:translate-y-0.5"
+              strokeWidth={2.2}
+            />
+          </a>
+        </div>
+      )}
     </div>
   );
 }
@@ -2102,5 +2085,100 @@ function Tool({
     >
       {children}
     </button>
+  );
+}
+
+/**
+ * The three doors on the film screen, and the plate they stand on.
+ *
+ * The same three the first screen offers, in the same order and with the same
+ * icons. They were two of their own once - "What we make" and "Send us a
+ * message" - which is a third and fourth way of saying what the card already
+ * says twice. Somebody turning from the first screen to this one should find
+ * the doors where they left them.
+ *
+ * Stacked and at one width, because they stand in a corner rather than on a
+ * row. The filled one leads, since a stack is read top to bottom.
+ *
+ * It measures itself and hands the number back up, because the cut it is
+ * standing in is drawn from it. That is the way round it has to be: a fixed cut
+ * with a stack fitted into it would be a hole that three labels have to be short
+ * enough for, and the labels are the part that matters.
+ */
+function FilmDoors({ onSize }: { onSize: (w: number, h: number) => void }) {
+  const box = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const node = box.current;
+    if (!node) return;
+
+    const watch = new ResizeObserver(() => {
+      const rect = node.getBoundingClientRect();
+      onSize(Math.round(rect.width), Math.round(rect.height));
+    });
+
+    watch.observe(node);
+    return () => watch.disconnect();
+  }, [onSize]);
+
+  return (
+    /* No plate under them.
+
+       There was an ink one, on the argument that through the cut there is no
+       white behind these three and a bordered white pill wants something to be
+       bordered against. What it actually did was put a second surface inside a
+       hole cut out of the first, a few pixels in from an edge already drawn by
+       the outline - two shapes saying the same thing, and the smaller one
+       redrawing a corner the card had just cut.
+
+       The cut is the surface. The three pills stand in it the way the disc did,
+       on the page, and the air round them is the cut's own. */
+    <div
+      ref={box}
+      className="pointer-events-auto flex w-max flex-col items-stretch gap-2 sm:gap-2.5"
+    >
+      <Link
+        href={ROUTES.build}
+        className="group/way thread-fill inline-flex items-center gap-1.5 rounded-pill px-3 py-2 text-[11.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 sm:gap-2 sm:px-4.5 sm:py-2.5 sm:text-[13px]"
+      >
+        <PencilLine aria-hidden className="size-3.5 shrink-0 sm:size-4" />
+        Scope your website
+        <ArrowRight
+          aria-hidden
+          className="ml-auto size-3.5 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-4"
+          strokeWidth={2.4}
+        />
+      </Link>
+
+      <a
+        href={ROUTES.services}
+        className="group/way inline-flex items-center gap-1.5 rounded-pill border border-hair bg-field px-3 py-2 text-[11.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink sm:gap-2 sm:px-4.5 sm:py-2.5 sm:text-[13px]"
+      >
+        <LayoutGrid
+          aria-hidden
+          className="size-3.5 shrink-0 text-idx sm:size-4"
+        />
+        View our services
+        <ArrowRight
+          aria-hidden
+          className="ml-auto size-3.5 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-4"
+        />
+      </a>
+
+      <Link
+        href={ROUTES.book}
+        className="group/way inline-flex items-center gap-1.5 rounded-pill border border-hair bg-field px-3 py-2 text-[11.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink sm:gap-2 sm:px-4.5 sm:py-2.5 sm:text-[13px]"
+      >
+        <CalendarDays
+          aria-hidden
+          className="size-3.5 shrink-0 text-idx sm:size-4"
+        />
+        Book a meeting
+        <ArrowRight
+          aria-hidden
+          className="ml-auto size-3.5 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-4"
+        />
+      </Link>
+    </div>
   );
 }
