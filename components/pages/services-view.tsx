@@ -59,14 +59,48 @@ const EDGES =
    already carries. */
 
 /**
+ * The order the wall reads in.
+ *
+ * Not the order `lib/services` holds them in, and the difference is the point.
+ * That file keeps two lists apart because the distinction matters to it - what
+ * we build, then what runs alongside - and reading them out end to end put the
+ * two biggest commitments first and second, which made the four after them look
+ * like an appendix.
+ *
+ * This is the order somebody meets them in: the site, then keeping the site,
+ * then working out what it should be, then getting people to it, then how it
+ * looks, then the software under it. Roughly the order the work happens in, and
+ * it ends on the one that is built by the other company - which is the right
+ * place for it, because it is the thing you arrive at rather than the thing you
+ * came for.
+ */
+const ORDER = [
+  "Websites",
+  "Website Care",
+  "Digital consultancy",
+  "Digital campaign management",
+  "Brand identity",
+  "Custom software",
+] as const;
+
+/**
  * What the wall shows.
  *
- * The seven things we do, not seven partner disciplines. There are no partners
- * to name, and a wall of specialisms on a page about services was answering a
+ * The six things we do, not six partner disciplines. There are no partners to
+ * name, and a wall of specialisms on a page about services was answering a
  * question nobody had asked yet - somebody arriving here wants the list of what
  * can be bought, and this is that list.
+ *
+ * Sorted by `ORDER` rather than filtered through it, so a discipline added to
+ * `lib/services` and forgotten here still appears - at the end, which looks
+ * wrong, which is how anybody finds out. Filtering would drop it silently.
  */
-const SHOWN = [...OFFER, ...SERVICES];
+const AT = (name: string) => {
+  const at = ORDER.indexOf(name as (typeof ORDER)[number]);
+  return at === -1 ? ORDER.length : at;
+};
+
+const SHOWN = [...OFFER, ...SERVICES].sort((a, b) => AT(a.n) - AT(b.n));
 
 const RULES = [
   "One contract, and it is with us.",
@@ -285,7 +319,11 @@ export function ServiceWall({
                   Four of these run to one line and three to two, and with the
                   box sized to its own words the sentences under them landed at
                   four different heights along the row. */}
-              <h3 className="min-h-[2.4em] text-[13px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink sm:text-[18.5px]">
+              {/* Centred over the drawing above it, which is centred too. The
+                  sentence under it stays left: a name is a label on a picture
+                  and centres with it, where three lines of prose centred are
+                  three lines ragged at both ends. */}
+              <h3 className="min-h-[2.4em] text-center text-[13px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink sm:text-[18.5px]">
                 {entry.n}
               </h3>
 

@@ -81,23 +81,20 @@ const TOPIC: Record<string, string> = {
 };
 
 /**
- * A picture each, so five heads are not one head five times.
+ * A picture each, named after the piece it belongs to.
  *
- * Held here rather than in a view, because the index and the piece itself show
- * the same picture and two lists of these would drift the first time one was
- * edited.
+ * The file is the slug, so there is no map to keep. Five pieces shared three
+ * borrowed photographs before this - the same one at the head of two different
+ * articles - and any table pairing a slug with a filename is a table somebody
+ * has to remember to edit when a piece is added.
+ *
+ * Drawings rather than photographs, in the language the services cards are
+ * drawn in: the mark rendered as a glass ribbon, the dotted thread through it,
+ * and the piece's own subject built around it. A photograph at the head of a
+ * page about how something is decided is decoration; a drawing of the thing
+ * being decided is the page's first sentence.
  */
-const PLATES: Record<string, string> = {
-  "how-your-website-is-made": "/work-investor.png",
-  "the-technology-we-use": "/work-investor.png",
-  "selling-online": "/work-trade.png",
-  "picking-the-back-end-for-your-shop": "/work-shop.png",
-  "systems-behind-selling": "/work-careers.png",
-  "seo-and-search": "/work-careers.png",
-  "what-twincoretech-can-build": "/work-shop.png",
-};
-
-export const plateFor = (slug: string) => PLATES[slug] ?? "/right-image.png";
+export const plateFor = (slug: string) => `/assets/insights/${slug}.png`;
 
 /** A markdown table row, split on the pipes and trimmed. */
 const cells = (line: string) =>

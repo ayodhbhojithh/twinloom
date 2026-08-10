@@ -103,6 +103,22 @@ export default function RootLayout({
   return (
     <html
       lang="en-GB"
+      /* The stylesheet sets `scroll-behavior: smooth`, which is what makes an
+         in-page anchor - the hero's down arrow, every link into `#services` -
+         glide rather than jump.
+
+         Next 16 stopped working around that on its own. Until 16 it suspended
+         the setting for the length of a route change, so moving between pages
+         still landed instantly at the top; the note in the upgrade guide is
+         that it no longer does, because the suspend-navigate-restore dance cost
+         something at the start of every navigation. Without this attribute a
+         route change now animates the scroll to the top, which is a page you
+         watch arrive.
+
+         This asks for the old behaviour back, and it is the right way round:
+         smooth is a decision about moving within a page, and a new page has
+         nowhere to have come from. */
+      data-scroll-behavior="smooth"
       className={`${sora.variable} ${jetbrains.variable} h-full`}
     >
       <body className="flex min-h-full flex-col">

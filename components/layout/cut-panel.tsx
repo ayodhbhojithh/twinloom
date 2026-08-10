@@ -261,7 +261,6 @@ export function CutPanel({
             />
           </div>
 
-
           <div className="absolute inset-y-0 right-0 hidden w-[55%] lg:block">
             <Image
               src={image}
