@@ -737,7 +737,16 @@ export function NotchedCard({ className }: { className?: string }) {
      with nothing set over the artwork there is nothing left to place. */
 
   return (
-    <div ref={box} className={cn("relative", className)}>
+    <div
+      ref={box}
+      /* A column on a phone, and only there.
+
+         The one screen that stands in the flow rather than over the card needs
+         the card to stretch it, or it sits at the top with the rest of the
+         height empty underneath. Everything else here is `absolute` and out of
+         the flow, so a flex column changes nothing for any of them. */
+      className={cn("relative max-sm:flex max-sm:flex-col", className)}
+    >
       {/* The slide, cut to the card's outline, and the one before it still
           drawn underneath while they cross.
 
@@ -1630,7 +1639,7 @@ export function NotchedCard({ className }: { className?: string }) {
              where one was wanted, and a hand's depth of empty card under the
              last button. Its height is its contents; the card is what holds the
              floor, and the card gets that from the section it fills. */
-          className="pointer-events-none absolute inset-0 z-10 flex items-stretch max-sm:relative max-sm:inset-auto"
+          className="pointer-events-none absolute inset-0 z-10 flex items-stretch max-sm:relative max-sm:inset-auto max-sm:min-h-[calc(100svh-var(--sill-top)-var(--sill-bottom))]"
           style={{
             /* `head` clears the row of links, and there is no row of links on a
                phone - the bar is a wordmark and a menu button, and the notch

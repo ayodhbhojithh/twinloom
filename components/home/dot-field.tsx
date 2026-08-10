@@ -43,6 +43,20 @@ const PITCH = 20;
 const DOT = 1.5;
 
 /**
+ * And the same weave at the scale a phone actually is.
+ *
+ * A texture is read against the thing it is a texture on. The card is a third
+ * of the width on a handset, so a twenty pixel pitch that reads as paper on a
+ * monitor reads as a pattern of dots there - a dozen of them across the space
+ * between two words. Fourteen and a pixel keeps it a weave.
+ */
+const PITCH_TIGHT = 14;
+const DOT_TIGHT = 1;
+
+/** Where the card stops being wide enough to carry the full-size weave. */
+const TIGHT = 640;
+
+/**
  * How strongly the dot's own weight follows the wave.
  *
  * Small, and it was not. It swung between about six tenths and full, which does
@@ -143,8 +157,11 @@ export function DotField({ className }: { className?: string }) {
       ctx.clearRect(0, 0, width, height);
       if (width < 2 || height < 2) return;
 
-      const cols = Math.ceil(width / PITCH) + 1;
-      const rows = Math.ceil(height / PITCH) + 1;
+      const pitch = width < TIGHT ? PITCH_TIGHT : PITCH;
+      const dot = width < TIGHT ? DOT_TIGHT : DOT;
+
+      const cols = Math.ceil(width / pitch) + 1;
+      const rows = Math.ceil(height / pitch) + 1;
 
       if (colSin.length < cols) {
         colSin = new Float32Array(cols);
@@ -175,12 +192,12 @@ export function DotField({ className }: { className?: string }) {
          around four and a half now, which is a wave passing rather than a
          pattern that might be drifting. */
       for (let i = 0; i < cols; i += 1) {
-        const a = (i * PITCH) / 260 + t * 1.35;
+        const a = (i * pitch) / 260 + t * 1.35;
         colSin[i] = Math.sin(a);
         colCos[i] = Math.cos(a);
       }
       for (let j = 0; j < rows; j += 1) {
-        const b = (j * PITCH) / 760 - t * 0.28;
+        const b = (j * pitch) / 760 - t * 0.28;
         rowSin[j] = Math.sin(b);
         rowCos[j] = Math.cos(b);
       }
@@ -189,7 +206,7 @@ export function DotField({ className }: { className?: string }) {
       ctx.beginPath();
 
       for (let j = 0; j < rows; j += 1) {
-        const y = j * PITCH;
+        const y = j * pitch;
         const sb = rowSin[j];
         const cb = rowCos[j];
 
@@ -199,10 +216,10 @@ export function DotField({ className }: { className?: string }) {
 
           /* Lifted, and a touch heavier where it is lifted. The displacement
              is the wave; the weight only says which side of it is nearer. */
-          const r = DOT * (1 + WEIGHT * wave);
+          const r = dot * (1 + WEIGHT * wave);
           const at = y + LIFT * wave;
 
-          ctx.rect(i * PITCH - r, at - r, r + r, r + r);
+          ctx.rect(i * pitch - r, at - r, r + r, r + r);
         }
       }
 
