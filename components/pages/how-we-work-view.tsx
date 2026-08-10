@@ -224,7 +224,19 @@ export function HowWeWorkView() {
                                 : {}),
                             }}
                           >
-                            {n + 1}
+                            {/* The step's number in the run, not its place in
+                                the zone.
+
+                                It was `n + 1`, which is the index inside the
+                                zone - so the page counted one to five, then
+                                started again at one, then again. The whole claim
+                                here is that there is one run of thirteen steps
+                                and the zones are how it is grouped; numbering
+                                that restarts three times says the opposite, and
+                                says it directly under a notch reading "Steps 6 -
+                                11". `ix` is the number in the run, and it is the
+                                same field the notch above reads. */}
+                            {stop.ix}
                           </span>
 
                           <b className="min-w-0 text-[15.5px] leading-[1.35] font-bold tracking-[-0.018em] text-ink max-sm:text-[13.5px] sm:w-[240px] sm:shrink-0 sm:grow-0">

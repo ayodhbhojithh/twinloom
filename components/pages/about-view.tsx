@@ -123,13 +123,13 @@ function Ways({
     <div className={className}>
       <div
         className={cn(
-          "flex flex-wrap items-center gap-2.5",
+          "flex flex-wrap items-center gap-2.5 max-sm:gap-2",
           center && "justify-center",
         )}
       >
         <Link
           href={ROUTES.build}
-          className="group/one inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2.5 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85"
+          className="group/one inline-flex items-center justify-center gap-2 rounded-pill bg-ink px-4.5 py-2.5 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85 max-sm:w-full max-sm:px-4 max-sm:text-[12.5px]"
         >
           <PencilLine aria-hidden className="size-4" strokeWidth={1.9} />
           Send us your requirements
@@ -141,7 +141,7 @@ function Ways({
 
         <a
           href={CONTACT_INFO.phoneHref}
-          className="inline-flex items-center gap-2 rounded-pill bg-canvas px-4 py-2.5 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair"
+          className="inline-flex flex-1 items-center justify-center gap-2 rounded-pill bg-canvas px-4 py-2.5 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair max-sm:px-3 max-sm:text-[12.5px]"
         >
           <Phone aria-hidden className="size-4" strokeWidth={1.9} />
           Give us a call
@@ -149,7 +149,7 @@ function Ways({
 
         <Link
           href={ROUTES.book}
-          className="inline-flex items-center gap-2 rounded-pill bg-canvas px-4 py-2.5 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair"
+          className="inline-flex flex-1 items-center justify-center gap-2 rounded-pill bg-canvas px-4 py-2.5 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair max-sm:px-3 max-sm:text-[12.5px]"
         >
           <CalendarClock aria-hidden className="size-4" strokeWidth={1.9} />
           Book a meeting
@@ -171,10 +171,10 @@ function Head({
 }) {
   return (
     <div className={className}>
-      <h2 className="max-w-[32ch] text-[clamp(21px,1.9vw,28px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink">
+      <h2 className="max-w-[32ch] text-[clamp(21px,1.9vw,28px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink max-sm:text-[19px]">
         {n}
       </h2>
-      <p className="mt-3 max-w-[92ch] text-[15px] leading-[1.65] text-quiet">
+      <p className="mt-3 max-w-[92ch] text-[15px] leading-[1.65] text-quiet max-sm:mt-2 max-sm:text-[13px] max-sm:leading-[1.55]">
         {sub}
       </p>
     </div>
@@ -187,9 +187,13 @@ export function AboutView() {
       {/* White, like every other card on the site. The panel's own default is
           the canvas grey, and on a canvas page that makes the one card with a
           picture in it the one card that does not read as a card. */}
+      {/* Arriving on the scroll. `reveal` is a class in the stylesheet and one
+          observer already watches the whole document, so there is no JavaScript
+          here and no wrapper per block; `--step` is the order, ninety
+          milliseconds apart, and the page lands top to bottom. */}
       <CutPanel
         tone="field"
-        className="w-full"
+        className="reveal w-full"
         image="/partners/arch.png"
         corner={
           <Link
@@ -207,7 +211,7 @@ export function AboutView() {
             About TwinLoom
           </p>
 
-          <h1 className="mt-3 max-w-[min(46ch,var(--notch-free,104ch))] text-[clamp(26px,2.9vw,42px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink">
+          <h1 className="mt-3 max-w-[min(46ch,var(--notch-free,104ch))] text-[clamp(26px,2.9vw,42px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink max-sm:mt-2 max-sm:text-[25px]">
             TwinLoom builds websites,
             <span className="text-quiet">
               {" "}
@@ -215,13 +219,13 @@ export function AboutView() {
             </span>
           </h1>
 
-          <p className="mt-5 max-w-[110ch] text-[clamp(15px,1.2vw,17px)] leading-[1.6] text-body">
+          <p className="mt-5 max-w-[110ch] text-[clamp(15px,1.2vw,17px)] leading-[1.6] text-body max-sm:mt-3 max-sm:text-[13px] max-sm:leading-[1.55]">
             TwinLoom is a trading name of TwinCoreTech, a SaaS company building
             custom software for businesses. If what sits behind your website
             needs building rather than buying, that work sits in the same group.
           </p>
 
-          <Ways className="mt-7" />
+          <Ways className="mt-7 max-sm:mt-5" />
         </div>
       </CutPanel>
 
@@ -229,13 +233,13 @@ export function AboutView() {
           distinction between them is the point: one is the site, the other is
           what the site sits on, and they are built by two halves of one
           group. */}
-      <section className="mt-14">
+      <section className="reveal mt-14 [--step:1] max-sm:mt-9">
         <Head
           n="Our core offering."
           sub="Two things, and the second only where a website is not the whole of what you need."
         />
 
-        <div className="mt-7 grid gap-4 lg:grid-cols-2">
+        <div className="mt-7 grid gap-4 max-sm:mt-5 max-sm:gap-3 lg:grid-cols-2">
           {OFFER.map((entry) => (
             <CutPanel
               key={entry.n}
@@ -249,20 +253,23 @@ export function AboutView() {
             >
               <span
                 aria-hidden
-                className="flex size-11 items-center justify-center rounded-pill bg-canvas text-ink"
+                className="flex size-11 items-center justify-center rounded-pill bg-canvas text-ink max-sm:size-10"
               >
-                <entry.icon className="size-5" strokeWidth={1.9} />
+                <entry.icon
+                  className="size-5 max-sm:size-[18px]"
+                  strokeWidth={1.9}
+                />
               </span>
 
-              <p className="mt-5 font-mono text-[9px] font-bold tracking-[0.16em] text-mark uppercase">
+              <p className="mt-5 font-mono text-[9px] font-bold tracking-[0.16em] text-mark uppercase max-sm:mt-3.5">
                 {entry.kicker}
               </p>
 
-              <h3 className="mt-2.5 text-[clamp(20px,1.8vw,27px)] leading-[1.1] font-extrabold tracking-[-0.032em] text-ink">
+              <h3 className="mt-2.5 text-[clamp(20px,1.8vw,27px)] leading-[1.1] font-extrabold tracking-[-0.032em] text-ink max-sm:mt-2 max-sm:text-[18px]">
                 {entry.n}
               </h3>
 
-              <p className="mt-3 max-w-[60ch] text-[14px] leading-[1.65] text-body">
+              <p className="mt-3 max-w-[60ch] text-[14px] leading-[1.65] text-body max-sm:mt-2 max-sm:text-[13px] max-sm:leading-[1.55]">
                 {entry.sub}
               </p>
             </CutPanel>
@@ -276,7 +283,7 @@ export function AboutView() {
           thing eleven times; a column of numbers says how many there are, which
           is the actual claim - the list is the same length whatever the site
           costs. */}
-      <section className="mt-16">
+      <section className="reveal mt-16 [--step:2] max-sm:mt-9">
         <CutPanel
           tone="field"
           className="w-full"
@@ -306,12 +313,12 @@ export function AboutView() {
               `mt-8` because the notch is at the top centre: with the heading on
               the left there was room beside it, and on the centre line there is
               not. */}
-          <h2 className="mx-auto mt-8 max-w-[52ch] text-center text-[clamp(21px,1.9vw,28px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink">
+          <h2 className="mx-auto mt-8 max-w-[52ch] text-center text-[clamp(21px,1.9vw,28px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink max-sm:mt-4 max-sm:text-[19px]">
             Every site we build gets the same eleven inclusions, whatever its
             size.
           </h2>
 
-          <p className="mx-auto mt-3 max-w-[84ch] text-center text-[15px] leading-[1.65] text-quiet">
+          <p className="mx-auto mt-3 max-w-[84ch] text-center text-[15px] leading-[1.65] text-quiet max-sm:mt-2 max-sm:text-[13px] max-sm:leading-[1.55]">
             Not a tier, not an upgrade, and not something to ask for. A five
             page site gets the list a fifty page site gets.
           </p>
@@ -326,16 +333,19 @@ export function AboutView() {
                   a list of eleven short lines - and eleven over three is a last
                   row with two in it. Four columns take the width the panel
                   already has, and the ragged row goes from two short to one. */}
-          <ol className="mt-10 grid w-full gap-x-8 gap-y-3.5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          <ol className="mt-10 grid w-full gap-x-8 gap-y-3.5 max-sm:mt-6 max-sm:gap-y-2.5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {INCLUDED.map((line, n) => (
-              <li key={line.say} className="flex min-w-0 gap-3.5">
+              <li
+                key={line.say}
+                className="flex min-w-0 gap-3.5 max-sm:gap-2.5"
+              >
                 <span
                   aria-hidden
-                  className="mt-px flex size-6 flex-none items-center justify-center rounded-pill bg-canvas font-mono text-[9.5px] font-bold text-idx tabular-nums"
+                  className="mt-px flex size-6 flex-none items-center justify-center rounded-pill bg-canvas font-mono text-[9.5px] font-bold text-idx tabular-nums max-sm:size-5 max-sm:text-[9px]"
                 >
                   {String(n + 1).padStart(2, "0")}
                 </span>
-                <span className="min-w-0 text-[13.5px] leading-[1.55] text-body">
+                <span className="min-w-0 text-[13.5px] leading-[1.55] text-body max-sm:text-[12.5px] max-sm:leading-[1.5]">
                   {line.say}
                 </span>
               </li>
@@ -345,7 +355,7 @@ export function AboutView() {
           {/* The ways again, under the list they belong to. Cut once as a
               repetition; it is not one - it is the first point in the page
               where somebody has read something concrete enough to act on. */}
-          <Ways className="mt-10" center />
+          <Ways className="mt-10 max-sm:mt-6" center />
         </CutPanel>
       </section>
 
@@ -359,7 +369,7 @@ export function AboutView() {
           Numbered, and each says whose it is. "Provided by us or through our
           specialist partners" is the one thing the reader wants resolved, and a
           sentence above four unlabelled boxes does not resolve it. */}
-      <section className="mt-16">
+      <section className="reveal mt-16 [--step:3] max-sm:mt-9">
         <CutPanel
           tone="field"
           className="w-full"
@@ -386,19 +396,19 @@ export function AboutView() {
               has one. And the standfirst carried two more claims after the one
               that matters; both are made elsewhere on this page, and a panel
               that says everything says it to nobody. */}
-          <h2 className="mx-auto mt-8 max-w-[52ch] text-center text-[clamp(21px,1.9vw,28px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink">
+          <h2 className="mx-auto mt-8 max-w-[52ch] text-center text-[clamp(21px,1.9vw,28px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink max-sm:mt-4 max-sm:text-[19px]">
             Our services
           </h2>
 
-          <p className="mx-auto mt-3 max-w-[84ch] text-center text-[15px] leading-[1.65] text-quiet">
+          <p className="mx-auto mt-3 max-w-[84ch] text-center text-[15px] leading-[1.65] text-quiet max-sm:mt-2 max-sm:text-[13px] max-sm:leading-[1.55]">
             Provided by us or through our specialist partners.
           </p>
 
-          <ul className="mt-10 grid w-full gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <ul className="mt-10 grid w-full gap-3 max-sm:mt-6 max-sm:gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
             {SERVICES.map((service, n) => (
               <li
                 key={service.n}
-                className="group/svc flex min-w-0 flex-col rounded-[20px] bg-canvas p-5 transition-colors hover:bg-canvas-firm"
+                className="group/svc flex min-w-0 flex-col rounded-[20px] bg-canvas p-5 transition-colors hover:bg-canvas-firm max-sm:rounded-[16px] max-sm:p-4"
               >
                 <span className="flex items-center justify-between gap-3">
                   <span
@@ -413,15 +423,15 @@ export function AboutView() {
                   </span>
                 </span>
 
-                <b className="mt-4 block text-[15.5px] leading-[1.2] font-extrabold tracking-[-0.025em] text-ink">
+                <b className="mt-4 block text-[15.5px] leading-[1.2] font-extrabold tracking-[-0.025em] text-ink max-sm:mt-3 max-sm:text-[14.5px]">
                   {service.n}
                 </b>
 
-                <p className="mt-2 flex-1 text-[13px] leading-[1.6] text-quiet">
+                <p className="mt-2 flex-1 text-[13px] leading-[1.6] text-quiet max-sm:mt-1.5 max-sm:text-[12.5px] max-sm:leading-[1.55]">
                   {service.sub}
                 </p>
 
-                <span className="mt-4 font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase">
+                <span className="mt-4 font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase max-sm:mt-3">
                   {service.by}
                 </span>
               </li>
@@ -433,7 +443,7 @@ export function AboutView() {
       {/* How it proceeds. The count comes from the run itself rather than from
           a number typed on this page, so adding a step cannot leave this saying
           thirteen. */}
-      <section className="mt-16">
+      <section className="reveal mt-16 [--step:4] max-sm:mt-9">
         <Head
           n="How we work"
           sub={`From the first conversation to the site going live, in ${STOPS.length} steps. You can see all of them before you commit to any.`}
@@ -441,7 +451,7 @@ export function AboutView() {
 
         <CutPanel
           tone="field"
-          className="mt-7 w-full"
+          className="mt-7 w-full max-sm:mt-5"
           corner={
             <Link
               href={ROUTES.how}
@@ -453,7 +463,7 @@ export function AboutView() {
             </Link>
           }
         >
-          <h3 className="max-w-[min(44ch,var(--notch-free,96ch))] text-[clamp(19px,1.7vw,25px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink">
+          <h3 className="max-w-[min(44ch,var(--notch-free,96ch))] text-[clamp(19px,1.7vw,25px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink max-sm:text-[17.5px]">
             It starts with a conversation.
           </h3>
 
@@ -467,15 +477,15 @@ export function AboutView() {
               line the eye loses its place in on the way back. The cap is what
               keeps this two columns of sixty rather than one of a hundred and
               twenty. */}
-          <div className="mt-5 grid max-w-[128ch] gap-x-14 gap-y-4 lg:grid-cols-2">
-            <p className="text-[15px] leading-[1.65] text-body">
+          <div className="mt-5 grid max-w-[128ch] gap-x-14 gap-y-4 max-sm:mt-3.5 max-sm:gap-y-3 lg:grid-cols-2">
+            <p className="text-[15px] leading-[1.65] text-body max-sm:text-[13px] max-sm:leading-[1.55]">
               Start by booking a meeting to talk through what you need. Or, if
               you have already done some thinking, send us your requirements in
               as little or as much detail as you want - send it straight away,
               or work through the scoping questions first.
             </p>
 
-            <p className="text-[15px] leading-[1.65] text-body">
+            <p className="text-[15px] leading-[1.65] text-body max-sm:text-[13px] max-sm:leading-[1.55]">
               Once the scope is agreed and the contract is signed, we start your
               project and keep you informed all the way through.
             </p>
@@ -490,7 +500,7 @@ export function AboutView() {
               answer to a paragraph that has just told you what happens next. */}
           <Link
             href={ROUTES.how}
-            className="group/all mt-7 inline-flex items-center gap-2 rounded-pill bg-canvas px-4.5 py-2.5 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair"
+            className="group/all mt-7 inline-flex items-center justify-center gap-2 rounded-pill bg-canvas px-4.5 py-2.5 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair max-sm:mt-5 max-sm:w-full max-sm:px-4 max-sm:text-[12.5px]"
           >
             <Route aria-hidden className="size-4" strokeWidth={1.9} />
             See how we work
@@ -500,7 +510,7 @@ export function AboutView() {
             />
           </Link>
 
-          <Ways className="mt-5" />
+          <Ways className="mt-5 max-sm:mt-4" />
         </CutPanel>
       </section>
 
@@ -521,21 +531,21 @@ export function AboutView() {
           Two ways rather than three. Writing it down and putting it in the diary
           are the two anybody actually chooses between, and a third option in a
           row of three is a third of the attention gone. */}
-      <section className="mt-16">
+      <section className="reveal mt-16 [--step:5] max-sm:mt-9">
         <CutPanel tone="field" className="w-full">
-          <h2 className="max-w-[min(40ch,var(--notch-free,96ch))] text-[clamp(21px,1.9vw,28px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink">
+          <h2 className="max-w-[min(40ch,var(--notch-free,96ch))] text-[clamp(21px,1.9vw,28px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink max-sm:text-[19px]">
             Start with what you need.
           </h2>
 
-          <p className="mt-3 max-w-[100ch] text-[15px] leading-[1.65] text-quiet">
+          <p className="mt-3 max-w-[100ch] text-[15px] leading-[1.65] text-quiet max-sm:mt-2 max-sm:text-[13px] max-sm:leading-[1.55]">
             Tell us what you are looking to build, improve or connect. We will
             help you work out the rest.
           </p>
 
-          <div className="mt-7 flex flex-wrap items-center gap-2.5">
+          <div className="mt-7 flex flex-wrap items-center gap-2.5 max-sm:mt-5 max-sm:gap-2">
             <Link
               href={ROUTES.build}
-              className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+              className="group/way thread-fill inline-flex items-center justify-center gap-2 rounded-pill px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:w-full max-sm:px-4 max-sm:py-2.5 max-sm:text-[13px]"
             >
               Send us your requirements
               <ArrowRight
@@ -547,7 +557,7 @@ export function AboutView() {
 
             <Link
               href={ROUTES.book}
-              className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
+              className="group/way inline-flex items-center justify-center gap-2 rounded-pill border border-hair bg-field px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:w-full max-sm:px-4 max-sm:py-2.5 max-sm:text-[13px]"
             >
               Book a meeting
               <ArrowUpRight
