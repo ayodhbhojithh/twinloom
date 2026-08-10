@@ -42,9 +42,40 @@ import { cn } from "@/lib/utils";
  * are ten numbers to keep in step every time the strip changes height; a step
  * and a radius are two numbers that cannot disagree with each other.
  */
+const WIDE = 1200;
 const BASE = 84;
-const STEP = 108;
-const RADIUS = 9;
+const RADIUS = 6.5;
+
+/**
+ * How far the row stands off each end of the strip.
+ *
+ * It had none. The first bead sat fifty-four units in and the last sixty-six
+ * from the other end, because the positions were a start plus a fixed step and
+ * whatever was left over at the far end was left over - so the row was neither
+ * padded nor centred, it was packed from the left and stopped when it ran out
+ * of beads. On a card whose bottom corners curve in, the ends were also running
+ * into the curve.
+ *
+ * Which is why the step is worked out from this rather than the other way
+ * round: with the two ends given, the gap between beads is whatever divides the
+ * space between them evenly. Equal margins and equal spacing then hold at any
+ * count - add a colour to `INKS` and the row closes up rather than growing out
+ * of the card.
+ *
+ * Set so the row comes out the width of the line of type under it - the mark,
+ * the name, the rule and the sentence, which together take a bit over a third
+ * of the card. That is the thing this row is standing over, and two objects on
+ * the same axis at two different widths is what made it read as a strip of
+ * scenery with a caption parked in the middle of it.
+ *
+ * A share of the viewBox rather than a measurement of that line. This strip is
+ * drawn at the full width of the card, so the two track each other as the card
+ * grows: the type is the same type at every width above `md`, and this is the
+ * share of the card it takes at the widths this screen is drawn for. Measuring
+ * the line and feeding its width back here is the exact answer and costs an
+ * observer, a re-render and a layout read on a decorative row.
+ */
+const PAD = 390;
 
 /**
  * The colours, in the order they run.
@@ -53,7 +84,13 @@ const RADIUS = 9;
  * was never about position: no two neighbours share a colour, and the sequence
  * does not repeat inside the width. Equal size and equal spacing is what makes
  * a row read as one object - the colour is what stops it reading as one object
- * stamped eleven times.
+ * stamped eight times.
+ *
+ * Eight of them, down from eleven. The count is not free once the ends are
+ * fixed: the step is whatever divides the span between them, so shortening the
+ * row to the width of the line below it left eleven beads about two diameters
+ * apart, which is a dotted rule rather than beads on a thread. Eight is what
+ * keeps the gaps looking like gaps.
  */
 const INKS = [
   "#2a98fe",
@@ -64,20 +101,19 @@ const INKS = [
   "#ff4d5e",
   "#10c996",
   "#2a98fe",
-  "#7c4dff",
-  "#ff7a1a",
-  "#22bde8",
 ] as const;
 
+const STEP = (WIDE - PAD * 2) / (INKS.length - 1);
+
 const TRAIL = INKS.map((ink, n) => ({
-  x: 54 + n * STEP,
+  x: PAD + n * STEP,
   y: BASE,
   r: RADIUS,
   ink,
 }));
 
-/** The line they sit on, which is now a line. */
-const CURVE = `M 0 ${BASE} L 1200 ${BASE}`;
+/** The line they sit on, which is now a line, and stops where they stop. */
+const CURVE = `M ${PAD} ${BASE} L ${WIDE - PAD} ${BASE}`;
 
 /**
  * A dotted thread with glass beads along it.
@@ -97,7 +133,7 @@ export function BeadTrail({ className }: { className?: string }) {
   return (
     <svg
       aria-hidden
-      viewBox="0 0 1200 130"
+      viewBox={`0 0 ${WIDE} 130`}
       className={cn("block h-auto w-full overflow-visible", className)}
     >
       <defs>
@@ -155,7 +191,7 @@ export function BeadTrail({ className }: { className?: string }) {
            string of beads read as one dotted line with some fat dots in it -
            and the line is meant to be what they are standing on rather than
            another thing in the row. */
-        strokeWidth="2.2"
+        strokeWidth="2.8"
         strokeLinecap="round"
         strokeDasharray="0.1 14"
       />
