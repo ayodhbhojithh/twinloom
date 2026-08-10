@@ -9,6 +9,11 @@ import {
 } from "react";
 
 import { STEPS } from "@/lib/build/v5";
+import {
+  askDeskFace,
+  clearDeskContext,
+  setDeskContext,
+} from "@/lib/build/desk-context";
 import { STEP_ORDER } from "@/lib/build/v5-derive";
 import {
   getAnswers,
@@ -18,7 +23,6 @@ import {
   type Where,
 } from "@/lib/build/v5-store";
 
-import { DockPanel, DockTab, type Face } from "./dock";
 import { QuickPane } from "./quick";
 import { StageDo, StageWho } from "./stages-a";
 import { StageHave, StageRefs, StageSell, StageStyle } from "./stages-b";
@@ -70,15 +74,41 @@ export function BuildFlow() {
     goStep(at);
   };
 
+  /* What the desk needs to know while this is on screen.
+
+     `where` is nothing on the quick pane: there is no step being stood on
+     there, and filing a note under step 01 because step 01 is what the run
+     would have opened at is a place the reader never was. The site tab is
+     held back for the same reason - the quick submission derives no pages,
+     and a tab reading zero has nothing to say.
+
+     Cleared on the way out, so the desk on every other page is a desk with no
+     run-through behind it. */
+  useEffect(() => {
+    setDeskContext({
+      where: tab === "full" ? where : null,
+      withSite: tab === "full",
+      goStep: goKey,
+    });
+    return clearDeskContext;
+    /* `goKey` is rebuilt each render and is not worth a `useCallback` for a
+       store that compares before it publishes: what matters is the step and
+       the tab, and `setDeskContext` ignores a write that changes neither. */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab, where]);
+
   const props = { answers, onGo: goStep, onGoKey: goKey };
 
-  /* Which panel of the dock is open, or none.
+  /* No `face` here any more.
 
-     It lives here rather than inside the dock because opening it changes the
-     layout of the whole tool: the panel is a surface beside the question, not a
-     drawer over it, so the thing that lays the two of them out has to be the
-     thing that knows. */
-  const [face, setFace] = useState<Face | null>(null);
+     Which panel of the dock is open used to live here, because opening it
+     changed the layout of the tool - the panel was a column in this grid, so
+     the thing laying the two out had to be the thing that knew. It is fixed to
+     the window now and lays out nothing here, so the state belongs with it.
+
+     Which leaves one loose end, deliberately left: the door into the run
+     wanted to open the site tab as it went, and it cannot reach across to do
+     that any more. See where it used to call `setFace`. */
 
   /* Back to the top of the tool when the step changes.
 
@@ -218,7 +248,7 @@ export function BuildFlow() {
                    them while you answer. Arriving to a closed tab and having to
                    find it makes that a claim rather than a fact. It is still
                    closeable - it is opened for somebody, not on them. */
-                setFace("site");
+                askDeskFace("site");
               }}
             />
           ) : (
@@ -232,38 +262,21 @@ export function BuildFlow() {
             </>
           )}
         </div>
-
-        {face ? (
-          <div className="order-first w-full shrink-0 xl:order-last xl:sticky xl:top-[calc(var(--nav-height)+16px)] xl:w-[400px] 2xl:w-[440px]">
-            <DockPanel
-              answers={answers}
-              /* Nowhere, on the quick pane. There is no step being stood on
-                 there, and filing a note under step 01 because step 01 is what
-                 the run would have opened at is a place the reader never was. */
-              where={tab === "full" ? where : null}
-              onGoStep={goKey}
-              face={face}
-              onFace={setFace}
-              onClose={() => setFace(null)}
-              withSite={tab === "full"}
-            />
-          </div>
-        ) : null}
       </div>
 
-      {/* The way into the dock, hanging off the edge of the tool.
+      {/* No dock here any more.
 
-          On both ways through, because the desk is on both - the quick pane
-          writes its notes and its files to the same one, and somebody who has
-          attached four things there has to be able to see the four. Only the
-          site half is held back: the quick submission derives no pages, and a
-          tab reading zero on every screen it appears on has nothing to say. */}
-      <DockTab
-        answers={answers}
-        withSite={tab === "full"}
-        open={Boolean(face)}
-        onOpen={setFace}
-      />
+          The tab and the panel hung off the edge of this tool, which put the
+          desk on one screen of one route - and the desk is where anything
+          worth writing down goes, whatever page the thought arrived on. Both
+          are in the shell now, so they are on every page and the panel is the
+          height of the window rather than the height of whichever step it
+          happened to stand beside.
+
+          What this still owns is the context: which step is being stood on,
+          whether the derived site is worth a tab, and how to open a step. It
+          publishes those while it is mounted and takes them back on the way
+          out - see `lib/build/desk`. */}
     </div>
   );
 }

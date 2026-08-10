@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 
+import { DeskDock } from "@/components/build/v5/desk-dock";
+import type { Face } from "@/components/build/v5/dock";
 import { ROUTES } from "@/lib/site";
 
 import { SiteFooter } from "./site-footer";
@@ -41,6 +44,14 @@ const NO_FOOTER: readonly string[] = [
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
+  /* Whether the desk is open, and it lives here rather than in the dock.
+
+     Opening it moves the page aside, so the thing that lays the page out is
+     the thing that has to know. Held here, one number in the stylesheet
+     decides both how wide the panel is and how far everything else stands
+     back, and neither can be changed without the other. */
+  const [face, setFace] = useState<Face | null>(null);
+
   return (
     <>
       {/* Two arrangements, one component.
@@ -57,7 +68,26 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           one is not there until it is needed. */}
       {pathname === ROUTES.home ? <SiteHeader appear={240} /> : <SiteHeader />}
 
-      <div className="flex flex-1 items-start">
+      {/* Aside, rather than under.
+
+          The desk floats over the right of the window, and a panel over a page
+          is a panel covering whatever it is open next to - which on this site
+          is usually the thing somebody opened it to write about. So the page
+          gives up the room instead: the same width the panel takes, as padding
+          on the column that holds the sections and the footer.
+
+          Only from `lg`, because `--desk-width` is nought below it. There is no
+          room to stand aside on a phone, so there the desk covers the page and
+          the veil under it says so.
+
+          The header is deliberately not moved. It is fixed across the top and
+          the desk is above it; a bar that shrank away from a panel would be a
+          third thing moving on screen to say what the panel already says by
+          being there. */}
+      <div
+        className="flex flex-1 items-start transition-[padding] duration-300 ease-out"
+        style={face ? { paddingRight: "var(--desk-width)" } : undefined}
+      >
         {/* No rail. Every page it carried is in the header now, and a docked
             column repeating the bar above it spent a fifth of the window
             saying what one line already said.
@@ -73,6 +103,19 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           {NO_FOOTER.includes(pathname) ? null : <SiteFooter />}
         </div>
       </div>
+
+      {/* The desk, on every page.
+
+          It hung off the edge of the run-through, which put it on one screen
+          of one route - so a thought worth writing down that arrived while
+          reading anything else had to survive the trip to the tool first.
+          Here it is the same distance from every page, and the panel is the
+          height of the window rather than of whatever it stood beside.
+
+          Below the header in the markup and above it in nothing: the tab and
+          the panel carry their own z, and the header's menu sheet is higher
+          than both, so a menu open over the desk still covers it. */}
+      <DeskDock face={face} onFace={setFace} />
     </>
   );
 }

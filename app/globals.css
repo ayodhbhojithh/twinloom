@@ -121,6 +121,18 @@
      measured from it, so the two are set from one number at every width. */
   --page-gutter: 20px;
 
+  /* How much room the desk takes when it is open.
+
+     One number, read by two things that must agree: the panel sets its own
+     width from it, and the page sets the padding it stands aside by. Written
+     twice they would drift the first time either changed, and the failure is
+     silent - a page that shifts by slightly less than the panel covers leaves
+     a strip of itself underneath it.
+
+     Nought on a phone. There is no room to stand aside on a narrow screen, so
+     the desk covers the page there and the page does not move at all. */
+  --desk-width: 0px;
+
   /* The rail's own side gutter.
 
      One number for everything inside the rail - the page links and the control
@@ -262,6 +274,7 @@
   @media (min-width: 64rem) {
     :root {
       --page-gutter: 48px;
+      --desk-width: 520px;
     }
   }
 
@@ -274,6 +287,7 @@
   @media (min-width: 96rem) {
     :root {
       --page-gutter: 80px;
+      --desk-width: 580px;
     }
   }
 

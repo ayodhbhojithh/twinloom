@@ -33,6 +33,7 @@ export function Stage({
   foot,
   scrollKey,
   tone = "canvas",
+  top = false,
   className,
   children,
 }: {
@@ -54,6 +55,18 @@ export function Stage({
    * screen never reaches the line that lifts it.
    */
   stickyBar?: boolean;
+  /**
+   * Start the content at the top and let it scroll, rather than centring
+   * it in whatever room there is.
+   *
+   * Centred is right for a step: a question that fills a third of a tall
+   * surface should sit where the eye already is, not against the ceiling.
+   * It is wrong for a surface that is the height of the window and holds a
+   * list that grows - the desk was opening with its heading halfway down
+   * the screen and a screenful of nothing above it, and would have pushed
+   * its own top out of view once the list got long.
+   */
+  top?: boolean;
   /** Stands in the corner cut at the bottom right: the way on. */
   corner?: React.ReactNode;
   /** Stands in the bite at the bottom left: what the answers add up to. */
@@ -351,7 +364,12 @@ export function Stage({
           empty room is shared above and below instead of all falling to the
           bottom, and the question sits where the eye already is. */}
       <div
-        className="relative z-10 flex flex-1 flex-col justify-center"
+        className={cn(
+          "relative z-10 flex flex-1 flex-col",
+          top
+            ? "quiet-scroll min-h-0 justify-start overflow-y-auto"
+            : "justify-center",
+        )}
         style={{
           /* Under the notch, not a whole band under it. The bar is only as
              deep as its own arcs, and on a wide surface it leaves most of the

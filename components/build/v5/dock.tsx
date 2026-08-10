@@ -20,11 +20,18 @@ import { Disc, Plate, Stage } from "./stage";
    something else clipped to its right reads as a screen with two problems
    rather than one desk. One shape, one place, two tabs.
 
-   It does not float. It was a drawer over a scrim: a rectangle sliding over the
-   page, which is the one thing this site's shape language does not do - and
-   worse, it covered the question you opened it to compare against. Now it is a
-   surface in the layout. Opening it moves the tool left and the panel takes the
-   room, so both are on screen and neither is over the other.
+   It floats at the right of the window, the full height of it. It was a column
+   in the tool's own grid for a while, which is why it was as tall as whichever
+   step happened to be beside it - a panel for a running list, sized by
+   something that is not the list. Against the window it is the window's
+   height, and the list scrolls inside it.
+
+   What it must not become again is the drawer it started as: a rectangle
+   sliding over a scrim, covering the question you opened it to compare
+   against. It is inset from the edge rather than flush to it, and on a wide
+   screen there is no scrim at all - the page is still there and still
+   readable, which is the difference between a panel resting against the side
+   of a page and a panel over it.
 
    And it is cut, not boxed. The tabs stand in a notch in its top edge and the
    way out stands in the corner it gives up for it, which is the rule the whole
@@ -58,12 +65,20 @@ function faces(answers: Answers, withSite: boolean) {
 }
 
 /**
- * The tab, turned on its side against the right edge of the tool.
+ * The tab, turned on its side against the right edge of the window.
  *
- * It belongs to this tool, not to the window: fixed to the screen it followed
- * the reader onto pages that have no notes to keep and no step to file them
- * under. So it hangs off the edge of the run-through and leaves with it, and it
- * sticks to the middle of the screen for as long as the run-through is on it.
+ * It belonged to the tool and hung off the edge of it, on the argument that a
+ * tab following the reader onto pages with no step to file a note under was a
+ * tab in the way. That argument has been dropped rather than lost to: a note
+ * worth keeping is worth keeping wherever the thought arrived, and the panel
+ * files under General when there is no step behind it. The desk is the site's
+ * now, so the tab is the window's.
+ *
+ * Fixed rather than absolute-and-sticky. It had a zero-width absolute box to
+ * hang off the tool's own edge and a sticky child to hold it near the middle
+ * of the screen - both of which need the tool to be the positioned thing
+ * around them. In the shell there is nothing to be absolute against but the
+ * page itself, so it is simply fixed where it belongs.
  */
 export function DockTab({
   answers,
@@ -77,12 +92,10 @@ export function DockTab({
   onOpen: (face: Face) => void;
 }) {
   return (
-    /* Out to the edge of the window, not the edge of the column. Measured back
-       through the page frame's own gutter, which is the padding standing between
-       this column and the window. */
+    /* Against the window's own right edge, halfway down it. */
     <div
       aria-hidden={open}
-      className="pointer-events-none absolute inset-y-0 -right-(--page-gutter) z-30 w-0"
+      className="pointer-events-none fixed top-1/2 right-0 z-30 w-0 -translate-y-1/2"
     >
       {/* `w-max` is not optional. The box this stands in is `w-0` - a zero-width
           line at the edge of the window, there only to hang the tab off. A form
@@ -91,7 +104,7 @@ export function DockTab({
           its containing block, which here is nothing at all. */}
       <div
         className={cn(
-          "sticky top-[42vh] flex w-max -translate-x-full flex-col overflow-hidden rounded-l-[10px] bg-ink text-white",
+          "flex w-max -translate-x-full flex-col overflow-hidden rounded-l-[10px] bg-ink text-white",
           open ? "pointer-events-none opacity-0" : "pointer-events-auto",
         )}
       >
@@ -118,7 +131,9 @@ export function DockTab({
             <span
               className={cn(
                 "flex min-w-4 items-center justify-center rounded-pill px-1 py-px font-mono text-[8.5px] font-bold tabular-nums",
-                entry.count ? "bg-mark text-white" : "bg-white/15 text-white/60",
+                entry.count
+                  ? "bg-mark text-white"
+                  : "bg-white/15 text-white/60",
               )}
             >
               {entry.count}
@@ -168,51 +183,56 @@ export function DockPanel({
       /* Back to the top when the tab changes. The two are different lengths, and
          a panel left where the last one ended opens the next halfway down. */
       scrollKey={on}
-      className="w-full"
+      /* The whole of whatever it is given, which is now the height of the
+         window rather than the height of the step it used to stand beside -
+         and so its contents start at the top and scroll, rather than being
+         centred in a screenful of room. */
+      top
+      className="h-full min-h-0 w-full"
       toolbar={
         /* The two, standing in the notch. Short labels here and the full ones in
            the heading below: the notch is a bar cut out of a 400px edge, and
            "Your site" beside "Your notes" in it is two truncations. */
         <Plate className="gap-1">
-          {list.length > 1
-            ? list.map((entry) => {
-                const chosen = entry.k === on;
+          {list.length > 1 ? (
+            list.map((entry) => {
+              const chosen = entry.k === on;
 
-                return (
-                  <button
-                    key={entry.k}
-                    type="button"
-                    role="tab"
-                    aria-selected={chosen}
-                    onClick={() => onFace(entry.k)}
+              return (
+                <button
+                  key={entry.k}
+                  type="button"
+                  role="tab"
+                  aria-selected={chosen}
+                  onClick={() => onFace(entry.k)}
+                  className={cn(
+                    "flex cursor-pointer items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12.5px] font-semibold transition-colors",
+                    chosen
+                      ? "bg-ink text-white"
+                      : "text-quiet hover:bg-well hover:text-ink",
+                  )}
+                >
+                  {entry.short}
+                  <span
                     className={cn(
-                      "flex cursor-pointer items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12.5px] font-semibold transition-colors",
+                      "font-mono text-[9.5px] font-bold tabular-nums",
                       chosen
-                        ? "bg-ink text-white"
-                        : "text-quiet hover:bg-well hover:text-ink",
+                        ? "text-white/60"
+                        : entry.count
+                          ? "text-mark"
+                          : "text-idx",
                     )}
                   >
-                    {entry.short}
-                    <span
-                      className={cn(
-                        "font-mono text-[9.5px] font-bold tabular-nums",
-                        chosen
-                          ? "text-white/60"
-                          : entry.count
-                            ? "text-mark"
-                            : "text-idx",
-                      )}
-                    >
-                      {entry.count}
-                    </span>
-                  </button>
-                );
-              })
-            : (
-                <span className="px-2">
-                  <Kicker>{here?.label}</Kicker>
-                </span>
-              )}
+                    {entry.count}
+                  </span>
+                </button>
+              );
+            })
+          ) : (
+            <span className="px-2">
+              <Kicker>{here?.label}</Kicker>
+            </span>
+          )}
         </Plate>
       }
       /* What it adds up to, standing in the bite the same way the run-through's
