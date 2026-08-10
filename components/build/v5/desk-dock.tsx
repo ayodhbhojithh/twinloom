@@ -146,7 +146,7 @@ export function DeskDock({
               column the page was built with. Full width on a phone, where
               there is no room to float anything. */}
           <div
-            className="fixed right-0 bottom-0 z-50 flex w-full max-w-[560px] flex-col lg:w-(--desk-width) lg:max-w-none"
+            className="fixed right-0 bottom-0 z-50 flex w-full max-w-[560px] flex-col max-sm:p-0 lg:w-(--desk-width) lg:max-w-none"
             style={{
               top: underHeader ? "var(--nav-height)" : 0,
               /* The landing card's own sill, so the two rest on the same
@@ -159,6 +159,10 @@ export function DeskDock({
                  card's own gap to the window; with one, `top` has already
                  cleared the bar and this is the gap to that instead - the same
                  number doing the same job against a different edge. */
+              /* `max-sm:p-0` above overrides all four on a phone, where the
+                 panel covers the page rather than resting beside it - a sill of
+                 nothing behind it is a strip of page showing through the top of
+                 a panel that is meant to have taken the screen. */
               paddingTop: "var(--sill-top)",
               paddingBottom: "var(--sill-bottom)",
               /* Nothing on the inner edge, and that is what makes the gap one

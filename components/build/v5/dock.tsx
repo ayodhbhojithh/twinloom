@@ -206,7 +206,7 @@ export function DockPanel({
                   aria-selected={chosen}
                   onClick={() => onFace(entry.k)}
                   className={cn(
-                    "flex cursor-pointer items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12.5px] font-semibold transition-colors",
+                    "flex cursor-pointer items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12.5px] font-semibold transition-colors max-sm:px-2.5 max-sm:py-1 max-sm:text-[11.5px]",
                     chosen
                       ? "bg-ink text-white"
                       : "text-quiet hover:bg-well hover:text-ink",
@@ -239,7 +239,7 @@ export function DockPanel({
          own surfaces put their page count there. */
       aside={
         <div className="flex size-full flex-col items-center justify-center">
-          <b className="font-mono text-[21px] leading-none font-bold text-ink tabular-nums">
+          <b className="font-mono text-[21px] leading-none font-bold text-ink tabular-nums max-sm:text-[17px]">
             {here?.count ?? 0}
           </b>
           <span className="mt-1 font-mono text-[8px] font-bold tracking-[0.1em] text-label uppercase">
@@ -274,7 +274,7 @@ export function DockPanel({
           {on === "site" ? "The site you are building" : "Your notes"}
         </Kicker>
 
-        <h2 className="mt-2 text-[20px] leading-[1.12] font-extrabold tracking-[-0.03em] text-ink">
+        <h2 className="mt-2 text-[20px] leading-[1.12] font-extrabold tracking-[-0.03em] text-ink max-sm:mt-1.5 max-sm:text-[17px]">
           {on === "site"
             ? pages
               ? `${pages} pages, as it stands`
@@ -289,7 +289,7 @@ export function DockPanel({
             {/* What the list is, said before it is read. Four of these pages are
                 on every site we build and the rest were put there by an answer,
                 and a list that does not say which is which reads as a quote. */}
-            <p className="mt-4 rounded-[12px] bg-well px-3.5 py-2.5 text-[12px] leading-[1.5] text-quiet">
+            <p className="mt-4 rounded-[12px] bg-well px-3.5 py-2.5 text-[12px] leading-[1.5] text-quiet max-sm:mt-3 max-sm:px-3 max-sm:py-2 max-sm:text-[11.5px]">
               Every answer adds to this and nothing here is fixed. Leave a
               question alone and we write down{" "}
               <b className="font-semibold text-ink">what we will assume</b>{" "}
