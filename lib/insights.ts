@@ -80,22 +80,6 @@ const TOPIC: Record<string, string> = {
   "what-twincoretech-can-build": "Custom software",
 };
 
-/**
- * A picture each, named after the piece it belongs to.
- *
- * The file is the slug, so there is no map to keep. Five pieces shared three
- * borrowed photographs before this - the same one at the head of two different
- * articles - and any table pairing a slug with a filename is a table somebody
- * has to remember to edit when a piece is added.
- *
- * Drawings rather than photographs, in the language the services cards are
- * drawn in: the mark rendered as a glass ribbon, the dotted thread through it,
- * and the piece's own subject built around it. A photograph at the head of a
- * page about how something is decided is decoration; a drawing of the thing
- * being decided is the page's first sentence.
- */
-export const plateFor = (slug: string) => `/assets/insights/${slug}.png`;
-
 /** A markdown table row, split on the pipes and trimmed. */
 const cells = (line: string) =>
   line
@@ -105,6 +89,9 @@ const cells = (line: string) =>
 
 /** The rule under a table's head, which is the only thing that identifies it. */
 const isDivider = (line: string) => /^\|?[\s:|-]+\|[\s:|-]*$/.test(line);
+
+/** What a heading may carry after its name: "(4 pages)". */
+const COUNT = /\s*\((.*)\)$/;
 
 /**
  * One file, read into sections.
@@ -129,13 +116,13 @@ function parse(slug: string, source: string): Insight {
   let title = slug;
   const sections: Section[] = [];
 
+  type Run = { kind: "ul" | "ol"; items: string[] };
+  type Grid = { head: string[]; rows: string[][] };
+
   /* The opening, which belongs to no section. Some pieces put it under the
      title and some under their first heading, so it is simply the first
      paragraph found either way. */
   let lead = "";
-  type Run = { kind: "ul" | "ol"; items: string[] };
-  type Grid = { head: string[]; rows: string[][] };
-
   let here: Section | null = null;
   let list: Run | null = null;
   let table: Grid | null = null;
@@ -173,9 +160,11 @@ function parse(slug: string, source: string): Insight {
        Both are decided by the route and by git, not by a line in a file. */
     if (/^\*\*(URL|Last updated):\*\*/i.test(line)) continue;
 
+    /* A section, with any count in its heading taken off the name - "(4 pages)"
+       is a fact about the section rather than part of what it is called. */
     if (line.startsWith("## ")) {
       shut();
-      here = { title: line.slice(3).trim(), blocks: [] };
+      here = { title: line.slice(3).replace(COUNT, "").trim(), blocks: [] };
       sections.push(here);
       continue;
     }
@@ -210,15 +199,9 @@ function parse(slug: string, source: string): Insight {
     if (bullet || number) {
       const kind: "ul" | "ol" = bullet ? "ul" : "ol";
       const item = (bullet ?? number)![1].trim();
-      /* Read out before `shut` can be called, and widened back to what it
-         was declared as.
-
-         `shut` is a closure that sets `list` to null, and the checker's
-         control-flow analysis does not follow a call into one - so by this
-         point in the loop it believes `list` is null and nothing else, and
-         reading `.kind` off it is an error about a value that is plainly a
-         list at run time. The assertion says what the declaration already
-         said. */
+      /* Read out before `shut` can be called, and widened back to what it was
+         declared as: `shut` is a closure that sets `list` to null, and the
+         checker's control-flow analysis does not follow a call into one. */
       const open = list as Run | null;
 
       if (open && open.kind === kind) open.items.push(item);
@@ -259,6 +242,27 @@ function parse(slug: string, source: string): Insight {
     sections: kept,
   };
 }
+
+/**
+ * A picture each, named after the piece it belongs to.
+ *
+ * The file is the slug, so there is no map to keep - a new piece is a markdown
+ * file and a PNG of the same name, and nothing has to be wired.
+ *
+ * No cache-busting stamp on the address, and it is worth saying why, because it
+ * was tried. Replacing a drawing under a name that has not changed leaves every
+ * cache between the disk and the screen serving what it already has, and the
+ * obvious fix is to put the file's modified time in the query. Next 16 will not
+ * have it: a local image with a search string has to be declared in
+ * `images.localPatterns`, and `search` there is an exact string rather than a
+ * pattern - so a query that changes with the file is a query that can never be
+ * allowed. A stamp that never changes is not a stamp.
+ *
+ * Which leaves it where it belongs. In production a deploy is a new build and
+ * the pictures arrive with it; in development, a replaced file wants the dev
+ * server restarted and the page hard-reloaded, and that is the whole of it.
+ */
+export const plateFor = (slug: string) => `/assets/insights/${slug}.png`;
 
 /**
  * Every piece, in the order the folder gives them.

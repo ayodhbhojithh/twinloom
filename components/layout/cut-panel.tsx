@@ -32,9 +32,19 @@ import { cn } from "@/lib/utils";
  * either side of it, which is the one thing a blend must not have. Whichever
  * edge the picture enters from, the other three are the card's own, and an edge
  * that is already the end of the card wants nothing on top of it.
+ *
+ * Over the first third of the picture, not most of it. It ran to eighty-six per
+ * cent, which is a wash across nearly the whole thing - the picture only reached
+ * full strength in the last sliver, so what was on screen was a faded picture
+ * with a slightly less faded corner. That is defensible for a photograph the
+ * words have to be read over and wrong for anything anybody is meant to look at.
+ *
+ * The join still has no edge, because the same nine stops are simply closer
+ * together: transparent at the edge the picture enters from, full by a third,
+ * and the two thirds after that are the picture as it was made.
  */
 const fade = (to: string) =>
-  `linear-gradient(to ${to}, transparent 0%, rgba(0,0,0,0.04) 10%, rgba(0,0,0,0.12) 20%, rgba(0,0,0,0.26) 30%, rgba(0,0,0,0.44) 40%, rgba(0,0,0,0.63) 50%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0.93) 72%, black 86%)`;
+  `linear-gradient(to ${to}, transparent 0%, rgba(0,0,0,0.04) 4%, rgba(0,0,0,0.12) 8%, rgba(0,0,0,0.26) 12%, rgba(0,0,0,0.44) 16%, rgba(0,0,0,0.63) 21%, rgba(0,0,0,0.8) 26%, rgba(0,0,0,0.93) 30%, black 36%)`;
 
 const MASK = { across: fade("right"), up: fade("bottom") } as const;
 
@@ -252,6 +262,12 @@ export function CutPanel({
               alt=""
               fill
               priority
+              /* The plate is the largest thing on the surface and the only
+                 thing anybody looks at rather than reads. 75 is right for a
+                 photograph behind type; this is a drawing with flat colour and
+                 fine linework in it, and JPEG artefacts on flat colour are
+                 exactly what shows. */
+              quality={100}
               sizes="(max-width: 1023px) 100vw, 0px"
               className="object-cover object-center"
               style={{
@@ -267,6 +283,12 @@ export function CutPanel({
               alt=""
               fill
               priority
+              /* The plate is the largest thing on the surface and the only
+                 thing anybody looks at rather than reads. 75 is right for a
+                 photograph behind type; this is a drawing with flat colour and
+                 fine linework in it, and JPEG artefacts on flat colour are
+                 exactly what shows. */
+              quality={100}
               sizes="(min-width: 1024px) 55vw, 0px"
               className="object-cover object-center"
               style={{

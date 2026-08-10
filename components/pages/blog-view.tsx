@@ -126,13 +126,14 @@ export function BlogView() {
                   src={plateFor(article.slug)}
                   alt=""
                   fill
+                  quality={100}
                   sizes="(min-width: 1024px) 46vw, 0px"
                   className="object-cover object-center"
                   style={{
                     maskImage:
-                      "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.06) 14%, rgba(0,0,0,0.2) 26%, rgba(0,0,0,0.42) 38%, rgba(0,0,0,0.66) 52%, rgba(0,0,0,0.86) 68%, black 84%)",
+                      "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.06) 6%, rgba(0,0,0,0.2) 11%, rgba(0,0,0,0.42) 16%, rgba(0,0,0,0.66) 22%, rgba(0,0,0,0.86) 29%, black 36%)",
                     WebkitMaskImage:
-                      "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.06) 14%, rgba(0,0,0,0.2) 26%, rgba(0,0,0,0.42) 38%, rgba(0,0,0,0.66) 52%, rgba(0,0,0,0.86) 68%, black 84%)",
+                      "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.06) 6%, rgba(0,0,0,0.2) 11%, rgba(0,0,0,0.42) 16%, rgba(0,0,0,0.66) 22%, rgba(0,0,0,0.86) 29%, black 36%)",
                   }}
                 />
 

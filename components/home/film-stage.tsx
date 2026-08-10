@@ -42,38 +42,27 @@ import { outline, type Cuts } from "./notched-card";
 const PLATE = 26;
 
 /**
- * The corner the picture gives up, as a share of itself.
+ * How far the controls stand off the corner they cover, as a share of the
+ * picture.
  *
- * This does two jobs and the second one is the reason it is this large.
+ * They sit on the film rather than in a piece taken out of it, which is the one
+ * place this screen departs from how the rest of the site draws a control - and
+ * it departs for a reason the shape could not solve. The reel is signed: whatever
+ * made it burned a four-pointed star into the bottom right of every frame, and
+ * that mark cannot come off a hundred and twenty stills without repainting them.
  *
- * The first is the ordinary one: it holds the control, in a piece taken out of
- * the surface rather than laid on top of it, which is how everything pressable
- * on this site is drawn. The corner rather than the middle of the edge - a notch
- * in the centre of an edge reads as a handle on the whole frame, which is right
- * for the label at the top and wrong for the thing you do next. Reading ends at
- * the bottom right, and the card behind this puts its own way on in exactly the
- * same corner.
+ * Cutting the corner away took it out of the picture and cost a quarter of the
+ * frame to do it. Standing something opaque over it costs nothing and hides it
+ * completely, and the something that has to be somewhere on this screen anyway is
+ * the pair of buttons. So they are placed where the badge is rather than where a
+ * button would naturally go.
  *
- * The second is that the reel is signed. Whatever made it burned a four-pointed
- * star into the bottom right of every frame, and it is somebody else's mark on
- * our film. It cannot be taken off a hundred and twenty stills without
- * repainting them, and covering it with a plate is a sticker on a picture.
- *
- * So the corner it sits in is the corner that is not there. A fifth of the width
- * and a quarter of the height takes the badge out of the frame entirely - not
- * hidden under something, but outside the shape - and what fills the space is
- * the card's own white running into the picture, opening towards the words
- * beside it. The film and the column interlock instead of standing side by side.
- *
- * Shares rather than pixels, because the star sits at a fixed place in the frame
- * and the frame is a ratio: a fraction of the picture stays over it at every
- * size, where a pixel measurement is right on one screen.
+ * Shares rather than pixels, because the star sits at a fixed place in a frame
+ * that is a ratio - a fraction stays over it at every size, where a pixel
+ * measurement is right on one screen and off on the next.
  */
-const CUT_WIDE = 0.22;
-const CUT_DEEP = 0.26;
-
-/** The air between what stands in the cut and the two edges it meets. */
-const FOOT_AIR = 32;
+const FOOT_RIGHT = 0.035;
+const FOOT_DOWN = 0.055;
 
 /**
  * How wide the film may ever be drawn: the source's own width.
@@ -109,44 +98,17 @@ export function FilmStage({
   frames: number;
   kind: string;
   /**
-   * What stands in the notch cut out of the bottom edge.
+   * What stands over the bottom right corner of the picture.
    *
-   * Optional, and the cut only exists when something is given for it - a notch
-   * with nothing in it is a hole in the picture. Passed in rather than built
-   * here, because what the screen is asking anybody to do is the screen's
-   * business and this only knows how to make room for it.
+   * Passed in rather than built here, because what the screen is asking anybody
+   * to do is the screen's business and this only knows where to stand it.
    */
   foot?: React.ReactNode;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const face = useRef<HTMLCanvasElement>(null);
-  const sill = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
-
-  /**
-   * How much room what stands in the cut actually needs.
-   *
-   * Measured rather than declared, because it is a row of buttons and a row of
-   * buttons is whatever its labels come to - and on a narrow screen it wraps,
-   * which doubles its height. A cut sized from a number would be right for the
-   * row it was written against and wrong for the next one; sized from the row,
-   * the shape follows whatever is put in it.
-   */
-  const [need, setNeed] = useState({ w: 0, h: 0 });
-
-  useEffect(() => {
-    const node = sill.current;
-    if (!node) return;
-
-    const watcher = new ResizeObserver(() =>
-      setNeed({ w: node.offsetWidth, h: node.offsetHeight }),
-    );
-    watcher.observe(node);
-    setNeed({ w: node.offsetWidth, h: node.offsetHeight });
-
-    return () => watcher.disconnect();
-  }, [foot]);
 
   useEffect(() => {
     const outer = box.current;
@@ -170,9 +132,8 @@ export function FilmStage({
     const load = (n: number) =>
       new Promise<void>((done) => {
         if (!alive || shots[n]) return done();
-        /* `window.Image`, not `Image`. The name is taken in this file by
-           `next/image`, and `new Image()` on that is a component being
-           constructed rather than a bitmap being fetched. */
+        /* `window.Image`, not `Image`: a bitmap being fetched rather than a
+           component being constructed. */
         const img = new window.Image();
         img.decoding = "async";
         img.onload = () => {
@@ -305,26 +266,14 @@ export function FilmStage({
       biteHeight: 0,
       biteRadius: flare,
       biteFlare: flare,
-      /* The bottom right, given up. Wider than it is deep, because what stands
-         there is a pill rather than a disc - the drop takes its two dimensions
-         separately for exactly this. Collapsed to nothing when there is nothing
-         to hold, which `outline` reads as an ordinary corner. */
-      dropWidth: foot
-        ? Math.min(Math.max(need.w + FOOT_AIR, w * CUT_WIDE), w * 0.62)
-        : 0,
-      dropHeight: foot
-        ? Math.min(Math.max(need.h + FOOT_AIR, h * CUT_DEEP), h * 0.5)
-        : 0,
-      /* A larger inner corner than the card's, and only here.
-
-         The card's cuts are small bites out of a big surface, where the radius
-         that matters is the flare sweeping out to the edge. This one is a
-         quarter of the picture: at the card's radius its inner corner is a sharp
-         turn in the middle of a long run, which reads as a rectangle removed
-         rather than a corner given way. Half again is where the two arcs and the
-         straight between them read as one curve. */
-      dropRadius: foot ? Math.min(flare * 1.6, 34) : flare,
-      dropFlare: foot ? flare : flare,
+      /* Nought here too. The corner was given up for a while so the badge on
+         the frames would fall outside the shape, and it cost a quarter of the
+         picture - see `FOOT_RIGHT`. The buttons cover it instead, and the film
+         gets its corner back. */
+      dropWidth: 0,
+      dropHeight: 0,
+      dropRadius: flare,
+      dropFlare: flare,
     };
   })();
 
@@ -372,22 +321,14 @@ export function FilmStage({
           it, and beside the words it was one more line of a column that already
           had four. */}
       {foot ? (
-        /* Bottom right of the cut, not its middle. The cut is larger than the
-           thing standing in it - it is sized to take the badge out of the frame
-           as well - so a control centred in it would float in the middle of a
-           white notch. Against the two edges the notch meets, it reads as
-           standing in the corner rather than parked in a hole. */
         <div
-          className="pointer-events-none absolute right-0 bottom-0 flex items-end justify-end"
-          style={{ width: cut.dropWidth, height: cut.dropHeight }}
+          className="pointer-events-none absolute flex items-end justify-end"
+          style={{
+            right: `${FOOT_RIGHT * 100}%`,
+            bottom: `${FOOT_DOWN * 100}%`,
+          }}
         >
-          {/* `w-max` so it takes its natural width rather than the cut's - the
-              cut is sized from this, and a child stretched to its parent would
-              be measuring the thing it decides. `max-w-full` is the one limit,
-              so on a narrow film the row wraps and the cut grows to take it. */}
-          <div ref={sill} className="w-max max-w-full">
-            {foot}
-          </div>
+          {foot}
         </div>
       ) : null}
 
