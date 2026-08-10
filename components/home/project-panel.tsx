@@ -75,8 +75,17 @@ export function ProjectPanel({
             /* Darkened and blurred. A flat wash tells you the page is out of
                play; blurring it takes the page out of focus as well, which is
                what stops the eye trying to read the headline behind the
-               panel. */
-            className="fixed inset-0 z-50 bg-ink/65 backdrop-blur-[14px]"
+               panel.
+
+               Above the desk, which is the one other thing on this site fixed
+               to the window. Both sat on the same layer and the desk was
+               rendered later, so it won on document order alone - a panel for
+               writing notes drawn over the top of a dialog, with neither one
+               covering the other properly. A dialog is the topmost thing on a
+               page by definition: it takes the whole screen out of play, and
+               that has to include the desk. Under this wash the desk is dimmed
+               with everything else, which is exactly what should happen to it. */
+            className="fixed inset-0 z-[60] bg-ink/65 backdrop-blur-[14px]"
           />
 
           <div
@@ -88,7 +97,7 @@ export function ProjectPanel({
                showing around it reads as something lifted off the page, which is
                what it is; full bleed reads as a new page and loses the thread
                back to the card. */
-            className="pointer-events-none fixed inset-3 z-50 sm:inset-6 lg:inset-10"
+            className="pointer-events-none fixed inset-3 z-[61] sm:inset-6 lg:inset-10"
           >
             <motion.div
               layout
