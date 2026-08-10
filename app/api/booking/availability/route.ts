@@ -21,6 +21,28 @@ import { busyBetween, wiring } from "@/lib/booking/google";
 /** Ninety-two days. Longer than the diary is open, and a bounded query. */
 const MOST_DAYS = 92;
 
+/**
+ * And a day of slack on top of it, because a day is not always a day.
+ *
+ * The browser asks for exactly `MOST_DAYS`, counted the way a person counts
+ * them - `setDate(+92)`, ninety-two dates on a calendar. The check here counted
+ * milliseconds. Those agree everywhere that has no daylight saving and disagree
+ * twice a year everywhere that does: crossing into GMT in October there are
+ * twenty-five hours in one of those days, so ninety-two dates is an hour longer
+ * than ninety-two times a day's worth of milliseconds, and the request that was
+ * exactly at the limit went a fraction over it.
+ *
+ * Which made this a bug nobody could reproduce anywhere but here, and only
+ * between August and the end of October: everywhere on UTC it was fine all
+ * year, and in the UK it started failing the day the window began to span the
+ * clock change.
+ *
+ * A day of slack rather than a rewrite in dates. The ceiling exists to stop an
+ * unbounded query being asked for, and an hour either way is not that - so the
+ * cheapest correct thing is to leave room for the calendar to be a calendar.
+ */
+const SLACK = 86_400_000;
+
 export async function POST(request: Request) {
   const w = wiring();
 
@@ -47,7 +69,11 @@ export async function POST(request: Request) {
   const from = new Date(String(body.from));
   const to = new Date(String(body.to));
 
-  if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime()) || to <= from) {
+  if (
+    Number.isNaN(from.getTime()) ||
+    Number.isNaN(to.getTime()) ||
+    to <= from
+  ) {
     return NextResponse.json(
       { ok: false, problem: "That is not a window we can read." },
       { status: 400 },
@@ -56,7 +82,7 @@ export async function POST(request: Request) {
 
   /* Bounded, because the window is chosen by the browser and an unbounded one
      is a way to make us do arbitrary work. */
-  if (to.getTime() - from.getTime() > MOST_DAYS * 86_400_000) {
+  if (to.getTime() - from.getTime() > MOST_DAYS * 86_400_000 + SLACK) {
     return NextResponse.json(
       { ok: false, problem: "That window is longer than the diary is open." },
       { status: 400 },

@@ -235,10 +235,13 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
   {
     id: "hero-7",
     view: "particles",
-    /* Two halves, and they are set on one line rather than two - it is one
-       word. The colour marks where the name divides, the way the header sets
-       TwinLoom, rather than adding a second idea to it. */
-    claim: ["Twin", "CoreTech"],
+    /* Split at the last syllable rather than in the middle.
+
+       It was "Twin" and "CoreTech", which colours more of the name than it
+       leaves - and half a word tinted is a word somebody has highlighted. Only
+       "Tech" carries the gradient now: the eye reads one name with an accent on
+       its end, which is the same weight the header gives "Loom". */
+    claim: ["TwinCore", "Tech"],
     lead: "The software company behind TwinLoom.",
     name: "A field that answers the pointer",
     kind: "Motion",
