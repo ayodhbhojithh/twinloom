@@ -384,31 +384,46 @@ const HERO_RISE = {
  * Windows are `[in, out]` as shares of the reel, and the last one has no exit:
  * whatever is on screen when the scrolling stops should be the thing worth
  * being left with.
+ *
+ * Each is three parts rather than one line: a small kicker, then a sentence
+ * split across white and ink. The split is what makes them readable on this
+ * particular film - it is pale and busy, so white holds against the shadowed
+ * folds and vanishes on the bright floor, and ink does the reverse. Giving each
+ * half the colour that survives where it sits also gives the sentence a stress,
+ * and the stress lands on the half that matters.
  */
 const TITLES = [
   {
-    text: "Your clothing store.",
+    over: "TwinLoom film",
+    lead: "Your clothing",
+    tail: "store.",
     place: "bottom-left",
     from: "up",
     show: [-0.04, 0.02],
     hide: [0.16, 0.24],
   },
   {
-    text: "Filmed, cut and graded here.",
+    over: "On set",
+    lead: "Filmed, cut",
+    tail: "and graded here.",
     place: "top-left",
     from: "left",
     show: [0.26, 0.34],
     hide: [0.46, 0.54],
   },
   {
-    text: "Every frame is a still.",
+    over: "Frame by frame",
+    lead: "Every frame",
+    tail: "is a still.",
     place: "middle-right",
     from: "right",
     show: [0.56, 0.64],
     hide: [0.74, 0.82],
   },
   {
-    text: "Your scroll is the shutter.",
+    over: "Which makes you",
+    lead: "Your scroll",
+    tail: "is the shutter.",
     place: "bottom-left",
     from: "scale",
     show: [0.84, 0.92],
@@ -416,11 +431,26 @@ const TITLES = [
   },
 ] as const;
 
-/** Where on the frame a title stands. */
+/**
+ * Where on the frame a title stands, and how much of it it may take.
+ *
+ * The measure is part of the position rather than one number for all four,
+ * because what a line can afford depends on where it is. The two on the left
+ * have the open half of the frame to themselves and take three fifths of it;
+ * the one on the right has the buttons under it and takes less.
+ *
+ * Capped in per cent rather than characters. A `ch` cap is a measure for prose,
+ * where the job is to stop a line running past what an eye can track back from -
+ * and these are not prose, they are two or three words set very large. At
+ * fifteen characters "Your clothing store." broke across three lines and left a
+ * column of type down one edge of a wide frame, which is a poster with the
+ * margins wrong. A share of the frame lets each half sit on its own line wherever
+ * there is room for it, and only wraps where there genuinely is not.
+ */
 const PLACE: Record<string, string> = {
-  "bottom-left": "bottom-[16%] left-0 text-left",
-  "top-left": "top-0 left-0 text-left",
-  "middle-right": "top-1/2 right-0 -translate-y-1/2 text-right",
+  "bottom-left": "bottom-[14%] left-0 max-w-[62%] text-left",
+  "top-left": "top-0 left-0 max-w-[62%] text-left",
+  "middle-right": "top-1/2 right-0 max-w-[44%] -translate-y-1/2 text-right",
 };
 
 /**
@@ -1145,16 +1175,40 @@ export function NotchedCard({ className }: { className?: string }) {
         >
           <div className="relative size-full">
             {TITLES.map((line) => (
-              <p
-                key={line.text}
-                className={cn(
-                  "absolute max-w-[13ch] text-[clamp(30px,4.4vw,66px)] leading-[1.04] font-extrabold tracking-[-0.045em] text-white drop-shadow-[0_2px_18px_rgba(24,32,44,0.45)]",
-                  PLACE[line.place],
-                )}
+              <div
+                key={line.lead}
+                className={cn("absolute", PLACE[line.place])}
                 style={title(reelAt, line.show, line.hide, line.from)}
               >
-                {line.text}
-              </p>
+                {/* A small line above the large one, set in the mark's blue.
+
+                    It is what fills the space the picture leaves without
+                    filling it with more shouting: a kicker is read in a glance
+                    and a second headline is not, so the frame gains a second
+                    line of information at no cost to the first. */}
+                <p className="font-mono text-[10px] font-bold tracking-[0.2em] text-white/70 uppercase drop-shadow-[0_1px_10px_rgba(24,32,44,0.5)] sm:text-[11px]">
+                  {line.over}
+                </p>
+
+                {/* Two colours in one sentence, and it is not decoration.
+
+                    This reel is pale and busy: white type holds against the
+                    shadowed folds and disappears against the bright floor, and
+                    ink does the opposite. Splitting the sentence gives each half
+                    the colour that survives where it sits - and what falls out of
+                    that is a sentence with a stress in it, where the second half
+                    is the half that lands.
+
+                    The white half carries a shadow and the ink half does not.
+                    Ink on a pale frame needs no help; a shadow under it would be
+                    a grey edge on a black letter. */}
+                <p className="mt-2 text-[clamp(34px,6.2vw,96px)] leading-[0.96] font-extrabold tracking-[-0.05em] text-balance sm:mt-3">
+                  <span className="block text-white drop-shadow-[0_2px_20px_rgba(24,32,44,0.5)]">
+                    {line.lead}
+                  </span>
+                  <span className="block text-ink">{line.tail}</span>
+                </p>
+              </div>
             ))}
           </div>
         </div>

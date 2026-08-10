@@ -160,7 +160,13 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
      Dark type again, like the screen before it, because the ground is light
      again - a field of glass beads on white. What separates the two is not the
      treatment, it is the argument: the first says what we build, this one says
-     what you get before anybody agrees to anything.
+     that the look of it is yours to play with.
+
+     And the screen makes that case by being it. The beads answer to the pointer
+     - shove them and they scatter - so a claim about pushing a design around is
+     set on the one screen anybody can push. Every other version of this said
+     something serious over a field somebody was already playing with, which is
+     a page arguing with its own picture.
 
      It follows the mark rather than the water because it is the answer to the
      question the mark leaves: a front door that has just said what it does
@@ -168,18 +174,18 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
   {
     id: "hero-3",
     view: "balls",
-    name: "Written down first",
-    kind: "How we work",
+    name: "Have fun with your design",
+    kind: "The look",
     year: "2026",
     summary:
-      "You get the scope in your own words, with every assumption named, before anything is agreed. If it is not in there, it is not in the price.",
+      "Colour, shape and motion are the parts nobody can specify in a document. Push them around until it feels like you, and we build whatever you land on.",
     facts: [
-      { term: "Written first", value: "Always" },
-      { term: "Assumptions", value: "Named, not buried" },
-      { term: "Not in the scope", value: "Not in the price" },
+      { term: "Colour", value: "Yours to choose" },
+      { term: "Rounds", value: "As many as it takes" },
+      { term: "Signed off", value: "Before a line is built" },
     ],
-    claim: ["Nothing gets built", "until it is written."],
-    lead: "You get the scope in your own words, with every assumption named, before anything is agreed. If it is not in there, it is not in the price.",
+    claim: ["Have fun", "with your design."],
+    lead: "Colour, shape, motion - the parts nobody can specify in a document. Push them around until it feels like you, and we will build whatever you land on.",
     image: "",
     alt: "",
     tone: "#ffffff",
