@@ -1536,7 +1536,19 @@ export function NotchedCard({ className }: { className?: string }) {
           four rows, which is fine - a row that scrolls sideways hides doors. */}
       {shown.view === "mark" ? (
         <div
-          className="pointer-events-none absolute inset-0 z-10 flex items-stretch"
+          /* In the flow on a phone rather than laid over the card.
+
+             Every screen here is `absolute inset-0`, which is right for the ones
+             that are pictures: they fill whatever the card is and the card is a
+             screenful. This one is a column of type, and an absolutely
+             positioned column cannot make the thing behind it taller - so on a
+             short screen it simply ran out through the bottom edge.
+
+             Relative below `sm`, it is what gives the card its height, and the
+             card grows to hold it. Above `sm` nothing changes: the contents fit
+             the screen, so being laid over it and being in it come to the same
+             thing. */
+          className="pointer-events-none absolute inset-0 z-10 flex items-stretch max-sm:relative max-sm:inset-auto max-sm:min-h-svh"
           style={{
             /* `head` clears the row of links, and there is no row of links on a
                phone - the bar is a wordmark and a menu button, and the notch
@@ -1544,12 +1556,19 @@ export function NotchedCard({ className }: { className?: string }) {
                left a hand's depth of empty card above the mark and pushed
                everything into the bottom half of the screen. */
             paddingTop: size.w < TIGHT ? cut.barDepth + 44 : head,
-            /* Almost nothing at the foot. It used to clear the notch's depth,
-               which was right while the notch was in the top edge and one number
-               did both ends - the notch is in the corner now and the bottom edge
-               is straight, so all that clearance did was hold the last line off
-               the floor it is meant to be standing on. */
-            paddingBottom: 14,
+            /* Almost nothing at the foot on a desk. It used to clear the
+               notch's depth, which was right while the notch was in the top edge
+               and one number did both ends - the notch is in the corner now and
+               the bottom edge is straight, so all that clearance did was hold
+               the last line off the floor it is meant to be standing on.
+
+               On a phone it clears the corner instead. The card gives up its
+               bottom right for the way down the page, and there the column is
+               nearly the full width - so the last of the three doors ran under
+               that cut and came out sliced by the outline with the arrow sitting
+               on top of it. Measured from the cut rather than guessed, so it
+               follows if the corner ever changes size. */
+            paddingBottom: size.w < TIGHT ? cut.dropHeight + 12 : 14,
             paddingLeft: pad,
             paddingRight: pad,
           }}

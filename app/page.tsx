@@ -81,13 +81,28 @@ export default function LandingPage() {
         /* The whole window, not the window less the header - the header is
            inside the card on this page, so there is nothing above it to take
            off. */
-        className="flex h-svh flex-col overflow-clip"
+        /* A screenful on a desk, at least a screenful on a phone.
+
+           `h-svh` is a ceiling as well as a floor, and on a short screen the
+           card's contents are taller than it: the mark, four trades, a claim
+           over two lines, a lead, a paragraph and three doors. Held to exactly
+           one screen, the last of those was cut off by the card's own edge.
+
+           `min-h-svh` keeps the desk behaviour - there the contents fit inside
+           a screenful, so the minimum is the height - and lets a phone take the
+           room it actually needs. The page scrolls; a hero that scrolls a little
+           is a hero, and one with its buttons sliced off is a fault. */
+        className="flex min-h-svh flex-col overflow-clip"
       >
         {/* No heading here. The card carries the `h1` now - it says the same
             claim, on the screen, where the words and the two ways in sit inside
             the surface rather than in a band above it. Two would be two. */}
-        <div className="page-frame min-h-0 w-full flex-1">
-          <NotchedCard className="h-full w-full" />
+        {/* `min-h-0` lets a flex child shrink below its own contents, which is
+            what a card holding a full screen needs and exactly what clips one
+            holding more. Off below `sm`, so the card is as tall as what is in
+            it; the card's own height follows for the same reason. */}
+        <div className="page-frame w-full flex-1 max-sm:min-h-fit sm:min-h-0">
+          <NotchedCard className="h-full w-full max-sm:h-auto" />
         </div>
       </section>
 
