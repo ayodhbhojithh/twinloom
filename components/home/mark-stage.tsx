@@ -86,11 +86,11 @@ const PAD = 390;
  * a row read as one object - the colour is what stops it reading as one object
  * stamped eight times.
  *
- * Eight of them, down from eleven. The count is not free once the ends are
- * fixed: the step is whatever divides the span between them, so shortening the
- * row to the width of the line below it left eleven beads about two diameters
- * apart, which is a dotted rule rather than beads on a thread. Eight is what
- * keeps the gaps looking like gaps.
+ * Eleven of them, which is how the gaps are set. The count is the only thing
+ * that decides them once the two ends are fixed - the step is whatever divides
+ * the span between them - so the row went to eight when it shortened to the
+ * width of the line below, and back to eleven when the beads came down a size.
+ * Eight beads at six and a half is a row with more gap in it than beads.
  */
 const INKS = [
   "#2a98fe",
@@ -101,6 +101,9 @@ const INKS = [
   "#ff4d5e",
   "#10c996",
   "#2a98fe",
+  "#7c4dff",
+  "#ff7a1a",
+  "#22bde8",
 ] as const;
 
 const STEP = (WIDE - PAD * 2) / (INKS.length - 1);
@@ -227,28 +230,63 @@ export function BeadTrail({ className }: { className?: string }) {
           in the stylesheet because it is per bead, and a stylesheet cannot hold
           ten of them without ten classes. */}
       {TRAIL.map((bead, n) => (
-        <g key={n}>
+        <g key={n} className="trail-pick">
           {/* Its shadow first, so the bead sits on the line rather than beside
-              it. Flat and wide, because the light is high and in front. */}
-          <ellipse
-            className="trail-shade"
-            style={{ animationDelay: `${1 + n * 0.1}s` }}
-            cx={bead.x}
-            cy={bead.y + bead.r * 1.02}
-            /* Wider and taller than the flat one it replaces, because most of
-               the extra is the fade. A gradient shadow measured to the same
-               size as a flat one reads smaller than it. */
-            rx={bead.r * 1.9}
-            ry={bead.r * 0.52}
-            fill="url(#trail-shade-fill)"
-          />
-          <circle
-            className="trail-bead"
-            style={{ animationDelay: `${1 + n * 0.1}s` }}
-            cx={bead.x}
-            cy={bead.y}
-            r={bead.r}
-            fill={`url(#bead-${n})`}
+              it. Flat and wide, because the light is high and in front.
+
+              The shadow and the bead each sit in a group of their own, and the
+              groups are what the hover moves. Both elements already carry an
+              animation - the drop - and a hover rule setting `animation` on the
+              same element replaces it rather than adding to it, so a bead
+              hovered while it was still falling would have had its fall
+              cancelled. One element, one animation. */}
+          <g className="trail-hop-shade">
+            <ellipse
+              className="trail-shade"
+              style={{ animationDelay: `${1 + n * 0.1}s` }}
+              cx={bead.x}
+              cy={bead.y + bead.r * 1.02}
+              /* Wider and taller than the flat one it replaces, because most
+                 of the extra is the fade. A gradient shadow measured to the
+                 same size as a flat one reads smaller than it. */
+              rx={bead.r * 1.9}
+              ry={bead.r * 0.52}
+              fill="url(#trail-shade-fill)"
+            />
+          </g>
+
+          <g className="trail-hop">
+            <circle
+              className="trail-bead"
+              style={{ animationDelay: `${1 + n * 0.1}s` }}
+              cx={bead.x}
+              cy={bead.y}
+              r={bead.r}
+              fill={`url(#bead-${n})`}
+            />
+          </g>
+
+          {/* And the thing the pointer actually meets, which does not move.
+
+              This is the whole of why the hover stopped flickering. The bead
+              was its own target: hovering it lifted it, the lift took it out
+              from under the pointer, the hover ended, it dropped back under the
+              pointer and was hovered again - a bead stuck in a loop of being
+              picked up and put down, at whatever rate the two could race each
+              other.
+
+              A target that never moves cannot lose the pointer. It is drawn
+              over the bead and the room above it, tall enough to cover the whole
+              hop, and it is invisible - the stylesheet hit-tests it whether it
+              is painted or not. Its width stops short of the step between beads,
+              so no two ever overlap. */}
+          <rect
+            className="trail-hit"
+            x={bead.x - 17}
+            y={bead.y - 26}
+            width={34}
+            height={40}
+            fill="transparent"
           />
         </g>
       ))}

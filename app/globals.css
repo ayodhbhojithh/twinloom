@@ -1385,12 +1385,152 @@
     animation: trail-shade 1.9s linear backwards;
   }
 
-  /* Asked for less motion: the trail is simply strung already. */
+  /* And one under the pointer, picked up off the thread and put back.
+
+     One bounce, on a stationary target. Both halves of that matter.
+
+     The target is a rectangle drawn over the bead that never moves, because the
+     bead cannot be its own target: lifting it takes it out from under the
+     pointer, which ends the hover, which drops it back under the pointer, which
+     starts it again. That is the stutter - not a rendering fault, a control
+     fighting the thing controlling it.
+
+     One bounce rather than a lift held for as long as the pointer stays. A held
+     lift has to come down when the pointer leaves, and a bead halfway up when
+     that happens snaps. These keyframes start and end where the bead lives, so
+     however long the pointer stays, the bead is resting on the thread by the
+     time it goes - and the short transition underneath catches the one case
+     left, a pointer that leaves inside the four fifths of a second the hop
+     takes.
+
+     Per-segment easing, the same as the drop: up decelerating, down
+     accelerating. A single ease across a rise and a fall is a hover on a spring.
+
+     Slower and shorter than the first version of it, which is the whole of what
+     was rough. Eighteen pixels in a quarter of six tenths of a second is a bead
+     travelling about a hundred and twenty pixels a second, and the curve on it
+     started at full speed - the ball was not picked up, it was kicked. Fifteen
+     over four tenths of eight is half that, and the launch now takes a moment to
+     get going before it decelerates, which is the difference between a thing
+     being lifted and a thing being struck.
+
+     The second hop is proportionally larger than it was, at a third of the
+     first rather than a quarter. A bounce that returns almost nothing reads as
+     the animation stopping; a third reads as a bounce dying.
+
+     The two groups are promoted before either moves. SVG transforms do not run
+     on the compositor - they are main thread work, on the same thread as the
+     canvas drawing the card's texture - and the frame this would otherwise
+     spend working out that it needs a layer is the first frame of the hop, which
+     is the one frame anybody is looking at. Eleven small groups is worth the
+     memory; a hundred would not be.
+
+     The shadow answers on the same clock - tight and pale at the top of the hop,
+     open again on the way down - because it is the gap between the bead and the
+     thread rather than a shape attached to either. */
+  @keyframes trail-hop {
+    0% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0.34, 0.12, 0.28, 1);
+    }
+    40% {
+      transform: translateY(-15px);
+      animation-timing-function: cubic-bezier(0.5, 0, 0.78, 0.52);
+    }
+    72% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0.28, 0.3, 0.3, 1);
+    }
+    87% {
+      transform: translateY(-5px);
+      animation-timing-function: cubic-bezier(0.5, 0, 0.78, 0.52);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes trail-hop-shade {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+      animation-timing-function: cubic-bezier(0.34, 0.12, 0.28, 1);
+    }
+    40% {
+      transform: scale(0.68);
+      opacity: 0.52;
+      animation-timing-function: cubic-bezier(0.5, 0, 0.78, 0.52);
+    }
+    72% {
+      transform: scale(1);
+      opacity: 1;
+      animation-timing-function: cubic-bezier(0.28, 0.3, 0.3, 1);
+    }
+    87% {
+      transform: scale(0.88);
+      opacity: 0.82;
+      animation-timing-function: cubic-bezier(0.5, 0, 0.78, 0.52);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* `all`, not `auto`. On an SVG shape `auto` means `visiblePainted`, which asks
+     whether the pixel under the pointer was actually painted - and this one is
+     deliberately not. */
+  .trail-hit {
+    pointer-events: all;
+    cursor: default;
+  }
+
+  /* Nothing else in the trail takes the pointer. The bead is drawn under a
+     target that already covers it, and a shadow that can be hovered is a shape
+     nobody can see being pressed. */
+  .trail-hop,
+  .trail-hop-shade,
+  .trail-bead,
+  .trail-shade,
+  .trail-line {
+    pointer-events: none;
+  }
+
+  .trail-hop-shade {
+    transform-box: fill-box;
+    transform-origin: center;
+    will-change: transform, opacity;
+  }
+
+  /* The catch for a pointer that leaves mid-hop. Removing an animation makes the
+     computed transform jump back to its base value, and a transition on that
+     property turns the jump into a fall. */
+  .trail-hop {
+    transition: transform 0.26s cubic-bezier(0.33, 0, 0.2, 1);
+    will-change: transform;
+  }
+
+  .trail-pick:hover .trail-hop {
+    animation: trail-hop 0.8s linear;
+  }
+
+  .trail-pick:hover .trail-hop-shade {
+    animation: trail-hop-shade 0.8s linear;
+  }
+
+  /* Asked for less motion: the trail is simply strung already, and nothing
+     under the pointer moves. */
   @media (prefers-reduced-motion: reduce) {
     .trail-line,
     .trail-bead,
-    .trail-shade {
+    .trail-shade,
+    .trail-pick:hover .trail-hop,
+    .trail-pick:hover .trail-hop-shade {
       animation: none;
+    }
+
+    .trail-hop {
+      transition: none;
     }
   }
 
