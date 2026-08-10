@@ -330,7 +330,14 @@ export function CutPanel({
               not beside it. */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0"
+            /* `lg:hidden`, to match the picture layer it belongs to.
+
+               Both washes were running at every width, so on a laptop the
+               downward one was whitening the top of a picture that fades to the
+               left - two edges being blended when only one of them meets
+               anything. Each one now covers exactly where its own picture layer
+               is: down the frame on a phone, across it from `lg`. */
+            className="pointer-events-none absolute inset-0 lg:hidden"
             style={{
               backgroundImage: `linear-gradient(to bottom, var(--color-field) 0%, color-mix(in oklab, var(--color-field) 40%, transparent) 18%, transparent 38%)`,
             }}
