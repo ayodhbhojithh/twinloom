@@ -125,8 +125,34 @@ export function DeskDock({
               column the page was built with. Full width on a phone, where
               there is no room to float anything. */}
           <div
-            className="fixed right-0 bottom-0 z-50 flex w-full max-w-[560px] flex-col p-2 sm:p-3 lg:w-(--desk-width) lg:max-w-none"
-            style={{ top: underHeader ? "var(--nav-height)" : 0 }}
+            className="fixed right-0 bottom-0 z-50 flex w-full max-w-[560px] flex-col lg:w-(--desk-width) lg:max-w-none"
+            style={{
+              top: underHeader ? "var(--nav-height)" : 0,
+              /* The landing card's own sill, so the two rest on the same
+                 lines. They are the only two things on the site sized by the
+                 window rather than by the page, and a panel beside a card that
+                 stood a few pixels off it would read as very slightly wrong
+                 without it being obvious why.
+
+                 The head takes it either way. With no bar above, it is the
+                 card's own gap to the window; with one, `top` has already
+                 cleared the bar and this is the gap to that instead - the same
+                 number doing the same job against a different edge. */
+              paddingTop: "var(--sill-top)",
+              paddingBottom: "var(--sill-bottom)",
+              /* Nothing on the inner edge, and that is what makes the gap one
+                 sill rather than two.
+
+                 The page already ends a sill short of where the desk begins -
+                 that is its own right gutter - so a sill of padding here as
+                 well put two of them between the card and the panel, and the
+                 one gap on screen that should match every other was the only
+                 one that was double. The outer three keep theirs: those are
+                 gaps to the window, and there is nothing on the far side of
+                 them to have paid already. */
+              paddingLeft: 0,
+              paddingRight: "var(--sill-side)",
+            }}
           >
             <DockPanel
               answers={answers}

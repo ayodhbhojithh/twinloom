@@ -141,6 +141,23 @@
      the viewport does not change when the desk opens and the page does. */
   --desk-space: 0px;
 
+  /* How far a full-window surface stands off the edges of the window.
+
+     The landing card's insets, and now the desk's as well: the two are the
+     only things on the site that are sized by the window rather than by the
+     page, and a panel resting beside a card should rest on the same lines
+     the card does. Written here rather than at either use, because the
+     moment they are written twice one of them is wrong.
+
+     The foot is a shade more than the head. A gap between an object and the
+     bottom of the window is bounded on one side only - the sides are read
+     against the page either side of the card and this is read against
+     nothing - so the eye adds the rest, and four equal numbers do not give
+     four equal gaps. */
+  --sill-top: clamp(10px, 1vw, 18px);
+  --sill-bottom: clamp(10px, 1.2vw, 22px);
+  --sill-side: clamp(12px, 1.5vw, 28px);
+
   /* The rail's own side gutter.
 
      One number for everything inside the rail - the page links and the control
