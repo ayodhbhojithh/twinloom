@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
-import { outline, type Cuts } from "./notched-card";
+import { useEffect, useRef } from "react";
 
 /* ---------------------------------------------------------------------------
    A film you scroll rather than watch.
@@ -89,35 +87,15 @@ const AHEAD = 12;
 export function FilmStage({
   base,
   frames,
-  label,
-  foot,
 }: {
   /** The folder the stills are in, without a trailing slash. */
   base: string;
   /** How many there are. They are named `001.jpg` upward. */
   frames: number;
-  /**
-   * What the notch says.
-   *
-   * An instruction rather than a name. It read "Film", which is a label on a
-   * thing that is plainly a film - it told nobody anything they could not see -
-   * and the one thing this screen needs somebody to know is that the picture
-   * answers to their scroll. Nothing else on the card does, so nobody would try
-   * it unasked.
-   */
-  label: string;
-  /**
-   * What stands over the bottom right corner of the picture.
-   *
-   * Passed in rather than built here, because what the screen is asking anybody
-   * to do is the screen's business and this only knows where to stand it.
-   */
-  foot?: React.ReactNode;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const face = useRef<HTMLCanvasElement>(null);
-  const [size, setSize] = useState({ w: 0, h: 0 });
 
   useEffect(() => {
     const outer = box.current;
@@ -217,7 +195,6 @@ export function FilmStage({
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       canvas.width = Math.round(rect.width * dpr);
       canvas.height = Math.round(rect.height * dpr);
-      setSize({ w: rect.width, h: rect.height });
 
       drawn = -1;
       settle();
@@ -251,55 +228,13 @@ export function FilmStage({
     };
   }, [base, frames]);
 
-  const cut: Cuts = (() => {
-    const w = Math.max(size.w, 1);
-    const h = Math.max(size.h, 1);
-
-    /* The card's own two numbers at this size, from the same expressions. */
-    const radius = Math.max(14, Math.min(w * 0.018 + 10, 26));
-    const flare = Math.max(14, Math.min(h * 0.04, 22));
-
-    /* The notch takes its depth from what stands in it, which is where its two
-       arcs meet - anything deeper is a straight wall between them. */
-    const barFlare = Math.min(flare, (PLATE + 8) / 2);
-
-    return {
-      radius,
-      barWidth: Math.min(Math.max(96, w * 0.14), w - 2 * (radius + flare) - 20),
-      barDepth: barFlare * 2,
-      barRadius: barFlare,
-      barFlare,
-      /* Nought, which `outline` reads as no cut at all - and the bottom left
-         comes back as an ordinary rounded corner. */
-      biteWidth: 0,
-      biteHeight: 0,
-      biteRadius: flare,
-      biteFlare: flare,
-      /* Nought here too. The corner was given up for a while so the badge on
-         the frames would fall outside the shape, and it cost a quarter of the
-         picture - see `FOOT_RIGHT`. The buttons cover it instead, and the film
-         gets its corner back. */
-      dropWidth: 0,
-      dropHeight: 0,
-      dropRadius: flare,
-      dropFlare: flare,
-    };
-  })();
-
-  const path = size.w > 40 ? outline(size.w, size.h, cut) : "";
-
   return (
-    <div
-      ref={box}
-      className="relative aspect-video max-h-full w-full"
-      style={{ maxWidth: NATIVE }}
-    >
-      {/* The scroller, cut to the shape. The clip is drawn in the coordinates of
-          the element it is set on, so this has to be exactly the picture. */}
+    /* The whole of whatever it is given. The card clips it, so there is no
+       shape to draw here and nothing to measure a shape against. */
+    <div ref={box} className="absolute inset-0">
       <div
         ref={track}
-        className="pointer-events-auto absolute inset-0 overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden"
-        style={{ clipPath: path ? `path("${path}")` : undefined }}
+        className="absolute inset-0 overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden"
       >
         {/* Four screenfuls of nothing, with the picture stuck to the top of
             them. Nothing is drawn down here - the height is the only thing this
@@ -316,42 +251,6 @@ export function FilmStage({
             />
           </div>
         </div>
-      </div>
-
-      {/* And what the screen is asking for, standing in the corner it gives up.
-
-          In a cut rather than on the picture, which is the rule the whole site
-          is drawn by: anything you can press stands in a piece taken out of the
-          surface. A button laid over a photograph is a button somebody has put
-          there; a button standing in a hole in it is part of the same object.
-
-          It is also the only place on this screen a control could go without
-          being on the film. Over the frame it would move with whatever is behind
-          it, and beside the words it was one more line of a column that already
-          had four. */}
-      {foot ? (
-        <div
-          className="pointer-events-none absolute flex items-end justify-end"
-          style={{
-            right: `${FOOT_RIGHT * 100}%`,
-            bottom: `${FOOT_DOWN * 100}%`,
-          }}
-        >
-          {foot}
-        </div>
-      ) : null}
-
-      {/* What to do, standing in the notch. No plate behind it: the notch is
-          already the outline, and a pill drawn inside it is a second shape
-          inside the first. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-0 left-1/2 flex -translate-x-1/2 items-center justify-center"
-        style={{ width: cut.barWidth, height: cut.barDepth }}
-      >
-        <span className="font-mono text-[9px] font-bold tracking-[0.18em] text-label uppercase">
-          {label}
-        </span>
       </div>
     </div>
   );

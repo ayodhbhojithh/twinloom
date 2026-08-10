@@ -701,6 +701,23 @@ export function NotchedCard({ className }: { className?: string }) {
             wide this fills the card at full sharpness with nothing else to
             change, because the cap is the file's own dimensions rather than a
             number written here. */}
+        {/* The fourth screen: the film, filling the card.
+
+            Inside the clipped layer, so what shapes it is the card's own
+            outline - the notch in the top edge, the corner given up at the
+            foot, the flares at every turn. It had a frame of its own for a
+            while, cut by the same function at its own size, with words beside it
+            and two ways on standing in a bite out of its corner. All of that is
+            off: the screen is the film now.
+
+            Which is the argument the water and the pit already make. They are
+            pictures rather than pages with a picture behind them, and a sentence
+            set across one makes it a background. What this card asks for is said
+            on the first screen and again in the header. */}
+        {shown.view === "film" && shown.reel ? (
+          <FilmStage base={shown.reel.base} frames={shown.reel.frames} />
+        ) : null}
+
         {/* The second screen: the water, full bleed and nothing over it.
 
             No claim, no buttons, and no white gradient taking part of the card
@@ -1003,153 +1020,6 @@ export function NotchedCard({ className }: { className?: string }) {
           </Tool>
         </div>
       </div>
-
-      {/* The fourth screen: the film, and the words that stand beside it.
-
-          A two-up rather than a picture with a caption laid over it. The film is
-          the point of the screen and the sentence is what it is evidence for, so
-          neither is on top of the other: the reel keeps its own frame and the
-          words keep their own measure.
-
-          The film leads on a narrow screen and takes the left on a wide one.
-          `order` moves it, so which one is read first and which one is drawn
-          first stay separate decisions - on a phone the picture says what this
-          is before a line of type has to.
-
-          Not inside the clipped layer with the drawings. It was, and everything
-          in there is `aria-hidden` scenery: the words would have been invisible
-          to anything reading the page out. Up here they are content, and the
-          film's own outline is what shapes it rather than the card's. */}
-      {shown.view === "film" && shown.reel ? (
-        <div
-          className="pointer-events-none absolute inset-0 z-10 flex items-center"
-          style={{
-            paddingTop: head,
-            paddingBottom: cut.barDepth,
-            paddingLeft: pad / 2,
-            paddingRight: pad / 2,
-          }}
-        >
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={shown.id}
-              variants={HERO_RUN}
-              initial="hidden"
-              animate="shown"
-              exit={{ opacity: 0, y: -8, transition: { duration: 0.22 } }}
-              className="flex w-full flex-col items-center gap-6 lg:flex-row lg:items-center lg:gap-10 xl:gap-14"
-            >
-              <motion.div
-                variants={HERO_MARK}
-                className="flex w-full min-w-0 justify-center lg:w-[58%] xl:w-[60%]"
-              >
-                <FilmStage
-                  base={shown.reel.base}
-                  frames={shown.reel.frames}
-                  /* An instruction, not a label. "Film" named something
-                     already obvious; this is the only place anybody is told
-                     the picture answers to their scroll. */
-                  label="Scroll this"
-                  foot={
-                    /* Two, stacked, and the pair is the point of the shape
-                       being this size: one bite out of the picture holding both
-                       ways on reads as the page reaching into the film, where
-                       two buttons on the surface would be two stickers.
-
-                       Stacked rather than in a row. A row is as wide as both
-                       labels together, and the cut is sized from what stands in
-                       it - so a row took a fifth of the film's width out of the
-                       picture to hold two words each. Stacked, the bite is one
-                       button wide and reaches down instead of across, which is
-                       the corner giving way rather than the bottom edge being
-                       shortened.
-
-                       Right aligned, because the corner they stand in opens
-                       from the right, and a stack ragged on that side would be
-                       two buttons that do not know which edge they belong
-                       to. */
-                    /* `items-stretch` inside a box that sizes to its widest
-                       child, so both come out the width of the longer label.
-                       Two pills of different lengths stacked are two shapes; two
-                       of one width are a pair. */
-                    <div className="flex w-max flex-col items-stretch gap-2">
-                      {/* The filled one first, which is the other half of
-                          stacking them: in a row the eye reads left to right and
-                          the loud one goes first; in a stack it reads top to
-                          bottom and the loud one goes at the top. */}
-                      <a
-                        href={ROUTES.services}
-                        className="group/way pointer-events-auto inline-flex items-center justify-between gap-4 rounded-pill bg-ink px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90"
-                      >
-                        What we make
-                        <ArrowUpRight
-                          aria-hidden
-                          className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
-                        />
-                      </a>
-
-                      <a
-                        href={ROUTES.contact}
-                        className="group/way pointer-events-auto inline-flex items-center justify-between gap-4 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
-                      >
-                        Send us a message
-                        <ArrowUpRight
-                          aria-hidden
-                          className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
-                        />
-                      </a>
-                    </div>
-                  }
-                />
-              </motion.div>
-
-              <motion.div
-                variants={HERO_RUN}
-                className="min-w-0 text-center lg:flex-1 lg:text-left"
-              >
-                <motion.ul
-                  variants={HERO_RISE}
-                  className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 font-mono text-[10px] font-bold tracking-[0.15em] text-idx uppercase lg:justify-start lg:gap-x-3.5 lg:text-[11px]"
-                >
-                  {shown.kicker?.map((trade, n) => (
-                    <li key={trade} className="flex items-center gap-2.5">
-                      {n > 0 ? (
-                        <span
-                          aria-hidden
-                          className="size-1 rounded-pill bg-mark"
-                        />
-                      ) : null}
-                      {trade}
-                    </li>
-                  ))}
-                </motion.ul>
-
-                <motion.h1
-                  variants={HERO_RISE}
-                  className="mx-auto mt-3 max-w-[20ch] text-[clamp(26px,2.6vw,44px)] leading-[1.06] font-extrabold tracking-[-0.042em] text-ink lg:mx-0"
-                >
-                  {shown.claim?.[0]}
-                  <span className="thread-text block">{shown.claim?.[1]}</span>
-                </motion.h1>
-
-                <motion.p
-                  variants={HERO_RISE}
-                  className="mx-auto mt-4 max-w-[34ch] text-[clamp(14.5px,1.15vw,18px)] leading-[1.4] font-bold tracking-[-0.022em] text-ink lg:mx-0"
-                >
-                  {shown.lead}
-                </motion.p>
-
-                <motion.p
-                  variants={HERO_RISE}
-                  className="mx-auto mt-4 max-w-[46ch] text-[13.5px] leading-[1.68] text-quiet sm:text-[14.5px] lg:mx-0 lg:text-[15px]"
-                >
-                  {shown.note}
-                </motion.p>
-              </motion.div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      ) : null}
 
       {/* The second screen's words: centred, and set light on a dark ground.
 
