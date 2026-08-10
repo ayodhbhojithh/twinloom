@@ -13,7 +13,7 @@ import type { Project } from "./projects";
    fields. Only the list is separate - one type, two lists, and the type is the
    thing that keeps them interchangeable if a slide ever is a project.
 
-   Three screens, and they are meant to be three different screens rather than
+   Five screens, and they are meant to be five different screens rather than
    one screen with its contents swapped. Each carries a `view`, and the card
    branches on it - so an arrow does not change a picture, it changes what the
    card is.
@@ -33,6 +33,11 @@ import type { Project } from "./projects";
    run - two light grounds and then this one, rather than the polarity flipping
    back and forth.
 
+   The fourth and fifth are white and empty, and waiting. They are in the run
+   rather than held back until they have something on them, because the arrows
+   are how anybody finds out how much there is - a card that grows from three
+   screens to five later is a card somebody has already decided the length of.
+
    Which is the shape of the card. The first is the long version; the two behind
    it each make one argument and open one door, because a card that turns should
    not ask for the same thing three times.
@@ -50,15 +55,18 @@ import type { Project } from "./projects";
  * the size of the card with the words beside it, and it is the only screen that
  * is not centred - the whole of it is the asymmetry.
  *
- * Two others have gone. `wave` was a claim set over a horizon of dots, and it
- * made the same argument as a screen two along from it on a drawing that takes a
- * moment to resolve into anything - a moment a card in the middle of a turn does
- * not have. `blank` was a white card with the ask on it and the mark behind it
- * as a halftone; it was the quiet at the end of a run of four, and a run of
- * three does not need one. `wave-dots` is still on disk for whatever wants a
- * field of dots next.
+ * `blank` is a white card and nothing else - no drawing, no words, no way on.
+ * Not a placeholder graphic and not a greyed panel, because either of those is a
+ * design decision made in advance of the design. Two of the five are that, and
+ * they are that on purpose: the card turns onto them and there is nothing there
+ * yet.
+ *
+ * `wave` has gone: a claim set over a horizon of dots, making the same argument
+ * as a screen two along from it on a drawing that takes a moment to resolve into
+ * anything - a moment a card in the middle of a turn does not have. `wave-dots`
+ * is still on disk for whatever wants a field of dots next.
  */
-export type SlideView = "waves" | "balls" | "mark";
+export type SlideView = "waves" | "balls" | "blank" | "mark";
 
 /**
  * A slide, which is a `Project` and a few more things.
@@ -192,6 +200,55 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     ],
     claim: ["Two threads.", "One piece of work."],
     lead: "The site people see and the software behind it are one build, not two suppliers who blame each other. One contract, one invoice, and the same people to ask either way.",
+    image: "",
+    alt: "",
+    tone: "#ffffff",
+    overview: true,
+  },
+
+  /* The fourth and fifth: white, and nothing on them yet.
+
+     Everything a slide has to carry is here and only the drawing is missing -
+     no `view` branch renders for `blank`, so what shows is the card's own white
+     ground and the controls cut into it. They still open the company's panel,
+     because the expand control opens the same thing on every screen and a
+     screen that opened nothing would be the one that looked broken rather than
+     the one that looked empty.
+
+     No `claim` and no `lead`. A screen waiting for its design should not be
+     carrying copy written for somebody else's, and a headline standing on a
+     white card is a design - the wrong one, made by default. */
+  {
+    id: "hero-6",
+    view: "blank",
+    name: "Waiting for its design",
+    kind: "In progress",
+    year: "2026",
+    summary:
+      "A screen on the landing card with nothing on it yet. It turns to like any other and opens the same panel.",
+    facts: [
+      { term: "Screen", value: "Four of five" },
+      { term: "Holds", value: "Nothing yet" },
+      { term: "Opens", value: "What we do" },
+    ],
+    image: "",
+    alt: "",
+    tone: "#ffffff",
+    overview: true,
+  },
+  {
+    id: "hero-7",
+    view: "blank",
+    name: "Waiting for its design",
+    kind: "In progress",
+    year: "2026",
+    summary:
+      "A screen on the landing card with nothing on it yet. It turns to like any other and opens the same panel.",
+    facts: [
+      { term: "Screen", value: "Five of five" },
+      { term: "Holds", value: "Nothing yet" },
+      { term: "Opens", value: "What we do" },
+    ],
     image: "",
     alt: "",
     tone: "#ffffff",
