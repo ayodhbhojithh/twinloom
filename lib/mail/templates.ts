@@ -418,6 +418,19 @@ export function bookingConfirmation({
 /** The two sections written as `Label: value`, and the only two. */
 const FIELD_SECTIONS = new Set(["WHO IS ASKING", "THE ORGANISATION"]);
 
+/**
+ * What the block at the top of the message already says.
+ *
+ * Dropped from `WHO IS ASKING` rather than left to appear twice. In the plain
+ * text there was nothing above the document, so that section was the only place
+ * these four had ever been said; here they are the header, set as links, and a
+ * section repeating them immediately underneath reads as the message having
+ * been assembled by machine. What is left of the section is the part the header
+ * does not carry - the part they play in the decision, and when they need it
+ * live - which is worth its own heading.
+ */
+const IN_THE_HEADER = new Set(["Your name", "Company", "Email", "Phone"]);
+
 /** A heading is a line that is already shouting. */
 const isHeading = (line: string) =>
   /[A-Z]/.test(line) && line === line.toUpperCase() && !line.startsWith("-");
@@ -437,18 +450,53 @@ const linkify = (value: string) =>
  * was above it, a leading dash makes a bullet, a trailing colon makes a
  * sub-heading, and inside the two sections that use them a colon makes a row.
  * Anything else is a sentence somebody typed.
+ *
+ * `headings` and `omit` are what let the same document be set twice. It is
+ * written for us - "what they told us", "the site their answers describe" - and
+ * the person who wrote it gets a copy, where every one of those is about them
+ * and reads as being talked about in the third person. Renaming the headings is
+ * the whole of the difference; the content underneath is theirs either way, and
+ * rewriting that would give the two copies different facts.
  */
-function setDocument(document: string) {
+function setDocument(
+  document: string,
+  {
+    headings,
+    omit,
+  }: {
+    /** Section name as written, to section name as shown. */
+    headings?: Record<string, string>;
+    /** Sections to leave out entirely, with everything under them. */
+    omit?: Set<string>;
+  } = {},
+) {
   const out: string[] = [];
   let section = "";
   let open = false;
+  let skipping = false;
+
+  /* The heading is held back until something turns up under it.
+
+     A section can come out empty - `WHO IS ASKING` loses four of its lines to
+     the header above, and any of them can be empty in the document to begin
+     with, since `line()` writes nothing for a field nobody filled in. A rule
+     with nothing under it is worse than a missing section: it reads as content
+     that failed to load. */
+  let pending = "";
 
   const shut = () => {
     if (open) out.push("</table>");
     open = false;
   };
 
+  const land = () => {
+    if (!pending) return;
+    out.push(pending);
+    pending = "";
+  };
+
   const row = (cells: string) => {
+    land();
     if (!open) {
       out.push(
         `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0">`,
@@ -461,18 +509,28 @@ function setDocument(document: string) {
   for (const raw of document.split("\n")) {
     const line = raw.trimEnd();
     if (!line.trim()) continue;
+    if (skipping && !isHeading(line)) continue;
 
     if (isHeading(line)) {
       shut();
       section = line.replace(/\s*\(.*\)$/, "");
+
+      /* Dropped with everything under it. `skipping` holds until the next
+         heading, because a section is its heading plus whatever follows, and
+         nothing in this grammar closes one. */
+      skipping = Boolean(omit?.has(section));
+      if (skipping) {
+        pending = "";
+        continue;
+      }
+
       /* The count in the heading - "(4 pages)" - set apart from the heading
          itself. It is a fact about the section rather than part of its name,
          and at the same weight it reads as one long label. */
       const count = line.match(/\((.*)\)$/)?.[1] ?? "";
-      out.push(
-        `<div style="margin:26px 0 0;padding:0 0 8px;border-bottom:1px solid #e8eaee">
+      pending = `<div style="margin:26px 0 0;padding:0 0 8px;border-bottom:1px solid #e8eaee">
            <span style="font-family:${MONO};font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:${LABEL};line-height:1">${esc(
-             section,
+             headings?.[section] ?? section,
            )}</span>${
              count
                ? `<span style="font-family:${MONO};font-size:9px;font-weight:700;letter-spacing:0.16em;color:${MARK};line-height:1"> ${esc(
@@ -480,8 +538,7 @@ function setDocument(document: string) {
                  )}</span>`
                : ""
            }
-         </div>`,
-      );
+         </div>`;
       continue;
     }
 
@@ -511,6 +568,7 @@ function setDocument(document: string) {
     /* A zone name inside the pages: "Always there:" with its pages under it. */
     if (line.endsWith(":") && !line.slice(0, -1).includes(": ")) {
       shut();
+      land();
       out.push(
         `<div style="margin:14px 0 0;font-family:${SANS};font-size:12px;font-weight:700;letter-spacing:-0.01em;color:${INK};line-height:1.4">${esc(
           line.slice(0, -1),
@@ -522,6 +580,10 @@ function setDocument(document: string) {
     const at = line.indexOf(": ");
 
     if (at > 0 && FIELD_SECTIONS.has(section)) {
+      if (section === "WHO IS ASKING" && IN_THE_HEADER.has(line.slice(0, at))) {
+        continue;
+      }
+
       row(
         `<td width="38%" valign="top" style="padding:7px 12px 0 0;font-family:${SANS};font-size:12px;line-height:1.5;color:${LABEL}">${esc(
           line.slice(0, at),
@@ -535,6 +597,7 @@ function setDocument(document: string) {
 
     /* Whatever they wrote, as they wrote it. */
     shut();
+    land();
     out.push(
       `<div style="margin:10px 0 0;font-family:${SANS};font-size:13px;line-height:1.65;color:${BODY};white-space:pre-wrap">${esc(
         line,
