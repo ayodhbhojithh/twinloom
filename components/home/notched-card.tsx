@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 
 import { Ballpit } from "./ballpit";
 import { DotField } from "./dot-field";
+import { FilmStage } from "./film-stage";
 import { BeadTrail, MarkStage } from "./mark-stage";
 import { GradientWaves } from "./gradient-waves";
 import { ProjectPanel } from "./project-panel";
@@ -672,19 +673,54 @@ export function NotchedCard({ className }: { className?: string }) {
             player somebody has parked on a page.
 
             The tone underneath is the card's own white, so the moment before the
-            first frame is a white card rather than a black rectangle. */}
+            first frame is a white card rather than a black rectangle.
+
+            Cut, not boxed. It sits in a shape drawn by the same `outline` this
+            card is drawn by - a notch in its top edge saying what it is, and a
+            corner given up for the one control it has. A rectangle in the middle
+            of a page made of cut surfaces is the one element that looks pasted
+            on. See `film-stage`.
+
+            Shown at its own size, and never above it.
+
+            The file is 1280 by 720. This card is most of a window - around 1900
+            points across, and twice that in device pixels on a good screen - so
+            filling it meant blowing 720 lines up to three times their height,
+            which is not a video playing, it is a video being enlarged. Cropping
+            it to the card's shape on top of that threw away a sixth of the frame
+            as well.
+
+            `max-w-full max-h-full` on the element and nothing else: a `video`
+            has an intrinsic size, so this lets it shrink to fit a narrow screen
+            and stops it growing past what it actually contains. On a wide card
+            it plays at 1280 by 720 in the middle of the surface, which is the
+            sharpest it can ever be, and the card's own white stands round it -
+            the same white it stands on everywhere else.
+
+            The one way to make it larger is a larger file. Re-exported at 2560
+            wide this fills the card at full sharpness with nothing else to
+            change, because the cap is the file's own dimensions rather than a
+            number written here. */}
         {shown.view === "film" && shown.video ? (
-          <video
-            aria-hidden
-            className="absolute inset-0 size-full object-cover"
-            src={shown.video}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            tabIndex={-1}
-          />
+          /* Centred in the room under the header, not in the card.
+
+             `inset-0` and `items-center` centre it on the card, and the top of
+             the card is the header - so the film came up under the row of links
+             with its notch touching them, and the space it left at the foot was
+             the height of the bar it was not clearing. The same `head` every
+             other screen's words clear the bar by, and the same air at the foot,
+             so what it centres in is what is actually free. */
+          <div
+            className="absolute inset-0 flex items-center justify-center"
+            style={{
+              paddingTop: head,
+              paddingBottom: cut.barDepth + 12,
+              paddingLeft: pad,
+              paddingRight: pad,
+            }}
+          >
+            <FilmStage src={shown.video} kind={shown.kind} />
+          </div>
         ) : null}
 
         {/* The second screen: the water, full bleed and nothing over it.
