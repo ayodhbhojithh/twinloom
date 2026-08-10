@@ -91,13 +91,24 @@ export function FilmStage({ src, kind }: { src: string; kind: string }) {
   const path = size.w > 40 ? outline(size.w, size.h, cut) : "";
 
   return (
-    /* The box is the film's own shape - sixteen by nine, and never wider than
-       the file is. The clip is drawn in the coordinates of the element it is
-       set on, so the element has to be exactly the picture for the path to
-       describe it. */
+    /* The box is the film's own shape - sixteen by nine - and it grows with the
+       screen.
+
+       It was held to 1280, the file's own width, so it could never be upscaled.
+       That is the right rule for a picture and the wrong one for this: on a
+       monitor the card is two thousand points across and a 1280 box in the
+       middle of it is a film being shown at arm's length, with more empty card
+       around it than picture. It goes to 1560 at `xl` and 1800 at `2xl`, which
+       is a stretch of about two fifths at the very widest - visible if you look
+       for it, and less costly than a screen that is mostly margin.
+
+       A larger file removes the trade entirely. See the note in `notched-card`.
+
+       The clip is drawn in the coordinates of the element it is set on, so the
+       element has to be exactly the picture for the path to describe it. */
     <div
       ref={box}
-      className="relative aspect-video max-h-full w-full max-w-[1280px]"
+      className="relative aspect-video max-h-full w-full max-w-[1280px] xl:max-w-[1560px] 2xl:max-w-[1800px]"
     >
       <video
         aria-hidden

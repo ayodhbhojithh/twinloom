@@ -714,9 +714,12 @@ export function NotchedCard({ className }: { className?: string }) {
             className="absolute inset-0 flex items-center justify-center"
             style={{
               paddingTop: head,
-              paddingBottom: cut.barDepth + 12,
-              paddingLeft: pad,
-              paddingRight: pad,
+              paddingBottom: cut.barDepth,
+              /* Half the gutter the words take. A measure is held off the edge
+                 so a line has somewhere to begin; a picture is held off it so
+                 the card is still a card round it, which takes less. */
+              paddingLeft: pad / 2,
+              paddingRight: pad / 2,
             }}
           >
             <FilmStage src={shown.video} kind={shown.kind} />
