@@ -35,9 +35,19 @@ import { cn } from "@/lib/utils";
  */
 const PLATE = 34;
 
+/**
+ * The disc that stands in the top right cut, measured the same way.
+ *
+ * `Disc` is a 36px control, and the cut is sized from it rather than from the
+ * surface: a fraction of a five-hundred-pixel panel and a fraction of a
+ * window-wide card are two different holes for the same button.
+ */
+const HANDLE = 36;
+
 export function Stage({
   toolbar,
   stickyBar,
+  head,
   corner,
   aside,
   foot,
@@ -77,6 +87,20 @@ export function Stage({
    * its own top out of view once the list got long.
    */
   top?: boolean;
+  /**
+   * Stands in the cut at the top right: the way out.
+   *
+   * Where `corner` is the way on, this is the way back - and the difference is
+   * which end of the surface it belongs at. A panel opened over the page is
+   * shut from its top right corner, which is where every window anybody has
+   * ever closed puts it; a step that leads to the next one carries that at its
+   * foot, where the reading ends.
+   *
+   * Its own cut rather than a disc laid on the surface, because that is the
+   * rule the whole site is drawn by: anything you can press stands in a piece
+   * taken out of the surface rather than floating on top of it.
+   */
+  head?: React.ReactNode;
   /** Stands in the corner cut at the bottom right: the way on. */
   corner?: React.ReactNode;
   /** Stands in the bite at the bottom left: what the answers add up to. */
@@ -272,6 +296,17 @@ export function Stage({
     const bite = cut;
     const drop = cut;
 
+    /* And a shallower one at the top right, for the same reason the notch is
+       shallower than the two at the foot: it holds one 36px disc, and the two
+       bottom cuts are the size they are because they are read against the
+       corners of a surface rather than against what stands in them.
+
+       Cut to the card's own depth it would be sixty-eight deep on a panel the
+       height of the window - which is a hole most of the way down to the
+       heading, to hold a button half that size. */
+    const headFlare = head ? Math.min(flare, (HANDLE + 12) / 2) : 0.01;
+    const headSize = head ? Math.max(headFlare * 2 + 12, 56) : 0.01;
+
     return {
       /** The bar's own size, whether or not the edge is cut for it. */
       barRoom: { width: barWidth, depth: barDepth },
@@ -288,13 +323,25 @@ export function Stage({
       dropHeight: corner ? drop : 0.01,
       dropRadius: corner ? flare : 0.01,
       dropFlare: corner ? flare : 0.01,
+      /** The cut's own size, read back by the box that stands in it. `Cuts`
+          has these four as optional because every other surface on the site
+          leaves them out, and an optional number is not a number. */
+      headRoomSize: headSize,
+      headWidth: headSize,
+      headHeight: headSize,
+      headRadius: headFlare,
+      headFlare: headFlare,
     };
   })();
 
   const {
     barRoom,
+    headRoomSize,
     ...cut
-  }: { barRoom: { width: number; depth: number } } & Cuts = geo;
+  }: {
+    barRoom: { width: number; depth: number };
+    headRoomSize: number;
+  } & Cuts = geo;
 
   const path = size.w > 40 ? outline(size.w, size.h, cut) : "";
 
@@ -392,6 +439,15 @@ export function Stage({
         </div>
       ) : null}
 
+      {head ? (
+        <div
+          className="absolute top-0 right-0 z-20 flex items-center justify-center"
+          style={{ width: headRoomSize, height: headRoomSize }}
+        >
+          {head}
+        </div>
+      ) : null}
+
       {/* The content, held clear of every cut by the numbers that made them.
 
           `min-h-full` and a centred column: the surface has a floor so its
@@ -433,8 +489,17 @@ export function Stage({
           /* Under the notch, not a whole band under it, and nothing at all
              where the bar is in the flow: there it has already taken its own
              room above this. */
+          /* With no notch but a cut at the top right, the content still has to
+             start below that cut - it is only in one corner, but a heading
+             running up beside it reads as a heading the corner has bitten. */
           paddingTop:
-            stickyBar && toolbar ? 20 : toolbar ? barRoom.depth + 20 : pad,
+            stickyBar && toolbar
+              ? 20
+              : toolbar
+                ? barRoom.depth + 20
+                : head
+                  ? headRoomSize + 12
+                  : pad,
           /* What the heading may take before it would run under the bar. */
           ["--notch-free" as string]: headRoom,
           /* Clear of the bite and then some. The content only has to miss the

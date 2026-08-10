@@ -34,9 +34,9 @@ import { Disc, Plate, Stage } from "./stage";
    of a page and a panel over it.
 
    And it is cut, not boxed. The tabs stand in a notch in its top edge and the
-   way out stands in the corner it gives up for it, which is the rule the whole
-   site is drawn by: anything you can press stands in a piece cut out of the
-   surface rather than floating on top of it.
+   way out stands in a cut taken out of the corner beside them, which is the
+   rule the whole site is drawn by: anything you can press stands in a piece cut
+   out of the surface rather than floating on top of it.
 --------------------------------------------------------------------------- */
 
 export type Face = "site" | "notes";
@@ -247,11 +247,20 @@ export function DockPanel({
           </span>
         </div>
       }
-      corner={
-        /* Filled, not bare. It stands in the corner cut - a piece taken out of
-           the surface - so on the quiet tone it was a grey mark on the page
-           showing through, with nothing to say it was a control at all. Ink is
-           what the site's other corner discs are. */
+      head={
+        /* At the top right, which is where a panel is shut from.
+
+           It stood in the corner cut at the foot, and that cut is for the way
+           on: a step carries the thing that takes you forward at the end of the
+           reading. Nothing about this takes anybody forward - it puts the panel
+           away - and every window anybody has ever closed is closed from its
+           top right corner. At the bottom of a panel the height of the screen
+           it was also the furthest point on it from the tab that opened it.
+
+           Filled, not bare. It stands in a piece taken out of the surface, so
+           bare it was a grey mark on the page showing through with nothing to
+           say it was a control at all. Ink is what the site's other cut discs
+           are. */
         <Disc label="Close the panel" onClick={onClose} tone="ink">
           <X className="size-4" />
         </Disc>

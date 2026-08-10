@@ -209,8 +209,16 @@ export function Boot() {
           draggable={false}
           loading="eager"
           fetchPriority="high"
-          sizes="34px"
-          className="absolute top-1/2 left-1/2 size-[34px] -translate-x-1/2 -translate-y-1/2 object-contain"
+          sizes="52px"
+          /* Larger than the box it looks like it should take.
+
+             The file is square and the mark inside it is not - it is a wide
+             thing with a good deal of white above and below - so a box measured
+             to the shape's own height draws a mark half that tall. Fifty-two in
+             a shape sixty high is the box overshooting on purpose: what lands
+             on the screen is the ink, and the margins the file carries fall
+             outside the outline where there is nothing to collide with. */
+          className="absolute top-1/2 left-1/2 size-[52px] -translate-x-1/2 -translate-y-1/2 object-contain"
         />
       </span>
 

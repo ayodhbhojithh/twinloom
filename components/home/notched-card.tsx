@@ -63,6 +63,19 @@ export interface Cuts {
   barDepth: number;
   barRadius: number;
   barFlare: number;
+  /**
+   * A cut taken out of the top right corner: the mirror of `drop`.
+   *
+   * Optional, like the notch and the bite, and left out by everything that has
+   * nothing to stand there. A surface with a way out at the top asks for it -
+   * a panel is shut from its top right corner, not from its foot - and a
+   * surface whose only controls are at the bottom keeps an ordinary rounded
+   * corner there.
+   */
+  headWidth?: number;
+  headHeight?: number;
+  headRadius?: number;
+  headFlare?: number;
   /** The bite at the bottom left, the same four numbers. */
   biteWidth: number;
   biteHeight: number;
@@ -120,6 +133,10 @@ export function outline(w: number, h: number, cut: Cuts): string {
     footDepth: fd = 0,
     footRadius: fr = 0,
     footFlare: ff = 0,
+    headWidth: hw = 0,
+    headHeight: hh = 0,
+    headRadius: hr = 0,
+    headFlare: hf = 0,
   } = cut;
 
   /* Where the top edge is cut from and to.
@@ -215,11 +232,30 @@ export function outline(w: number, h: number, cut: Cuts): string {
           `A ${bf} ${bf} 0 0 1 ${right + bf} 0`,
         ];
 
-  /* The top right corner, unless the notch has taken it. */
+  /* The top right corner: nothing where the notch has taken it, a cut of its
+     own where something stands there, and an ordinary rounded corner
+     otherwise.
+
+     The same six commands the notch is built from, turned to face the other
+     way: come along the top edge, flare down into the cut, cross its floor,
+     turn its inner corner, and flare out onto the right side. The two flares
+     take sweep 1 because they curve away from the cut and into the card; the
+     corner between them takes sweep 0 because it curves the way any rounded
+     box does. Get those the wrong way round and the card grows an ear here in
+     exactly the way it does anywhere else on this path. */
   const topRight =
     cut.barRight && !off(bw, bd)
       ? []
-      : [`L ${w - r} 0`, `A ${r} ${r} 0 0 1 ${w} ${r}`];
+      : off(hw, hh)
+        ? [`L ${w - r} 0`, `A ${r} ${r} 0 0 1 ${w} ${r}`]
+        : [
+            `L ${w - hw - hf} 0`,
+            `A ${hf} ${hf} 0 0 1 ${w - hw} ${hf}`,
+            `L ${w - hw} ${hh - hr}`,
+            `A ${hr} ${hr} 0 0 0 ${w - hw + hr} ${hh}`,
+            `L ${w - hf} ${hh}`,
+            `A ${hf} ${hf} 0 0 1 ${w} ${hh + hf}`,
+          ];
 
   return [
     `M ${r} 0`,
@@ -282,10 +318,17 @@ const SISTER = "TwinCoreTech";
  * headline that settles a beat before the line under it is a page being read
  * to you in the order it was written.
  *
- * Small numbers on purpose. Sixteen pixels and half a second each, seventy
- * milliseconds apart - enough that the order registers, not so much that
- * anybody waits for it. The whole run is over inside a second, which is about
- * as long as it takes to look from the top of a headline to the bottom of it.
+ * Small numbers on purpose. Eighteen pixels and about six tenths of a second
+ * each, eighty-five milliseconds apart - enough that the order registers, not
+ * so much that anybody waits for it. The whole run is over in a little over a
+ * second, which is about as long as it takes to look from the top of a headline
+ * to the bottom of it.
+ *
+ * A shade longer than it was at every one of those numbers. Half a second and
+ * seventy apart was quick enough that each line was most of the way up before
+ * the eye had found it, so the run read as five things appearing rather than as
+ * one thing arriving in order - and a stagger nobody can follow is a stagger
+ * paying for nothing. The extra tenth is what makes it legible as a sequence.
  *
  * The ease is nearly all at the end: things start quickly and settle slowly,
  * which is how a thing with weight comes to rest. A symmetrical curve spends
@@ -293,15 +336,15 @@ const SISTER = "TwinCoreTech";
  */
 const HERO_RUN = {
   hidden: {},
-  shown: { transition: { staggerChildren: 0.07, delayChildren: 0.06 } },
+  shown: { transition: { staggerChildren: 0.085, delayChildren: 0.08 } },
 } as const;
 
 const HERO_RISE = {
-  hidden: { opacity: 0, y: 16 },
+  hidden: { opacity: 0, y: 18 },
   shown: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.62, ease: [0.22, 1, 0.36, 1] },
   },
 } as const;
 
@@ -319,7 +362,7 @@ const HERO_MARK = {
   shown: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] },
   },
 } as const;
 

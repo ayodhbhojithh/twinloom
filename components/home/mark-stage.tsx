@@ -233,7 +233,7 @@ export function MarkStage({ className }: { className?: string }) {
            It works because the card behind it is white. On a coloured screen
            this would darken rather than blend, and the honest fix there would be
            a file with an alpha channel rather than a different blend mode. */
-        className="relative h-full w-full object-cover mix-blend-multiply"
+        className="hero-float relative h-full w-full object-cover mix-blend-multiply"
         style={{
           /* And the edges given away. Even multiplied, the file's outer corners
              carry enough noise to draw a rectangle in the right light; faded to
