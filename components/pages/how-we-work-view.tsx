@@ -49,6 +49,9 @@ const RAMP = [
  */
 const HOW_MANY = ["One", "Two", "Three", "Four", "Five", "Six", "Seven"];
 
+/** Where each zone lands in the page's arrival order. */
+const STEP = ["[--step:2]", "[--step:3]", "[--step:4]"] as const;
+
 const ZONE_LINE: Record<string, string> = {
   start: "and you start here",
   build: "scope agreed up front, delivered in milestones",
@@ -59,16 +62,19 @@ export function HowWeWorkView() {
   return (
     <>
       {/* The head, on the centre line every surface below it shares. */}
-      <section className="page-frame pt-10 pb-10 text-center sm:pt-14">
+      {/* Arriving on the scroll, at no cost per page: `reveal` is a class in
+          the stylesheet and one observer already watches the whole document.
+          `--step` is the order, ninety milliseconds apart. */}
+      <section className="page-frame pt-10 pb-10 text-center max-sm:pt-7 max-sm:pb-7 sm:pt-14">
         {/* No kicker over it. The nav item that got somebody here says "How we
             work", the tab says it, and a third copy directly above a headline
             that means the same thing is the page introducing itself twice. */}
-        <h1 className="section-head mx-auto max-w-[22ch] text-ink">
+        <h1 className="reveal section-head mx-auto max-w-[22ch] text-ink">
           How we
           <span className="text-quiet"> Work.</span>
         </h1>
 
-        <p className="mx-auto mt-5 max-w-[70ch] text-[clamp(15px,1.2vw,17px)] leading-[1.6] text-quiet">
+        <p className="reveal mx-auto mt-5 max-w-[70ch] text-[clamp(15px,1.2vw,17px)] leading-[1.6] text-quiet [--step:1] max-sm:mt-3 max-sm:text-[13px] max-sm:leading-[1.55]">
           The same run of {STOPS.length} steps for every project. What changes
           between them is what happens inside a step, never which steps there
           are - so you can see the whole of it before you have committed to any
@@ -77,7 +83,7 @@ export function HowWeWorkView() {
       </section>
 
       {/* The three zones, each on a surface of its own. */}
-      <section className="page-frame flex flex-col gap-4 pb-14">
+      <section className="page-frame flex flex-col gap-4 pb-14 max-sm:gap-3 max-sm:pb-9">
         {ZONES.map((zone, at) => {
           const ramp = RAMP[at] ?? RAMP[RAMP.length - 1];
           const first = zone.stops[0]?.ix;
@@ -88,7 +94,17 @@ export function HowWeWorkView() {
             <CutPanel
               key={zone.key}
               tone="field"
-              className="w-full"
+              /* Each surface arrives after the one above it. The run starts at
+                 two because the head above has taken nought and one, so the
+                 whole page reads top to bottom in one sequence rather than as
+                 two that happen to overlap.
+
+                 Written out rather than computed. `--step` is a Tailwind
+                 arbitrary property, which means the class has to exist in the
+                 source for the stylesheet to contain it - a template built at
+                 runtime produces a class nothing generated. There are three
+                 zones and there have always been three. */
+              className={cn("reveal w-full", STEP[at] ?? "[--step:4]")}
               toolbar={
                 <span className="flex h-10 w-full items-center justify-center gap-2.5">
                   <span className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
@@ -116,7 +132,7 @@ export function HowWeWorkView() {
               aside={
                 <div
                   aria-hidden
-                  className="flex size-[52px] items-center justify-center rounded-pill text-[18px] leading-none font-bold tracking-[-0.02em] text-white tabular-nums"
+                  className="flex size-[52px] items-center justify-center rounded-pill text-[18px] leading-none font-bold tracking-[-0.02em] text-white tabular-nums max-sm:size-[42px] max-sm:text-[15px]"
                   style={{
                     backgroundImage: `linear-gradient(135deg, ${ramp.from}, ${ramp.to})`,
                   }}
@@ -127,9 +143,7 @@ export function HowWeWorkView() {
               corner={
                 <Link
                   href={opening ? ROUTES.book : ROUTES.build}
-                  aria-label={
-                    opening ? "Book a meeting" : "Build your website"
-                  }
+                  aria-label={opening ? "Book a meeting" : "Build your website"}
                   title={opening ? "Book a meeting" : "Build your website"}
                   className="flex size-11 items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
                 >
@@ -137,14 +151,14 @@ export function HowWeWorkView() {
                 </Link>
               }
             >
-              <div className="mx-auto mt-6 max-w-[70rem]">
+              <div className="mx-auto mt-6 max-w-[70rem] max-sm:mt-3">
                 <div className="text-center">
-                  <h2 className="mx-auto max-w-[24ch] text-[clamp(21px,2vw,28px)] leading-[1.12] font-extrabold tracking-[-0.035em] text-ink">
+                  <h2 className="mx-auto max-w-[24ch] text-[clamp(21px,2vw,28px)] leading-[1.12] font-extrabold tracking-[-0.035em] text-ink max-sm:text-[19px]">
                     {zone.n}
                   </h2>
-                  <p className="mx-auto mt-2 max-w-[58ch] text-[13.5px] leading-[1.55] text-quiet">
-                    {HOW_MANY[zone.stops.length - 1] ?? zone.stops.length} steps,{" "}
-                    {ZONE_LINE[zone.key]}
+                  <p className="mx-auto mt-2 max-w-[58ch] text-[13.5px] leading-[1.55] text-quiet max-sm:mt-1.5 max-sm:text-[12.5px]">
+                    {HOW_MANY[zone.stops.length - 1] ?? zone.stops.length}{" "}
+                    steps, {ZONE_LINE[zone.key]}
                   </p>
                 </div>
 
@@ -155,7 +169,7 @@ export function HowWeWorkView() {
                     into step one, so it belongs to step one. */}
                 <div
                   className={cn(
-                    "mt-9 gap-10",
+                    "mt-9 gap-10 max-sm:mt-6",
                     opening &&
                       "lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)]",
                   )}
@@ -185,12 +199,16 @@ export function HowWeWorkView() {
                       {zone.stops.map((stop, n) => (
                         <li
                           key={stop.ix}
-                          className="relative flex flex-col items-start gap-x-7 gap-y-1.5 py-3 sm:flex-row sm:items-baseline"
+                          /* Row and column, and on a phone the mark sits beside
+                             the name rather than above it: stacked, a 34px disc
+                             on its own line put every step three lines deep and
+                             the thirteen of them ran to four screenfuls. */
+                          className="relative flex flex-col items-start gap-x-7 gap-y-1.5 py-3 max-sm:flex-row max-sm:flex-wrap max-sm:items-baseline max-sm:gap-x-3 max-sm:gap-y-1 max-sm:py-2 sm:flex-row sm:items-baseline"
                         >
                           <span
                             aria-hidden
                             className={cn(
-                              "relative z-10 flex h-[34px] w-[34px] shrink-0 grow-0 basis-[34px] items-center justify-center self-start rounded-pill text-[13px] font-bold text-white tabular-nums",
+                              "relative z-10 flex h-[34px] w-[34px] shrink-0 grow-0 basis-[34px] items-center justify-center self-start rounded-pill text-[13px] font-bold text-white tabular-nums max-sm:h-[26px] max-sm:w-[26px] max-sm:basis-[26px] max-sm:text-[11px]",
                               stop.mark === "launch" ? "" : "bg-ink",
                             )}
                             style={{
@@ -209,7 +227,7 @@ export function HowWeWorkView() {
                             {n + 1}
                           </span>
 
-                          <b className="min-w-0 text-[15.5px] leading-[1.35] font-bold tracking-[-0.018em] text-ink sm:w-[240px] sm:shrink-0 sm:grow-0">
+                          <b className="min-w-0 text-[15.5px] leading-[1.35] font-bold tracking-[-0.018em] text-ink max-sm:text-[13.5px] sm:w-[240px] sm:shrink-0 sm:grow-0">
                             {stop.n}
                           </b>
 
@@ -219,7 +237,10 @@ export function HowWeWorkView() {
                               annotation floating in the margin. What a step
                               takes is a thing to say in the conversation it
                               belongs to, not a column. */}
-                          <span className="min-w-0 grow text-[13.5px] leading-[1.6] text-quiet">
+                          {/* The whole width on a phone, under the two above
+                              it. A sentence sharing a line with a name three
+                              words long leaves it four characters. */}
+                          <span className="min-w-0 grow text-[13.5px] leading-[1.6] text-quiet max-sm:w-full max-sm:pl-[38px] max-sm:text-[12.5px] max-sm:leading-[1.5]">
                             {stop.sub}
                           </span>
                         </li>
@@ -228,19 +249,22 @@ export function HowWeWorkView() {
                   </div>
 
                   {opening ? (
-                    <aside className="mt-8 flex flex-col items-start gap-3 self-start rounded-[18px] bg-canvas p-6 lg:mt-0">
+                    <aside className="mt-8 flex flex-col items-start gap-3 self-start rounded-[18px] bg-canvas p-6 max-sm:mt-5 max-sm:gap-2.5 max-sm:rounded-[15px] max-sm:p-4 lg:mt-0">
                       <span
                         aria-hidden
-                        className="flex size-10 items-center justify-center rounded-pill bg-field text-ink"
+                        className="flex size-10 items-center justify-center rounded-pill bg-field text-ink max-sm:size-9"
                       >
-                        <CalendarClock className="size-[18px]" strokeWidth={1.9} />
+                        <CalendarClock
+                          className="size-[18px]"
+                          strokeWidth={1.9}
+                        />
                       </span>
 
-                      <b className="mt-1 text-[15.5px] leading-[1.25] font-extrabold tracking-[-0.025em] text-ink">
+                      <b className="mt-1 text-[15.5px] leading-[1.25] font-extrabold tracking-[-0.025em] text-ink max-sm:mt-0 max-sm:text-[14.5px]">
                         Get us involved from the start
                       </b>
 
-                      <p className="text-[13px] leading-[1.6] text-quiet">
+                      <p className="text-[13px] leading-[1.6] text-quiet max-sm:text-[12.5px] max-sm:leading-[1.55]">
                         Not sure yet what it looks like? Book a call and we work
                         the requirements out with you. Nothing is priced and
                         nothing is committed.
@@ -248,7 +272,7 @@ export function HowWeWorkView() {
 
                       <Link
                         href={ROUTES.book}
-                        className="group/go mt-1 inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2.5 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85"
+                        className="group/go mt-1 inline-flex items-center justify-center gap-2 rounded-pill bg-ink px-4.5 py-2.5 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85 max-sm:w-full max-sm:px-4 max-sm:py-2.5 max-sm:text-[12.5px]"
                       >
                         Book a meeting
                         <ArrowUpRight
@@ -264,7 +288,6 @@ export function HowWeWorkView() {
           );
         })}
       </section>
-
     </>
   );
 }
