@@ -1219,26 +1219,109 @@
     }
   }
 
+  /* A ball dropped from the top of the card, landing on the thread.
+
+     The lengths are SVG user units, not screen pixels: these are set on
+     children of a `0 0 1200 130` viewBox drawn at the full width of the card,
+     so one unit is about a seven-hundredth of the window and 560 of them is a
+     drop from somewhere above the top edge. Above it on purpose - the card's
+     own outline clips the trail, so a ball that starts higher than the card
+     simply enters the picture already falling, which is what falling into shot
+     looks like. Tie the number to the strip's own height and the drop would
+     shorten every time the strip did.
+
+     Every segment carries its own timing function, which is the whole of what
+     makes this read as gravity. A fall accelerates and a rise decelerates, so
+     the two halves of a bounce take opposite curves; one ease across the lot
+     of it is a ball on a spring. The overall timing on the class is `linear`
+     for exactly that reason - it would otherwise be applied on top of each of
+     these and slur them together.
+
+     Three bounces, each about a third of the last, and they get quicker as
+     they shrink - which is the one thing a bouncing ball does that a shrinking
+     wobble does not. */
   @keyframes trail-bead {
-    from {
-      transform: translateY(-46px);
+    0% {
+      transform: translateY(-560px);
       opacity: 0;
+      animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
     }
-    55% {
+    6% {
       opacity: 1;
+      animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
     }
-    to {
+    52% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+    }
+    67% {
+      transform: translateY(-52px);
+      animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+    }
+    81% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+    }
+    89% {
+      transform: translateY(-17px);
+      animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+    }
+    95% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+    }
+    98% {
+      transform: translateY(-5px);
+      animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+    }
+    100% {
       transform: translateY(0);
       opacity: 1;
     }
   }
 
+  /* The shadow, on the same clock and the same keyframes.
+
+     It is not a passenger: a shadow that fell with the ball would be glued to
+     it. This one is the gap between the two, so it is small and faint while the
+     ball is high and full every time the ball is down - which means it has to
+     pulse on each bounce rather than simply arrive. The percentages are the
+     bead's own, and the two run at one duration and one delay so they cannot
+     drift apart. */
   @keyframes trail-shade {
-    from {
-      transform: scaleX(0.35);
+    0% {
+      transform: scaleX(0.16);
       opacity: 0;
     }
-    to {
+    30% {
+      transform: scaleX(0.24);
+      opacity: 0.2;
+    }
+    52% {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+    67% {
+      transform: scaleX(0.58);
+      opacity: 0.46;
+    }
+    81% {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+    89% {
+      transform: scaleX(0.8);
+      opacity: 0.7;
+    }
+    95% {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+    98% {
+      transform: scaleX(0.93);
+      opacity: 0.88;
+    }
+    100% {
       transform: scaleX(1);
       opacity: 1;
     }
@@ -1250,15 +1333,16 @@
   }
 
   .trail-bead {
-    /* Just past one on the overshoot, which is a bounce you feel rather than
-       one you watch. Anything more and ten of them read as a toy. */
-    animation: trail-bead 0.72s cubic-bezier(0.34, 1.42, 0.64, 1) backwards;
+    /* `linear` on purpose - the keyframes above set their own curve per
+       segment, and anything here would be applied on top of every one of
+       them. */
+    animation: trail-bead 1.45s linear backwards;
   }
 
   .trail-shade {
     transform-box: fill-box;
     transform-origin: center;
-    animation: trail-shade 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation: trail-shade 1.45s linear backwards;
   }
 
   /* Asked for less motion: the trail is simply strung already. */

@@ -119,32 +119,36 @@ export function BeadTrail({ className }: { className?: string }) {
 
       {/* Dropped in, one after another from the left.
 
-          Each bead falls from above the line and settles on it, and its shadow
-          is a separate animation rather than a passenger: a shadow that fell
-          with the ball would be glued to it, where one that grows and darkens
-          as the ball nears reads as the gap closing. That pair is the whole
-          trick - a ball with a shadow that never changes is a sticker.
+          Each one falls the height of the card and bounces three times on the
+          thread, and its shadow is a separate animation rather than a
+          passenger: a shadow that fell with the ball would be glued to it,
+          where one that opens as the ball lands and shrinks again as it comes
+          back up is the gap between the two. That pair is the whole trick - a
+          ball with a shadow that never changes is a sticker.
 
-          The ball overshoots very slightly and comes back, which is the only
-          part of this that says the thing has weight. The shadow is set a
-          shade later than the ball so it is still arriving as the ball
-          touches.
+          `overflow-visible` on the surface above, because they start well
+          above the strip - and the card's own outline clips them, so they fall
+          into the picture out of the top of it rather than out of nowhere.
 
-          `overflow-visible` on the surface above, because they start higher
-          than the strip is tall - and the card's own outline clips them, so
-          they fall out of the top of the picture rather than out of nowhere.
+          One duration and one delay for the ball and its shadow. They were set
+          a beat apart, on the argument that a shadow still arriving as the ball
+          touches reads as the gap closing - which was right for a single drop
+          and is wrong for a bounce, where the two have to meet three times.
+          Sharing the clock is what keeps them meeting.
 
           The delay is the index, so the run reads left to right along the
-          thread. Every value is written here rather than in the stylesheet
-          because it is per bead, and a stylesheet cannot hold ten of them
-          without ten classes. */}
+          thread. A tenth of a second between them: enough that they land one
+          after another rather than as a shower, and the whole run is over in
+          about two and a half seconds. Every value is written here rather than
+          in the stylesheet because it is per bead, and a stylesheet cannot hold
+          ten of them without ten classes. */}
       {TRAIL.map((bead, n) => (
         <g key={n}>
           {/* Its shadow first, so the bead sits on the line rather than beside
               it. Flat and wide, because the light is high and in front. */}
           <ellipse
             className="trail-shade"
-            style={{ animationDelay: `${0.5 + n * 0.085}s` }}
+            style={{ animationDelay: `${0.35 + n * 0.1}s` }}
             cx={bead.x}
             cy={bead.y + bead.r * 1.05}
             rx={bead.r * 1.5}
@@ -153,7 +157,7 @@ export function BeadTrail({ className }: { className?: string }) {
           />
           <circle
             className="trail-bead"
-            style={{ animationDelay: `${0.42 + n * 0.085}s` }}
+            style={{ animationDelay: `${0.35 + n * 0.1}s` }}
             cx={bead.x}
             cy={bead.y}
             r={bead.r}
