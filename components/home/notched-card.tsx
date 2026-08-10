@@ -1485,6 +1485,54 @@ export function NotchedCard({ className }: { className?: string }) {
         </div>
       ) : null}
 
+      {/* The fourth screen: the other company's name, and nothing else.
+
+          Centred on the card rather than set at one corner, because there is
+          nothing else on the screen to balance it against - the field behind it
+          is even in every direction, so anything off-centre reads as having
+          slipped. It is the one screen here that is a name rather than a claim,
+          and a name wants the middle.
+
+          Set as one word in two colours, which is what the header does with
+          TwinLoom: the tint marks where the name divides rather than adding a
+          second idea. Inline rather than blocked, so it stays one line and never
+          breaks in the middle of itself.
+
+          `pointer-events-none` throughout. The field answers the pointer, and a
+          block of type laid over it is a rectangle in the middle of the card
+          where nothing moves. */}
+      {shown.view === "particles" && shown.claim ? (
+        <div
+          className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
+          style={{
+            paddingTop: size.w < TIGHT ? cut.barDepth + 26 : head,
+            paddingBottom: cut.barDepth + 12,
+            paddingLeft: pad,
+            paddingRight: pad,
+          }}
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={shown.id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
+              className="text-center"
+            >
+              <h1 className="text-[clamp(38px,6.6vw,104px)] leading-[1] font-extrabold tracking-[-0.05em] text-ink">
+                {shown.claim[0]}
+                <span className="thread-text">{shown.claim[1]}</span>
+              </h1>
+
+              <p className="mx-auto mt-4 max-w-[34ch] text-[13.5px] leading-[1.6] text-quiet sm:mt-5 sm:text-[15px] lg:text-[16px]">
+                {shown.lead}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      ) : null}
+
       {/* The third screen's words: centred, dark, and one way on.
 
           The same block as the second screen at the same sizes, set the other

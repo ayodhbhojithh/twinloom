@@ -235,6 +235,11 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
   {
     id: "hero-7",
     view: "particles",
+    /* Two halves, and they are set on one line rather than two - it is one
+       word. The colour marks where the name divides, the way the header sets
+       TwinLoom, rather than adding a second idea to it. */
+    claim: ["Twin", "CoreTech"],
+    lead: "The software company behind TwinLoom.",
     name: "A field that answers the pointer",
     kind: "Motion",
     year: "2026",
