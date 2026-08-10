@@ -48,9 +48,13 @@ export function ContactView() {
       {/* White, like every other card on the site. The panel's own default is
           the canvas grey, and on a canvas page that makes the one card with a
           picture in it the one card that does not read as a card. */}
+      {/* Arriving on the scroll. `reveal` is a class in the stylesheet and one
+          observer already watches the document, so this is no JavaScript here
+          and no wrapper per block; `--step` is the order, ninety milliseconds
+          apart, and the four panels arrive in the order they are numbered. */}
       <CutPanel
         tone="field"
-        className="w-full"
+        className="reveal w-full"
         image="/partners/hero-marble.png"
         /* The hours stand in the bottom notch. They are one line, they belong
            with the number rather than above it, and a notch holds exactly one
@@ -87,11 +91,11 @@ export function ContactView() {
               contents before anybody has reached them. The kicker above already
               says Contact us; saying it again in a sentence is the page
               introducing itself twice. */}
-          <h1 className="mt-3 max-w-[min(30ch,var(--notch-free,86ch))] text-[clamp(26px,2.9vw,42px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink">
+          <h1 className="mt-3 max-w-[min(30ch,var(--notch-free,86ch))] text-[clamp(26px,2.9vw,42px)] leading-[1.05] font-extrabold tracking-[-0.04em] text-ink max-sm:mt-2 max-sm:text-[25px]">
             Contact us.
           </h1>
 
-          <p className="mt-4 text-[clamp(15px,1.2vw,17px)] leading-[1.6] text-body">
+          <p className="mt-4 text-[clamp(15px,1.2vw,17px)] leading-[1.6] text-body max-sm:mt-2.5 max-sm:text-[13px] max-sm:leading-[1.55]">
             A person reads every one of these, and answers within a working day.
             None of them is a form, and none of them puts you on a list.
           </p>
@@ -103,7 +107,7 @@ export function ContactView() {
               right to know why the reply comes from a name they have not seen.
               Small, under the paragraph, because it is a fact rather than a
               claim. */}
-          <p className="mt-4 max-w-[90ch] text-[13.5px] leading-[1.6] text-quiet">
+          <p className="mt-4 max-w-[90ch] text-[13.5px] leading-[1.6] text-quiet max-sm:mt-2.5 max-sm:text-[12px]">
             TwinLoom is the website development and digital services arm of
             TwinCoreTech.
           </p>
@@ -124,10 +128,10 @@ export function ContactView() {
           question. One address, and it reaches a person. */}
 
       {/* 01. A meeting. */}
-      <section className="mt-4">
+      <section className="mt-4 max-sm:mt-3">
         <CutPanel
           tone="field"
-          className="w-full"
+          className="reveal w-full [--step:1]"
           toolbar={
             <span className="flex h-10 w-full items-center justify-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
               01 &middot; Best first move
@@ -146,23 +150,26 @@ export function ContactView() {
         >
           <span
             aria-hidden
-            className="mt-2 flex size-11 items-center justify-center rounded-pill bg-canvas text-ink"
+            className="mt-2 flex size-11 items-center justify-center rounded-pill bg-canvas text-ink max-sm:size-10"
           >
-            <CalendarClock className="size-5" strokeWidth={1.9} />
+            <CalendarClock
+              className="size-5 max-sm:size-[18px]"
+              strokeWidth={1.9}
+            />
           </span>
 
-          <h2 className="mt-5 max-w-[min(20ch,var(--notch-free,62ch))] text-[clamp(20px,1.8vw,27px)] leading-[1.1] font-extrabold tracking-[-0.032em] text-ink">
+          <h2 className="mt-5 max-w-[min(20ch,var(--notch-free,62ch))] text-[clamp(20px,1.8vw,27px)] leading-[1.1] font-extrabold tracking-[-0.032em] text-ink max-sm:mt-3.5 max-sm:text-[19px]">
             Book a meeting
           </h2>
 
-          <p className="mt-3 max-w-[60ch] text-[14.5px] leading-[1.65] text-body">
+          <p className="mt-3 max-w-[60ch] text-[14.5px] leading-[1.65] text-body max-sm:mt-2 max-sm:text-[13px] max-sm:leading-[1.55]">
             Pick a length and a slot. Come with your requirements written down
             or come with nothing - both are a conversation we can have.
           </p>
 
           <Link
             href={ROUTES.book}
-            className="group/go mt-6 inline-flex items-center gap-2 rounded-pill bg-ink px-5 py-3 text-[14px] font-semibold text-white transition-opacity hover:opacity-85"
+            className="group/go mt-6 inline-flex items-center justify-center gap-2 rounded-pill bg-ink px-5 py-3 text-[14px] font-semibold text-white transition-opacity hover:opacity-85 max-sm:mt-4 max-sm:w-full max-sm:px-4 max-sm:py-2.5 max-sm:text-[13px]"
           >
             Book a meeting
             <ArrowUpRight
@@ -176,10 +183,10 @@ export function ContactView() {
       {/* 02 and 03. Writing and ringing, side by side on a wide window because
           they are the same kind of thing: one line each, and both of them
           pressable. */}
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+      <div className="mt-4 grid gap-4 max-sm:mt-3 max-sm:gap-3 lg:grid-cols-2">
         <CutPanel
           tone="field"
-          className="w-full"
+          className="reveal w-full [--step:2]"
           toolbar={
             <span className="flex h-10 w-full items-center justify-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
               02 &middot; Email us
@@ -188,9 +195,9 @@ export function ContactView() {
         >
           <span
             aria-hidden
-            className="mt-2 flex size-11 items-center justify-center rounded-pill bg-canvas text-ink"
+            className="mt-2 flex size-11 items-center justify-center rounded-pill bg-canvas text-ink max-sm:size-10"
           >
-            <AtSign className="size-5" strokeWidth={1.9} />
+            <AtSign className="size-5 max-sm:size-[18px]" strokeWidth={1.9} />
           </span>
 
           {/* Set large, because it is the answer to the question the page was
@@ -198,12 +205,12 @@ export function ContactView() {
               somebody has to hunt for. */}
           <a
             href={`mailto:${CONTACT_INFO.primaryEmail}`}
-            className="mt-5 inline-block text-[clamp(17px,1.7vw,23px)] leading-[1.15] font-extrabold tracking-[-0.035em] break-all text-ink transition-colors hover:text-mark"
+            className="mt-5 inline-block text-[clamp(17px,1.7vw,23px)] leading-[1.15] font-extrabold tracking-[-0.035em] break-all text-ink transition-colors hover:text-mark max-sm:mt-3.5 max-sm:text-[16px]"
           >
             {CONTACT_INFO.primaryEmail}
           </a>
 
-          <p className="mt-4 max-w-[46ch] text-[13.5px] leading-[1.6] text-quiet">
+          <p className="mt-4 max-w-[46ch] text-[13.5px] leading-[1.6] text-quiet max-sm:mt-3 max-sm:text-[12.5px] max-sm:leading-[1.5]">
             Read the same morning it arrives, and answered by the people who
             would do the work.
           </p>
@@ -211,7 +218,7 @@ export function ContactView() {
 
         <CutPanel
           tone="field"
-          className="w-full"
+          className="reveal w-full [--step:3]"
           toolbar={
             <span className="flex h-10 w-full items-center justify-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
               03 &middot; Call us
@@ -236,19 +243,19 @@ export function ContactView() {
         >
           <span
             aria-hidden
-            className="mt-2 flex size-11 items-center justify-center rounded-pill bg-canvas text-ink"
+            className="mt-2 flex size-11 items-center justify-center rounded-pill bg-canvas text-ink max-sm:size-10"
           >
-            <Phone className="size-5" strokeWidth={1.9} />
+            <Phone className="size-5 max-sm:size-[18px]" strokeWidth={1.9} />
           </span>
 
           <a
             href={CONTACT_INFO.phoneHref}
-            className="mt-5 inline-block text-[clamp(17px,1.7vw,23px)] leading-[1.15] font-extrabold tracking-[-0.035em] text-ink transition-colors hover:text-mark"
+            className="mt-5 inline-block text-[clamp(17px,1.7vw,23px)] leading-[1.15] font-extrabold tracking-[-0.035em] text-ink transition-colors hover:text-mark max-sm:mt-3.5 max-sm:text-[17px]"
           >
             {CONTACT_INFO.phone}
           </a>
 
-          <p className="mt-4 max-w-[46ch] text-[13.5px] leading-[1.6] text-quiet">
+          <p className="mt-4 max-w-[46ch] text-[13.5px] leading-[1.6] text-quiet max-sm:mt-3 max-sm:text-[12.5px] max-sm:leading-[1.5]">
             Outside those hours the line goes to voicemail, and it is listened
             to the next morning.
           </p>
@@ -256,10 +263,10 @@ export function ContactView() {
       </div>
 
       {/* 04. Where we are, on an envelope's worth of lines. */}
-      <section className="mt-4">
+      <section className="mt-4 max-sm:mt-3">
         <CutPanel
           tone="field"
-          className="w-full"
+          className="reveal w-full [--step:4]"
           toolbar={
             <span className="flex h-10 w-full items-center justify-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
               04 &middot; Address
@@ -277,17 +284,17 @@ export function ContactView() {
               Which leaves the address on the panel's own width rather than in a
               column sized to balance a picture: the lines set on one edge, the
               way out under them, and nothing to align to but the surface. */}
-          <address className="mt-2 flex gap-3 not-italic">
+          <address className="mt-2 flex gap-3 not-italic max-sm:gap-2.5">
             <MapPin
               aria-hidden
               className="mt-1 size-4 flex-none text-mark"
               strokeWidth={2.2}
             />
             <span className="min-w-0">
-              <b className="block text-[clamp(16px,1.4vw,19px)] leading-[1.2] font-extrabold tracking-[-0.03em] text-ink">
+              <b className="block text-[clamp(16px,1.4vw,19px)] leading-[1.2] font-extrabold tracking-[-0.03em] text-ink max-sm:text-[15px]">
                 {CONTACT_INFO.companyName}
               </b>
-              <span className="mt-1.5 block text-[14.5px] leading-[1.7] text-body">
+              <span className="mt-1.5 block text-[14.5px] leading-[1.7] text-body max-sm:text-[13px] max-sm:leading-[1.65]">
                 {CONTACT_INFO.address.name}
                 <br />
                 {CONTACT_INFO.address.street}
@@ -303,7 +310,7 @@ export function ContactView() {
                 href={CONTACT_INFO.address.mapUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="group/map mt-5 inline-flex items-center gap-2 rounded-pill bg-canvas px-4.5 py-2.5 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair"
+                className="group/map mt-5 inline-flex items-center justify-center gap-2 rounded-pill bg-canvas px-4.5 py-2.5 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair max-sm:mt-4 max-sm:w-full max-sm:px-4 max-sm:text-[12.5px]"
               >
                 <MapPin aria-hidden className="size-4" strokeWidth={1.9} />
                 Open in Google Maps
