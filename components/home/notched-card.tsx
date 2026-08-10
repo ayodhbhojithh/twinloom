@@ -1004,9 +1004,23 @@ export function NotchedCard({ className }: { className?: string }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
-          onClick={() => setOpen(shown)}
-          role="button"
-          tabIndex={-1}
+          /* It takes no clicks any more.
+
+             The whole card opened the panel, which made sense while every
+             screen was a picture of a piece of work: pressing the picture
+             opened the piece. It stopped making sense the moment the screens
+             became things in their own right - a headline with three doors under
+             it, a field that answers the pointer, a reel that scrubs to the
+             scroll. On those, a press anywhere is a press on something, and the
+             panel arriving over it is the card interrupting whatever was
+             happening.
+
+             The control in the notch is the way in, and it is the only one. It
+             is drawn, labelled and sits between the two arrows that turn the
+             card, so the way to open a screen is beside the way to leave it.
+
+             `aria-hidden` stays: it is the crossfade layer, scenery either
+             way. */
           aria-hidden
           /* `artwork` only where there is artwork.
 
@@ -1016,7 +1030,7 @@ export function NotchedCard({ className }: { className?: string }) {
              Over a white surface with no picture in it they do not soften
              anything - they simply paint the card dark grey and dust it. */
           className={cn(
-            "absolute inset-0 cursor-pointer overflow-hidden",
+            "pointer-events-none absolute inset-0 overflow-hidden",
             shown.image && "artwork",
           )}
           style={{
