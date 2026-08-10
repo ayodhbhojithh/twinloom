@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import { outline, type Cuts } from "./notched-card";
@@ -101,7 +102,10 @@ export function FilmStage({
     const load = (n: number) =>
       new Promise<void>((done) => {
         if (!alive || shots[n]) return done();
-        const img = new Image();
+        /* `window.Image`, not `Image`. The name is taken in this file by
+           `next/image`, and `new Image()` on that is a component being
+           constructed rather than a bitmap being fetched. */
+        const img = new window.Image();
         img.decoding = "async";
         img.onload = () => {
           if (alive) shots[n] = img;
@@ -271,6 +275,38 @@ export function FilmStage({
           </div>
         </div>
       </div>
+
+      {/* Our mark, over the generator's.
+
+          The reel carries a four-pointed sparkle burned into its bottom right
+          corner - the badge the tool that made it signs everything with. On a
+          landing card it is somebody else's logo on our film, and it cannot be
+          removed from the frames without repainting a hundred and twenty of
+          them.
+
+          So our mark stands there instead - and on the picture, with no plate
+          behind it. A logo bug is a mark on the film, and a white tile in the
+          corner of a frame is a sticker on it.
+
+          Which means the covering is the mark's own ink rather than a panel: the
+          badge underneath is a thin four-pointed star, and this is drawn over
+          the place it sits at a size that takes in the whole of it. If it ever
+          shows through the gaps in the loops, the fix is a wider mark rather
+          than a ground behind it.
+
+          Placed as a share of the picture rather than in pixels, because the
+          picture is a ratio and the badge is at a fixed place inside it - so the
+          mark sits over the same part of the frame at every size. */}
+      <Image
+        aria-hidden
+        src="/assets/logo.png"
+        alt=""
+        width={192}
+        height={192}
+        draggable={false}
+        sizes="180px"
+        className="pointer-events-none absolute right-[2.5%] bottom-[5.5%] aspect-square w-[13%] min-w-10 object-contain"
+      />
 
       {/* What it is, standing in the notch. No plate behind it: the notch is
           already the outline, and a pill drawn inside it is a second shape
