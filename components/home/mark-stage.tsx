@@ -44,7 +44,7 @@ import { cn } from "@/lib/utils";
  */
 const BASE = 84;
 const STEP = 108;
-const RADIUS = 13;
+const RADIUS = 9;
 
 /**
  * The colours, in the order they run.
@@ -150,9 +150,14 @@ export function BeadTrail({ className }: { className?: string }) {
         d={CURVE}
         fill="none"
         stroke="url(#trail-thread)"
-        strokeWidth="3.5"
+        /* Thinner than the beads by a good margin. The thread and the things
+           on it were within a few units of each other in weight, which makes a
+           string of beads read as one dotted line with some fat dots in it -
+           and the line is meant to be what they are standing on rather than
+           another thing in the row. */
+        strokeWidth="2.2"
         strokeLinecap="round"
-        strokeDasharray="0.1 16"
+        strokeDasharray="0.1 14"
       />
 
       {/* Dropped in, one after another from the left.
