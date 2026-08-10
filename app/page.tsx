@@ -99,10 +99,23 @@ export default function LandingPage() {
             the surface rather than in a band above it. Two would be two. */}
         {/* `min-h-0` lets a flex child shrink below its own contents, which is
             what a card holding a full screen needs and exactly what clips one
-            holding more. Off below `sm`, so the card is as tall as what is in
-            it; the card's own height follows for the same reason. */}
+            holding more. Off below `sm`, where the card is as tall as what is in
+            it.
+
+            The floor is on the card itself, and it has to be. `flex-1` divides
+            the *free* space of its container, and a container with `min-height`
+            rather than `height` has none to divide - and putting the minimum on
+            this box did not help either, because `h-full` on the card is
+            `height: 100%` measured against a parent whose height is auto, which
+            resolves to auto. Either way the card came out at its content size
+            and stopped short of the screen with grey below it.
+
+            Given to the card as its own minimum, there is nothing to resolve
+            against: the screen less the two sills is exactly the height it had
+            when the section was `h-svh`, and being a minimum is what lets it
+            grow past that when the contents need it to. */}
         <div className="page-frame w-full flex-1 max-sm:min-h-fit sm:min-h-0">
-          <NotchedCard className="h-full w-full max-sm:h-auto" />
+          <NotchedCard className="h-full w-full max-sm:h-auto max-sm:min-h-[calc(100svh-var(--sill-top)-var(--sill-bottom))]" />
         </div>
       </section>
 

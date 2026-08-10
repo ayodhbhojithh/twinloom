@@ -1547,8 +1547,15 @@ export function NotchedCard({ className }: { className?: string }) {
              Relative below `sm`, it is what gives the card its height, and the
              card grows to hold it. Above `sm` nothing changes: the contents fit
              the screen, so being laid over it and being in it come to the same
-             thing. */
-          className="pointer-events-none absolute inset-0 z-10 flex items-stretch max-sm:relative max-sm:inset-auto max-sm:min-h-svh"
+             thing.
+
+             No floor of its own. It had `min-h-svh`, which made it a screenful
+             tall inside a card that was already at least a screenful inside a
+             section with padding above and below - three screenfuls stacked
+             where one was wanted, and a hand's depth of empty card under the
+             last button. Its height is its contents; the card is what holds the
+             floor, and the card gets that from the section it fills. */
+          className="pointer-events-none absolute inset-0 z-10 flex items-stretch max-sm:relative max-sm:inset-auto"
           style={{
             /* `head` clears the row of links, and there is no row of links on a
                phone - the bar is a wordmark and a menu button, and the notch
