@@ -2,10 +2,28 @@
 
 import { useState } from "react";
 
-import { BuildFlow } from "@/components/build/v5/flow";
+import dynamic from "next/dynamic";
+
+import { NearView } from "./near-view";
 import { cn } from "@/lib/utils";
 
 import { LoomWave, type WaveVariant } from "./loom-wave";
+
+/* The tool, fetched when somebody is on their way to it.
+
+   It is the same component the build page renders, and there it is the page - so
+   it is imported plainly there and loads with everything else. Here it is the
+   last thing on a landing page, four screenfuls down, and it brings its own
+   uploader with it: a hundred and fifty kilobytes plus another sixty, parsed on
+   arrival by every visitor to be used by the ones who scroll to the end.
+
+   `ssr: false` because it is a tool with measured surfaces and a docked panel.
+   What a server can say about it is an empty box, and hydrating that is work
+   done twice. */
+const BuildFlow = dynamic(
+  () => import("@/components/build/v5/flow").then((m) => m.BuildFlow),
+  { ssr: false },
+);
 
 /**
  * The drawings, and what each is called on the switch.
@@ -195,7 +213,12 @@ export function BuildSection() {
             words that introduce it arrive on the scroll; the tool is simply
             there, which is what a tool should be. */}
         <div className="mt-12">
-          <BuildFlow />
+          {/* About a screenful. The tool opens on its own first step, which is
+              a cut surface with a floor of its own - see `Stage` - so the space
+              held here is close to what arrives in it. */}
+          <NearView min={620}>
+            <BuildFlow />
+          </NearView>
         </div>
       </div>
     </section>
