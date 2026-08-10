@@ -236,7 +236,7 @@ export function ServiceWall({
             the other axis `auto` too, so with the padding gone a card that
             moved up would be clipped by its own scroller. A shadow happens
             inside the box and needs none. */}
-        {SHOWN.map((entry) => (
+        {SHOWN.map((entry, n) => (
           <article
             key={entry.n}
             /* The middle term is the phone's card and the cap is the desk's.
@@ -316,6 +316,13 @@ export function ServiceWall({
                   alt=""
                   fill
                   draggable={false}
+                  /* The first three are on screen before anything is scrolled -
+                     two on a phone and three on a desk - so they are fetched
+                     with the page. The rest of the row is off to the right and
+                     waits to be scrolled to, which is what lazy loading is for
+                     and what a horizontal row of cards is the textbook case
+                     of. */
+                  loading={n < 3 ? "eager" : "lazy"}
                   sizes="(max-width: 640px) 52vw, 286px"
                   className="object-contain transition-transform duration-500 group-hover/card:scale-[1.06]"
                 />

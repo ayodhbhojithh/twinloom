@@ -151,6 +151,14 @@ export function BlogView() {
                   alt=""
                   fill
                   quality={100}
+                  /* The first of these is on screen when the page arrives, so it
+                     is fetched with the page rather than discovered after it.
+                     The rest are below the fold and stay lazy - a list of six
+                     plates at two megabytes apiece, all demanded at once, is the
+                     opposite of loading them early: they queue behind each other
+                     and the one somebody is looking at arrives last. */
+                  loading={n === 0 ? "eager" : "lazy"}
+                  fetchPriority={n === 0 ? "high" : "auto"}
                   sizes="(min-width: 1024px) 46vw, 0px"
                   /* Right edge, as the panel above it - the crop belongs at the
                      end that is fading out, not the end standing in the open. */
