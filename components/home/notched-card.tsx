@@ -701,23 +701,6 @@ export function NotchedCard({ className }: { className?: string }) {
             wide this fills the card at full sharpness with nothing else to
             change, because the cap is the file's own dimensions rather than a
             number written here. */}
-        {/* The fourth screen: the film, filling the card.
-
-            Inside the clipped layer, so what shapes it is the card's own
-            outline - the notch in the top edge, the corner given up at the
-            foot, the flares at every turn. It had a frame of its own for a
-            while, cut by the same function at its own size, with words beside it
-            and two ways on standing in a bite out of its corner. All of that is
-            off: the screen is the film now.
-
-            Which is the argument the water and the pit already make. They are
-            pictures rather than pages with a picture behind them, and a sentence
-            set across one makes it a background. What this card asks for is said
-            on the first screen and again in the header. */}
-        {shown.view === "film" && shown.reel ? (
-          <FilmStage base={shown.reel.base} frames={shown.reel.frames} />
-        ) : null}
-
         {/* The second screen: the water, full bleed and nothing over it.
 
             No claim, no buttons, and no white gradient taking part of the card
@@ -930,6 +913,31 @@ export function NotchedCard({ className }: { className?: string }) {
         </motion.div>
       </AnimatePresence>
 
+      {/* The fourth screen: the film, filling the card.
+
+          Above the layer that crossfades the slides, not inside the clipped
+          ground with the other drawings - and that is not a preference, it is
+          the difference between the reel scrubbing and doing nothing at all.
+          The crossfade layer is `inset-0` and takes clicks, because pressing the
+          card is what opens the panel; laid over the film it swallowed every
+          wheel event before the scroller underneath could see one.
+
+          Cut to the card by hand, since it is no longer inside the thing that
+          clips. Same `path`, so it is the same outline: the notch in the top
+          edge, the corner given up at the foot, the flares at every turn.
+
+          Under the buttons, which are `z-10`. They are the only things on this
+          screen that take a press, and a scroller over them is a scroller that
+          eats it. */}
+      {shown.view === "film" && shown.reel ? (
+        <div
+          className="absolute inset-0 z-[5]"
+          style={{ clipPath: path ? `path("${path}")` : undefined }}
+        >
+          <FilmStage base={shown.reel.base} frames={shown.reel.frames} />
+        </div>
+      ) : null}
+
       {/* The site's header, inside the card.
 
           Everywhere else it is a bar across the top of the window with the page
@@ -950,8 +958,22 @@ export function NotchedCard({ className }: { className?: string }) {
           them, it took every click meant for an arrow and the card stopped
           turning. The box is only here to place the bar, so it takes no clicks;
           the bar takes its own. */}
+      {/* Not on the film.
+
+          Every other screen is white behind the bar, or has its own wash taking
+          the card back under the words. The reel has neither: it is a
+          photograph edge to edge, and a row of grey links over moving footage is
+          a row nobody can read on half the frames and nobody can ignore on the
+          rest. So that one screen gives the header up.
+
+          Nothing is lost that cannot be reached. The arrows in the notch still
+          turn the card, and one turn puts the bar back - which is a fair trade
+          for the one screen that is a picture rather than a page. */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-20"
+        className={cn(
+          "pointer-events-none absolute inset-x-0 top-0 z-20",
+          shown.view === "film" && "hidden",
+        )}
         style={{
           /* The header's own side padding, set to the card's.
 
@@ -1020,6 +1042,60 @@ export function NotchedCard({ className }: { className?: string }) {
           </Tool>
         </div>
       </div>
+
+      {/* The fourth screen's two ways on, and nothing else.
+
+          The film is the whole screen - it fills the card and takes the card's
+          own shape - so these stand on the picture rather than in a cut of their
+          own. That is the one place this screen departs from how the rest of the
+          site draws a control, and it earns the departure twice over: the reel
+          is signed with a four-pointed star in its bottom right that cannot come
+          off a hundred and twenty stills, and something opaque standing exactly
+          there covers it. The thing that has to be on this screen anyway does
+          the hiding.
+
+          Down as far as that corner allows, because the badge is what they are
+          covering. They cleared the cut by a comfortable margin and the star sat
+          in the gap underneath - close enough to look like something the buttons
+          had missed. Sixteen above the cut is still clear of the way down the
+          page, and it is the difference between hiding the mark and framing it.
+
+          Stacked and one width: in a row the eye reads left to right and the
+          loud one goes first; in a stack it reads top to bottom, so the filled
+          one is at the top and both are as wide as the longer label. */}
+      {shown.view === "film" ? (
+        <div
+          className="pointer-events-none absolute z-10 flex justify-end"
+          style={{
+            right: pad,
+            bottom: cut.dropHeight - 22,
+          }}
+        >
+          <div className="flex w-max flex-col items-stretch gap-2">
+            <a
+              href={ROUTES.services}
+              className="group/way pointer-events-auto inline-flex items-center justify-between gap-4 rounded-pill bg-ink px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90"
+            >
+              What we make
+              <ArrowUpRight
+                aria-hidden
+                className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+              />
+            </a>
+
+            <a
+              href={ROUTES.contact}
+              className="group/way pointer-events-auto inline-flex items-center justify-between gap-4 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
+            >
+              Send us a message
+              <ArrowUpRight
+                aria-hidden
+                className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+              />
+            </a>
+          </div>
+        </div>
+      ) : null}
 
       {/* The second screen's words: centred, and set light on a dark ground.
 
