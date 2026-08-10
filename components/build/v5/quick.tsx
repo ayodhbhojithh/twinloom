@@ -477,7 +477,14 @@ export function QuickPane({
 
             It sat under the left column because it is the next thing in the
             flow after it, which put it against one edge of a surface whose
-            heading is centred over the whole of it. */}
+            heading is centred over the whole of it.
+
+            Everything under the button takes one measure, and it is a wide one.
+            Sixty-two characters is the measure for a paragraph somebody reads
+            down; these are two single sentences set centred under a control,
+            and at that cap each broke a few words short of its end - which
+            leaves a centred line with an orphan under it, the one shape a
+            centred block should never make. */}
           <div className="mt-8 min-w-0 text-center">
             {/* What went wrong, or what is still needed, above the control rather
               than after it has been pressed again. A button that refuses without
@@ -485,12 +492,12 @@ export function QuickPane({
             {answers.problem ? (
               <p
                 role="alert"
-                className="mx-auto mb-5 max-w-[62ch] rounded-[12px] bg-blocked/[0.08] px-4 py-3 text-[13px] leading-[1.6] text-blocked"
+                className="mx-auto mb-5 max-w-[88ch] rounded-[12px] bg-blocked/[0.08] px-4 py-3 text-[13px] leading-[1.6] text-blocked"
               >
                 {answers.problem}
               </p>
             ) : asking && missing.length ? (
-              <p className="mx-auto mb-5 max-w-[62ch] text-[13px] leading-[1.6] text-quiet">
+              <p className="mx-auto mb-5 max-w-[88ch] text-[13px] leading-[1.6] text-quiet">
                 Before this can go we need {missing.join(", ").toLowerCase()}.
               </p>
             ) : null}
@@ -513,7 +520,7 @@ export function QuickPane({
               </Pill>
             </div>
 
-            <p className="mx-auto mt-4 max-w-[62ch] text-[12.5px] leading-[1.55] text-quiet">
+            <p className="mx-auto mt-4 max-w-[88ch] text-[12.5px] leading-[1.55] text-quiet">
               Nothing is thrown away and nothing is final. Once it has gone you
               can still add to it, or book a time to talk it through.
             </p>
@@ -522,7 +529,7 @@ export function QuickPane({
               pane takes free text, files and contact details, and a privacy
               notice somebody has to go looking for is not one that was
               given. */}
-            <p className="mx-auto mt-2 max-w-[62ch] text-[12px] leading-[1.55] text-label">
+            <p className="mx-auto mt-2 max-w-[88ch] text-[12px] leading-[1.55] text-label">
               What happens to your details is set out in our{" "}
               <Link
                 href={ROUTES.privacy}
