@@ -28,36 +28,56 @@ import { cn } from "@/lib/utils";
 --------------------------------------------------------------------------- */
 
 /**
- * The beads, and where each one sits on the line.
+ * Where the beads stand, and how far apart.
  *
- * Ten of them, and every number here is placed rather than generated: the
- * sizes run small, medium, large and back in no repeating order, and the
- * colours never put two of the same next to each other. A row of evenly
- * spaced, evenly sized beads is a progress bar; this is a handful of things
- * that happen to be on the same thread.
+ * One line, and everything on it the same size at the same spacing. It was a
+ * shallow S with ten beads of six different radii placed along it by eye, and
+ * the case for that was that evenly spaced, evenly sized beads are a progress
+ * bar. They are not - a progress bar is a bar with a filled part and an empty
+ * part, and this has neither. What the wandering version actually was is ten
+ * separate decisions the eye has to take in one at a time, laid across the foot
+ * of the screen the whole page opens on.
  *
- * `y` is not derived from `CURVE`. Reading a point off a path costs a DOM
- * measurement per bead and gains nothing - these were placed against the
- * curve by eye, which is the only test that matters for whether a bead looks
- * like it is sitting on a line.
+ * Set as a rule rather than a table for the same reason. Ten hand-placed rows
+ * are ten numbers to keep in step every time the strip changes height; a step
+ * and a radius are two numbers that cannot disagree with each other.
  */
-const TRAIL = [
-  { x: 60, y: 96, r: 9, ink: "#2a98fe" },
-  { x: 175, y: 78, r: 15, ink: "#10c996" },
-  { x: 318, y: 62, r: 20, ink: "#7c4dff" },
-  { x: 432, y: 84, r: 8, ink: "#ff7a1a" },
-  { x: 545, y: 66, r: 16, ink: "#2a98fe" },
-  { x: 690, y: 62, r: 19, ink: "#10c996" },
-  { x: 800, y: 90, r: 9, ink: "#7c4dff" },
-  { x: 878, y: 86, r: 8, ink: "#22bde8" },
-  { x: 960, y: 84, r: 12, ink: "#ff7a1a" },
-  { x: 1060, y: 74, r: 11, ink: "#ff4d5e" },
+const BASE = 84;
+const STEP = 108;
+const RADIUS = 13;
+
+/**
+ * The colours, in the order they run.
+ *
+ * The one thing kept from the placed version, because it is the one thing that
+ * was never about position: no two neighbours share a colour, and the sequence
+ * does not repeat inside the width. Equal size and equal spacing is what makes
+ * a row read as one object - the colour is what stops it reading as one object
+ * stamped eleven times.
+ */
+const INKS = [
+  "#2a98fe",
+  "#10c996",
+  "#7c4dff",
+  "#ff7a1a",
+  "#22bde8",
+  "#ff4d5e",
+  "#10c996",
+  "#2a98fe",
+  "#7c4dff",
+  "#ff7a1a",
+  "#22bde8",
 ] as const;
 
-/** The line they sit on: one long shallow S, never crossing its own middle
-    twice in the same direction. */
-const CURVE =
-  "M 0 104 C 120 104 180 74 300 70 S 470 96 600 74 S 800 60 900 84 S 1080 92 1200 66";
+const TRAIL = INKS.map((ink, n) => ({
+  x: 54 + n * STEP,
+  y: BASE,
+  r: RADIUS,
+  ink,
+}));
+
+/** The line they sit on, which is now a line. */
+const CURVE = `M 0 ${BASE} L 1200 ${BASE}`;
 
 /**
  * A dotted thread with glass beads along it.
