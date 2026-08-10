@@ -52,6 +52,24 @@ export const SITE = {
     "A framework, not a website. Every screen here is a place for something, and only the visitor page has anything in it yet.",
 } as const;
 
+/**
+ * The other company in the group, and where it lives.
+ *
+ * One place for both halves. The name is split out of running sentences in
+ * three components so it can be made a link, and the address it points at was
+ * `/#services` in two of them - our own services section, which is not the
+ * sister company and does not answer the question somebody clicking its name
+ * is asking.
+ *
+ * A real address off this site, so the link leaves it. Written here rather than
+ * at each use, because a company's own domain is the kind of thing that gets
+ * edited once and missed twice.
+ */
+export const SISTER = {
+  name: "TwinCoreTech",
+  href: "https://www.twincoretech.com/",
+} as const;
+
 export const ROUTES = {
   home: "/",
   /* The other home pages, kept beside the landing one so they can be compared. */

@@ -15,7 +15,8 @@ import {
   PencilLine,
 } from "lucide-react";
 
-import { ROUTES } from "@/lib/site";
+import { SisterSentence } from "@/components/blocks";
+import { ROUTES, SISTER } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 import { Ballpit } from "./ballpit";
@@ -304,9 +305,6 @@ const BAR = TOOL * 3 + 2 * 2 + 6 * 2;
  * day the bar changes height, both places are one screen apart.
  */
 const NAV_HEIGHT = 53;
-
-/** The other company's name, so the paragraph and the link cannot disagree. */
-const SISTER = "TwinCoreTech";
 
 /**
  * How the first screen arrives: one thing after another, up into place.
@@ -1266,27 +1264,18 @@ export function NotchedCard({ className }: { className?: string }) {
 
                   {/* The paragraph, with the other company's name as a link.
 
-                      Split on the name rather than kept as three fields: the
-                      sentence is a sentence, and cutting it into pieces in the
-                      data so the middle one can be blue is a sentence that can no
-                      longer be rewritten without touching the markup. */}
+                      The same splitter the services cards use, rather than a
+                      second copy of it here. It was its own: its own `SISTER`
+                      constant, its own `map`, and its own destination - and that
+                      destination was `/#services`, which is our own services
+                      section rather than the company whose name had just been
+                      pressed. Two copies of a link is two addresses, and one of
+                      them is wrong the day the other is fixed. */}
                   <motion.p
                     variants={HERO_RISE}
                     className="pointer-events-auto mx-auto mt-4 max-w-[62ch] text-[13.5px] leading-[1.68] text-quiet sm:mt-5 sm:text-[14.5px] lg:mx-0"
                   >
-                    {shown.note?.split(SISTER).map((part, n) => (
-                      <span key={n}>
-                        {n > 0 ? (
-                          <a
-                            href={ROUTES.services}
-                            className="font-semibold text-mark hover:underline"
-                          >
-                            {SISTER}
-                          </a>
-                        ) : null}
-                        {part}
-                      </span>
-                    ))}
+                    <SisterSentence say={shown.note ?? ""} />
                   </motion.p>
 
                   {/* Three doors, one row, and the first one filled. Where they
@@ -1368,37 +1357,71 @@ export function NotchedCard({ className }: { className?: string }) {
                 </motion.div>
               </div>
 
-              {/* The floor line arrives last, after everything it sits under. */}
+              {/* The floor line arrives last, after everything it sits under.
+
+                  All of it is the link, not the name alone. The mark, the name
+                  and the sentence after it are one lockup for one company -
+                  every part of it is about the same place, so a row where only
+                  the middle word can be pressed is a row that has to be aimed
+                  at. Whole, it is a target the width of the card.
+
+                  A plain anchor rather than `Link`, because it leaves this
+                  site: `Link` is for routes this application owns, and
+                  prefetching somebody else's domain is a request we have no
+                  business making.
+
+                  `pointer-events-auto` because the screen around it takes no
+                  clicks - the whole block is laid over a drawing, and only the
+                  things that are actually controls take the pointer back. */}
               <motion.div
                 variants={HERO_RISE}
-                className="hidden items-center justify-center gap-3.5 md:flex"
+                className="hidden justify-center md:flex"
               >
-                <Image
-                  src="/assets/logo.png"
-                  alt=""
-                  width={64}
-                  height={64}
-                  aria-hidden
-                  draggable={false}
-                  sizes="64px"
-                  className="size-7 flex-none object-contain"
-                />
-                <span className="text-[14px] font-bold tracking-[-0.02em] text-ink">
-                  TwinCoreTech
-                </span>
-                {/* A rule between them, not a bullet. The two are a name and a
-                    description of it, which is a caption - and a caption is set
-                    off by a line. */}
-                <span aria-hidden className="h-5 w-px flex-none bg-hair" />
-                {/* Wide enough for the whole sentence on one line where there
-                    is room for one. At forty-six characters it broke after
-                    "more than", which puts "a website." alone on a second line -
-                    a two word orphan under a caption that is one sentence long.
-                    Seventy-six is the sentence. */}
-                <span className="max-w-[76ch] text-[12.5px] leading-[1.5] text-quiet">
-                  Custom software development for businesses that need more than
-                  a website.
-                </span>
+                <a
+                  href={SISTER.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group/sister pointer-events-auto flex items-center gap-3.5"
+                >
+                  <Image
+                    src="/assets/logo.png"
+                    alt=""
+                    width={64}
+                    height={64}
+                    aria-hidden
+                    draggable={false}
+                    sizes="64px"
+                    className="size-7 flex-none object-contain"
+                  />
+                  <span className="text-[14px] font-bold tracking-[-0.02em] text-ink">
+                    {SISTER.name}
+                  </span>
+                  {/* A rule between them, not a bullet. The two are a name and a
+                      description of it, which is a caption - and a caption is
+                      set off by a line. */}
+                  <span aria-hidden className="h-5 w-px flex-none bg-hair" />
+                  {/* Wide enough for the whole sentence on one line where there
+                      is room for one. At forty-six characters it broke after
+                      "more than", which puts "a website." alone on a second
+                      line - a two word orphan under a caption that is one
+                      sentence long. Seventy-six is the sentence. */}
+                  <span className="max-w-[76ch] text-[12.5px] leading-[1.5] text-quiet">
+                    Custom software development for businesses that need more
+                    than a website.
+                  </span>
+                  {/* The one mark that says this goes somewhere, and now the
+                      only one. A tinted pill grew behind the row on hover, and
+                      a plate under a line standing on the card's own floor is a
+                      second surface on a surface - the trail of beads runs
+                      under it, so what appeared was a grey window in the
+                      picture. The arrow moves instead: it is already the thing
+                      that says this is a link, so it is the right thing to
+                      answer with. */}
+                  <ArrowUpRight
+                    aria-hidden
+                    className="size-4 flex-none text-idx transition-transform duration-200 group-hover/sister:translate-x-0.5 group-hover/sister:-translate-y-0.5"
+                  />
+                </a>
               </motion.div>
             </motion.div>
           </AnimatePresence>

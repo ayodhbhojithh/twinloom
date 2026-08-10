@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
-import { ROUTES } from "@/lib/site";
+import { SISTER } from "@/lib/site";
 
 /* ---------------------------------------------------------------------------
    The other company's name, wherever a sentence says it.
@@ -16,9 +15,6 @@ import { ROUTES } from "@/lib/site";
    three places for the colour, the arrow and the destination to drift apart.
 --------------------------------------------------------------------------- */
 
-/** The name itself, so a sentence and its link cannot disagree. */
-export const SISTER = "TwinCoreTech";
-
 /**
  * A sentence, with the sister company's name made a way out of it.
  *
@@ -31,12 +27,14 @@ export const SISTER = "TwinCoreTech";
  * and that is the point - the day a second sentence names the company, it is
  * already linked.
  *
- * It goes to the about page, which is where the group is actually set out. Not
- * to an address of its own: there is no twincoretech.com anywhere in this repo
- * to point at, and a link invented to look complete is a dead one.
+ * It goes to the company's own site, which is off this one - so a plain anchor
+ * with `target` rather than a `Link`. `Link` is for routes this application
+ * owns, and prefetching an address on somebody else's domain is a request we
+ * have no business making. `noreferrer` covers `noopener` as well, and covers
+ * it in the browsers where `noopener` alone does not.
  */
 export function SisterSentence({ say }: { say: string }) {
-  const parts = say.split(SISTER);
+  const parts = say.split(SISTER.name);
   if (parts.length === 1) return <>{say}</>;
 
   return (
@@ -48,17 +46,19 @@ export function SisterSentence({ say }: { say: string }) {
                with the card's own type - ten and a half pixels on a phone,
                thirteen and a half on a desk - and it underlines and presses as
                part of the name rather than sitting beside it. */
-            <Link
-              href={ROUTES.about}
+            <a
+              href={SISTER.href}
+              target="_blank"
+              rel="noreferrer"
               className="font-semibold whitespace-nowrap text-mark underline decoration-hair underline-offset-2 transition-colors hover:decoration-mark"
             >
-              {SISTER}
+              {SISTER.name}
               <ArrowUpRight
                 aria-hidden
                 className="ml-0.5 inline size-[0.85em] shrink-0 align-[-0.09em]"
                 strokeWidth={2.4}
               />
-            </Link>
+            </a>
           ) : null}
           {part}
         </span>
