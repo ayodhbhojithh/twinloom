@@ -234,7 +234,7 @@ export function QuickPane({
             A numbered pill rather than a second heading. The surface already
             carries one heading centred over it, and a route that opens with a
             heading of its own is a page inside a page. */}
-          <div className="mt-9 flex justify-center">
+          <div className="mt-9 flex justify-center max-sm:mt-6">
             <span className="inline-flex items-center gap-2.5 rounded-pill bg-canvas py-1.5 pr-4 pl-1.5">
               <span
                 aria-hidden
@@ -246,11 +246,11 @@ export function QuickPane({
             </span>
           </div>
 
-          <p className="mx-auto mt-3.5 max-w-[54ch] text-center text-[15px] leading-[1.5] font-semibold text-ink">
+          <p className="mx-auto mt-3.5 max-w-[54ch] text-center text-[15px] leading-[1.5] font-semibold text-ink max-sm:mt-3 max-sm:text-[14px]">
             Use this if you already know roughly what you want.
           </p>
 
-          <p className="mx-auto mt-1.5 max-w-[62ch] text-center text-[13px] leading-[1.6] text-quiet">
+          <p className="mx-auto mt-1.5 max-w-[62ch] text-center text-[13px] leading-[1.6] text-quiet max-sm:text-[12px] max-sm:leading-[1.55]">
             No questions, no order, no structure. It goes exactly as you typed
             it, with anything you want to show us attached to it.
           </p>
@@ -263,7 +263,7 @@ export function QuickPane({
             and note added to the right made the two halves finish further
             apart. Stretched, the row is as tall as its tallest column and the
             box takes the rest. */}
-          <div className="mt-7 grid items-stretch gap-6 lg:grid-cols-2 lg:gap-8">
+          <div className="mt-7 grid items-stretch gap-6 max-sm:mt-5 max-sm:gap-3.5 lg:grid-cols-2 lg:gap-8">
             {/* The writing. `flex-1` on the box rather than a row count, so it
               grows to whatever the column beside it needs and the two halves
               end level. */}
@@ -274,7 +274,15 @@ export function QuickPane({
                 value={answers.text["quick.words"] ?? ""}
                 placeholder="What the business does, who it is for, what the website has to do, and anything you already know you want."
                 onChange={(event) => setText("quick.words", event.target.value)}
-                className="min-h-[280px] w-full flex-1 resize-y rounded-[14px] border border-border bg-field px-4 py-3 text-[14px] leading-[1.6] text-ink outline-none transition-colors placeholder:text-label focus:border-ink"
+                /* Two hundred and eighty is the height of the column
+                   beside it, which is what makes the two halves end level on a
+                   desk. Stacked on a phone there is no column beside it, so the
+                   number is just an empty box the height of half the screen
+                   between the question and everything else - and an empty box
+                   that large reads as an amount somebody is expected to write.
+                   It still grows with what is typed and it can still be
+                   dragged. */
+                className="min-h-[280px] w-full flex-1 resize-y rounded-[14px] border border-border bg-field px-4 py-3 text-[14px] leading-[1.6] text-ink outline-none transition-colors placeholder:text-label focus:border-ink max-sm:min-h-[132px] max-sm:rounded-[12px] max-sm:px-3.5 max-sm:py-2.5 max-sm:text-[13.5px]"
               />
             </div>
 
@@ -314,7 +322,7 @@ export function QuickPane({
                 not for a sentence. Given a line each, the field is the width
                 of the column and the chips still sit directly above what they
                 switch. */}
-              <div className="mt-3">
+              <div className="mt-3 max-sm:mt-2.5">
                 {/* Centred over the field they switch. The drop zone above and
                   the row below both take the whole column, so a pair of chips
                   against the left edge was the one thing in it starting
@@ -358,11 +366,11 @@ export function QuickPane({
               </div>
 
               {answers.refs.length ? (
-                <ul className="mt-3 flex flex-col gap-1.5">
+                <ul className="mt-3 flex flex-col gap-1.5 max-sm:mt-2.5">
                   {answers.refs.map((ref) => (
                     <li
                       key={ref.n}
-                      className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[10px] bg-canvas px-3 py-1.5"
+                      className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[10px] bg-canvas px-3 py-1.5 max-sm:gap-x-2 max-sm:px-2.5 max-sm:py-2"
                     >
                       <Kicker className="w-[64px] flex-none">{ref.kind}</Kicker>
                       <span className="min-w-[12ch] flex-1 text-[13px] leading-[1.35] text-ink">
@@ -402,7 +410,7 @@ export function QuickPane({
             actually blocks something, it is four fields filled in by somebody
             who has already decided to send. */}
           {asking && !answers.sent ? (
-            <div className="mx-auto mt-9 w-full max-w-[720px] rounded-[18px] bg-canvas p-5 text-left sm:p-6">
+            <div className="mx-auto mt-9 w-full max-w-[720px] rounded-[18px] bg-canvas p-5 text-left max-sm:mt-6 max-sm:rounded-[15px] max-sm:p-4 sm:p-6">
               <b className="block text-[15px] leading-[1.25] font-extrabold tracking-[-0.02em] text-ink">
                 Who is asking
               </b>
@@ -410,7 +418,7 @@ export function QuickPane({
                 The only part about you, and the only part we cannot do without.
               </p>
 
-              <div className="mt-4 grid gap-x-6 gap-y-5 sm:grid-cols-2">
+              <div className="mt-4 grid gap-x-6 gap-y-5 max-sm:mt-3.5 max-sm:gap-y-3.5 sm:grid-cols-2">
                 {FIELDS.map((field) => (
                   <Field
                     key={field.k}
@@ -426,7 +434,10 @@ export function QuickPane({
                 ))}
               </div>
 
-              <div id="quick-ask-part" className="mt-6 scroll-mt-24">
+              <div
+                id="quick-ask-part"
+                className="mt-6 scroll-mt-24 max-sm:mt-5"
+              >
                 <div className="mb-2 flex items-baseline justify-between gap-3">
                   <b className="text-[13.5px] font-semibold text-ink">
                     What part do you play in this decision
@@ -475,7 +486,7 @@ export function QuickPane({
             and at that cap each broke a few words short of its end - which
             leaves a centred line with an orphan under it, the one shape a
             centred block should never make. */}
-          <div className="mt-8 min-w-0 text-center">
+          <div className="mt-8 min-w-0 text-center max-sm:mt-6">
             {/* What went wrong, or what is still needed, above the control rather
               than after it has been pressed again. A button that refuses without
               saying why is a button somebody presses four times. */}
@@ -510,7 +521,7 @@ export function QuickPane({
               </Pill>
             </div>
 
-            <p className="mx-auto mt-4 max-w-[88ch] text-[12.5px] leading-[1.55] text-quiet">
+            <p className="mx-auto mt-4 max-w-[88ch] text-[12.5px] leading-[1.55] text-quiet max-sm:mt-3 max-sm:text-[12px]">
               Nothing is thrown away and nothing is final. Once it has gone you
               can still add to it, or book a time to talk it through.
             </p>
@@ -519,7 +530,7 @@ export function QuickPane({
               pane takes free text, files and contact details, and a privacy
               notice somebody has to go looking for is not one that was
               given. */}
-            <p className="mx-auto mt-2 max-w-[88ch] text-[12px] leading-[1.55] text-label">
+            <p className="mx-auto mt-2 max-w-[88ch] text-[12px] leading-[1.55] text-label max-sm:text-[11.5px]">
               What happens to your details is set out in our{" "}
               <Link
                 href={ROUTES.privacy}

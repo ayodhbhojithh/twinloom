@@ -31,6 +31,7 @@ import { cn } from "@/lib/utils";
  */
 export function DropZone({
   label,
+  tap = "Choose files to attach",
   note,
   files,
   onAdd,
@@ -38,6 +39,8 @@ export function DropZone({
   className,
 }: {
   label: string;
+  /** What it says on a phone, where there is nothing to drop onto it. */
+  tap?: string;
   note?: string;
   files: readonly Attached[];
   onAdd: (taken: Attached[]) => void;
@@ -88,16 +91,33 @@ export function DropZone({
           void take(event.dataTransfer.files);
         }}
         className={cn(
-          "flex w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-[14px] border border-dashed px-5 py-6 text-center transition-colors",
+          "flex w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-[14px] border border-dashed px-5 py-6 text-center transition-colors max-sm:gap-1 max-sm:px-4 max-sm:py-4",
           over
             ? "border-ink bg-well"
             : "border-border bg-canvas hover:border-ink hover:bg-canvas-firm",
         )}
       >
-        <ImageUp aria-hidden className="size-5 text-idx" strokeWidth={1.9} />
-        <b className="text-[13.5px] font-bold text-ink">{label}</b>
+        <ImageUp
+          aria-hidden
+          className="size-5 text-idx max-sm:size-[18px]"
+          strokeWidth={1.9}
+        />
+
+        {/* Two labels, one control.
+
+            Every one of these says "drop files here, or choose them", which is
+            a true sentence on a desk and half a lie on a phone: there is
+            nothing to drag from and nothing to drag with, so half the offer
+            names a gesture that does not exist and the half that works reads
+            as the fallback. Below `sm` it says the one thing that is true
+            there. */}
+        <b className="text-[13.5px] font-bold text-ink max-sm:text-[12.5px]">
+          <span className="max-sm:hidden">{label}</span>
+          <span className="hidden max-sm:inline">{tap}</span>
+        </b>
+
         {note ? (
-          <span className="max-w-[42ch] text-[12px] leading-[1.45] text-quiet">
+          <span className="max-w-[42ch] text-[12px] leading-[1.45] text-quiet max-sm:text-[11.5px]">
             {note}
           </span>
         ) : null}
@@ -117,7 +137,10 @@ export function DropZone({
       />
 
       {wrong ? (
-        <p role="alert" className="mt-2 text-[12px] leading-[1.45] text-blocked">
+        <p
+          role="alert"
+          className="mt-2 text-[12px] leading-[1.45] text-blocked"
+        >
           {wrong}
         </p>
       ) : null}
