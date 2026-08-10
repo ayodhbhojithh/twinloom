@@ -242,17 +242,22 @@ export function ServiceWall({
                 by a different number and no CSS could have evened them up.
                 Each is cropped to its own artwork and padded back out to a
                 square, so one box scales them all alike. */}
-            {/* Down from four-to-three on a phone and a square on a desk.
+            {/* Down from a square on a desk, twice.
 
                 The drawing was the card: on a 286 wide card a square box is 286
                 tall, which is more than the name and the sentence under it put
-                together, so a set of six cards read as six pictures with
-                captions. Five-to-four and three-to-two give the picture about a
-                fifth of its height back and hand it to the words, and it is the
-                words somebody is choosing between. */}
+                together, so a set of six read as six pictures with captions.
+
+                Wider than tall now, which is the shape the drawings actually
+                are. Every one of them is the mark - twice as wide as it is high
+                - sitting in a square file, so a square box was reserving the
+                file's own white margin rather than any of the picture. At
+                sixteen-to-ten what is given up is that margin, and the drawing
+                comes down only a little; what the words gain is a third of the
+                card. */}
             <span
               aria-hidden
-              className="relative -mx-1 block aspect-5/4 shrink-0 sm:aspect-3/2"
+              className="relative -mx-1 block aspect-4/3 shrink-0 sm:aspect-16/10"
             >
               {entry.art ? (
                 <Image

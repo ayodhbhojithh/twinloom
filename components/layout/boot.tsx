@@ -43,22 +43,36 @@ import { outline, type Cuts } from "@/components/home/notched-card";
  * surface with pieces taken out and started reading as a shape in its own
  * right, which is the one thing the card is careful never to do.
  */
-const MARK = { w: 88, h: 60 };
+const MARK = { w: 132, h: 90 };
 
+/**
+ * Every cut, at half again what it was.
+ *
+ * The whole thing was drawn at 88 by 60, which on a laptop is about the size of
+ * a favicon standing in the middle of an empty screen - small enough that the
+ * one job it has, being recognisable as this site's shape, was being asked of an
+ * object the size of a stamp.
+ *
+ * Scaled rather than redrawn, and every number moved by the same factor
+ * including the stroke. A shape that grows while its outline stays put comes out
+ * thinner as it gets larger, which reads as a different drawing rather than a
+ * bigger one - and the whole point of this shape is that it is the same shape as
+ * the card on the page behind it.
+ */
 const SMALL: Cuts = {
-  radius: 12,
-  barWidth: 22,
-  barDepth: 8,
-  barRadius: 5,
-  barFlare: 6,
-  biteWidth: 20,
-  biteHeight: 17,
-  biteRadius: 5,
-  biteFlare: 6,
-  dropWidth: 16,
-  dropHeight: 15,
-  dropRadius: 5,
-  dropFlare: 6,
+  radius: 18,
+  barWidth: 33,
+  barDepth: 12,
+  barRadius: 8,
+  barFlare: 9,
+  biteWidth: 30,
+  biteHeight: 26,
+  biteRadius: 8,
+  biteFlare: 9,
+  dropWidth: 24,
+  dropHeight: 23,
+  dropRadius: 8,
+  dropFlare: 9,
 };
 
 const SHAPE = outline(MARK.w, MARK.h, SMALL);
@@ -170,7 +184,7 @@ export function Boot() {
           <path
             d={SHAPE}
             stroke="var(--color-hair)"
-            strokeWidth="1.4"
+            strokeWidth="1.9"
             strokeLinejoin="round"
           />
           {/* And the piece of it that travels. `pathLength` normalises the
@@ -181,7 +195,7 @@ export function Boot() {
             className="boot-trace"
             d={SHAPE}
             stroke="var(--color-ink)"
-            strokeWidth="1.4"
+            strokeWidth="1.9"
             strokeLinecap="round"
             strokeLinejoin="round"
             pathLength={100}
@@ -209,20 +223,20 @@ export function Boot() {
           draggable={false}
           loading="eager"
           fetchPriority="high"
-          sizes="52px"
+          sizes="78px"
           /* Larger than the box it looks like it should take.
 
              The file is square and the mark inside it is not - it is a wide
              thing with a good deal of white above and below - so a box measured
-             to the shape's own height draws a mark half that tall. Fifty-two in
-             a shape sixty high is the box overshooting on purpose: what lands
+             to the shape's own height draws a mark half that tall. Seventy-
+             eight in a shape ninety high is the box overshooting on purpose: what lands
              on the screen is the ink, and the margins the file carries fall
              outside the outline where there is nothing to collide with. */
-          className="absolute top-1/2 left-1/2 size-[52px] -translate-x-1/2 -translate-y-1/2 object-contain"
+          className="absolute top-1/2 left-1/2 size-[78px] -translate-x-1/2 -translate-y-1/2 object-contain"
         />
       </span>
 
-      <span className="mt-5 font-mono text-[9px] font-bold tracking-[0.22em] text-label uppercase">
+      <span className="mt-7 font-mono text-[11px] font-bold tracking-[0.24em] text-label uppercase">
         TwinLoom
       </span>
     </div>
