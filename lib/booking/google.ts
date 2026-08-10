@@ -183,9 +183,7 @@ export async function book(w: Wiring, m: Booking): Promise<Booked> {
         description: m.description,
         start: { dateTime: m.start.toISOString() },
         end: { dateTime: m.end.toISOString() },
-        attendees: [
-          { email: m.attendee.email, displayName: m.attendee.name },
-        ],
+        attendees: [{ email: m.attendee.email, displayName: m.attendee.name }],
         reminders: { useDefault: true },
         ...(m.meet
           ? {
@@ -224,12 +222,34 @@ export async function book(w: Wiring, m: Booking): Promise<Booked> {
  * parts are always sent: a message with no text alternative scores worse with
  * every spam filter there is, and some people read mail as text on purpose.
  */
+/** A file hung off a message. */
+export interface Attachment {
+  /** What it arrives called. Already made safe by whoever built it. */
+  filename: string;
+  type: string;
+  body: Buffer;
+}
+
+/**
+ * Send a message, with files on it where there are files.
+ *
+ * Two shapes rather than one, because a message with nothing attached should
+ * not be wrapped in a `multipart/mixed` it does not need - some clients show a
+ * paperclip for the wrapper alone.
+ *
+ * With attachments the nesting is the part worth getting right: `mixed` holds
+ * an `alternative` and then the files, rather than the three sitting as
+ * siblings. Flat, a client choosing between the text and the HTML sees the
+ * attachments as further alternatives and shows one of them instead of the
+ * message.
+ */
 export async function send(
   w: Wiring,
   to: string,
   subject: string,
   text: string,
   html?: string,
+  files: Attachment[] = [],
 ) {
   /* A boundary that cannot appear in either part. Derived rather than random
      so a retry of the same message is byte-identical. */
@@ -242,9 +262,9 @@ export async function send(
     "MIME-Version: 1.0",
   ];
 
-  const message = html
+  /* The readable part, whichever shape it is in. */
+  const reading = html
     ? [
-        ...head,
         `Content-Type: multipart/alternative; boundary="${edge}"`,
         "",
         `--${edge}`,
@@ -258,10 +278,38 @@ export async function send(
         html,
         "",
         `--${edge}--`,
-      ].join(CRLF)
-    : [...head, 'Content-Type: text/plain; charset="UTF-8"', "", text].join(
-        CRLF,
-      );
+      ]
+    : ['Content-Type: text/plain; charset="UTF-8"', "", text];
+
+  let message: string;
+
+  if (files.length) {
+    const outer = `${edge}-mixed`;
+
+    message = [
+      ...head,
+      `Content-Type: multipart/mixed; boundary="${outer}"`,
+      "",
+      `--${outer}`,
+      ...reading,
+      "",
+      ...files.flatMap((file) => [
+        `--${outer}`,
+        `Content-Type: ${file.type}; name="${file.filename}"`,
+        "Content-Transfer-Encoding: base64",
+        `Content-Disposition: attachment; filename="${file.filename}"`,
+        "",
+        /* Wrapped at 76, which is not a nicety: a base64 part with lines longer
+           than 998 characters is not a legal message, and some relays will
+           refuse it rather than fold it for you. */
+        file.body.toString("base64").replace(/.{76}/g, "$&" + CRLF),
+        "",
+      ]),
+      `--${outer}--`,
+    ].join(CRLF);
+  } else {
+    message = [...head, ...reading].join(CRLF);
+  }
 
   const raw = Buffer.from(message)
     .toString("base64")

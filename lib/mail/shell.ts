@@ -151,6 +151,7 @@ export function shell({
   body,
   width = 460,
   align = "center",
+  bleed = false,
 }: {
   /** The `<title>`, and what a reading pane may show as the subject line. */
   title: string;
@@ -161,6 +162,20 @@ export function shell({
   width?: number;
   /** Which edge the message is read from. */
   align?: "center" | "left";
+  /**
+   * Take the whole window rather than a column in the middle of it.
+   *
+   * For the message that comes to us. A centred column is right for something
+   * somebody is being sent - it reads as a note on a page - and wrong for a
+   * filled-in form being worked through, where the width of the window is the
+   * width of the desk and a 620px column in the middle of a monitor is a
+   * document being read through a letterbox.
+   *
+   * Not quite to the glass. Sixteen pixels stay at each side, because type
+   * touching the edge of a reading pane is type with nowhere to begin, and the
+   * first character of every line is the one the eye returns to.
+   */
+  bleed?: boolean;
 }) {
   return `<!doctype html>
 <html lang="en">
@@ -183,9 +198,11 @@ export function shell({
   <tr>
     <!-- Twenty pixels of gutter on a phone, which is the difference between a
          centred column and type jammed against two edges. -->
-    <td align="center" style="padding:36px 20px 40px">
+    <td align="center" style="padding:${bleed ? "22px 16px 28px" : "36px 20px 40px"}">
 
-      <table role="presentation" width="${width}" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:${width}px">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%${
+        bleed ? "" : `;max-width:${width}px`
+      }">
 
         <tr>
           <td align="${align}" style="padding:0 0 26px">

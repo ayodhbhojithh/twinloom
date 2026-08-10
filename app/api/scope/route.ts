@@ -3,6 +3,9 @@ import { NextResponse } from "next/server";
 import { send, wiring } from "@/lib/booking/google";
 import { scopeNotice, scopeReceipt } from "@/lib/mail/templates";
 import { isReference, makeReference } from "@/lib/build/reference";
+import { attachedFrom } from "@/lib/build/attachments";
+import { fetchFiles } from "@/lib/build/fetch-files";
+import { mediaFolder } from "@/lib/build/media";
 import { absolute } from "@/lib/seo";
 import { CONTACT_INFO, ROUTES } from "@/lib/site";
 
@@ -31,7 +34,16 @@ export async function POST(request: Request) {
     follow?: unknown;
     document?: string;
     ask?: Record<string, string>;
-    answers?: { refs?: { url?: unknown; text?: unknown }[]; text?: unknown };
+    answers?: {
+      refs?: {
+        url?: unknown;
+        text?: unknown;
+        n?: unknown;
+        where?: unknown;
+      }[];
+      text?: unknown;
+      like?: unknown;
+    };
   };
 
   try {
@@ -105,40 +117,6 @@ ${body.document}`,
   const w = wiring();
 
   if (w) {
-    /* Set rather than pasted.
-
-       The document is the record and it goes out unchanged - it is what the log
-       holds and what a text client shows. What it also used to be is the whole
-       of the HTML, which meant eight sections of labels and lists arriving as
-       one unbroken column with no heading weight and no alignment. `scopeNotice`
-       reads the same text back and sets it; nothing about what is sent has
-       changed except that it can be read. */
-    const notice = scopeNotice({
-      ref,
-      name: ask.name!.trim(),
-      company: ask.company!.trim(),
-      email: ask.email!.trim(),
-      phone: ask.phone?.trim(),
-      document: body.document,
-      follow,
-    });
-
-    await send(w, w.notify, notice.subject, notice.text, notice.html).catch(
-      (wrong) => {
-        console.error(`[scope ${ref}] could not be forwarded`, wrong);
-      },
-    );
-
-    /* And the person who sent it.
-
-       Only our own inbox was told. Somebody wrote out what they wanted,
-       attached files to it, pressed send and got a reference on a screen they
-       were about to close - with nothing in writing anywhere they could find
-       it again. The reference is what everything they attached is filed
-       under, so it has to reach them somewhere they keep.
-
-       Sent second, and its failure is caught separately. If ours goes and
-       theirs does not, the request is still received. */
     /* What they will recognise sending, counted from what actually arrived.
 
        A ref with a `url` is a file that reached Cloudinary; a ref without one
@@ -166,6 +144,58 @@ ${body.document}`,
           )
         : false;
 
+    /* Set rather than pasted.
+
+       The document is the record and it goes out unchanged - it is what the log
+       holds and what a text client shows. What it also used to be is the whole
+       of the HTML, which meant eight sections of labels and lists arriving as
+       one unbroken column with no heading weight and no alignment. `scopeNotice`
+       reads the same text back and sets it; nothing about what is sent has
+       changed except that it can be read. */
+    /* The files, brought back so they ride on the message rather than sitting
+       behind eleven links. Numbered by the same function the browser numbered
+       them with, so `02-logo.png` on the message is provably the second row of
+       `FILES ATTACHED` in the document. */
+    const wanted = attachedFrom(
+      refs as Parameters<typeof attachedFrom>[0],
+      (body.answers?.like as Record<number, string>) ?? {},
+    );
+    const { attachments, skipped } = await fetchFiles(wanted);
+
+    const notice = scopeNotice({
+      ref,
+      name: ask.name!.trim(),
+      company: ask.company!.trim(),
+      email: ask.email!.trim(),
+      phone: ask.phone?.trim(),
+      document: body.document,
+      attached: attachments.length,
+      skipped,
+      folder: files ? mediaFolder(ref) : undefined,
+      follow,
+    });
+
+    await send(
+      w,
+      w.notify,
+      notice.subject,
+      notice.text,
+      notice.html,
+      attachments,
+    ).catch((wrong) => {
+      console.error(`[scope ${ref}] could not be forwarded`, wrong);
+    });
+
+    /* And the person who sent it.
+
+       Only our own inbox was told. Somebody wrote out what they wanted,
+       attached files to it, pressed send and got a reference on a screen they
+       were about to close - with nothing in writing anywhere they could find
+       it again. The reference is what everything they attached is filed
+       under, so it has to reach them somewhere they keep.
+
+       Sent second, and its failure is caught separately. If ours goes and
+       theirs does not, the request is still received. */
     const receipt = scopeReceipt({
       name: ask.name!.trim(),
       ref,

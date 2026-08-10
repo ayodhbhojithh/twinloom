@@ -6,7 +6,9 @@ import {
   SECTORS,
   SYS_LINKS,
 } from "./v5";
+import { attachedFrom, whereOf } from "./attachments";
 import { deskRef } from "./desk";
+import { getPalette, ROLES } from "./v5-palette";
 import { assumed, askDone, pagesFrom, told, zonesFrom } from "./v5-derive";
 import { chipsIn, type Answers } from "./v5-store";
 
@@ -31,6 +33,43 @@ export function whatIsMissing(answers: Answers): string[] {
   );
 }
 
+/**
+ * The palette, if anything was chosen.
+ *
+ * Read from the colour studio's own store rather than from `Answers`, exactly
+ * as the attachment folder is read from the desk's. The studio keeps a working
+ * document with its own order, weights and roles, and that was the argument for
+ * not folding it into the answers - but it was never an argument for leaving it
+ * out of the request. Somebody picking twelve colours and a role for each, and
+ * then getting a scope with no colours in it, has lost the work.
+ *
+ * Weight and role travel with the hex, because a list of six colours says far
+ * less than a list of six colours where one is the background at sixty per cent
+ * and one is an accent at three.
+ */
+function colours(): string[] {
+  const palette = getPalette().filter((swatch) => swatch.hex);
+  if (!palette.length) return [];
+
+  const roleName = (key: string) =>
+    ROLES.find((role) => role.k === key)?.n ?? "No role yet";
+
+  return [
+    `COLOURS (${palette.length})`,
+    ...palette.map((swatch) =>
+      [
+        `- ${swatch.hex.toUpperCase()} - ${roleName(swatch.role)}, ${Math.round(
+          swatch.weight,
+        )}% of the design`,
+        swatch.note.trim() ? `  Note: ${swatch.note.trim()}` : "",
+        swatch.source ? `  From: ${swatch.source}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n"),
+    ),
+  ];
+}
+
 /** A line of the document, or nothing when there is nothing to say. */
 const line = (label: string, value: string) =>
   value.trim() ? `${label}: ${value.trim()}` : "";
@@ -44,6 +83,8 @@ const line = (label: string, value: string) =>
  * that wants to machine-read them later.
  */
 export function scopeDocument(answers: Answers) {
+  const files = attachedFrom(answers.refs, answers.like);
+  const notes = answers.refs.filter((ref) => !ref.url);
   const pages = pagesFrom(answers);
   const zones = zonesFrom(pages);
   const said = told(answers);
@@ -89,22 +130,52 @@ export function scopeDocument(answers: Answers) {
     ]),
     "",
     "SYSTEMS TO JOIN TO",
-    links.length ? links.map((entry) => `- ${entry}`).join("\n") : "- None named",
+    links.length
+      ? links.map((entry) => `- ${entry}`).join("\n")
+      : "- None named",
     "",
     "IN THEIR OWN WORDS",
     answers.text["quick.words"]?.trim() || "- Nothing written",
     "",
-    "REFERENCES",
-    answers.refs.length
-      ? answers.refs
+    ...colours(),
+    "",
+    /* What was put on the desk that is not a file: notes, links, things typed
+       into a box. Files have a section of their own below, because a file is
+       something to open and a note is something to read, and one list holding
+       both is a list where the paperclips are buried. */
+    "NOTES AND LINKS",
+    notes.length
+      ? notes
           .map(
             (ref) =>
               `- [${ref.kind}] ${ref.text}${
                 answers.like[ref.n] ? ` - ${answers.like[ref.n]}` : ""
-              }${ref.url ? `\n  ${ref.url}` : ""}`,
+              }\n  Written at: ${whereOf(ref.where)}`,
           )
           .join("\n")
       : "- None added",
+    "",
+    /* The files, numbered, and each one said with what it was attached to.
+
+       The number is not decoration: it is the same number the file carries on
+       the message, so a paperclip called `02-logo.png` and the second row here
+       are provably the same thing. Without it, three files and three notes on
+       one request is a puzzle. */
+    files.length ? `FILES ATTACHED (${files.length})` : "FILES ATTACHED",
+    files.length
+      ? files
+          .map((file) =>
+            [
+              `- ${String(file.index).padStart(2, "0")} - ${file.name}`,
+              `  Attached at: ${file.where}`,
+              file.note ? `  Said about it: ${file.note}` : "",
+              `  ${file.url}`,
+            ]
+              .filter(Boolean)
+              .join("\n"),
+          )
+          .join("\n")
+      : "- None attached",
     /* Where the attachments are, said once rather than left to be worked out
        from a column of URLs. Everything from one desk is in one Cloudinary
        folder, named after the reference this submission comes back with.
@@ -114,9 +185,7 @@ export function scopeDocument(answers: Answers) {
        asked for one - and then the submit screen began showing the reference to
        anybody booking a meeting against it, which minted one and made this
        promise a folder with nothing in it. */
-    ...(answers.refs.some((ref) => ref.url)
-      ? ["", "ATTACHMENTS", `- Folder: ${deskRef()}`]
-      : []),
+    ...(files.length ? ["", "ATTACHMENTS", `- Folder: ${deskRef()}`] : []),
   ];
 
   return parts.filter((part) => part !== "").join("\n");
@@ -124,8 +193,7 @@ export function scopeDocument(answers: Answers) {
 
 /** What comes back. `ref` is what somebody can quote at us. */
 export type SendResult =
-  | { ok: true; ref: string }
-  | { ok: false; problem: string };
+  { ok: true; ref: string } | { ok: false; problem: string };
 
 /**
  * Send it.

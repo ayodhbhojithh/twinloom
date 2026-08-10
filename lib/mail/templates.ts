@@ -65,7 +65,9 @@ const THEIR_HEADINGS: Record<string, string> = {
   "THE SITE THEIR ANSWERS DESCRIBE": "THE SITE YOUR ANSWERS DESCRIBE",
   "SYSTEMS TO JOIN TO": "SYSTEMS TO JOIN TO",
   "IN THEIR OWN WORDS": "IN YOUR OWN WORDS",
-  REFERENCES: "WHAT YOU ATTACHED",
+  "NOTES AND LINKS": "NOTES AND LINKS YOU ADDED",
+  "FILES ATTACHED": "FILES YOU ATTACHED",
+  COLOURS: "THE COLOURS YOU CHOSE",
 };
 
 /**
@@ -512,6 +514,50 @@ const isHeading = (line: string) => {
   );
 };
 
+/** A colour, at the head of the line that describes it. */
+const HEX = /^([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})\b/;
+
+/**
+ * How light a colour is, on the crude scale that is right for this.
+ *
+ * Rec. 601 luma, because the question is only "will black or white sit on
+ * this", and it is asked about a swatch the size of a word. Anything more exact
+ * would be more exact about a decision with two possible answers.
+ */
+const isPale = (hex: string) => {
+  const full =
+    hex.length === 3
+      ? hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2]
+      : hex;
+  const n = parseInt(full, 16);
+  return (
+    (((n >> 16) & 255) * 299 + ((n >> 8) & 255) * 587 + (n & 255) * 114) /
+      1000 >
+    168
+  );
+};
+
+/**
+ * A hex code, set in its own colour.
+ *
+ * The point of a palette in a message is that you can see it. Six lines reading
+ * `#2A98FE - Primary, 40%` is a palette described; the same six with the code
+ * standing on the colour is the palette itself, and it takes the same space.
+ *
+ * The colour is the background rather than the text, and the text is black or
+ * white over it. Set as the type colour, a pale accent on white is a line
+ * nobody can read - and the one thing this must never do is hide a colour in
+ * order to show it.
+ *
+ * A padded cell rather than a bordered one: Outlook draws borders on inline
+ * elements at its own widths and rounds nothing, and the fill is the whole
+ * point anyway.
+ */
+const chip = (hex: string) =>
+  `<span style="display:inline-block;padding:3px 8px;border-radius:6px;background:#${hex.toUpperCase()};font-family:${MONO};font-size:11.5px;font-weight:700;letter-spacing:0.04em;color:${
+    isPale(hex) ? "#111827" : "#ffffff"
+  }">#${hex.toUpperCase()}</span>`;
+
 const linkify = (value: string) =>
   /^https?:\/\//.test(value)
     ? `<a href="${esc(value)}" style="color:${MARK};text-decoration:underline;word-break:break-all">${esc(
@@ -636,9 +682,26 @@ function setDocument(
        it. Set in the mono face and pulled in, so a run of them reads as a list
        belonging to the line before rather than as more sentences. */
     if (raw.startsWith("  ")) {
+      const under = line.trim();
+      const split = under.indexOf(": ");
+
+      /* An indented line is either a fact about the line above it - where a
+         file was attached, what somebody said about it - or an address. A fact
+         gets its label in the label grey and its value in the body, because a
+         run of them set in one mono colour is a paragraph of metadata nobody
+         reads. An address stays mono, since that is what an address is. */
+      if (split > 0 && !/^https?:/.test(under)) {
+        row(
+          `<td colspan="2" style="padding:4px 0 0 16px;font-family:${SANS};font-size:12px;line-height:1.55;color:${BODY}"><span style="color:${LABEL}">${esc(
+            under.slice(0, split + 1),
+          )}</span> ${esc(under.slice(split + 2))}</td>`,
+        );
+        continue;
+      }
+
       row(
-        `<td style="padding:5px 0 0 16px;font-family:${MONO};font-size:11.5px;line-height:1.6;color:${QUIET}">${linkify(
-          line.trim(),
+        `<td colspan="2" style="padding:4px 0 0 16px;font-family:${MONO};font-size:11.5px;line-height:1.6;color:${QUIET};word-break:break-all">${linkify(
+          under,
         )}</td>`,
       );
       continue;
@@ -646,6 +709,24 @@ function setDocument(
 
     if (line.startsWith("- ")) {
       const text = line.slice(2);
+
+      /* A colour line draws its colour. The document writes them as
+         `#RRGGBB - Primary, 40% of the design`, so the hex comes off the front
+         and the rest is set beside it as the sentence it is. */
+      const hex = text.startsWith("#") ? HEX.exec(text.slice(1))?.[1] : null;
+
+      if (hex) {
+        row(
+          `<td width="86" valign="top" style="padding:7px 12px 0 0">${chip(
+            hex,
+          )}</td>
+           <td valign="top" style="padding:9px 0 0;font-family:${SANS};font-size:12.5px;line-height:1.5;color:${BODY}">${esc(
+             text.slice(hex.length + 1).replace(/^\s*-\s*/, ""),
+           )}</td>`,
+        );
+        continue;
+      }
+
       row(
         `<td width="14" valign="top" style="padding:6px 0 0;font-family:${SANS};font-size:13px;line-height:1.55;color:${MARK}">&bull;</td>
          <td style="padding:6px 0 0;font-family:${SANS};font-size:13px;line-height:1.55;color:${BODY}">${linkify(
@@ -715,6 +796,9 @@ export function scopeNotice({
   email,
   phone,
   document,
+  attached,
+  skipped = [],
+  folder,
   follow,
 }: {
   ref: string;
@@ -723,6 +807,12 @@ export function scopeNotice({
   email: string;
   phone?: string;
   document: string;
+  /** How many files actually rode on the message. */
+  attached?: number;
+  /** The numbers of any that did not, so the message can say which. */
+  skipped?: number[];
+  /** Where the lot of them live, as somewhere to press. */
+  folder?: { path: string; url?: string };
   follow?: boolean;
 }): Message {
   const fact = (label: string, value: string) =>
@@ -771,7 +861,48 @@ export function scopeNotice({
       )}
     </table>
 
-    ${setDocument(document, { dedupe: IN_THE_HEADER })}`;
+    ${
+      attached
+        ? `<div style="margin:18px 0 0;padding:11px 14px;background:${CANVAS};border-radius:12px;font-family:${SANS};font-size:12.5px;line-height:1.6;color:${BODY}">
+             <b style="color:${INK};font-weight:600">${attached} ${
+               attached === 1 ? "file is" : "files are"
+             } attached to this message.</b> They are numbered to match
+             <span style="font-family:${MONO};font-size:11.5px">FILES ATTACHED</span>
+             below, so <span style="font-family:${MONO};font-size:11.5px">02-logo.png</span>
+             is the second row in it.${
+               skipped.length
+                 ? ` ${skipped.length} would not fit and ${
+                     skipped.length === 1 ? "is" : "are"
+                   } linked instead: ${skipped
+                     .map((n) => String(n).padStart(2, "0"))
+                     .join(", ")}.`
+                 : ""
+             }
+           </div>`
+        : ""
+    }
+
+    ${
+      folder
+        ? `<div style="margin:10px 0 0;font-family:${SANS};font-size:12px;line-height:1.6;color:${QUIET}">All of them together: ${
+            folder.url
+              ? `<a href="${esc(folder.url)}" style="color:${MARK};text-decoration:underline">${esc(
+                  folder.path,
+                )}</a>`
+              : `<span style="font-family:${MONO};font-size:11.5px;color:${BODY}">${esc(
+                  folder.path,
+                )}</span>`
+          }</div>`
+        : ""
+    }
+
+    ${setDocument(document, {
+      dedupe: IN_THE_HEADER,
+      /* The folder is in the header now, with its whole path and somewhere to
+         press. The section at the foot of the document says the same thing as
+         a bare reference, which is the half of it nobody can search on. */
+      omit: folder ? OURS_ONLY : undefined,
+    })}`;
 
   const text = [
     follow
@@ -780,6 +911,15 @@ export function scopeNotice({
     `From: ${name} at ${company} <${email}>`,
     phone ? `Phone: ${phone}` : "",
     `Reference: ${ref}`,
+    attached
+      ? `${attached} ${attached === 1 ? "file" : "files"} attached, numbered to match FILES ATTACHED below.`
+      : "",
+    skipped.length
+      ? `Not attached, linked below instead: ${skipped
+          .map((n) => String(n).padStart(2, "0"))
+          .join(", ")}.`
+      : "",
+    folder ? `All of them together: ${folder.url ?? folder.path}` : "",
     "",
     document,
   ]
@@ -795,10 +935,12 @@ export function scopeNotice({
       title: follow ? `More detail on ${ref}` : `Scoping request ${ref}`,
       preview: `${name} at ${company}. ${ref}.`,
       body,
-      /* Wider and read from the left, unlike everything else this file sends.
-         See `shell`: a note is centred, a filled-in document is not. */
-      width: 620,
+      /* The whole window, read from the left. See `shell`: a note is a centred
+         column and a filled-in form is not, and this one carries a palette, a
+         page list and a numbered set of files - none of which has any business
+         being read through a 620px letterbox in the middle of a monitor. */
       align: "left",
+      bleed: true,
     }),
   };
 }
