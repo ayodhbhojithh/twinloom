@@ -15,7 +15,7 @@ import {
 } from "@/lib/build/v5-store";
 import { ROUTES } from "@/lib/site";
 
-import { DockPanel, DockTab, type Face } from "./dock";
+import { DockPanel, DockSheet, DockTab, type Face } from "./dock";
 
 /* ---------------------------------------------------------------------------
    The desk, on every page.
@@ -146,7 +146,7 @@ export function DeskDock({
               column the page was built with. Full width on a phone, where
               there is no room to float anything. */}
           <div
-            className="fixed right-0 bottom-0 z-50 flex w-full max-w-[560px] flex-col max-sm:p-0 lg:w-(--desk-width) lg:max-w-none"
+            className="fixed right-0 bottom-0 z-50 hidden w-full max-w-[560px] flex-col sm:flex lg:w-(--desk-width) lg:max-w-none"
             style={{
               top: underHeader ? "var(--nav-height)" : 0,
               /* The landing card's own sill, so the two rest on the same
@@ -187,6 +187,25 @@ export function DeskDock({
                  The desk is on every page, so this has to mean something on
                  every page. */
               onGoStep={desk.goStep ?? (() => router.push(ROUTES.build))}
+              face={face}
+              onFace={onFace}
+              onClose={() => onFace(null)}
+              withSite={desk.withSite}
+            />
+          </div>
+
+          {/* And the same desk as a sheet on a phone. Two shells for one thing
+              rather than one shell squeezed: see `DockSheet`. Only one of them
+              is on screen at a time - the other is `hidden` - and both read the
+              same store, so there is no state to keep in step. */}
+          <div className="fixed inset-x-0 bottom-0 z-50 sm:hidden">
+            <DockSheet
+              answers={answers}
+              where={desk.where}
+              onGoStep={(key) => {
+                if (desk.goStep) desk.goStep(key);
+                else router.push(`${ROUTES.build}#${key}`);
+              }}
               face={face}
               onFace={onFace}
               onClose={() => onFace(null)}

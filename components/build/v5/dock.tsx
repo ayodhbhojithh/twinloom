@@ -174,9 +174,6 @@ export function DockPanel({
   const list = faces(answers, withSite);
   const on = withSite ? face : "notes";
   const here = list.find((entry) => entry.k === on) ?? list[0];
-  const pages = pagesFrom(answers).length;
-  const notes = answers.refs.length;
-
   return (
     <Stage
       tone="field"
@@ -270,45 +267,195 @@ export function DockPanel({
           beside the question. Stacked above the tool on a narrower window it is
           in the page's own flow and the page scroll is the right one. */}
       <div className="quiet-scroll w-full xl:max-h-[calc(100svh-var(--nav-height)-190px)] xl:overflow-y-auto">
-        <Kicker className="block">
-          {on === "site" ? "The site you are building" : "Your notes"}
-        </Kicker>
-
-        <h2 className="mt-2 text-[20px] leading-[1.12] font-extrabold tracking-[-0.03em] text-ink max-sm:mt-1.5 max-sm:text-[17px]">
-          {on === "site"
-            ? pages
-              ? `${pages} pages, as it stands`
-              : "Nothing described yet"
-            : notes
-              ? `${notes} on the desk`
-              : "Anything you like, any time"}
-        </h2>
-
-        {on === "site" ? (
-          <>
-            {/* What the list is, said before it is read. Four of these pages are
-                on every site we build and the rest were put there by an answer,
-                and a list that does not say which is which reads as a quote. */}
-            <p className="mt-4 rounded-[12px] bg-well px-3.5 py-2.5 text-[12px] leading-[1.5] text-quiet max-sm:mt-3 max-sm:px-3 max-sm:py-2 max-sm:text-[11.5px]">
-              Every answer adds to this and nothing here is fixed. Leave a
-              question alone and we write down{" "}
-              <b className="font-semibold text-ink">what we will assume</b>{" "}
-              instead, which is at the foot of this panel.
-            </p>
-
-            <div className="mt-5">
-              <Panel answers={answers} bare />
-            </div>
-          </>
-        ) : (
-          <NotesBody
-            answers={answers}
-            where={where}
-            onGoStep={onGoStep}
-            onClose={onClose}
-          />
-        )}
+        <DeskBody
+          answers={answers}
+          where={where}
+          onGoStep={onGoStep}
+          onClose={onClose}
+          on={on}
+        />
       </div>
     </Stage>
   );
 }
+
+/**
+ * What is on the desk, whichever shell is holding it.
+ *
+ * Two shells now: the cut surface on a wide screen and a sheet on a phone, and
+ * the thing inside them is the same list either way. Written once, because the
+ * day the notes list gains a column is the day the two would have parted
+ * company.
+ */
+function DeskBody({
+  answers,
+  where,
+  onGoStep,
+  onClose,
+  on,
+}: {
+  answers: Answers;
+  where: Where | null;
+  onGoStep: (key: string) => void;
+  onClose: () => void;
+  on: Face;
+}) {
+  const pages = pagesFrom(answers).length;
+  const notes = answers.refs.length;
+
+  return (
+    <>
+      <Kicker className="block">
+        {on === "site" ? "The site you are building" : "Your notes"}
+      </Kicker>
+
+      <h2 className="mt-2 text-[20px] leading-[1.12] font-extrabold tracking-[-0.03em] text-ink max-sm:mt-1.5 max-sm:text-[17px]">
+        {on === "site"
+          ? pages
+            ? `${pages} pages, as it stands`
+            : "Nothing described yet"
+          : notes
+            ? `${notes} on the desk`
+            : "Anything you like, any time"}
+      </h2>
+
+      {on === "site" ? (
+        <>
+          {/* What the list is, said before it is read. Four of these pages are
+              on every site we build and the rest were put there by an answer,
+              and a list that does not say which is which reads as a quote. */}
+          <p className="mt-4 rounded-[12px] bg-well px-3.5 py-2.5 text-[12px] leading-[1.5] text-quiet max-sm:mt-3 max-sm:px-3 max-sm:py-2 max-sm:text-[11.5px]">
+            Every answer adds to this and nothing here is fixed. Leave a
+            question alone and we write down{" "}
+            <b className="font-semibold text-ink">what we will assume</b>{" "}
+            instead, which is at the foot of this panel.
+          </p>
+
+          <div className="mt-5">
+            <Panel answers={answers} bare />
+          </div>
+        </>
+      ) : (
+        <NotesBody
+          answers={answers}
+          where={where}
+          onGoStep={onGoStep}
+          onClose={onClose}
+        />
+      )}
+    </>
+  );
+}
+
+/**
+ * The desk on a phone: a sheet up from the bottom edge.
+ *
+ * Not the cut surface at a smaller size. That shape is a panel resting beside a
+ * page - it has a notch in its top edge, a bite at one corner and a disc in
+ * another, and all three are read against the page showing round it. On a phone
+ * nothing shows round it: it covers the screen, so the cuts are cut out of
+ * nothing and the shape reads as a rectangle with dents.
+ *
+ * A sheet is what a phone already means by this. It comes up from the edge the
+ * thumb is nearest, it keeps a handle at the top to say which way it goes, and
+ * it stops short of the top of the screen so the page behind is still visible -
+ * which is the same thing the desktop panel says by floating beside the page.
+ *
+ * It is capped at seven eighths of the screen rather than filling it, for the
+ * same reason: a sheet that reaches the top is a page, and a page is something
+ * you have navigated to rather than something you have opened.
+ */
+function DockSheet({
+  answers,
+  where,
+  onGoStep,
+  face,
+  onFace,
+  onClose,
+  withSite = true,
+}: {
+  answers: Answers;
+  where: Where | null;
+  onGoStep: (key: string) => void;
+  face: Face;
+  onFace: (face: Face) => void;
+  onClose: () => void;
+  withSite?: boolean;
+}) {
+  const list = faces(answers, withSite);
+  const on = withSite ? face : "notes";
+
+  return (
+    <div className="flex max-h-[87svh] w-full flex-col rounded-t-[22px] bg-field shadow-[0_-8px_40px_rgba(12,32,56,0.16)]">
+      {/* The handle. It does nothing - the sheet is not draggable - and it is
+          still the right mark: it is how a phone says which edge this came from
+          and which edge it goes back to. */}
+      <span
+        aria-hidden
+        className="mx-auto mt-2.5 h-1 w-9 flex-none rounded-pill bg-hair"
+      />
+
+      <div className="flex flex-none items-center gap-2 px-4 pt-3 pb-3">
+        {list.length > 1 ? (
+          /* A segmented control rather than two pills in a notch. The notch is
+             a hole in a surface with a page behind it; there is no page behind
+             this one. */
+          <div className="flex min-w-0 flex-1 rounded-pill bg-well p-0.5">
+            {list.map((entry) => {
+              const chosen = entry.k === on;
+
+              return (
+                <button
+                  key={entry.k}
+                  type="button"
+                  role="tab"
+                  aria-selected={chosen}
+                  onClick={() => onFace(entry.k)}
+                  className={cn(
+                    "flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-pill py-1.5 text-[12px] font-semibold transition-colors",
+                    chosen ? "bg-field text-ink shadow-sm" : "text-quiet",
+                  )}
+                >
+                  {entry.short}
+                  <span
+                    className={cn(
+                      "font-mono text-[9.5px] font-bold tabular-nums",
+                      chosen ? "text-mark" : "text-idx",
+                    )}
+                  >
+                    {entry.count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <span className="min-w-0 flex-1">
+            <Kicker>{list[0]?.label}</Kicker>
+          </span>
+        )}
+
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close the panel"
+          className="flex size-9 flex-none cursor-pointer items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-90"
+        >
+          <X className="size-4" />
+        </button>
+      </div>
+
+      <div className="quiet-scroll min-h-0 flex-1 overflow-y-auto px-4 pt-1 pb-6">
+        <DeskBody
+          answers={answers}
+          where={where}
+          onGoStep={onGoStep}
+          onClose={onClose}
+          on={on}
+        />
+      </div>
+    </div>
+  );
+}
+
+export { DockSheet };
