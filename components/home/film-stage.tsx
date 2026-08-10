@@ -89,14 +89,23 @@ const AHEAD = 12;
 export function FilmStage({
   base,
   frames,
-  kind,
+  label,
   foot,
 }: {
   /** The folder the stills are in, without a trailing slash. */
   base: string;
   /** How many there are. They are named `001.jpg` upward. */
   frames: number;
-  kind: string;
+  /**
+   * What the notch says.
+   *
+   * An instruction rather than a name. It read "Film", which is a label on a
+   * thing that is plainly a film - it told nobody anything they could not see -
+   * and the one thing this screen needs somebody to know is that the picture
+   * answers to their scroll. Nothing else on the card does, so nobody would try
+   * it unasked.
+   */
+  label: string;
   /**
    * What stands over the bottom right corner of the picture.
    *
@@ -332,7 +341,7 @@ export function FilmStage({
         </div>
       ) : null}
 
-      {/* What it is, standing in the notch. No plate behind it: the notch is
+      {/* What to do, standing in the notch. No plate behind it: the notch is
           already the outline, and a pill drawn inside it is a second shape
           inside the first. */}
       <div
@@ -341,7 +350,7 @@ export function FilmStage({
         style={{ width: cut.barWidth, height: cut.barDepth }}
       >
         <span className="font-mono text-[9px] font-bold tracking-[0.18em] text-label uppercase">
-          {kind}
+          {label}
         </span>
       </div>
     </div>

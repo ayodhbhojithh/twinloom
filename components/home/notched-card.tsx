@@ -1046,7 +1046,10 @@ export function NotchedCard({ className }: { className?: string }) {
                 <FilmStage
                   base={shown.reel.base}
                   frames={shown.reel.frames}
-                  kind={shown.kind}
+                  /* An instruction, not a label. "Film" named something
+                     already obvious; this is the only place anybody is told
+                     the picture answers to their scroll. */
+                  label="Scroll this"
                   foot={
                     /* Two, stacked, and the pair is the point of the shape
                        being this size: one bite out of the picture holding both
