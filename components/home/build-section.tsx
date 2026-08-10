@@ -81,34 +81,50 @@ export function BuildSection() {
             Above the wave rather than below it, because it is the label on
             what follows: a control under a picture reads as belonging to
             whatever comes next. */}
-        <div
-          role="radiogroup"
-          aria-label="Wave version"
-          className="mb-4 flex justify-center gap-1 rounded-pill"
-        >
-          {VERSIONS.map((entry) => {
-            const on = entry.id === version;
-            return (
-              <button
-                key={entry.id}
-                type="button"
-                role="radio"
-                aria-checked={on}
-                onClick={() => setVersion(entry.id)}
-                className={cn(
-                  "cursor-pointer rounded-pill px-3 py-1 font-mono text-[9.5px] font-bold tracking-[0.14em] uppercase transition-colors sm:px-4 sm:py-1.5 sm:text-[11px] sm:tracking-[0.16em]",
-                  on
-                    ? "bg-ink text-white"
-                    : "bg-field text-quiet hover:text-ink",
-                )}
-              >
-                {entry.label}
-              </button>
-            );
-          })}
-        </div>
+        {/* The switch and the wave arrive together, and first.
 
-        <LoomWave className="-mx-(--page-gutter) w-auto" variant={version} />
+            The heading below already came in on the scroll and these did not,
+            so the section half-appeared: a picture and a control sitting there
+            fully drawn while the words under them faded up. Nought is the step
+            because this is the top of the section - the heading is one, the
+            tool takes none, and the order down the page is the order in time.
+
+            A wrapper rather than the class on each. `.reveal` carries
+            `will-change: transform`, and putting that on the box the canvas
+            measures itself in is asking for the measurement and the animation
+            to disagree. Here the canvas is a child, and nothing it reads
+            changes: the reveal moves it vertically and both its width and its
+            left edge are what they were. */}
+        <div className="reveal [--step:0]">
+          <div
+            role="radiogroup"
+            aria-label="Wave version"
+            className="mb-4 flex justify-center gap-1 rounded-pill"
+          >
+            {VERSIONS.map((entry) => {
+              const on = entry.id === version;
+              return (
+                <button
+                  key={entry.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  onClick={() => setVersion(entry.id)}
+                  className={cn(
+                    "cursor-pointer rounded-pill px-3 py-1 font-mono text-[9.5px] font-bold tracking-[0.14em] uppercase transition-colors sm:px-4 sm:py-1.5 sm:text-[11px] sm:tracking-[0.16em]",
+                    on
+                      ? "bg-ink text-white"
+                      : "bg-field text-quiet hover:text-ink",
+                  )}
+                >
+                  {entry.label}
+                </button>
+              );
+            })}
+          </div>
+
+          <LoomWave className="-mx-(--page-gutter) w-auto" variant={version} />
+        </div>
 
         {/* Centred, and the only centred thing in this section.
 

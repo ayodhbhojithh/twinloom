@@ -274,6 +274,57 @@ const NAV_HEIGHT = 53;
 /** The other company's name, so the paragraph and the link cannot disagree. */
 const SISTER = "TwinCoreTech";
 
+/**
+ * How the first screen arrives: one thing after another, up into place.
+ *
+ * The whole block used to fade as a single object, and only when the card was
+ * turned - `AnimatePresence` was set not to run on the first render, so on the
+ * screen somebody actually lands on nothing moved at all. What is wanted here
+ * is the opposite: the screen you arrive on is the one worth composing, and a
+ * headline that settles a beat before the line under it is a page being read
+ * to you in the order it was written.
+ *
+ * Small numbers on purpose. Sixteen pixels and half a second each, seventy
+ * milliseconds apart - enough that the order registers, not so much that
+ * anybody waits for it. The whole run is over inside a second, which is about
+ * as long as it takes to look from the top of a headline to the bottom of it.
+ *
+ * The ease is nearly all at the end: things start quickly and settle slowly,
+ * which is how a thing with weight comes to rest. A symmetrical curve spends
+ * half its time getting going and reads as hesitation.
+ */
+const HERO_RUN = {
+  hidden: {},
+  shown: { transition: { staggerChildren: 0.07, delayChildren: 0.06 } },
+} as const;
+
+const HERO_RISE = {
+  hidden: { opacity: 0, y: 16 },
+  shown: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+  },
+} as const;
+
+/**
+ * The artwork's own arrival, which is not a rise.
+ *
+ * It comes up from slightly under its size rather than from below, because a
+ * picture that slides has a direction and this one is meant to be the still
+ * point the words are arranged around. A scale is the one transform it may
+ * have: it is on the element itself, and the blend and the mask this file has
+ * fought over twice are on the image inside it.
+ */
+const HERO_MARK = {
+  hidden: { opacity: 0, scale: 0.94 },
+  shown: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+  },
+} as const;
+
 export function NotchedCard({ className }: { className?: string }) {
   const box = useRef<HTMLDivElement>(null);
 
@@ -1219,13 +1270,21 @@ export function NotchedCard({ className }: { className?: string }) {
             <BeadTrail />
           </div>
 
-          <AnimatePresence mode="wait" initial={false}>
+          {/* `initial` left on, unlike the other screens.
+
+              It was `false`, which is right for a carousel - a card that
+              animates its first slide in has animated something nobody asked
+              to see change. But this is the screen the page opens on, and the
+              cost of that setting was that the one screen everybody sees was
+              the one screen that never moved. Here the first render is the
+              performance. */}
+          <AnimatePresence mode="wait">
             <motion.div
               key={shown.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
+              variants={HERO_RUN}
+              initial="hidden"
+              animate="shown"
+              exit={{ opacity: 0, y: -8, transition: { duration: 0.22 } }}
               /* One rhythm down the screen, and it is worth naming because it
                  was five arbitrary numbers before: 4 between the trades and the
                  claim, 5 between the claim and the line under it, 4 again
@@ -1288,13 +1347,28 @@ export function NotchedCard({ className }: { className?: string }) {
                     anywhere above it would make a stacking context and cut the
                     blend group - the white box this file has already come back
                     as twice. */}
-                <MarkStage className="pointer-events-none w-[86%] max-w-[380px] shrink-0 lg:order-2 lg:-ml-[12%] lg:w-[54%] lg:max-w-none" />
+                <motion.div
+                  variants={HERO_MARK}
+                  className="pointer-events-none w-[86%] max-w-[380px] shrink-0 lg:order-2 lg:-ml-[12%] lg:w-[54%] lg:max-w-none"
+                >
+                  <MarkStage />
+                </motion.div>
 
-                <div className="min-w-0 text-center lg:order-1 lg:flex-1 lg:text-left">
+                {/* A run of its own, so the words stagger among themselves
+                    rather than against the picture beside them. Nested
+                    orchestration: this is a child of the screen's run and the
+                    parent of the five below it. */}
+                <motion.div
+                  variants={HERO_RUN}
+                  className="min-w-0 text-center lg:order-1 lg:flex-1 lg:text-left"
+                >
                   {/* The trades, as a list rather than a sentence. Dots between
                     them, because a comma would make it a sentence and it is a
                     label. */}
-                  <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 font-mono text-[11px] font-bold tracking-[0.15em] text-idx uppercase lg:justify-start">
+                  <motion.ul
+                    variants={HERO_RISE}
+                    className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 font-mono text-[11px] font-bold tracking-[0.15em] text-idx uppercase lg:justify-start"
+                  >
                     {shown.kicker?.map((trade, n) => (
                       <li key={trade} className="flex items-center gap-2.5">
                         {n > 0 ? (
@@ -1306,7 +1380,7 @@ export function NotchedCard({ className }: { className?: string }) {
                         {trade}
                       </li>
                     ))}
-                  </ul>
+                  </motion.ul>
 
                   {/* The gaps are the grouping, and they were all much of a
                       muchness: four, five, four, seven, which says the trades
@@ -1326,16 +1400,22 @@ export function NotchedCard({ className }: { className?: string }) {
 
                       Each grows a little past `sm`, because a gap that is
                       right at 62px of headline is mean at 32. */}
-                  <h1 className="mx-auto mt-3.5 max-w-[26ch] text-[clamp(32px,4.2vw,62px)] leading-[1.04] font-extrabold tracking-[-0.042em] text-ink lg:mx-0">
+                  <motion.h1
+                    variants={HERO_RISE}
+                    className="mx-auto mt-3.5 max-w-[26ch] text-[clamp(32px,4.2vw,62px)] leading-[1.04] font-extrabold tracking-[-0.042em] text-ink lg:mx-0"
+                  >
                     {shown.claim?.[0]}
                     <span className="thread-text block">
                       {shown.claim?.[1]}
                     </span>
-                  </h1>
+                  </motion.h1>
 
-                  <p className="mx-auto mt-5 max-w-[44ch] text-[clamp(17px,1.6vw,24px)] leading-[1.36] font-bold tracking-[-0.022em] text-ink sm:mt-6 lg:mx-0">
+                  <motion.p
+                    variants={HERO_RISE}
+                    className="mx-auto mt-5 max-w-[44ch] text-[clamp(17px,1.6vw,24px)] leading-[1.36] font-bold tracking-[-0.022em] text-ink sm:mt-6 lg:mx-0"
+                  >
                     {shown.lead}
-                  </p>
+                  </motion.p>
 
                   {/* The paragraph, with the other company's name as a link.
 
@@ -1343,7 +1423,10 @@ export function NotchedCard({ className }: { className?: string }) {
                       sentence is a sentence, and cutting it into pieces in the
                       data so the middle one can be blue is a sentence that can no
                       longer be rewritten without touching the markup. */}
-                  <p className="pointer-events-auto mx-auto mt-5 max-w-[62ch] text-[15px] leading-[1.7] text-quiet sm:mt-6 sm:text-[16px] lg:mx-0">
+                  <motion.p
+                    variants={HERO_RISE}
+                    className="pointer-events-auto mx-auto mt-5 max-w-[62ch] text-[15px] leading-[1.7] text-quiet sm:mt-6 sm:text-[16px] lg:mx-0"
+                  >
                     {shown.note?.split(SISTER).map((part, n) => (
                       <span key={n}>
                         {n > 0 ? (
@@ -1357,7 +1440,7 @@ export function NotchedCard({ className }: { className?: string }) {
                         {part}
                       </span>
                     ))}
-                  </p>
+                  </motion.p>
 
                   {/* Four doors, one row, and the first one filled. Where they all
                     look the same there is no first choice, and a row of four
@@ -1370,7 +1453,10 @@ export function NotchedCard({ className }: { className?: string }) {
                       card they hold one line; on a narrow one, where there is
                       genuinely no line to hold, they wrap as they always
                       did. */}
-                  <div className="pointer-events-auto mt-8 flex flex-wrap justify-center gap-2.5 sm:mt-10 lg:flex-nowrap lg:justify-start">
+                  <motion.div
+                    variants={HERO_RISE}
+                    className="pointer-events-auto mt-8 flex flex-wrap justify-center gap-2.5 sm:mt-10 lg:flex-nowrap lg:justify-start"
+                  >
                     <Link
                       href={ROUTES.build}
                       className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-5.5 py-3.5 text-[15px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
@@ -1433,11 +1519,15 @@ export function NotchedCard({ className }: { className?: string }) {
                         </Link>
                       );
                     })}
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
               </div>
 
-              <div className="hidden items-center justify-center gap-4 md:flex">
+              {/* The floor line arrives last, after everything it sits under. */}
+              <motion.div
+                variants={HERO_RISE}
+                className="hidden items-center justify-center gap-4 md:flex"
+              >
                 <Image
                   src="/assets/logo.png"
                   alt=""
@@ -1464,7 +1554,7 @@ export function NotchedCard({ className }: { className?: string }) {
                   Custom software development for businesses that need more than
                   a website.
                 </span>
-              </div>
+              </motion.div>
             </motion.div>
           </AnimatePresence>
         </div>
