@@ -31,48 +31,6 @@ import { useEffect, useRef } from "react";
 --------------------------------------------------------------------------- */
 
 /**
- * What stands in the notch, measured rather than guessed.
- *
- * The notch is sized from the plate in it, exactly as it is on the card. A cut
- * sized as a fraction of the picture is a cut too small for its contents on a
- * phone and a hole on a desk.
- */
-const PLATE = 26;
-
-/**
- * How far the controls stand off the corner they cover, as a share of the
- * picture.
- *
- * They sit on the film rather than in a piece taken out of it, which is the one
- * place this screen departs from how the rest of the site draws a control - and
- * it departs for a reason the shape could not solve. The reel is signed: whatever
- * made it burned a four-pointed star into the bottom right of every frame, and
- * that mark cannot come off a hundred and twenty stills without repainting them.
- *
- * Cutting the corner away took it out of the picture and cost a quarter of the
- * frame to do it. Standing something opaque over it costs nothing and hides it
- * completely, and the something that has to be somewhere on this screen anyway is
- * the pair of buttons. So they are placed where the badge is rather than where a
- * button would naturally go.
- *
- * Shares rather than pixels, because the star sits at a fixed place in a frame
- * that is a ratio - a fraction stays over it at every size, where a pixel
- * measurement is right on one screen and off on the next.
- */
-const FOOT_RIGHT = 0.035;
-const FOOT_DOWN = 0.055;
-
-/**
- * How wide the film may ever be drawn: the source's own width.
- *
- * The stills are 1280 across. Anything past this is the browser inventing
- * pixels, and a frame invented at half again its size is soft across the whole
- * of it - which on a screen given over entirely to one picture is the only thing
- * there is to look at.
- */
-const NATIVE = 1280;
-
-/**
  * How much scrolling the whole reel takes, as multiples of its own height.
  *
  * Four, which is about two turns of a wheel. Less and the frames flick past too
