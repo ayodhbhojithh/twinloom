@@ -221,7 +221,20 @@ export function GradientWaves({
       alpha: true,
       premultipliedAlpha: true,
       antialias: false,
-      dpr: Math.min(window.devicePixelRatio || 1, 2),
+      /* One, and this is the single biggest number on the page.
+
+         Every pixel of this is raymarched - seventy steps through a noise field
+         for each one - so the cost is the pixel count multiplied by seventy. At
+         a device ratio of two on a card the width of a window that is close to
+         seven million pixels and half a billion steps a frame, which is what
+         made this screen crawl.
+
+         And it buys nothing here. A denser buffer sharpens edges, and this
+         picture has none: it is a smooth blue swell with a soft horizon and a
+         grain pass over it. There is no line in it whose stair-stepping anybody
+         could point at. Capped at one, it is a quarter of the work for a
+         picture nobody can tell from the other. */
+      dpr: Math.min(window.devicePixelRatio || 1, 1),
     });
 
     const gl = renderer.gl;

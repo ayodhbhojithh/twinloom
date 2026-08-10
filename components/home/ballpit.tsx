@@ -445,14 +445,38 @@ class Physics {
 
       for (let j = i + 1; j < config.count; j += 1) {
         const other = 3 * j;
+        const otherRadius = sizeData[j];
+        const touching = radius + otherRadius;
+
+        /* Three subtractions before anything else happens.
+
+           This is the hot loop of the whole screen: every ball against every
+           ball behind it, which at two hundred and twenty is twenty-four
+           thousand pairs a frame, sixty times a second. Almost none of them
+           touch - the field is mostly space - and the version below was doing
+           two `Vector3.fromArray` calls, a copy, a subtract and a square root
+           for each one before finding that out.
+
+           A ball is at most about one unit across and the box is tens of units
+           wide, so a comparison on one axis rejects the overwhelming majority
+           for the cost of a subtraction. Three of them, cheapest axis first,
+           and only what survives gets read into vectors and measured. The
+           physics is identical: the pairs this skips are pairs whose distance
+           on a single axis already exceeds the sum of their radii, and no such
+           pair can be overlapping. */
+        const dx = positionData[other] - positionData[at];
+        if (dx > touching || dx < -touching) continue;
+        const dy = positionData[other + 1] - positionData[at + 1];
+        if (dy > touching || dy < -touching) continue;
+        const dz = positionData[other + 2] - positionData[at + 2];
+        if (dz > touching || dz < -touching) continue;
+
+        const apart = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (apart >= touching) continue;
+
         there.fromArray(positionData, other);
         otherDrift.fromArray(velocityData, other);
-        const otherRadius = sizeData[j];
-
-        gap.copy(there).sub(here);
-        const apart = gap.length();
-        const touching = radius + otherRadius;
-        if (apart >= touching) continue;
+        gap.set(dx, dy, dz);
 
         push
           .copy(gap)
@@ -774,7 +798,15 @@ function createBallpit(canvas: HTMLCanvasElement, config: Partial<PitConfig>) {
   stage.camera.position.set(0, 0, 20);
   stage.camera.lookAt(0, 0, 0);
   stage.cameraMaxAspect = 1.5;
-  stage.maxPixelRatio = 2;
+  /* One and a half rather than two.
+
+     Two hundred glossy spheres over a white card is a picture with no fine
+     detail in it anywhere - no type, no hairlines, nothing whose edge a denser
+     buffer would sharpen. What it does have is a lot of shaded pixels, and a
+     physically-shaded material with a scattering term is expensive per pixel.
+     Three quarters of the density is a bit over half the shading, and side by
+     side the difference is not findable. */
+  stage.maxPixelRatio = 1.5;
   stage.resize();
 
   const beads = new Beads(stage.renderer, { ...DEFAULTS, ...config });

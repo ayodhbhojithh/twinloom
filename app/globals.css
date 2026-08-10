@@ -1486,19 +1486,30 @@
     pointer-events: none;
   }
 
-  /* Promoted before either moves. SVG transforms do not run on the compositor -
-     they are main thread work, on the same thread as the canvas drawing the
-     card's texture - and the frame the browser would otherwise spend working out
-     that it needs a layer is the first frame of the hop, which is the one frame
-     anybody is looking at. Eleven small groups is worth the memory; a hundred
-     would not be. */
-  .trail-hop {
-    will-change: transform;
-  }
-
   .trail-hop-shade {
     transform-box: fill-box;
     transform-origin: center;
+  }
+
+  /* Promoted while the pointer is over one, and not before.
+
+     SVG transforms do not run on the compositor - they are main thread work, on
+     the same thread as the canvas drawing the card's texture - so the frame the
+     browser would otherwise spend working out that it needs a layer is the first
+     frame of the hop, which is the one frame anybody is looking at.
+
+     It was declared on every bead, permanently: twenty-two layers held for the
+     life of the page so that two of them could move for eight tenths of a
+     second, on the screen the site opens on. `will-change` is a promise to the
+     browser about what is *about* to change, and left standing it is a promise
+     about nothing.
+
+     Hover is the right moment because it is the same moment. The target these
+     hang off does not move, and the pointer entering it is what both raises this
+     and fires the hop - so the layer is made on the event rather than in advance
+     of it, and never for a bead nobody has gone near. */
+  .trail-pick:hover .trail-hop,
+  .trail-pick:hover .trail-hop-shade {
     will-change: transform, opacity;
   }
 

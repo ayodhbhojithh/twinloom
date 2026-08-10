@@ -247,10 +247,15 @@ export function DotField({ className }: { className?: string }) {
       const rect = box.getBoundingClientRect();
       if (rect.width < 2 || rect.height < 2) return;
 
-      /* One and a half at most. This is a field of one-pixel dots: a denser
-         backing store buys a slightly crisper blur and costs four times the
-         pixels, and every one of them is cleared and painted every frame. */
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      /* One. This is a field of pixel-and-a-half dots at two thirds of a
+         hairline's strength, under a mask that fades most of them out - there
+         is nothing in it a denser backing store could sharpen, and every pixel
+         of it is cleared and painted every frame. At a device ratio of two it
+         was clearing four times the area to draw the same four thousand marks.
+
+         Held at one rather than one and a half for the same reason the swell
+         behind the other screen is: what is being drawn has no edges. */
+      const dpr = 1;
       width = rect.width;
       height = rect.height;
       canvas.width = Math.round(width * dpr);
