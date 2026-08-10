@@ -25,13 +25,23 @@ export function BlogView() {
 
   return (
     <PageShell>
-      <header className="mb-9 flex flex-wrap items-end justify-between gap-x-12 gap-y-5">
+      {/* Arriving rather than simply being there.
+
+          `reveal` is a class in the stylesheet and one observer that already
+          runs for the whole document - see `RevealWatcher` - so this costs
+          nothing per page and no JavaScript here. `--step` is the order things
+          land in, ninety milliseconds apart: the head, then the lead, then the
+          list. Read down, which is how the page is read.
+
+          It respects `prefers-reduced-motion` at the watcher rather than here,
+          and a page whose script never runs shows everything at once. */}
+      <header className="reveal mb-9 flex flex-wrap items-end justify-between gap-x-12 gap-y-5 max-sm:mb-6 max-sm:gap-y-3">
         <div className="min-w-0">
-          <p className="font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase">
+          <p className="font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase max-sm:text-[9px]">
             {INSIGHTS.length} pieces · {TOPICS.length} subjects
           </p>
 
-          <h1 className="mt-3 max-w-[20ch] text-[clamp(28px,3vw,44px)] leading-[1.04] font-extrabold tracking-[-0.04em] text-ink">
+          <h1 className="mt-3 max-w-[20ch] text-[clamp(28px,3vw,44px)] leading-[1.04] font-extrabold tracking-[-0.04em] text-ink max-sm:mt-2 max-sm:text-[26px]">
             Insights.
           </h1>
         </div>
@@ -46,7 +56,7 @@ export function BlogView() {
             `w-full` first and `flex-1` only from `sm`. Given `flex-1` at every
             width it shrank to nothing once the row wrapped on a phone - sixty
             pixels wide and twenty-two lines deep.  */}
-        <p className="w-full min-w-0 max-w-[92ch] text-[14.5px] leading-[1.6] text-quiet sm:flex-1">
+        <p className="w-full min-w-0 max-w-[92ch] text-[14.5px] leading-[1.6] text-quiet max-sm:text-[13px] max-sm:leading-[1.55] sm:flex-1">
           The decisions behind a website, written out in full: what each piece
           of technology actually touches, what it costs to run, and where we
           would tell you to do something other than what we sell.
@@ -59,7 +69,7 @@ export function BlogView() {
           did not read as a card while the three below it did. */}
       <CutPanel
         tone="field"
-        className="w-full"
+        className="reveal w-full [--step:1]"
         image={plateFor(lead.slug)}
         toolbar={
           <span className="flex h-10 w-full items-center justify-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
@@ -110,11 +120,11 @@ export function BlogView() {
           tabIndex={-1}
         />
 
-        <p className="relative z-20 font-mono text-[9px] font-bold tracking-[0.16em] text-mark uppercase">
+        <p className="relative z-20 font-mono text-[9px] font-bold tracking-[0.16em] text-mark uppercase max-sm:text-[8.5px]">
           {lead.topic}
         </p>
 
-        <h2 className="relative z-20 mt-3 max-w-[min(24ch,var(--notch-free,62ch))] text-[clamp(24px,2.6vw,38px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink">
+        <h2 className="relative z-20 mt-3 max-w-[min(24ch,var(--notch-free,62ch))] text-[clamp(24px,2.6vw,38px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink max-sm:mt-2 max-sm:text-[21px]">
           <Link
             href={`${ROUTES.insights}/${lead.slug}`}
             className="transition-opacity hover:opacity-70"
@@ -123,7 +133,7 @@ export function BlogView() {
           </Link>
         </h2>
 
-        <p className="relative z-20 mt-4 max-w-[46ch] text-[15px] leading-[1.6] text-body lg:max-w-[42%]">
+        <p className="relative z-20 mt-4 max-w-[46ch] text-[15px] leading-[1.6] text-body max-sm:mt-2.5 max-sm:text-[13px] max-sm:leading-[1.55] lg:max-w-[42%]">
           {lead.lead}
         </p>
       </CutPanel>
@@ -132,12 +142,20 @@ export function BlogView() {
           carries the ground, and each one carries its own picture on the right,
           so the list reads as three more of the thing above it rather than as
           an index underneath it. */}
-      <ol className="mt-4 flex flex-col gap-3">
+      <ol className="mt-4 flex flex-col gap-3 max-sm:mt-3 max-sm:gap-2.5">
         {rest.map((article, n) => (
-          <li key={article.slug}>
+          /* Each row arrives after the one above it, and the run starts where
+             the lead left off. Capped at five steps: past about half a second
+             the delay stops reading as a sequence and starts reading as a page
+             that is slow to fill in. */
+          <li
+            key={article.slug}
+            className="reveal"
+            style={{ ["--step" as string]: Math.min(n + 2, 5) }}
+          >
             <Link
               href={`${ROUTES.insights}/${article.slug}`}
-              className="group/piece relative block overflow-hidden rounded-[22px] bg-field transition-colors hover:bg-well"
+              className="group/piece relative block overflow-hidden rounded-[22px] bg-field transition-colors hover:bg-well max-sm:rounded-[18px]"
             >
               {/* The picture, on the right and faded into the ground it sits
                   on. The same arrangement as the card above, at the size a row
@@ -197,8 +215,8 @@ export function BlogView() {
                 />
               </span>
 
-              <span className="relative grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-5 gap-y-3 p-6 sm:p-7 lg:max-w-[68%]">
-                <span className="mt-[3px] font-mono text-[11px] font-bold text-idx tabular-nums">
+              <span className="relative grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-5 gap-y-3 p-6 max-sm:gap-x-3 max-sm:p-4 sm:p-7 lg:max-w-[68%]">
+                <span className="mt-[3px] font-mono text-[11px] font-bold text-idx tabular-nums max-sm:text-[10px]">
                   {String(n + 2).padStart(2, "0")}
                 </span>
 
@@ -212,15 +230,15 @@ export function BlogView() {
                     </span>
                   </span>
 
-                  <b className="mt-2 block max-w-[34ch] text-[clamp(18px,1.7vw,24px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink">
+                  <b className="mt-2 block max-w-[34ch] text-[clamp(18px,1.7vw,24px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink max-sm:mt-1.5 max-sm:text-[16.5px]">
                     {article.title}
                   </b>
 
-                  <span className="mt-2 block max-w-[58ch] text-[13.5px] leading-[1.55] text-quiet">
+                  <span className="mt-2 block max-w-[58ch] text-[13.5px] leading-[1.55] text-quiet max-sm:mt-1.5 max-sm:text-[12.5px] max-sm:leading-[1.5]">
                     {article.note}
                   </span>
 
-                  <span className="mt-4 inline-flex items-center gap-2 font-mono text-[9px] font-bold tracking-[0.14em] text-quiet uppercase transition-colors group-hover/piece:text-ink">
+                  <span className="mt-4 inline-flex items-center gap-2 font-mono text-[9px] font-bold tracking-[0.14em] text-quiet uppercase transition-colors group-hover/piece:text-ink max-sm:mt-3">
                     Read it
                     <span
                       aria-hidden
