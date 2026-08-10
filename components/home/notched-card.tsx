@@ -644,6 +644,105 @@ export function NotchedCard({ className }: { className?: string }) {
     return () => watcher.disconnect();
   }, []);
 
+  /* Turning the card with a thumb.
+   *
+   * The three controls in the notch are the way through this on a desk, and on a
+   * phone they are a 26px target in the middle of the top edge - reachable, but
+   * not what anybody's hand does with a card that has five faces. A swipe is,
+   * and a card that ignores one reads as a picture rather than as a thing you
+   * can turn.
+   *
+   * Touch listeners rather than pointer ones, deliberately: this should happen
+   * for a thumb and not for a mouse dragged across the card. A mouse has the
+   * arrows, and the pit on the second screen answers to a pointer drag by moving
+   * its spheres - turning the card underneath that would be two things
+   * responding to one gesture.
+   *
+   * Read at the end rather than followed as it goes. Following it means the card
+   * has to move with the finger, which means the five screens have to exist side
+   * by side to be moved - and four of them are canvases. What this does instead
+   * is decide, once, what the gesture was: the card crossfades exactly as it
+   * does from the arrows, and nothing is mounted that was not already.
+   *
+   * Three tests, and all three are needed. Far enough that a tap with a wobble
+   * in it is not a swipe; quick enough that a finger resting and later lifting
+   * somewhere else is not one either; and more sideways than up, or every scroll
+   * down the page that drifts a little would turn the card under the reader's
+   * hand. The ratio is what makes vertical scrolling safe, so it is deliberately
+   * generous - a gesture has to be clearly horizontal to count.
+   *
+   * Passive, and nothing is prevented. The page must stay scrollable through the
+   * card at all times: a swipe that turns out to be a scroll has to have been
+   * scrolling the whole way down, not from the moment this decided it was not
+   * interested.
+   */
+  useEffect(() => {
+    const node = box.current;
+    if (!node) return;
+
+    /* How far, how fast, and how straight a swipe has to be. */
+    const FAR = 56;
+    const QUICK = 600;
+    const STRAIGHT = 1.6;
+
+    let x = 0;
+    let y = 0;
+    let at = 0;
+    let live = false;
+
+    const start = (event: TouchEvent) => {
+      /* One finger. Two is a pinch, and a pinch that ends wide of where it
+         began is not somebody asking for the next screen. */
+      if (event.touches.length !== 1) {
+        live = false;
+        return;
+      }
+
+      const touch = event.touches[0];
+      x = touch.clientX;
+      y = touch.clientY;
+      at = event.timeStamp;
+      live = true;
+    };
+
+    const end = (event: TouchEvent) => {
+      if (!live) return;
+      live = false;
+
+      const touch = event.changedTouches[0];
+      if (!touch) return;
+
+      const dx = touch.clientX - x;
+      const dy = touch.clientY - y;
+
+      if (event.timeStamp - at > QUICK) return;
+      if (Math.abs(dx) < FAR) return;
+      if (Math.abs(dx) < Math.abs(dy) * STRAIGHT) return;
+
+      /* Left takes you forward, which is the direction the card moves rather
+         than the direction the finger does - the same way a page of anything is
+         turned. */
+      setAt(
+        (was) =>
+          (was + (dx < 0 ? 1 : -1) + HERO_SLIDES.length) % HERO_SLIDES.length,
+      );
+    };
+
+    const drop = () => {
+      live = false;
+    };
+
+    node.addEventListener("touchstart", start, { passive: true });
+    node.addEventListener("touchend", end, { passive: true });
+    node.addEventListener("touchcancel", drop, { passive: true });
+
+    return () => {
+      node.removeEventListener("touchstart", start);
+      node.removeEventListener("touchend", end);
+      node.removeEventListener("touchcancel", drop);
+    };
+  }, []);
+
   /* Which slide is showing, read before the geometry rather than after it.
 
      It used to come later, because the cuts were the same on every screen and
