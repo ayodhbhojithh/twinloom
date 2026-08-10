@@ -242,9 +242,17 @@ export function ServiceWall({
                 by a different number and no CSS could have evened them up.
                 Each is cropped to its own artwork and padded back out to a
                 square, so one box scales them all alike. */}
+            {/* Down from four-to-three on a phone and a square on a desk.
+
+                The drawing was the card: on a 286 wide card a square box is 286
+                tall, which is more than the name and the sentence under it put
+                together, so a set of six cards read as six pictures with
+                captions. Five-to-four and three-to-two give the picture about a
+                fifth of its height back and hand it to the words, and it is the
+                words somebody is choosing between. */}
             <span
               aria-hidden
-              className="relative -mx-1 block aspect-4/3 shrink-0 sm:aspect-square"
+              className="relative -mx-1 block aspect-5/4 shrink-0 sm:aspect-3/2"
             >
               {entry.art ? (
                 <Image
@@ -270,7 +278,7 @@ export function ServiceWall({
                   Four of these run to one line and three to two, and with the
                   box sized to its own words the sentences under them landed at
                   four different heights along the row. */}
-              <h3 className="min-h-[2.4em] text-[12px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink sm:text-[17px]">
+              <h3 className="min-h-[2.4em] text-[13px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink sm:text-[18.5px]">
                 {entry.n}
               </h3>
 
@@ -289,7 +297,7 @@ export function ServiceWall({
                   anything. Four bullets of what each discipline covers stood
                   here once and those were right to go, because a list nobody
                   can stop to read is furniture; a line of prose is not. */}
-              <p className="mt-1 text-[10.5px] leading-[1.5] text-quiet sm:mt-1.5 sm:text-[13.5px] sm:leading-[1.6]">
+              <p className="mt-1 text-[11.5px] leading-[1.55] text-quiet sm:mt-2 sm:text-[14.5px] sm:leading-[1.62]">
                 <SisterSentence say={entry.sub} />
               </p>
             </div>

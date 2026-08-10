@@ -65,11 +65,18 @@ const RADIUS = 5;
  * count - add a colour to `INKS` and the row closes up rather than growing out
  * of the card.
  *
- * Set so the row comes out the width of the line of type under it - the mark,
- * the name, the rule and the sentence, which together take a bit over a third
- * of the card. That is the thing this row is standing over, and two objects on
- * the same axis at two different widths is what made it read as a strip of
- * scenery with a caption parked in the middle of it.
+ * Set so the row comes out a little inside the line of type under it.
+ *
+ * It matched that line exactly for a while, on the argument that two objects on
+ * the same axis at two different widths read as scenery with a caption parked in
+ * the middle of it. That held while there were eleven beads on it. At seven the
+ * step is whatever divides the span between the two ends, so the same width gave
+ * a row with more gap in it than dots - and a row of dots spaced further apart
+ * than they are wide stops being a row and becomes seven separate marks.
+ *
+ * Narrower is the only lever, because the count is the colours and the colours
+ * are not repeating. Close enough to the line below that the two still read as
+ * one block, and tight enough that the dots read as a run.
  *
  * A share of the viewBox rather than a measurement of that line. This strip is
  * drawn at the full width of the card, so the two track each other as the card
@@ -78,7 +85,7 @@ const RADIUS = 5;
  * the line and feeding its width back here is the exact answer and costs an
  * observer, a re-render and a layout read on a decorative row.
  */
-const PAD = 390;
+const PAD = 462;
 
 /**
  * The colours, in the order they run.
