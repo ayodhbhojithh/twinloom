@@ -1547,7 +1547,17 @@ export function NotchedCard({ className }: { className?: string }) {
              where one was wanted, and a hand's depth of empty card under the
              last button. Its height is its contents; the card is what holds the
              floor, and the card gets that from the section it fills. */
-          className="pointer-events-none absolute inset-0 z-10 flex items-stretch max-sm:relative max-sm:inset-auto max-sm:min-h-[calc(100svh-var(--nav-height)-var(--sill-top)-var(--sill-top)/2)]"
+          /* `flex-1` on a phone, and it is what makes `justify-center` below
+             true rather than nearly true. In the card's column this block was
+             sized by its own minimum, so any height the card had past that
+             minimum - and it has some, because the card's floor and this one are
+             worked out from different sums - was card with nothing in it under
+             the last button. Told to take what is left, the block is the card,
+             and the column centred inside it is centred on the screen.
+
+             The minimum stays as the floor for the case where the contents
+             overrun it, which is what stops a long headline being squeezed. */
+          className="pointer-events-none absolute inset-0 z-10 flex items-stretch max-sm:relative max-sm:inset-auto max-sm:min-h-[calc(100svh-var(--nav-height)-var(--sill-top)/2)] max-sm:flex-1"
           style={{
             /* `head` clears the row of links, and there is no row of links on a
                phone - the bar is a wordmark and a menu button, and the notch
@@ -1664,7 +1674,7 @@ export function NotchedCard({ className }: { className?: string }) {
                   restore. The desktop screen is then provably untouched: there
                   is no shared value to get wrong, and reading any line tells you
                   which width it is for. */}
-              <div className="flex flex-1 flex-col items-center justify-center gap-6 pb-6 max-sm:gap-3 max-sm:pb-1 sm:pb-10 lg:flex-row lg:items-center lg:gap-8 2xl:gap-12">
+              <div className="flex flex-1 flex-col items-center justify-center gap-6 pb-6 max-sm:gap-4 max-sm:pb-0 sm:pb-10 lg:flex-row lg:items-center lg:gap-8 2xl:gap-12">
                 {/* Drawn wider than the room it takes, and grown leftward.
 
                     At a straight 52 per cent the mark was half the row and the
@@ -1776,7 +1786,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       right at 62px of headline is mean at 32. */}
                   <motion.h1
                     variants={HERO_RISE}
-                    className="mx-auto mt-3 max-w-[26ch] text-[clamp(28px,3.4vw,62px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink max-sm:mt-2.5 max-sm:max-w-none max-sm:text-[26px] max-sm:leading-[1.06] max-sm:tracking-[-0.042em] sm:mt-4 lg:mx-0 lg:mt-5"
+                    className="mx-auto mt-3 max-w-[26ch] text-[clamp(28px,3.4vw,62px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink max-sm:mt-3 max-sm:max-w-none max-sm:text-[28px] max-sm:leading-[1.06] max-sm:tracking-[-0.042em] sm:mt-4 lg:mx-0 lg:mt-5"
                   >
                     {shown.claim?.[0]}
                     <span className="thread-text block">
@@ -1786,7 +1796,7 @@ export function NotchedCard({ className }: { className?: string }) {
 
                   <motion.p
                     variants={HERO_RISE}
-                    className="mx-auto mt-4 max-w-[44ch] text-[clamp(15px,1.3vw,24px)] leading-[1.4] font-bold tracking-[-0.022em] text-ink max-sm:mt-2 max-sm:max-w-[34ch] max-sm:text-[12.5px] max-sm:leading-[1.45] sm:mt-5 lg:mx-0 lg:mt-6 2xl:mt-7"
+                    className="mx-auto mt-4 max-w-[44ch] text-[clamp(15px,1.3vw,24px)] leading-[1.4] font-bold tracking-[-0.022em] text-ink max-sm:mt-2.5 max-sm:max-w-[34ch] max-sm:text-[13.5px] max-sm:leading-[1.45] sm:mt-5 lg:mx-0 lg:mt-6 2xl:mt-7"
                   >
                     {shown.lead}
                   </motion.p>
@@ -1850,11 +1860,11 @@ export function NotchedCard({ className }: { className?: string }) {
                        column gives the screen a single left and right edge, and
                        it is what a control at the foot of a phone looks like
                        everywhere else. */
-                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 max-sm:mx-auto max-sm:mt-4 max-sm:w-full max-sm:max-w-[260px] max-sm:flex-col max-sm:gap-1.5 sm:mt-8 lg:mt-9 lg:flex-nowrap lg:justify-start lg:gap-2.5 2xl:mt-10"
+                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 max-sm:mx-auto max-sm:mt-5 max-sm:w-full max-sm:max-w-[268px] max-sm:flex-col max-sm:gap-2 sm:mt-8 lg:mt-9 lg:flex-nowrap lg:justify-start lg:gap-2.5 2xl:mt-10"
                   >
                     <Link
                       href={ROUTES.build}
-                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:justify-center max-sm:gap-1.5 max-sm:px-3 max-sm:py-2 max-sm:text-[12px] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]"
+                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:justify-center max-sm:gap-2 max-sm:px-3.5 max-sm:py-2.5 max-sm:text-[13px] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]"
                     >
                       <PencilLine aria-hidden className="size-4 shrink-0" />
                       Scope your website
@@ -1878,7 +1888,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       },
                     ].map((way) => {
                       const className =
-                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:justify-center max-sm:gap-1.5 max-sm:px-3 max-sm:py-2 max-sm:text-[12px] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]";
+                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:justify-center max-sm:gap-2 max-sm:px-3.5 max-sm:py-2.5 max-sm:text-[13px] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]";
                       const body = (
                         <>
                           <way.icon
@@ -1926,39 +1936,67 @@ export function NotchedCard({ className }: { className?: string }) {
                   `pointer-events-auto` because the screen around it takes no
                   clicks - the whole block is laid over a drawing, and only the
                   things that are actually controls take the pointer back. */}
+              {/* On every width now, and it used to start at `md`.
+
+                  What was under it on a phone was nothing: the three doors ended
+                  around two thirds of the way down the card and the rest was
+                  dotted ground. Padding is not what that room wanted - a screen
+                  ends on something, and the thing this screen ends on everywhere
+                  else is who else is behind the work. It is the floor line; a
+                  phone has a floor.
+
+                  Stacked there rather than strung out. The row is a name, a rule
+                  and a sentence, which is a caption and needs about sixty
+                  characters of line to be one - so below `sm` the name sits over
+                  the sentence, the rule between them goes (it separates things
+                  side by side, and these are not), and the sentence centres under
+                  the name it belongs to. */}
               <motion.div
                 variants={HERO_RISE}
-                className="hidden justify-center md:flex"
+                className="flex justify-center max-sm:pt-1"
               >
                 <a
                   href={SISTER.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="group/sister pointer-events-auto flex items-center gap-3.5"
+                  className="group/sister pointer-events-auto flex items-center gap-3.5 max-sm:flex-col max-sm:gap-1"
                 >
-                  <Image
-                    src="/assets/logo.png"
-                    alt=""
-                    width={64}
-                    height={64}
-                    aria-hidden
-                    draggable={false}
-                    sizes="64px"
-                    className="size-7 flex-none object-contain"
-                  />
-                  <span className="text-[14px] font-bold tracking-[-0.02em] text-ink lg:text-[15px]">
-                    {SISTER.name}
+                  <span className="flex items-center gap-3.5 max-sm:gap-2">
+                    <Image
+                      src="/assets/logo.png"
+                      alt=""
+                      width={64}
+                      height={64}
+                      aria-hidden
+                      draggable={false}
+                      sizes="64px"
+                      className="size-7 flex-none object-contain max-sm:size-6"
+                    />
+                    <span className="text-[14px] font-bold tracking-[-0.02em] text-ink lg:text-[15px]">
+                      {SISTER.name}
+                    </span>
+                    {/* The arrow travels with the name on a phone, where the
+                        sentence is on its own line under both - left at the end
+                        of the block it would be pointing away from a caption
+                        rather than from the thing that is a link. */}
+                    <ArrowUpRight
+                      aria-hidden
+                      className="hidden size-3.5 flex-none text-idx max-sm:block"
+                    />
                   </span>
                   {/* A rule between them, not a bullet. The two are a name and a
                       description of it, which is a caption - and a caption is
                       set off by a line. */}
-                  <span aria-hidden className="h-5 w-px flex-none bg-hair" />
+                  <span
+                    aria-hidden
+                    className="h-5 w-px flex-none bg-hair max-sm:hidden"
+                  />
                   {/* Wide enough for the whole sentence on one line where there
                       is room for one. At forty-six characters it broke after
                       "more than", which puts "a website." alone on a second
                       line - a two word orphan under a caption that is one
                       sentence long. Seventy-six is the sentence. */}
-                  <span className="max-w-[76ch] text-[12.5px] leading-[1.5] text-quiet lg:text-[13.5px]">
+                  <span className="max-w-[76ch] text-[12.5px] leading-[1.5] text-quiet max-sm:max-w-[34ch] max-sm:text-center max-sm:text-[11.5px] max-sm:leading-[1.45] lg:text-[13.5px]">
                     Custom software development for businesses that need more
                     than a website.
                   </span>
@@ -1972,7 +2010,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       answer with. */}
                   <ArrowUpRight
                     aria-hidden
-                    className="size-4 flex-none text-idx transition-transform duration-200 group-hover/sister:translate-x-0.5 group-hover/sister:-translate-y-0.5"
+                    className="size-4 flex-none text-idx transition-transform duration-200 group-hover/sister:translate-x-0.5 group-hover/sister:-translate-y-0.5 max-sm:hidden"
                   />
                 </a>
               </motion.div>
