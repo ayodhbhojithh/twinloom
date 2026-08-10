@@ -48,6 +48,16 @@ import { cn } from "@/lib/utils";
  */
 const FADE_OVER = 20;
 
+/**
+ * How far the page has to move before the bar takes a ground of its own.
+ *
+ * Four, which is to say the moment anything moves. This is not a ramp like the
+ * fade above it - it is one colour or the other - so the number is only here to
+ * keep a bar from flickering white and back at the top of a page that is being
+ * nudged by a trackpad.
+ */
+const LIFT = 4;
+
 export function SiteHeader({
   bare,
   appear,
@@ -123,6 +133,20 @@ export function SiteHeader({
       if (appear !== undefined) {
         node.dataset.here = down > appear ? "yes" : "no";
       }
+
+      /* And whether the page has moved at all under it.
+
+         At the top the bar is the top of the page and shares its ground; the
+         moment anything scrolls under it, it is a bar over a moving page and
+         wants to be a surface of its own. White, because everything that
+         travels under it - the card, every panel on every page - is white, and
+         a strip of grey laid over white reads as a gap in the page rather than
+         as a bar on it.
+
+         A threshold rather than a ramp, and a low one: this is a colour going
+         from one to the other, and there is no state between the page being at
+         the top and not being at the top. */
+      node.dataset.lifted = down > LIFT ? "yes" : "no";
     };
 
     const again = () => {
@@ -183,7 +207,7 @@ export function SiteHeader({
                  It keeps a ground rather than going transparent, because it is
                  sticky: everything below scrolls under it, and type sliding
                  beneath type is the one thing a fixed bar must not allow. */
-              "sticky top-0 z-40 bg-canvas"
+              "sticky top-0 z-40 bg-canvas transition-colors duration-200 ease-out data-[lifted=yes]:bg-field"
             : /* Fixed, not sticky, and that is the whole of it: a sticky element
                  still takes its place in the flow, so this one reserved a bar's
                  height at the top of the landing page and left an empty band
@@ -204,7 +228,7 @@ export function SiteHeader({
       {/* No padding under the row. The thing below it is the card, which
           carries its own inset from the window on every side - so a bar with
           space beneath it was two gaps where the page needed one. */}
-      <div className="page-frame relative flex items-center gap-4 pt-2.5 pb-0">
+      <div className="page-frame relative flex items-center gap-4 pt-2.5 pb-[var(--sill-top)]">
         <div className="flex min-w-0 flex-1 items-center">
           <Wordmark />
         </div>

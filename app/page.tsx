@@ -55,18 +55,17 @@ export default function LandingPage() {
       <section
         style={{
           ["--page-gutter" as string]: "var(--sill-side)",
-          /* Under the sides and the foot, but not by much.
+          /* None. The gap above the card is the header's foot now.
 
-             It was taken down to eleven, which is the floor the header's own
-             fade sets - eight pixels of white running out below the bar, and any
-             tighter and the fade lies over the top edge of the card instead of
-             over the ground. Eleven cleared the fade and nothing else: the card
-             read as hung off the header rather than as standing in the window.
-
-             Around two thirds of the sides is where it sits. The top is the one
-             edge with something above it rather than the window, so it wants
-             less than the other three - but it wants some. */
-          paddingTop: "var(--sill-top)",
+             It was a sill here, on the reasoning that the top is the one edge
+             with something above it rather than the window, so it wants less
+             than the other three but it wants some. That is still true - what
+             changed is whose padding it is. A gap held by the section below is a
+             gap every section has to hold, and the two are then two numbers that
+             can disagree; held by the bar, it is one number, the bar owns the
+             room under itself, and this edge simply starts where the header
+             stops. */
+          paddingTop: 0,
           /* The same as the head, and no longer more than it.
 
              It used to be a fifth over the sides, on the argument that a gap
@@ -134,7 +133,7 @@ export default function LandingPage() {
             when the section was `h-svh`, and being a minimum is what lets it
             grow past that when the contents need it to. */}
         <div className="page-frame w-full flex-1 max-sm:min-h-fit sm:min-h-0">
-          <NotchedCard className="h-full w-full max-sm:h-auto max-sm:min-h-[calc(100svh-var(--nav-height)-var(--sill-top)-var(--sill-top)/2)]" />
+          <NotchedCard className="h-full w-full max-sm:h-auto max-sm:min-h-[calc(100svh-var(--nav-height)-var(--sill-top)/2)]" />
         </div>
       </section>
 

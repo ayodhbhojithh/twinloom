@@ -192,8 +192,14 @@
   --breakpoint-panel: 820px;
 
   /* The header's height. Every sticky thing under it measures from this, so the
-     three of them cannot drift apart when the header changes. */
-  --nav-height: 53px;
+     three of them cannot drift apart when the header changes.
+
+     The sill is in it because the bar carries its own foot: the gap between the
+     header and whatever is under it used to be the next section's top padding,
+     which meant every section had to know how far to hold itself off the bar.
+     It is the bar's now, and this number has to include it or everything
+     measuring a screenful below the header comes out a sill too tall. */
+  --nav-height: calc(53px + var(--sill-top));
 }
 
 /* ---------------------------------------------------------------------------
