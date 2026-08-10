@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import { outline, type Cuts } from "@/components/home/notched-card";
@@ -16,7 +17,14 @@ import { outline, type Cuts } from "@/components/home/notched-card";
    size. One outline, one set of rules: change how a cut curves and this changes
    with it, because there is no second copy of the geometry to forget about.
 
-   Two things on the screen and nothing else. A loading screen is the one place
+   The mark stands inside it. The shape alone is the site's geometry and not its
+   name - it is recognisable to somebody who has already been here and is a small
+   grey outline to everybody else - so the one thing worth adding is the thing
+   that says whose site is loading. Inside the outline rather than beside it,
+   because that is what the outline is: a surface with the mark standing on it,
+   which is the landing card in miniature.
+
+   Three things on the screen and nothing else. A loading screen is the one place
    where anything additional is only there to be looked at while somebody waits,
    which is a poor reason to draw it.
 --------------------------------------------------------------------------- */
@@ -148,34 +156,63 @@ export function Boot() {
          underneath it. */
       aria-hidden
     >
-      <svg
-        width={MARK.w}
-        height={MARK.h}
-        viewBox={`0 0 ${MARK.w} ${MARK.h}`}
-        fill="none"
+      <span
+        className="relative block"
+        style={{ width: MARK.w, height: MARK.h }}
       >
-        {/* The shape, standing still. */}
-        <path
-          d={SHAPE}
-          stroke="var(--color-hair)"
-          strokeWidth="1.4"
-          strokeLinejoin="round"
+        <svg
+          width={MARK.w}
+          height={MARK.h}
+          viewBox={`0 0 ${MARK.w} ${MARK.h}`}
+          fill="none"
+        >
+          {/* The shape, standing still. */}
+          <path
+            d={SHAPE}
+            stroke="var(--color-hair)"
+            strokeWidth="1.4"
+            strokeLinejoin="round"
+          />
+          {/* And the piece of it that travels. `pathLength` normalises the
+              outline to 100 whatever its real length is, so the dash is a
+              readable fraction of the shape rather than a number that has to be
+              retuned every time a cut changes. */}
+          <path
+            className="boot-trace"
+            d={SHAPE}
+            stroke="var(--color-ink)"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            pathLength={100}
+            strokeDasharray="24 76"
+          />
+        </svg>
+
+        {/* The mark, standing on the surface the outline draws.
+
+            Centred on the whole shape rather than on what is left of it after
+            the cuts. The notch is in the top edge and the two bites are in the
+            bottom corners, so the middle is the one part of this shape that no
+            cut reaches - and a mark offset to dodge cuts it never touches would
+            look like a mark somebody had nudged.
+
+            Loaded eagerly, because this is the first thing on the screen and
+            the default is to wait until it has been discovered in the body. It
+            is the same file the header uses, so on any page after the first it
+            is already in the cache. */}
+        <Image
+          src="/assets/logo.png"
+          alt=""
+          width={192}
+          height={192}
+          draggable={false}
+          loading="eager"
+          fetchPriority="high"
+          sizes="34px"
+          className="absolute top-1/2 left-1/2 size-[34px] -translate-x-1/2 -translate-y-1/2 object-contain"
         />
-        {/* And the piece of it that travels. `pathLength` normalises the
-            outline to 100 whatever its real length is, so the dash is a
-            readable fraction of the shape rather than a number that has to be
-            retuned every time a cut changes. */}
-        <path
-          className="boot-trace"
-          d={SHAPE}
-          stroke="var(--color-ink)"
-          strokeWidth="1.4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          pathLength={100}
-          strokeDasharray="24 76"
-        />
-      </svg>
+      </span>
 
       <span className="mt-5 font-mono text-[9px] font-bold tracking-[0.22em] text-label uppercase">
         TwinLoom
