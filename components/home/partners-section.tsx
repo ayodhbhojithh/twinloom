@@ -19,7 +19,7 @@ export function PartnersSection() {
   return (
     <section
       id="services"
-      className="page-frame scroll-mt-[var(--nav-height)] pt-14 pb-14 sm:pt-20 sm:pb-20 lg:pt-32 lg:pb-28"
+      className="page-frame scroll-mt-[var(--nav-height)] pt-14 pb-14 max-sm:pt-9 max-sm:pb-9 sm:pt-20 sm:pb-20 lg:pt-32 lg:pb-28"
     >
       {/* Down the middle, and the wall crosses underneath it. That is the
           whole reason a centred heading works here: a column of centred text
@@ -36,11 +36,11 @@ export function PartnersSection() {
           is why the reveal is on a wrapper rather than on the wall: two
           animations on one element would be one `transform` written twice, and
           the second would win. */}
-      <div className="reveal mt-10 [--step:1] lg:mt-12">
+      <div className="reveal mt-10 [--step:1] max-sm:mt-6 lg:mt-12">
         <ServiceWall bleed />
       </div>
 
-      <p className="reveal mx-auto mt-6 max-w-[92ch] text-center text-[14px] leading-[1.6] text-quiet [--step:2]">
+      <p className="reveal mx-auto mt-6 max-w-[92ch] text-center text-[14px] leading-[1.6] text-quiet [--step:2] max-sm:mt-5 max-sm:text-[12.5px] max-sm:leading-[1.55]">
         One contract, one invoice, and named in the proposal before the work
         starts. Most projects need none of them - a specialist is added because
         the work justifies one.

@@ -225,7 +225,7 @@ export function ServiceWall({
            seven cards sitting in the middle of a wide screen rather than
            packed against one edge with a gap at the other. */
         className={cn(
-          "flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 [&::-webkit-scrollbar]:hidden sm:px-6",
+          "flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 [&::-webkit-scrollbar]:hidden max-sm:gap-3 max-sm:px-3.5 sm:px-6",
           still && "justify-center",
         )}
       >
@@ -251,8 +251,23 @@ export function ServiceWall({
 
                The cap is unchanged, so a wide screen is where it was: 44vw
                passes 286 at about a 650 wide window, and everything above that
-               gets the same card as before. */
-            className="group/card flex w-[clamp(146px,40vw,286px)] shrink-0 snap-start flex-col rounded-[16px] bg-field p-2.5 transition-shadow duration-300 sm:rounded-[22px] sm:p-5 hover:shadow-[0_10px_30px_rgba(24,39,75,0.08)]"
+               gets the same card as before.
+
+               Back up from 40vw, and the sentence is why. At 40 the card was
+               150 points on a 375 screen and 130 of that was measure - about
+               eighteen characters a line, so the longest of these six ran to
+               thirteen lines and the card came out as a small picture on top of
+               a paragraph the shape of a column of newsprint. The drawing is not
+               what got smaller by shrinking the card; the words did, and they
+               are the part worth reading.
+
+               52vw is 195 on that screen: still two cards to a phone with the
+               second cut, which is what says the row goes on, and a measure that
+               sets the same sentence in six lines instead of thirteen. The
+               picture stays where it was put - it is a 3:2 box on a phone rather
+               than the 2:1 a desk gets, so it takes a fixed share of the card
+               and nothing about it had to be renumbered. */
+            className="group/card flex w-[clamp(178px,52vw,286px)] shrink-0 snap-start flex-col rounded-[16px] bg-field p-2.5 transition-shadow duration-300 max-sm:p-3 sm:rounded-[22px] sm:p-5 hover:shadow-[0_10px_30px_rgba(24,39,75,0.08)]"
           >
             {/* The drawing, in the flow and sized by ratio rather than by a
                 number.
@@ -301,7 +316,7 @@ export function ServiceWall({
                   alt=""
                   fill
                   draggable={false}
-                  sizes="(max-width: 640px) 72vw, 286px"
+                  sizes="(max-width: 640px) 52vw, 286px"
                   className="object-contain transition-transform duration-500 group-hover/card:scale-[1.06]"
                 />
               ) : (
@@ -323,7 +338,7 @@ export function ServiceWall({
                   sentence under it stays left: a name is a label on a picture
                   and centres with it, where three lines of prose centred are
                   three lines ragged at both ends. */}
-              <h3 className="min-h-[2.4em] text-center text-[13px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink sm:text-[18.5px]">
+              <h3 className="min-h-[2.4em] text-center text-[13px] leading-[1.2] font-extrabold tracking-[-0.028em] text-ink max-sm:text-[13.5px] sm:text-[18.5px]">
                 {entry.n}
               </h3>
 
@@ -342,7 +357,7 @@ export function ServiceWall({
                   anything. Four bullets of what each discipline covers stood
                   here once and those were right to go, because a list nobody
                   can stop to read is furniture; a line of prose is not. */}
-              <p className="mt-1 text-[11.5px] leading-[1.55] text-quiet sm:mt-2 sm:text-[14.5px] sm:leading-[1.62]">
+              <p className="mt-1 text-[11.5px] leading-[1.55] text-quiet max-sm:mt-1.5 max-sm:text-[12px] max-sm:leading-[1.5] sm:mt-2 sm:text-[14.5px] sm:leading-[1.62]">
                 <SisterSentence say={entry.sub} />
               </p>
             </div>
