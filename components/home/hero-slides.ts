@@ -237,29 +237,38 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
   /* The fourth: a film, and what it is doing there.
 
      Nothing is set over the picture - a headline across moving footage is a
-     headline read while something else moves - so the words stand beside it
-     instead, and the film is the evidence for them. This is the one screen that
-     shows rather than says: the reel is ours, the page it is playing in is
-     ours, and both facts are made by the screen existing rather than by the
-     sentence claiming it. */
+     headline read while something else moves - so the words stand beside it and
+     the film is the evidence for them.
+
+     What the words are about is the thing that is actually happening. The reel
+     is not playing: it is a hundred and twenty stills, and the reader's own
+     scroll is what picks which one is on screen. Saying "we also make film" next
+     to a video would be a claim; saying "you are not watching this, you are
+     scrolling it" next to a reel that stops when the reader stops is a
+     demonstration, and it tells them what to do at the same time.
+
+     Verbs in the kicker rather than nouns. "Film, photography, motion" is a list
+     of departments; "filmed, cut, built" is a list of things that were done, and
+     the last of the three is the one nobody else on that list would have
+     done. */
   {
     id: "hero-6",
     view: "film",
     reel: { base: "/assets/film/fashion", frames: 120 },
-    name: "Film, and the page it moves in",
+    name: "A film you scroll",
     kind: "Film",
     year: "2026",
     summary:
-      "The reel is ours and so is the page it plays in. Fashion, product and brand film, shot, cut and graded here, then built into a site that moves as you read it.",
+      "Shot, cut and graded here, then taken apart frame by frame and built back into the page - so the reel runs at the reader's pace rather than its own.",
     facts: [
       { term: "Filmed", value: "By us" },
       { term: "Built", value: "By us" },
-      { term: "Also", value: "Stills and artwork" },
+      { term: "Frames", value: "120, scrubbed" },
     ],
-    kicker: ["Film", "Photography", "Motion"],
-    claim: ["We make the film,", "and the page it moves in."],
-    lead: "Fashion, product and brand - shot, cut and graded here.",
-    note: "Then built into a site that moves while you read it, rather than one that sits still and waits. The reel above is ours. So is the way it arrived on your screen.",
+    kicker: ["Filmed", "Cut", "Built"],
+    claim: ["You are not watching this.", "You are scrolling it."],
+    lead: "Every frame is a still, and your scroll is the shutter.",
+    note: "We shot it, cut it and graded it - fashion, product, brand. Then took it apart frame by frame and built it back into the page, so it runs at your pace instead of its own. That is the difference between a website with a film on it and a website that moves.",
     image: "",
     alt: "",
     tone: "#ffffff",

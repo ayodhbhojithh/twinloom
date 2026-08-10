@@ -1047,6 +1047,18 @@ export function NotchedCard({ className }: { className?: string }) {
                   base={shown.reel.base}
                   frames={shown.reel.frames}
                   kind={shown.kind}
+                  foot={
+                    <a
+                      href={ROUTES.services}
+                      className="group/way pointer-events-auto inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90"
+                    >
+                      What we make
+                      <ArrowUpRight
+                        aria-hidden
+                        className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                      />
+                    </a>
+                  }
                 />
               </motion.div>
 
@@ -1092,22 +1104,6 @@ export function NotchedCard({ className }: { className?: string }) {
                 >
                   {shown.note}
                 </motion.p>
-
-                <motion.div
-                  variants={HERO_RISE}
-                  className="mt-6 flex justify-center lg:mt-7 lg:justify-start"
-                >
-                  <a
-                    href={ROUTES.services}
-                    className="group/way pointer-events-auto inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90 lg:px-5 lg:py-3 lg:text-[14.5px]"
-                  >
-                    What we make
-                    <ArrowUpRight
-                      aria-hidden
-                      className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
-                    />
-                  </a>
-                </motion.div>
               </motion.div>
             </motion.div>
           </AnimatePresence>

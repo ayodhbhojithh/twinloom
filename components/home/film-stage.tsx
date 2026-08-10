@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import { outline, type Cuts } from "./notched-card";
@@ -43,6 +42,25 @@ import { outline, type Cuts } from "./notched-card";
 const PLATE = 26;
 
 /**
+ * What stands in the corner given up at the bottom right.
+ *
+ * The height of the control that goes there plus the air round it, and a floor
+ * under the width so a short label does not give a cut narrower than its own
+ * curves. Measured from the thing rather than taken as a share of the picture:
+ * a fraction of a phone is a hole too small for a button, and a fraction of a
+ * desk is a bite out of the film.
+ *
+ * The corner rather than the middle of the bottom edge. A notch cut into the
+ * centre of an edge is a piece taken out of a symmetrical thing, and it reads as
+ * a handle on the picture - which is right for the label at the top, because a
+ * label belongs to the whole frame. A control is not about the whole frame; it
+ * is the thing you do next, and the thing you do next belongs where reading
+ * ends. The card behind this puts its own way on in exactly the same corner.
+ */
+const FOOT = 42;
+const FOOT_WIDE = 186;
+
+/**
  * How wide the film may ever be drawn: the source's own width.
  *
  * The stills are 1280 across. Anything past this is the browser inventing
@@ -68,12 +86,22 @@ export function FilmStage({
   base,
   frames,
   kind,
+  foot,
 }: {
   /** The folder the stills are in, without a trailing slash. */
   base: string;
   /** How many there are. They are named `001.jpg` upward. */
   frames: number;
   kind: string;
+  /**
+   * What stands in the notch cut out of the bottom edge.
+   *
+   * Optional, and the cut only exists when something is given for it - a notch
+   * with nothing in it is a hole in the picture. Passed in rather than built
+   * here, because what the screen is asking anybody to do is the screen's
+   * business and this only knows how to make room for it.
+   */
+  foot?: React.ReactNode;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
@@ -231,16 +259,21 @@ export function FilmStage({
       barDepth: barFlare * 2,
       barRadius: barFlare,
       barFlare,
-      /* Nought, which `outline` reads as no cut at all - and each corner comes
-         back as an ordinary rounded one. */
+      /* Nought, which `outline` reads as no cut at all - and the bottom left
+         comes back as an ordinary rounded corner. */
       biteWidth: 0,
       biteHeight: 0,
       biteRadius: flare,
       biteFlare: flare,
-      dropWidth: 0,
-      dropHeight: 0,
-      dropRadius: flare,
-      dropFlare: flare,
+      /* The bottom right, given up for whatever stands there. Wider than it is
+         deep, because what stands there is a pill rather than a disc - the drop
+         takes its two dimensions separately for exactly this. Collapsed to
+         nothing when there is nothing to hold, which `outline` reads as a
+         corner. */
+      dropWidth: foot ? Math.min(Math.max(FOOT_WIDE, w * 0.2), w * 0.55) : 0,
+      dropHeight: foot ? FOOT : 0,
+      dropRadius: foot ? Math.min(flare, FOOT / 2) : flare,
+      dropFlare: foot ? Math.min(flare, FOOT / 2) : flare,
     };
   })();
 
@@ -276,37 +309,25 @@ export function FilmStage({
         </div>
       </div>
 
-      {/* Our mark, over the generator's.
+      {/* And what the screen is asking for, standing in the corner it gives up.
 
-          The reel carries a four-pointed sparkle burned into its bottom right
-          corner - the badge the tool that made it signs everything with. On a
-          landing card it is somebody else's logo on our film, and it cannot be
-          removed from the frames without repainting a hundred and twenty of
-          them.
+          In a cut rather than on the picture, which is the rule the whole site
+          is drawn by: anything you can press stands in a piece taken out of the
+          surface. A button laid over a photograph is a button somebody has put
+          there; a button standing in a hole in it is part of the same object.
 
-          So our mark stands there instead - and on the picture, with no plate
-          behind it. A logo bug is a mark on the film, and a white tile in the
-          corner of a frame is a sticker on it.
-
-          Which means the covering is the mark's own ink rather than a panel: the
-          badge underneath is a thin four-pointed star, and this is drawn over
-          the place it sits at a size that takes in the whole of it. If it ever
-          shows through the gaps in the loops, the fix is a wider mark rather
-          than a ground behind it.
-
-          Placed as a share of the picture rather than in pixels, because the
-          picture is a ratio and the badge is at a fixed place inside it - so the
-          mark sits over the same part of the frame at every size. */}
-      <Image
-        aria-hidden
-        src="/assets/logo.png"
-        alt=""
-        width={192}
-        height={192}
-        draggable={false}
-        sizes="180px"
-        className="pointer-events-none absolute right-[2.5%] bottom-[5.5%] aspect-square w-[13%] min-w-10 object-contain"
-      />
+          It is also the only place on this screen a control could go without
+          being on the film. Over the frame it would move with whatever is behind
+          it, and beside the words it was one more line of a column that already
+          had four. */}
+      {foot ? (
+        <div
+          className="pointer-events-none absolute right-0 bottom-0 flex items-center justify-center"
+          style={{ width: cut.dropWidth, height: cut.dropHeight }}
+        >
+          {foot}
+        </div>
+      ) : null}
 
       {/* What it is, standing in the notch. No plate behind it: the notch is
           already the outline, and a pill drawn inside it is a second shape
