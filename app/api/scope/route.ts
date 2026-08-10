@@ -180,10 +180,15 @@ ${body.document}`,
          submission carries no meeting at all. When that step exists it sets
          this, and the wording for all three is already here. */
       meeting: { kind: "none" },
-      /* No `archive`. There is nowhere to read a submission back - nothing is
-         stored, the email is the record - so the line is left out rather than
-         shipped as a link that goes nowhere, which is the one thing in a
-         receipt everybody presses. */
+      /* The request itself, sent back to the person who wrote it.
+
+         The same document our own copy carries, under headings written to them
+         rather than about them. It began as a link to somewhere they could read
+         it back and there is nowhere - nothing is stored, the email is the
+         record - and putting it in the message is the better answer regardless:
+         it is then in whatever they use to keep mail, and it is still there the
+         day a link would have rotted. */
+      document: body.document,
       addTo: absolute(ROUTES.build),
       contactEmail: CONTACT_INFO.primaryEmail,
       phone: CONTACT_INFO.phone,

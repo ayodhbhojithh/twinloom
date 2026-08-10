@@ -48,6 +48,36 @@ const h1 = (text: string) =>
 const p = (text: string, size = 13) =>
   `<div style="margin:12px auto 0;max-width:380px;font-family:${SANS};font-size:${size}px;line-height:1.65;color:${BODY}">${text}</div>`;
 
+/**
+ * The document's sections, said to the person who filled it in.
+ *
+ * The document is written for whoever opens our inbox, so every heading in it
+ * is about somebody who is not reading it: "what they told us", "the site their
+ * answers describe". Sent back unchanged, it is a copy of a message about them.
+ * Only the headings change - the content underneath is theirs either way, and
+ * rewriting that would give the two copies different facts to disagree over.
+ */
+const THEIR_HEADINGS: Record<string, string> = {
+  "WHO IS ASKING": "YOUR DETAILS",
+  "THE ORGANISATION": "YOUR ORGANISATION",
+  "WHAT THEY TOLD US": "WHAT YOU TOLD US",
+  "WHAT WE ARE TAKING AS READ": "WHAT WE HAVE TAKEN AS READ",
+  "THE SITE THEIR ANSWERS DESCRIBE": "THE SITE YOUR ANSWERS DESCRIBE",
+  "SYSTEMS TO JOIN TO": "SYSTEMS TO JOIN TO",
+  "IN THEIR OWN WORDS": "IN YOUR OWN WORDS",
+  REFERENCES: "WHAT YOU ATTACHED",
+};
+
+/**
+ * What their copy does not get.
+ *
+ * The folder every attachment was filed into, which is a path in our media
+ * library. It is in the document because whoever reads the request needs to
+ * find the files; to the person who sent them it is an internal address for
+ * something they already have.
+ */
+const OURS_ONLY = new Set(["ATTACHMENTS"]);
+
 export interface Meeting {
   /**
    * Which of the three things is true about talking it through.
@@ -84,7 +114,7 @@ export function scopeReceipt({
   attachments,
   notes,
   meeting = { kind: "none" },
-  archive,
+  document,
   addTo,
   contactEmail,
   phone,
@@ -102,13 +132,18 @@ export function scopeReceipt({
   notes: number;
   meeting?: Meeting;
   /**
-   * Where the whole submission can be read back.
+   * The request itself, set out underneath.
    *
-   * Optional, and left out until there is somewhere for it to point. A link in
-   * a receipt that goes nowhere is worse than no link: it is the one thing in
-   * the message somebody will try.
+   * The same text our own copy carries, under their own headings. It began as a
+   * link to somewhere they could read it back, and there is nowhere - nothing is
+   * stored, the email is the record. Which turned out to be the better answer
+   * anyway: a summary in the message is a summary in whatever they use to keep
+   * mail, and it is still there the day the link would have rotted.
+   *
+   * Optional, because a receipt is worth sending whether or not there is a
+   * document to put in it.
    */
-  archive?: string;
+  document?: string;
   /** Where to go to add to the request. The build tool, which files under the
       same reference. */
   addTo?: string;
@@ -187,7 +222,6 @@ export function scopeReceipt({
 
     ${heading("What you sent")}
     ${sent.map((line) => item(esc(line))).join("")}
-    ${archive ? item(link(archive, "Everything you sent")) : ""}
 
     ${rule}
 
@@ -197,6 +231,21 @@ export function scopeReceipt({
     )}
     ${p("Nothing you have sent commits you to anything, and nothing in it is priced.")}
     ${p(`<b style="color:${INK};font-weight:600">${esc(talk)}</b>`)}
+
+    ${
+      document
+        ? `${rule}
+           ${heading("Your request, as we have it")}
+           ${p(
+             "Everything below is what arrived. If any of it is wrong or missing, say so in a reply.",
+             12,
+           )}
+           <div style="margin:4px 0 0;text-align:left">${setDocument(document, {
+             headings: THEIR_HEADINGS,
+             omit: OURS_ONLY,
+           })}</div>`
+        : ""
+    }
 
     ${rule}
 
@@ -235,7 +284,6 @@ export function scopeReceipt({
     "",
     "WHAT YOU SENT",
     ...sent.map((line) => `  ${line}`),
-    ...(archive ? [`  Everything you sent: ${archive}`] : []),
     "",
     "WHAT HAPPENS NEXT",
     "  We read it in full. Then we talk it through with you properly - your",
@@ -247,6 +295,12 @@ export function scopeReceipt({
     "",
     `  ${talk}`,
     "",
+    /* The plain-text copy gets the document as it was written, headings and
+       all. Renaming them would mean a second table of substitutions kept in step
+       with the first, for a version of the message almost nobody reads, and the
+       text part exists so that a client which cannot render HTML shows something
+       complete rather than something polished. */
+    ...(document ? ["YOUR REQUEST, AS WE HAVE IT", "", document, ""] : []),
     "FORGOTTEN SOMETHING?",
     /* The address on its own line rather than inside the sentence. A URL set
        mid-clause is a URL that wraps mid-clause, and the half of it on the
@@ -280,6 +334,13 @@ export function scopeReceipt({
         ? `The rest of ${ref}. We read it in full, then we talk it through.`
         : `Your reference is ${ref}. We read it in full, then we talk it through.`,
       body,
+      /* Wider than the 460 a note is set at, because this one now carries the
+         request underneath it - two columns of label and value do not fit in a
+         measure chosen for four centred sentences. Still centred, though: the
+         note at the top is the message, and the document under it is set left
+         inside its own block rather than the whole thing being turned into a
+         file. */
+      width: document ? 560 : undefined,
     }),
   };
 }
@@ -431,9 +492,25 @@ const FIELD_SECTIONS = new Set(["WHO IS ASKING", "THE ORGANISATION"]);
  */
 const IN_THE_HEADER = new Set(["Your name", "Company", "Email", "Phone"]);
 
-/** A heading is a line that is already shouting. */
-const isHeading = (line: string) =>
-  /[A-Z]/.test(line) && line === line.toUpperCase() && !line.startsWith("-");
+/** What a heading may carry after its name: "(4 pages)". */
+const COUNT = /\s*\((.*)\)$/;
+
+/**
+ * A heading is a line that is already shouting.
+ *
+ * Tested with the count taken off first, which is not a detail. One heading in
+ * the document ends in "(4 pages)", and "pages" is lower case - so the whole
+ * line was not equal to its own upper case, the only section anybody actually
+ * wants to look at was not recognised as a section, and it came out as a
+ * sentence with its pages listed under a sub-heading. It read plausibly, which
+ * is why it survived two passes.
+ */
+const isHeading = (line: string) => {
+  const name = line.replace(COUNT, "");
+  return (
+    /[A-Z]/.test(name) && name === name.toUpperCase() && !line.startsWith("-")
+  );
+};
 
 const linkify = (value: string) =>
   /^https?:\/\//.test(value)
@@ -463,11 +540,24 @@ function setDocument(
   {
     headings,
     omit,
+    dedupe,
   }: {
     /** Section name as written, to section name as shown. */
     headings?: Record<string, string>;
     /** Sections to leave out entirely, with everything under them. */
     omit?: Set<string>;
+    /**
+     * Labels in `WHO IS ASKING` that the message already says above the
+     * document, and which would otherwise be said twice.
+     *
+     * An argument rather than a rule, because it depends on the message. Our
+     * copy sets the name, the address and the number as a header, so the
+     * section repeating them underneath reads as a message assembled by
+     * machine. Their copy has no such header - and their own details are the
+     * part of this they are most likely to want to check, since a mistyped
+     * number is the one thing here that stops us reaching them.
+     */
+    dedupe?: Set<string>;
   } = {},
 ) {
   const out: string[] = [];
@@ -513,7 +603,7 @@ function setDocument(
 
     if (isHeading(line)) {
       shut();
-      section = line.replace(/\s*\(.*\)$/, "");
+      section = line.replace(COUNT, "");
 
       /* Dropped with everything under it. `skipping` holds until the next
          heading, because a section is its heading plus whatever follows, and
@@ -527,7 +617,7 @@ function setDocument(
       /* The count in the heading - "(4 pages)" - set apart from the heading
          itself. It is a fact about the section rather than part of its name,
          and at the same weight it reads as one long label. */
-      const count = line.match(/\((.*)\)$/)?.[1] ?? "";
+      const count = line.match(COUNT)?.[1] ?? "";
       pending = `<div style="margin:26px 0 0;padding:0 0 8px;border-bottom:1px solid #e8eaee">
            <span style="font-family:${MONO};font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:${LABEL};line-height:1">${esc(
              headings?.[section] ?? section,
@@ -580,7 +670,7 @@ function setDocument(
     const at = line.indexOf(": ");
 
     if (at > 0 && FIELD_SECTIONS.has(section)) {
-      if (section === "WHO IS ASKING" && IN_THE_HEADER.has(line.slice(0, at))) {
+      if (section === "WHO IS ASKING" && dedupe?.has(line.slice(0, at))) {
         continue;
       }
 
@@ -681,7 +771,7 @@ export function scopeNotice({
       )}
     </table>
 
-    ${setDocument(document)}`;
+    ${setDocument(document, { dedupe: IN_THE_HEADER })}`;
 
   const text = [
     follow
