@@ -653,6 +653,40 @@ export function NotchedCard({ className }: { className?: string }) {
           </span>
         ) : null}
 
+        {/* The fourth screen: a film, filling the card.
+
+            Muted, looping and inline, which between them are the only way a
+            browser will start it without being asked. `playsInline` is the one
+            that is easy to miss: without it iOS takes any playing video full
+            screen, so a background on a card becomes the whole phone.
+
+            `preload="metadata"` rather than `auto`. Four of the five screens are
+            not this one, and somebody who never turns the card should not have
+            fetched two and a half megabytes of it - the metadata is enough for
+            the element to size itself, and the rest arrives when the screen is
+            reached. It is `Boot` that waits for the film to be playable before
+            it lifts, so the first screen is not held up by it either.
+
+            No controls and nothing announced. It is scenery on a surface, not
+            something to watch through, and a control bar drawn over a card is a
+            player somebody has parked on a page.
+
+            The tone underneath is the card's own white, so the moment before the
+            first frame is a white card rather than a black rectangle. */}
+        {shown.view === "film" && shown.video ? (
+          <video
+            aria-hidden
+            className="absolute inset-0 size-full object-cover"
+            src={shown.video}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            tabIndex={-1}
+          />
+        ) : null}
+
         {/* The second screen: the water, full bleed and nothing over it.
 
             No claim, no buttons, and no white gradient taking part of the card

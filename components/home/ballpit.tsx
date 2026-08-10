@@ -6,6 +6,7 @@ import {
   AmbientLight,
   ClampToEdgeWrapping,
   DataTexture,
+  type Texture,
   Group,
   InstancedMesh,
   LinearFilter,
@@ -159,6 +160,24 @@ class Stage {
       alpha: true,
     });
     this.renderer.outputColorSpace = SRGBColorSpace;
+
+    /* Do not read the compiler's opinion back.
+
+       Three asks the driver for every program's info log after linking, and
+       prints whatever comes back. On Windows that is ANGLE's HLSL compiler,
+       which warns about its own constant folding - "sum of 1 and -1.49e-017
+       cannot be represented accurately" - on shaders three generates itself
+       while prefiltering the environment map. The numbers are cosines of right
+       angles, which are 6e-17 rather than 0 in double precision. Nothing is
+       wrong and there is nothing to fix in them; they are a vendor compiler
+       being conversational.
+
+       Turning it off is not hiding a fault, and it is worth doing for a second
+       reason: `getProgramInfoLog` is a synchronous read back from the GPU, so
+       every program this compiles has been stalling the thread to fetch a
+       string nobody reads. Three's own guidance is to switch it off outside
+       development. */
+    this.renderer.debug.checkShaderErrors = false;
 
     this.resize();
 
@@ -633,6 +652,41 @@ function ribbon(colors: number[]) {
 
 const placing = new Object3D();
 
+/**
+ * The environment the balls are lit and reflected by, made once per renderer.
+ *
+ * Prefiltering a scene into an environment map is not cheap: it renders a cube,
+ * then blurs it down through every mip level, compiling a shader for each - and
+ * it was being done afresh every time the pit mounted, which is every time
+ * somebody turns the landing card onto that screen and back. The result is the
+ * same room every time.
+ *
+ * Keyed on the renderer because the texture belongs to a context: hand it to a
+ * second one and it is a texture uploaded to a GPU that has never seen it. A
+ * `WeakMap` so a renderer that goes away takes its entry with it.
+ *
+ * The generator is disposed as soon as it has produced the texture. It holds
+ * render targets and a mesh of its own, and it is finished the moment it
+ * answers - keeping one alive for the life of the page is keeping a scaffold up
+ * after the building is done.
+ */
+const ROOMS = new WeakMap<WebGLRenderer, Texture>();
+
+function roomFor(renderer: WebGLRenderer): Texture {
+  const had = ROOMS.get(renderer);
+  if (had) return had;
+
+  const maker = new PMREMGenerator(renderer);
+  const room = new RoomEnvironment();
+  const made = maker.fromScene(room, 0.04).texture;
+
+  maker.dispose();
+  room.clear();
+
+  ROOMS.set(renderer, made);
+  return made;
+}
+
 /** Every ball, as one instanced mesh, with the cursor's own light inside it. */
 /**
  * Every ball, as two instanced meshes rather than one.
@@ -661,10 +715,7 @@ class Beads extends Group {
   constructor(renderer: WebGLRenderer, config: PitConfig) {
     super();
 
-    const room = new PMREMGenerator(renderer).fromScene(
-      new RoomEnvironment(),
-      0.04,
-    ).texture;
+    const room = roomFor(renderer);
 
     /* Enough bands to carry a gradient. The default sphere has sixteen from
        pole to pole, and a ramp laid over sixteen is a ramp you can count. One

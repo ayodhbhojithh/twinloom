@@ -33,10 +33,12 @@ import type { Project } from "./projects";
    run - two light grounds and then this one, rather than the polarity flipping
    back and forth.
 
-   The fourth and fifth are white and empty, and waiting. They are in the run
-   rather than held back until they have something on them, because the arrows
-   are how anybody finds out how much there is - a card that grows from three
-   screens to five later is a card somebody has already decided the length of.
+   The fourth is a film, edge to edge with nothing set over it.
+
+   The fifth is white and empty, and waiting. It is in the run rather than held
+   back until it has something on it, because the arrows are how anybody finds
+   out how much there is - a card that grows from four screens to five later is
+   a card somebody has already decided the length of.
 
    Which is the shape of the card. The first is the long version; the two behind
    it each make one argument and open one door, because a card that turns should
@@ -55,18 +57,19 @@ import type { Project } from "./projects";
  * the size of the card with the words beside it, and it is the only screen that
  * is not centred - the whole of it is the asymmetry.
  *
+ * `film` is footage filling the card, with nothing laid over it.
+ *
  * `blank` is a white card and nothing else - no drawing, no words, no way on.
  * Not a placeholder graphic and not a greyed panel, because either of those is a
- * design decision made in advance of the design. Two of the five are that, and
- * they are that on purpose: the card turns onto them and there is nothing there
- * yet.
+ * design decision made in advance of the design. One of the five is that, and it
+ * is that on purpose: the card turns onto it and there is nothing there yet.
  *
  * `wave` has gone: a claim set over a horizon of dots, making the same argument
  * as a screen two along from it on a drawing that takes a moment to resolve into
  * anything - a moment a card in the middle of a turn does not have. `wave-dots`
  * is still on disk for whatever wants a field of dots next.
  */
-export type SlideView = "waves" | "balls" | "blank" | "mark";
+export type SlideView = "waves" | "balls" | "film" | "blank" | "mark";
 
 /**
  * A slide, which is a `Project` and a few more things.
@@ -91,6 +94,14 @@ export interface HeroSlide extends Project {
   kicker?: readonly string[];
   /** The paragraph under the lead, where a screen has more to say than a line. */
   note?: string;
+  /**
+   * The film this screen plays, for a `film` view.
+   *
+   * On the slide rather than in the view, for the same reason the claim is: the
+   * card branches on what a screen *is*, and which file it plays is what that
+   * screen is made of. A second film is a second slide, not a second branch.
+   */
+  video?: string;
 }
 
 /*
@@ -218,17 +229,24 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
      No `claim` and no `lead`. A screen waiting for its design should not be
      carrying copy written for somebody else's, and a headline standing on a
      white card is a design - the wrong one, made by default. */
+  /* The fourth: a film, filling the card.
+
+     Nothing over it. It is the one screen here that is footage rather than a
+     drawing, and a headline set across moving pictures is a headline read while
+     something else moves - what the card is asking for is said on the first
+     screen and again in the header. */
   {
     id: "hero-6",
-    view: "blank",
-    name: "Waiting for its design",
-    kind: "In progress",
+    view: "film",
+    video: "/assets/video/fashion.mp4",
+    name: "In motion",
+    kind: "Film",
     year: "2026",
     summary:
-      "A screen on the landing card with nothing on it yet. It turns to like any other and opens the same panel.",
+      "A screen on the landing card given over to film. It turns to like any other and opens the same panel.",
     facts: [
       { term: "Screen", value: "Four of five" },
-      { term: "Holds", value: "Nothing yet" },
+      { term: "Holds", value: "One film" },
       { term: "Opens", value: "What we do" },
     ],
     image: "",
