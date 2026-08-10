@@ -1048,16 +1048,38 @@ export function NotchedCard({ className }: { className?: string }) {
                   frames={shown.reel.frames}
                   kind={shown.kind}
                   foot={
-                    <a
-                      href={ROUTES.services}
-                      className="group/way pointer-events-auto inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90"
-                    >
-                      What we make
-                      <ArrowUpRight
-                        aria-hidden
-                        className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
-                      />
-                    </a>
+                    /* Two, and the pair is the whole point of the shape being
+                       this size: one bite out of the picture holding both ways
+                       on reads as the page reaching into the film, where two
+                       buttons on the surface would be two stickers.
+
+                       Wrapping right to left. When there is not room for one
+                       row the second drops under the first and both stay
+                       against the corner, which is the edge the cut is opening
+                       from. */
+                    <div className="flex flex-wrap items-center justify-end gap-2">
+                      <a
+                        href={ROUTES.contact}
+                        className="group/way pointer-events-auto inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
+                      >
+                        Send us a message
+                        <ArrowUpRight
+                          aria-hidden
+                          className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                        />
+                      </a>
+
+                      <a
+                        href={ROUTES.services}
+                        className="group/way pointer-events-auto inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2.5 text-[13px] font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90"
+                      >
+                        What we make
+                        <ArrowUpRight
+                          aria-hidden
+                          className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                        />
+                      </a>
+                    </div>
                   }
                 />
               </motion.div>
