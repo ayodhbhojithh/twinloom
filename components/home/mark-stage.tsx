@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -230,65 +233,7 @@ export function BeadTrail({ className }: { className?: string }) {
           in the stylesheet because it is per bead, and a stylesheet cannot hold
           ten of them without ten classes. */}
       {TRAIL.map((bead, n) => (
-        <g key={n} className="trail-pick">
-          {/* Its shadow first, so the bead sits on the line rather than beside
-              it. Flat and wide, because the light is high and in front.
-
-              The shadow and the bead each sit in a group of their own, and the
-              groups are what the hover moves. Both elements already carry an
-              animation - the drop - and a hover rule setting `animation` on the
-              same element replaces it rather than adding to it, so a bead
-              hovered while it was still falling would have had its fall
-              cancelled. One element, one animation. */}
-          <g className="trail-hop-shade">
-            <ellipse
-              className="trail-shade"
-              style={{ animationDelay: `${1 + n * 0.1}s` }}
-              cx={bead.x}
-              cy={bead.y + bead.r * 1.02}
-              /* Wider and taller than the flat one it replaces, because most
-                 of the extra is the fade. A gradient shadow measured to the
-                 same size as a flat one reads smaller than it. */
-              rx={bead.r * 1.9}
-              ry={bead.r * 0.52}
-              fill="url(#trail-shade-fill)"
-            />
-          </g>
-
-          <g className="trail-hop">
-            <circle
-              className="trail-bead"
-              style={{ animationDelay: `${1 + n * 0.1}s` }}
-              cx={bead.x}
-              cy={bead.y}
-              r={bead.r}
-              fill={`url(#bead-${n})`}
-            />
-          </g>
-
-          {/* And the thing the pointer actually meets, which does not move.
-
-              This is the whole of why the hover stopped flickering. The bead
-              was its own target: hovering it lifted it, the lift took it out
-              from under the pointer, the hover ended, it dropped back under the
-              pointer and was hovered again - a bead stuck in a loop of being
-              picked up and put down, at whatever rate the two could race each
-              other.
-
-              A target that never moves cannot lose the pointer. It is drawn
-              over the bead and the room above it, tall enough to cover the whole
-              hop, and it is invisible - the stylesheet hit-tests it whether it
-              is painted or not. Its width stops short of the step between beads,
-              so no two ever overlap. */}
-          <rect
-            className="trail-hit"
-            x={bead.x - 17}
-            y={bead.y - 26}
-            width={34}
-            height={40}
-            fill="transparent"
-          />
-        </g>
+        <Bead key={n} bead={bead} n={n} />
       ))}
     </svg>
   );
@@ -366,5 +311,102 @@ export function MarkStage({ className }: { className?: string }) {
         }}
       />
     </div>
+  );
+}
+
+/**
+ * One bead, and the hop it does when the pointer arrives.
+ *
+ * The hop is state rather than `:hover`, and that is the whole of this
+ * component. A hover animation only exists while the pointer is over the thing:
+ * take the pointer away halfway through and the rule stops matching, the
+ * animation is thrown away, and the bead is back on the thread on the next
+ * frame - which is the drop. Nothing in CSS lets an animation outlive the
+ * condition that started it.
+ *
+ * So the pointer arriving is an event rather than a state. It sets a flag, the
+ * flag runs the animation, and the animation ending clears the flag. Where the
+ * pointer is while that happens does not come into it, which means the bounce
+ * always runs to its end and always ends where the bead lives.
+ *
+ * It also gives the rule about repeating for nothing. `pointerenter` fires on
+ * arrival and not while resting, and the flag is already set for as long as the
+ * hop lasts - so a bead does one hop per arrival, and the next one needs the
+ * pointer to leave and come back.
+ */
+function Bead({
+  bead,
+  n,
+}: {
+  bead: { x: number; y: number; r: number; ink: string };
+  n: number;
+}) {
+  const [hop, setHop] = useState(false);
+
+  return (
+    <g>
+      {/* Its shadow first, so the bead sits on the line rather than beside it.
+          Flat and wide, because the light is high and in front.
+
+          The shadow and the bead each sit in a group of their own, and the
+          groups are what hops. Both elements already carry an animation - the
+          drop - and a second `animation` on the same element replaces it rather
+          than adding to it, so a bead hopped while it was still falling would
+          have had its fall cancelled. One element, one animation. */}
+      <g className={cn("trail-hop-shade", hop && "trail-hopping")}>
+        <ellipse
+          className="trail-shade"
+          style={{ animationDelay: `${1 + n * 0.1}s` }}
+          cx={bead.x}
+          cy={bead.y + bead.r * 1.02}
+          /* Wider and taller than the flat one it replaces, because most of the
+             extra is the fade. A gradient shadow measured to the same size as a
+             flat one reads smaller than it. */
+          rx={bead.r * 1.9}
+          ry={bead.r * 0.52}
+          fill="url(#trail-shade-fill)"
+        />
+      </g>
+
+      {/* The bead's own group is what carries the end of the hop, because it is
+          the one the eye is on. The shadow runs the same length on the same
+          curve, so either would do - but two listeners for one event is two
+          places for the flag to be cleared from. */}
+      <g
+        className={cn("trail-hop", hop && "trail-hopping")}
+        onAnimationEnd={() => setHop(false)}
+      >
+        <circle
+          className="trail-bead"
+          style={{ animationDelay: `${1 + n * 0.1}s` }}
+          cx={bead.x}
+          cy={bead.y}
+          r={bead.r}
+          fill={`url(#bead-${n})`}
+        />
+      </g>
+
+      {/* And the thing the pointer actually meets, which does not move.
+
+          This is why the hop stopped flickering. The bead was its own target:
+          hovering it lifted it, the lift took it out from under the pointer, the
+          hover ended, it dropped back under the pointer and was hovered again -
+          a bead stuck in a loop of being picked up and put down.
+
+          A target that never moves cannot lose the pointer. It is drawn over the
+          bead and the room above it, tall enough to cover the whole hop, and it
+          is invisible - the stylesheet hit-tests it whether it is painted or
+          not. Its width stops short of the step between beads, so no two ever
+          overlap. */}
+      <rect
+        className="trail-hit"
+        x={bead.x - 17}
+        y={bead.y - 26}
+        width={34}
+        height={40}
+        fill="transparent"
+        onPointerEnter={() => setHop(true)}
+      />
+    </g>
   );
 }
