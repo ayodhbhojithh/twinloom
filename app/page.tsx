@@ -81,18 +81,18 @@ export default function LandingPage() {
         /* The whole window, not the window less the header - the header is
            inside the card on this page, so there is nothing above it to take
            off. */
-        /* A screenful on a desk, at least a screenful on a phone.
+        /* Exactly a screenful on a desk, at least a screenful on a phone.
 
-           `h-svh` is a ceiling as well as a floor, and on a short screen the
-           card's contents are taller than it: the mark, four trades, a claim
-           over two lines, a lead, a paragraph and three doors. Held to exactly
-           one screen, the last of those was cut off by the card's own edge.
+           `h-svh` is a ceiling as well as a floor. On a desk that is right and
+           it is what this has always been: the contents fit, and a front door
+           that is precisely the window is the whole idea of the screen. On a
+           short phone they do not fit - the mark, four trades, a claim over two
+           lines, a lead, a paragraph and three doors - and held to one screen
+           the last of those was cut off by the card's own edge.
 
-           `min-h-svh` keeps the desk behaviour - there the contents fit inside
-           a screenful, so the minimum is the height - and lets a phone take the
-           room it actually needs. The page scrolls; a hero that scrolls a little
-           is a hero, and one with its buttons sliced off is a fault. */
-        className="flex min-h-svh flex-col overflow-clip"
+           So the ceiling comes off below `sm` and nowhere else. Everything from
+           `sm` up is the height it was, to the pixel. */
+        className="flex flex-col overflow-clip max-sm:min-h-svh sm:h-svh"
       >
         {/* No heading here. The card carries the `h1` now - it says the same
             claim, on the screen, where the words and the two ways in sit inside
