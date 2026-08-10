@@ -27,7 +27,7 @@ export default async function Page({
      surface holding everything else for the rest of the window. A reading
      column with a section index beside it is the wrong shell for that. */
   return (
-    <section className="flex min-h-[var(--stage)] flex-col justify-center overflow-clip py-10">
+    <section className="flex min-h-[var(--stage)] flex-col justify-center overflow-clip py-10 max-sm:py-5">
       <Suspense>
         <BookingFlow wanted={Number.isFinite(wanted) ? wanted : undefined} />
       </Suspense>

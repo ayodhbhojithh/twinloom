@@ -568,6 +568,11 @@ export function Stage({
                 under one of them at the width where the cut is largest, and a
                 control half inside a bite is a control nobody can press.
 
+                The floor under that width used to be a flat 200, which on a
+                phone was wider than the span it was meant to cap - so the rule
+                held everywhere except the one width where a control actually
+                ran under a cut. It comes down with the surface.
+
                 `mt-14` is a floor, not the gap. Where the question is short,
                 `my-auto` above has already opened far more than this and the
                 margin does nothing; where it is tall enough to fill the
@@ -577,7 +582,7 @@ export function Stage({
               className="mx-auto mt-14 w-full"
               style={{
                 maxWidth: Math.max(
-                  200,
+                  size.w < 520 ? 132 : 200,
                   size.w - 2 * Math.max(cut.biteWidth, cut.dropWidth) - 16,
                 ),
               }}

@@ -101,7 +101,6 @@ export function StepRail({
           const done = n < reached;
           const open = n <= reached;
 
-
           return (
             <li key={label} className="flex items-start">
               <button
@@ -110,7 +109,7 @@ export function StepRail({
                 aria-current={here ? "step" : undefined}
                 onClick={() => onGo(n)}
                 className={cn(
-                  "group/step flex w-[104px] flex-col items-center gap-2.5 px-1 sm:w-[132px]",
+                  "group/step flex w-[104px] flex-col items-center gap-2.5 px-1 max-sm:w-9 max-sm:gap-0 max-sm:px-0 sm:w-[132px]",
                   open ? "cursor-pointer" : "cursor-default",
                 )}
               >
@@ -119,7 +118,7 @@ export function StepRail({
                 <span
                   aria-hidden
                   className={cn(
-                    "flex size-3 items-center justify-center rounded-pill transition-all",
+                    "flex size-3 items-center justify-center rounded-pill transition-all max-sm:size-2.5 max-sm:ring-[3px]",
                     here
                       ? "bg-ink ring-4 ring-ink/15"
                       : done
@@ -128,7 +127,16 @@ export function StepRail({
                   )}
                 />
 
-                {/* The name, and nothing under it.
+                {/* The name, and nothing under it - and on a phone, not
+                    even the name.
+
+                    Four names side by side want four hundred points and the
+                    notch has two hundred and fifty, so the run either scrolled
+                    sideways or ran under the arrow standing at the left of the
+                    same bar. Neither is a progress line. The marks alone still
+                    carry the order, the position and how far along it is, and
+                    the name of the step somebody is on is the heading directly
+                    underneath - it was being said twice.
 
                     There were two lines here: the state of the step, and then
                     what had been chosen for it. Both went. The state is what
@@ -138,7 +146,7 @@ export function StepRail({
                     repeats the whole booking is not a run of steps. */}
                 <b
                   className={cn(
-                    "block max-w-full truncate text-[13px] leading-[1.2] font-bold tracking-[-0.01em] transition-colors",
+                    "block max-w-full truncate text-[13px] leading-[1.2] font-bold tracking-[-0.01em] transition-colors max-sm:hidden",
                     here
                       ? "text-ink"
                       : open
@@ -157,7 +165,7 @@ export function StepRail({
                 <span
                   aria-hidden
                   className={cn(
-                    "mt-[5px] -mx-6 h-0.5 w-12 rounded-pill transition-colors sm:w-16",
+                    "mt-[5px] -mx-6 h-0.5 w-12 rounded-pill transition-colors max-sm:mx-0 max-sm:w-5 sm:w-16",
                     n < reached ? "bg-mark" : "bg-hair",
                   )}
                 />
@@ -234,7 +242,9 @@ export function BookStage({
             </Disc>
           </span>
 
-          <div className="flex min-w-0 flex-1 justify-center px-11">{rail}</div>
+          <div className="flex min-w-0 flex-1 justify-center px-11 max-sm:px-9">
+            {rail}
+          </div>
         </div>
       }
       aside={
@@ -253,7 +263,7 @@ export function BookStage({
           onClick={onNext}
           disabled={!canGoOn}
           className={cn(
-            "flex size-11 items-center justify-center rounded-pill transition-opacity",
+            "flex size-11 items-center justify-center rounded-pill transition-opacity max-sm:size-10",
             canGoOn
               ? "cursor-pointer bg-ink text-white hover:opacity-85"
               : "cursor-default bg-planned text-white/70",
@@ -267,13 +277,13 @@ export function BookStage({
         </button>
       }
     >
-      <div className="mx-auto mt-6 max-w-[1180px] text-center">
-        <h2 className="mx-auto max-w-[24ch] text-[clamp(20px,1.9vw,27px)] leading-[1.08] font-extrabold tracking-[-0.032em] text-ink">
+      <div className="mx-auto mt-6 max-w-[1180px] text-center max-sm:mt-2">
+        <h2 className="mx-auto max-w-[24ch] text-[clamp(20px,1.9vw,27px)] leading-[1.08] font-extrabold tracking-[-0.032em] text-ink max-sm:text-[18px]">
           {title}
         </h2>
 
         {note ? (
-          <p className="mx-auto mt-2 max-w-[62ch] text-[13.5px] leading-[1.5] text-quiet sm:text-[14px]">
+          <p className="mx-auto mt-2 max-w-[62ch] text-[13.5px] leading-[1.5] text-quiet max-sm:mt-1.5 max-sm:text-[12.5px] sm:text-[14px]">
             {note}
           </p>
         ) : null}
@@ -283,7 +293,9 @@ export function BookStage({
           centre line as its heading rather than running the full surface, so
           three cards and four chips read as one block instead of two rows that
           happen to start in the same place. */}
-      <div className="mx-auto mt-8 w-full max-w-[1180px]">{children}</div>
+      <div className="mx-auto mt-8 w-full max-w-[1180px] max-sm:mt-5">
+        {children}
+      </div>
     </CutPanel>
   );
 }

@@ -137,8 +137,15 @@ export function CutPanel({
     const w = Math.max(size.w, 1);
     const h = Math.max(size.h, 1);
 
-    const radius = Math.max(20, Math.min(w * 0.02 + 14, 34));
-    const flare = Math.max(20, Math.min(h * 0.035, 28));
+    /* Where the surface stops being wide enough to give a third of its
+       bottom edge away to two corners. */
+    const tight = w < 520;
+
+    const radius = Math.max(tight ? 16 : 20, Math.min(w * 0.02 + 14, 34));
+    const flare = Math.max(
+      tight ? 16 : 20,
+      Math.min(h * 0.035, tight ? 22 : 28),
+    );
 
     /* The notch draws its arcs tighter than the corners do.
 
@@ -178,7 +185,15 @@ export function CutPanel({
 
     /* One size for both bottom cuts. Two cuts of different sizes on one
        surface read as two decisions rather than one. */
-    const nook = Math.max(flare * 2 + 20, Math.min(w * 0.07, 92));
+    /* Both bottom cuts. The floor is the control standing in one: `flare * 2`
+       is where the two arcs meet, and what is added to it is the air round a
+       target a thumb has to hit - which is less air on a phone, because there
+       the whole edge is only three hundred points wide and every pixel given to
+       a corner is one taken off the band between them. */
+    const nook = Math.max(
+      flare * 2 + (tight ? 10 : 20),
+      Math.min(w * 0.07, tight ? 62 : 92),
+    );
 
     return {
       radius,

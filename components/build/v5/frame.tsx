@@ -57,7 +57,11 @@ export function StageStep({
       className="min-h-[420px] w-full sm:min-h-[540px]"
       toolbar={
         <Plate>
-          <Disc label="Previous step" onClick={() => onGo(at - 1)} disabled={first}>
+          <Disc
+            label="Previous step"
+            onClick={() => onGo(at - 1)}
+            disabled={first}
+          >
             <ArrowLeft className="size-4" />
           </Disc>
 
@@ -98,7 +102,7 @@ export function StageStep({
            which reads as a thing that slipped rather than a thing that was
            placed. */
         <div className="flex size-full flex-col items-center justify-center">
-          <b className="font-mono text-[24px] leading-none font-bold text-ink tabular-nums">
+          <b className="font-mono text-[24px] leading-none font-bold text-ink tabular-nums max-sm:text-[19px]">
             {pages}
           </b>
           <span className="mt-1.5 font-mono text-[8.5px] font-bold tracking-[0.12em] text-label uppercase">
@@ -148,7 +152,7 @@ export function StageStep({
             <button
               type="button"
               onClick={() => onGo(STEPS.length - 1)}
-              className="group flex cursor-pointer items-center gap-2 rounded-pill bg-ink px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-85"
+              className="group flex cursor-pointer items-center gap-2 rounded-pill bg-ink px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-85 max-sm:gap-1.5 max-sm:px-3 max-sm:py-1.5 max-sm:text-[12px] max-sm:leading-[1.3]"
             >
               Send what you have so far
               <ArrowUpRight

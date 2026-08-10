@@ -326,7 +326,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
           <span className="text-quiet"> that suits you.</span>
         </h1>
 
-        <p className="mx-auto mt-4 max-w-[68ch] text-[15px] leading-[1.6] text-quiet">
+        <p className="mx-auto mt-4 max-w-[68ch] text-[15px] leading-[1.6] text-quiet max-sm:mt-2.5 max-sm:text-[13.5px]">
           {carried
             ? "Set to go through the requirements you have just sent us. Pick a time and the rest is already filled in."
             : "Four questions, nothing to prepare, and real availability - so a time you can pick is a time you can have."}
@@ -352,12 +352,10 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
       {/* The surface, filling what the head leaves - the landing page's own
           arrangement, where the card is the page and the words are a band
           above it. */}
-      <div className="page-frame mt-8 w-full">
+      <div className="page-frame mt-8 w-full max-sm:mt-4">
         {at === 0 ? (
           <BookStage
-            rail={
-              <StepRail at={at} reached={reached} onGo={setAt} />
-            }
+            rail={<StepRail at={at} reached={reached} onGo={setAt} />}
             at={at}
             title="What kind of meeting?"
             note="Three to choose from. None of them commits you to anything."
@@ -380,7 +378,14 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
                         if (!wanted) setMinutes(entry.minutes);
                       }}
                       className={cn(
-                        "flex h-full min-h-[190px] w-full cursor-pointer flex-col justify-between rounded-[18px] p-5 text-left transition-colors",
+                        /* A tall card on a screen, where three of them stand
+                           side by side and the height is what makes them read
+                           as a set. Stacked on a phone they are three of the
+                           same height one under another, and 190 apiece put the
+                           third one below the fold with the lengths under that
+                           - so on a phone the height is whatever the words in
+                           it come to. */
+                        "flex h-full min-h-[190px] w-full cursor-pointer flex-col justify-between rounded-[18px] p-5 text-left transition-colors max-sm:min-h-0 max-sm:rounded-[15px] max-sm:p-3.5",
                         on ? "bg-ink" : "bg-canvas hover:bg-canvas-firm",
                       )}
                     >
@@ -388,7 +393,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
                         <span
                           aria-hidden
                           className={cn(
-                            "flex size-9 shrink-0 items-center justify-center rounded-pill transition-colors",
+                            "flex size-9 shrink-0 items-center justify-center rounded-pill transition-colors max-sm:size-8",
                             on
                               ? "bg-white/15 text-white"
                               : "bg-field text-quiet",
@@ -410,7 +415,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
                         </span>
                       </span>
 
-                      <span className="mt-6 flex items-baseline gap-2">
+                      <span className="mt-6 flex items-baseline gap-2 max-sm:mt-3">
                         <span
                           className={cn(
                             "text-[15.5px] font-bold",
@@ -431,7 +436,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
 
                       <span
                         className={cn(
-                          "mt-1.5 text-[13px] leading-[1.45]",
+                          "mt-1.5 text-[13px] leading-[1.45] max-sm:mt-1 max-sm:text-[12.5px]",
                           on ? "text-white/70" : "text-quiet",
                         )}
                       >
@@ -446,7 +451,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
             {/* How long to hold. A quarter of an hour to an hour, and the kind
               chosen above only suggests it - the person who knows how long this
               needs is the one asking for it. */}
-            <div className="mt-7">
+            <div className="mt-7 max-sm:mt-5">
               <p className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
                 How long shall we hold
               </p>
@@ -464,7 +469,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
                     aria-checked={minutes === length}
                     onClick={() => setMinutes(length)}
                     className={cn(
-                      "cursor-pointer rounded-pill px-4 py-2 text-[13.5px] font-semibold tabular-nums transition-colors",
+                      "cursor-pointer rounded-pill px-4 py-2 text-[13.5px] font-semibold tabular-nums transition-colors max-sm:px-3.5 max-sm:py-1.5 max-sm:text-[12.5px]",
                       minutes === length
                         ? "bg-ink text-white"
                         : "bg-canvas text-body hover:bg-canvas-firm hover:text-ink",
@@ -480,9 +485,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
 
         {at === 1 ? (
           <BookStage
-            rail={
-              <StepRail at={at} reached={reached} onGo={setAt} />
-            }
+            rail={<StepRail at={at} reached={reached} onGo={setAt} />}
             at={at}
             title="When suits you?"
             note="Pick a day, then a time. Every time is shown in your own clock."
@@ -516,7 +519,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
               </div>
             }
           >
-            <div className="grid gap-x-10 gap-y-7 lg:grid-cols-[minmax(0,1fr)_16rem]">
+            <div className="grid gap-x-10 gap-y-7 max-sm:gap-y-5 lg:grid-cols-[minmax(0,1fr)_16rem]">
               <div className="min-w-0">
                 <Calendar
                   busy={diary.busy}
@@ -604,9 +607,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
 
         {at === 2 ? (
           <BookStage
-            rail={
-              <StepRail at={at} reached={reached} onGo={setAt} />
-            }
+            rail={<StepRail at={at} reached={reached} onGo={setAt} />}
             at={at}
             title="Who are we meeting?"
             note="Two things we need, and one you can leave blank."
@@ -627,7 +628,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
             onBack={back}
             onNext={next}
           >
-            <div className="grid max-w-[46rem] gap-5 sm:grid-cols-2">
+            <div className="grid max-w-[46rem] gap-5 max-sm:gap-3.5 sm:grid-cols-2">
               <Field
                 id="book-name"
                 label="Your name"
@@ -679,9 +680,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
 
         {at === 3 ? (
           <BookStage
-            rail={
-              <StepRail at={at} reached={reached} onGo={setAt} />
-            }
+            rail={<StepRail at={at} reached={reached} onGo={setAt} />}
             at={at}
             title="Check it over."
             note={
@@ -813,12 +812,17 @@ function Line({
     /* No rule between the rows. The list already sits on a ground of its own,
        and a hairline under every line of a six line list is more drawing than
        the list is worth. */
-    <div className="flex flex-wrap items-baseline gap-x-6 gap-y-1 px-5 py-3 sm:px-7">
-      <dt className="flex w-[9rem] flex-none items-center gap-2.5 text-[13px] font-semibold text-quiet">
+    /* Label above value on a phone rather than beside it. The label column is
+       nine rems, which on a three hundred point screen leaves the value four
+       words a line - and a booked time broken over three lines is not a thing
+       anybody can check at a glance, which is the only reason this list is
+       here. */
+    <div className="flex flex-wrap items-baseline gap-x-6 gap-y-1 px-5 py-3 max-sm:gap-y-0.5 max-sm:px-4 max-sm:py-2.5 sm:px-7">
+      <dt className="flex w-[9rem] flex-none items-center gap-2.5 text-[13px] font-semibold text-quiet max-sm:w-full max-sm:text-[12px]">
         <Icon aria-hidden className="size-4 shrink-0 text-label" />
         {term}
       </dt>
-      <dd className="min-w-0 flex-1 text-[14.5px] leading-[1.5] text-ink">
+      <dd className="min-w-0 flex-1 text-[14.5px] leading-[1.5] text-ink max-sm:text-[13.5px]">
         {children}
       </dd>
     </div>
