@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 
 import { Ballpit } from "./ballpit";
 import { DotField } from "./dot-field";
+import { ParticleCanvas } from "@/components/ui/ParticleCanvas";
 import { FilmStage } from "./film-stage";
 import { BeadTrail, MarkStage } from "./mark-stage";
 import { ProjectPanel } from "./project-panel";
@@ -923,6 +924,18 @@ export function NotchedCard({ className }: { className?: string }) {
             sphere zero, which is the sphere the pointer drags about - so the
             brightest part of the card followed the cursor around it, which is a
             torch rather than a room. */}
+        {/* The fourth screen: a field of points, answering the pointer.
+
+            Inside the clipped layer with the other grounds, so the card's own
+            outline cuts it like everything else on the card.
+
+            It came in from another project carrying two dependencies this site
+            does not have: a theme switch and a music player's audio analyser.
+            Both are gone rather than installed - there is one palette here and
+            nothing plays - and every path that read them already fell back to
+            what is wanted, which is a still field in the light set. */}
+        {shown.view === "particles" ? <ParticleCanvas /> : null}
+
         {shown.view === "balls" ? (
           <Ballpit
             className="absolute inset-0"

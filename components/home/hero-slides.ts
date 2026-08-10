@@ -64,7 +64,7 @@ import type { Project } from "./projects";
  * anything - a moment a card in the middle of a turn does not have. `wave-dots`
  * is still on disk for whatever wants a field of dots next.
  */
-export type SlideView = "balls" | "film" | "blank" | "mark";
+export type SlideView = "balls" | "film" | "particles" | "blank" | "mark";
 
 /**
  * A slide, which is a `Project` and a few more things.
@@ -234,16 +234,16 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
   },
   {
     id: "hero-7",
-    view: "blank",
-    name: "Waiting for its design",
-    kind: "In progress",
+    view: "particles",
+    name: "A field that answers the pointer",
+    kind: "Motion",
     year: "2026",
     summary:
-      "A screen on the landing card with nothing on it yet. It turns to like any other and opens the same panel.",
+      "Eight hundred points held in place and pushed aside by the pointer, drawn on a canvas rather than assembled out of elements.",
     facts: [
-      { term: "Screen", value: "Five of five" },
-      { term: "Holds", value: "Nothing yet" },
-      { term: "Opens", value: "What we do" },
+      { term: "Points", value: "800, or 400 on a phone" },
+      { term: "Drawn with", value: "One canvas" },
+      { term: "Answers", value: "The pointer" },
     ],
     image: "",
     alt: "",

@@ -1,10 +1,19 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useCallback, useMemo } from 'react';
-import { useTheme } from 'next-themes';
+import { useEffect, useRef, useCallback, useMemo } from "react";
 
-// Import global analyser from music player
-import { globalAnalyser } from '@/components/music-player';
+/* Two dependencies came off to bring this into the site.
+
+   `next-themes` decided whether to draw the dark palette. There is one palette
+   here - the card is white on every screen and always will be - so the light
+   set is the set, and the flag it read is a constant.
+
+   `globalAnalyser` was a music player's Web Audio node, and the field pulsed to
+   whatever was playing. Nothing on this site plays anything, so the analyser is
+   never found and every path that reads it already falls back to a still field.
+   The code for it is left where it stands rather than cut out: the day this
+   screen has sound, the wiring is a single import. */
+const globalAnalyser: AnalyserNode | null = null;
 
 // Constants for performance tuning
 const PARTICLE_COUNT = 800;
@@ -22,10 +31,10 @@ const PARTICLE_SIZE_MOBILE_MULTIPLIER = 0.5;
 
 // GPU-optimized styles
 const CANVAS_STYLES = {
-  willChange: 'transform',
-  transform: 'translateZ(0)',
-  backfaceVisibility: 'hidden' as const,
-  WebkitBackfaceVisibility: 'hidden' as const,
+  willChange: "transform",
+  transform: "translateZ(0)",
+  backfaceVisibility: "hidden" as const,
+  WebkitBackfaceVisibility: "hidden" as const,
 } as const;
 
 interface Particle {
@@ -54,7 +63,7 @@ const hslToHex = (h: number, s: number, l: number): string => {
   const f = (n: number) =>
     light - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
   const to255 = (v: number) => Math.round(255 * v);
-  const toHex = (v: number) => v.toString(16).padStart(2, '0');
+  const toHex = (v: number) => v.toString(16).padStart(2, "0");
   return `#${toHex(to255(f(0)))}${toHex(to255(f(8)))}${toHex(to255(f(4)))}`;
 };
 
@@ -64,26 +73,26 @@ const parseCssHslVar = (value: string | null): string | null => {
   const parts = value.trim().split(/\s+/);
   if (parts.length < 3) return null;
   const h = Number(parts[0]);
-  const s = Number(parts[1].replace('%', ''));
-  const l = Number(parts[2].replace('%', ''));
+  const s = Number(parts[1].replace("%", ""));
+  const l = Number(parts[2].replace("%", ""));
   if (Number.isNaN(h) || Number.isNaN(s) || Number.isNaN(l)) return null;
   return hslToHex(h, s, l);
 };
 
 // Default color palettes
-const DARK_MODE_FALLBACK = ['#22d3ee', '#38bdf8', '#60a5fa', '#818cf8'];
-const LIGHT_MODE_FALLBACK = ['#1e40af', '#1e3a8a', '#1e293b', '#0f172a'];
-const LIGHT_MODE_SECONDARY = ['#059669', '#047857'];
+const DARK_MODE_FALLBACK = ["#22d3ee", "#38bdf8", "#60a5fa", "#818cf8"];
+const LIGHT_MODE_FALLBACK = ["#1e40af", "#1e3a8a", "#1e293b", "#0f172a"];
+const LIGHT_MODE_SECONDARY = ["#059669", "#047857"];
 
 // Get theme colors with memoization support
 const getThemeColors = (isDark: boolean): string[] => {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return isDark ? DARK_MODE_FALLBACK : LIGHT_MODE_FALLBACK;
   }
 
   const styles = getComputedStyle(document.documentElement);
-  const primaryVar = parseCssHslVar(styles.getPropertyValue('--primary'));
-  const secondaryVar = parseCssHslVar(styles.getPropertyValue('--secondary'));
+  const primaryVar = parseCssHslVar(styles.getPropertyValue("--primary"));
+  const secondaryVar = parseCssHslVar(styles.getPropertyValue("--secondary"));
 
   const palette: string[] = [];
 
@@ -91,7 +100,7 @@ const getThemeColors = (isDark: boolean): string[] => {
     if (primaryVar) palette.push(primaryVar, `${primaryVar}cc`);
     if (secondaryVar) palette.push(secondaryVar, `${secondaryVar}cc`);
   } else {
-    if (primaryVar) palette.push('#1e40af', '#1e3a8a');
+    if (primaryVar) palette.push("#1e40af", "#1e3a8a");
     if (secondaryVar) palette.push(...LIGHT_MODE_SECONDARY);
   }
 
@@ -104,7 +113,12 @@ const getThemeColors = (isDark: boolean): string[] => {
 };
 
 // Create particles with pre-computed values
-const createParticles = (width: number, height: number, colorCount: number, isMobile: boolean): Particle[] => {
+const createParticles = (
+  width: number,
+  height: number,
+  colorCount: number,
+  isMobile: boolean,
+): Particle[] => {
   const count = isMobile ? PARTICLE_COUNT_MOBILE : PARTICLE_COUNT;
   const sizeMultiplier = isMobile ? PARTICLE_SIZE_MOBILE_MULTIPLIER : 1;
   const particles: Particle[] = new Array(count);
@@ -129,7 +143,7 @@ const createParticles = (width: number, height: number, colorCount: number, isMo
 // Calculate audio levels from frequency data
 const calculateAudioLevels = (
   analyser: AnalyserNode,
-  dataArray: Uint8Array<ArrayBuffer>
+  dataArray: Uint8Array<ArrayBuffer>,
 ): AudioLevels => {
   analyser.getByteFrequencyData(dataArray);
 
@@ -168,8 +182,8 @@ const MOTION_PARAMS = [
 ] as const;
 
 export function ParticleCanvas() {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
+  /* One palette. See the note at the head of the file. */
+  const isDark = false;
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>(0);
@@ -200,7 +214,7 @@ export function ParticleCanvas() {
     canvas.style.width = `${innerWidth}px`;
     canvas.style.height = `${innerHeight}px`;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (ctx) ctx.scale(dpr, dpr);
 
     dimensionsRef.current = { width: innerWidth, height: innerHeight };
@@ -211,7 +225,7 @@ export function ParticleCanvas() {
         innerWidth,
         innerHeight,
         colorsRef.current.length,
-        isMobile
+        isMobile,
       );
     }
   }, []);
@@ -224,7 +238,7 @@ export function ParticleCanvas() {
 
   // Initialize particles and event listeners
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
     isMobileRef.current = isMobile;
@@ -234,23 +248,23 @@ export function ParticleCanvas() {
       window.innerWidth,
       window.innerHeight,
       themeColors.length,
-      isMobile
+      isMobile,
     );
 
     handleResize();
 
-    window.addEventListener('resize', handleResize, { passive: true });
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener("resize", handleResize, { passive: true });
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
     return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("mousemove", handleMouseMove);
     };
   }, [themeColors, handleResize, handleMouseMove]);
 
   // Initialize audio analyser connection
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     const connectAnalyser = () => {
       if (globalAnalyser && !analyserRef.current) {
@@ -275,7 +289,7 @@ export function ParticleCanvas() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d', {
+    const ctx = canvas.getContext("2d", {
       alpha: true,
       desynchronized: true,
     });
@@ -292,7 +306,10 @@ export function ParticleCanvas() {
       let audioLevels: AudioLevels = { bass: 0, mid: 0, treble: 0, average: 0 };
 
       if (analyserRef.current && audioDataRef.current) {
-        audioLevels = calculateAudioLevels(analyserRef.current, audioDataRef.current);
+        audioLevels = calculateAudioLevels(
+          analyserRef.current,
+          audioDataRef.current,
+        );
       }
 
       const { bass, mid, treble, average } = audioLevels;
@@ -312,7 +329,8 @@ export function ParticleCanvas() {
 
         if (distSq < MOUSE_INTERACTION_RADIUS * MOUSE_INTERACTION_RADIUS) {
           const dist = Math.sqrt(distSq);
-          const force = (MOUSE_INTERACTION_RADIUS - dist) / MOUSE_INTERACTION_RADIUS;
+          const force =
+            (MOUSE_INTERACTION_RADIUS - dist) / MOUSE_INTERACTION_RADIUS;
           particle.x += dx * force * 0.08;
           particle.y += dy * force * 0.08;
         } else {
@@ -341,7 +359,8 @@ export function ParticleCanvas() {
       }
 
       // Draw connections (optimized with skip factors)
-      const connectionDistance = CONNECTION_BASE_DISTANCE + average * CONNECTION_AUDIO_MULTIPLIER;
+      const connectionDistance =
+        CONNECTION_BASE_DISTANCE + average * CONNECTION_AUDIO_MULTIPLIER;
       const connectionDistanceSq = connectionDistance * connectionDistance;
       const baseAlpha = isDark ? 0.3 : 0.4;
       const lineWidth = (isMobile ? 0.3 : 0.5) + average * 0.3;
@@ -352,7 +371,11 @@ export function ParticleCanvas() {
         const particle = currentParticles[i];
         let connectionsDrawn = 0;
 
-        for (let j = 0; j < particleCount && connectionsDrawn < MAX_CONNECTIONS_PER_PARTICLE; j += CONNECTION_SKIP_FACTOR) {
+        for (
+          let j = 0;
+          j < particleCount && connectionsDrawn < MAX_CONNECTIONS_PER_PARTICLE;
+          j += CONNECTION_SKIP_FACTOR
+        ) {
           const p2 = currentParticles[j];
           const dx2 = particle.x - p2.x;
           const dy2 = particle.y - p2.y;
@@ -364,7 +387,8 @@ export function ParticleCanvas() {
             ctx.moveTo(particle.x, particle.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.strokeStyle = colors[particle.colorIndex];
-            ctx.globalAlpha = (baseAlpha + average * 0.2) * (1 - dist2 / connectionDistance);
+            ctx.globalAlpha =
+              (baseAlpha + average * 0.2) * (1 - dist2 / connectionDistance);
             ctx.stroke();
             connectionsDrawn++;
           }
