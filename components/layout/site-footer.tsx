@@ -1,13 +1,7 @@
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
-import {
-  FOOTER_COLUMNS,
-  FOOTER_LEGAL,
-  LEGAL,
-  ROUTES,
-  SITE,
-} from "@/lib/site";
+import { FOOTER_COLUMNS, FOOTER_LEGAL, LEGAL, ROUTES, SITE } from "@/lib/site";
 
 import { CutPanel, TopDisc } from "./cut-panel";
 
@@ -36,7 +30,7 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="page-frame pt-6 pb-7">
+    <footer className="page-frame pt-6 pb-7 max-sm:pt-4 max-sm:pb-5">
       {/* No bite at the bottom left any more, and the year has gone with it.
 
           It said the same thing the copyright line says a few pixels away, and
@@ -54,9 +48,9 @@ export function SiteFooter() {
              about somebody else's rights - so it runs along the bottom band
              between the year and the way up, rather than above an empty
              strip. */
-          <div className="flex w-full flex-col gap-6">
-            <div className="flex flex-col gap-x-10 gap-y-4 lg:flex-row lg:items-end lg:justify-between">
-              <p className="order-2 min-w-0 max-w-[74ch] text-[11.5px] leading-[1.55] text-label lg:order-1">
+          <div className="flex w-full flex-col gap-6 max-sm:gap-4">
+            <div className="flex flex-col gap-x-10 gap-y-4 max-sm:gap-y-3.5 lg:flex-row lg:items-end lg:justify-between">
+              <p className="order-2 min-w-0 max-w-[74ch] text-[11.5px] leading-[1.55] text-label max-sm:text-[11px] lg:order-1">
                 {LEGAL.line}
               </p>
 
@@ -67,25 +61,32 @@ export function SiteFooter() {
                   edge made one long ragged column of small print rather than a
                   band with something at each end.
 
-                  At every width, not only from `lg`. Below that the row stacks
-                  and the set was falling back to the left, so the same links
-                  sat on a different edge depending on the size of the window.
-                  Wrapped onto two lines it still ends on the right, which is
-                  where the eye is now looking for it. */}
+                From `sm` up, and not below it. The rule used to be "at every
+                width", so the set would not sit on a different edge depending on
+                the size of the window - and that is right down to about a
+                tablet, where it wraps onto two lines and still reads as a band
+                ending on the right.
+
+                On a phone it is eight links in a column three or four words
+                wide: right aligned they come out as four rows with a torn left
+                edge, under an ask, three lists and a copyright line that all
+                start on the same left margin. The consistency the rule was
+                bought for is the thing it costs there. Below `sm` they are two
+                even columns on that same margin. */}
               <nav
                 aria-label="Legal"
-                className="order-1 min-w-0 text-right lg:order-2"
+                className="order-1 min-w-0 text-right max-sm:text-left lg:order-2"
               >
                 {/* Fourteen pixels tall is not a target, it is a line of type
                     that happens to be pressable. The padding gives each one the
                     height a thumb needs; the negative margin on the row keeps
                     the set sitting where it did on the line above. */}
-                <ul className="-my-1 flex flex-wrap justify-end gap-x-5">
+                <ul className="-my-1 grid grid-cols-2 gap-x-4 max-sm:gap-x-3 sm:flex sm:flex-wrap sm:justify-end sm:gap-x-5">
                   {FOOTER_LEGAL.map((link) => (
                     <li key={link.href} className="flex">
                       <Link
                         href={link.href}
-                        className="py-1.5 text-[12.5px] font-medium text-quiet underline decoration-planned decoration-1 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink"
+                        className="py-1.5 text-[12.5px] font-medium text-quiet underline decoration-planned decoration-1 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink max-sm:py-1 max-sm:text-[11.5px]"
                       >
                         {link.label}
                       </Link>
@@ -98,7 +99,7 @@ export function SiteFooter() {
             {/* The notice, last, and on the same left edge as the rest of the
                 foot. It was centred, which put the only centred line on a page
                 of left-aligned columns directly under them. */}
-            <p className="text-[11.5px] leading-[1.55] text-quiet">
+            <p className="text-[11.5px] leading-[1.55] text-quiet max-sm:text-[11px]">
               &copy; {year} {LEGAL.entity}. {LEGAL.rights}
               <span className="sr-only"> {SITE.name}.</span>
             </p>
@@ -117,7 +118,7 @@ export function SiteFooter() {
             aligned they take what they are given, and `auto` gave them enough
             to wrap the tagline onto five lines. Two fractions say what each
             side is worth. */}
-        <div className="grid gap-x-12 gap-y-11 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
+        <div className="grid gap-x-12 gap-y-11 max-sm:gap-y-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
           <div className="min-w-0">
             {/* The ask, in the words the about page ends on.
 
@@ -132,19 +133,27 @@ export function SiteFooter() {
                 Two ways rather than three. Writing it down and putting it in
                 the diary are the two anybody actually chooses between, and a
                 third in a row of three is a third of the attention gone. */}
-            <h2 className="max-w-[24ch] text-[clamp(21px,2.1vw,30px)] leading-[1.12] font-extrabold tracking-[-0.035em] text-ink">
+            <h2 className="max-w-[24ch] text-[clamp(21px,2.1vw,30px)] leading-[1.12] font-extrabold tracking-[-0.035em] text-ink max-sm:text-[20px]">
               Start with what you need.
             </h2>
 
-            <p className="mt-3 max-w-[52ch] text-[15px] leading-[1.65] text-quiet">
+            <p className="mt-3 max-w-[52ch] text-[15px] leading-[1.65] text-quiet max-sm:mt-2 max-sm:text-[13px] max-sm:leading-[1.6]">
               Tell us what you are looking to build, improve or connect. We will
               help you work out the rest.
             </p>
 
-            <div className="mt-6 flex flex-wrap items-center gap-2.5">
+            {/* Full width on a phone, and the same width as each other.
+
+                Sized to their own words they are two pills of visibly different
+                length read one under the other - "Send us your requirements"
+                against "Book a meeting" - which says two different kinds of
+                thing rather than one choice with two answers. It is the rule the
+                two doors on the brief follow for the same reason. From `sm` up
+                they sit on one line and are sized by what they say. */}
+            <div className="mt-6 flex flex-wrap items-center gap-2.5 max-sm:mt-4 max-sm:gap-2">
               <Link
                 href={ROUTES.build}
-                className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+                className="group/way thread-fill inline-flex items-center justify-center gap-2 rounded-pill px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:w-full max-sm:px-4 max-sm:py-2.5 max-sm:text-[13px]"
               >
                 Send us your requirements
                 <ArrowRight
@@ -156,7 +165,7 @@ export function SiteFooter() {
 
               <Link
                 href={ROUTES.book}
-                className="group/way inline-flex items-center gap-2 rounded-pill bg-field px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:bg-hair"
+                className="group/way inline-flex items-center justify-center gap-2 rounded-pill bg-field px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:bg-hair max-sm:w-full max-sm:px-4 max-sm:py-2.5 max-sm:text-[13px]"
               >
                 Book a meeting
                 <ArrowUpRight
@@ -192,15 +201,22 @@ export function SiteFooter() {
               lists with two thirds of the footer empty beside them; on the
               right the whole foot of the page ends on one edge. They wrap back
               to the left on a narrow screen, where there is no room to be
-              anywhere else. */}
-          <div className="flex flex-wrap gap-x-12 gap-y-8 sm:justify-end sm:gap-x-16">
+              anywhere else.
+
+              And on a phone not a row at all. Wrapped, three lists of different
+              widths came out as two and then one, each starting wherever the one
+              before it ended - three left edges in a block whose whole job is to
+              be scanned down. Two even columns instead, which puts "Reading"
+              under "Start here" on the margin everything else in the footer
+              begins on. */}
+          <div className="grid grid-cols-2 gap-x-6 gap-y-7 sm:flex sm:flex-wrap sm:justify-end sm:gap-x-16 sm:gap-y-8">
             {FOOTER_COLUMNS.map((column) => (
               <nav
                 key={column.title}
                 aria-label={column.title}
                 className="min-w-0"
               >
-                <h3 className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
+                <h3 className="font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase max-sm:text-[8.5px]">
                   {column.title}
                 </h3>
 
@@ -212,10 +228,10 @@ export function SiteFooter() {
                     Made padding instead, the same rhythm now belongs to the
                     links, so each is a 25px target with no gap left to miss
                     into and the column looks exactly as it did. */}
-                <ul className="mt-2.5 flex flex-col">
+                <ul className="mt-2.5 flex flex-col max-sm:mt-2">
                   {column.links.map((link) => {
                     const className =
-                      "py-1.5 text-[13.5px] leading-[1.3] font-medium text-quiet transition-colors hover:text-ink";
+                      "py-1.5 text-[13.5px] leading-[1.3] font-medium text-quiet transition-colors hover:text-ink max-sm:py-1 max-sm:text-[12.5px]";
 
                     /* A section of the home page rather than a page of its
                        own, and `Link` mishandles the jump when the section is
