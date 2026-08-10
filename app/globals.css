@@ -133,6 +133,14 @@
      the desk covers the page there and the page does not move at all. */
   --desk-width: 0px;
 
+  /* How much of that room is actually being taken, right now.
+
+     Nought until the desk opens, when the shell sets it to `--desk-width`
+     on the column it pads. Anything that needs to know how wide the page
+     currently is reads it from here rather than from the viewport, because
+     the viewport does not change when the desk opens and the page does. */
+  --desk-space: 0px;
+
   /* The rail's own side gutter.
 
      One number for everything inside the rail - the page links and the control
@@ -418,6 +426,20 @@
   --------------------------------------------------------------------------- */
   .page-frame {
     padding-inline: var(--page-gutter);
+  }
+
+  /* Out to the edges of the page, which is not the edges of the window.
+
+     `100vw` is the viewport and always will be, so a row bled with it ignored
+     the desk entirely: the page stood aside and the row carried straight on
+     underneath the panel. Measured against the page's own width instead, it
+     stops where the page stops.
+
+     Still centred on its container the same way - half the container out to
+     half the page - so it works wherever it is used, at any gutter. */
+  .page-bleed {
+    width: calc(100vw - var(--desk-space));
+    margin-inline: calc(50% - (100vw - var(--desk-space)) / 2);
   }
 
   @media (min-width: 80rem) {

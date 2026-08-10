@@ -108,9 +108,13 @@ export function ServiceWall({
   /**
    * Out to the edges of the window rather than the column.
    *
-   * `50% - 50vw` measures from the middle of a centred container to the middle
-   * of the window, so it is only right where the container is centred. Asked
-   * for rather than guessed at.
+   * `page-bleed` measures from the middle of a centred container out to the
+   * edges of the page, so it is only right where the container is centred.
+   * Asked for rather than guessed at.
+   *
+   * The page rather than the window, deliberately: the desk opens over the
+   * right of the screen and the page stands aside for it, and a row bled to
+   * the viewport would carry on underneath the panel.
    */
   bleed?: boolean;
 }) {
@@ -169,7 +173,7 @@ export function ServiceWall({
     <div
       className={cn(
         "group relative",
-        bleed ? "mx-[calc(50%-50vw)] w-screen" : "",
+        bleed ? "page-bleed" : "",
         className,
       )}
     >

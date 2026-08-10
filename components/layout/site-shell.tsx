@@ -86,7 +86,10 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           being there. */}
       <div
         className="flex flex-1 items-start transition-[padding] duration-300 ease-out"
-        style={face ? { paddingRight: "var(--desk-width)" } : undefined}
+        style={{
+          ["--desk-space" as string]: face ? "var(--desk-width)" : "0px",
+          paddingRight: "var(--desk-space)",
+        }}
       >
         {/* No rail. Every page it carried is in the header now, and a docked
             column repeating the bar above it spent a fifth of the window

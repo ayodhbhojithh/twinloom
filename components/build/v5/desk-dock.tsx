@@ -104,13 +104,20 @@ export function DeskDock({
             className="fixed inset-0 z-40 cursor-default bg-ink/25 backdrop-blur-[2px] lg:hidden"
           />
 
-          {/* Floating at the right, and the full height of the window.
+          {/* Floating at the right, from under the header to the floor.
 
-              Not edge to edge: the inset is what makes it read as a panel
-              resting against the side of the page rather than a second column
-              the page was built with. Full width on a phone, where there is no
-              room to float anything. */}
-          <div className="fixed inset-y-0 right-0 z-50 flex w-full max-w-[560px] flex-col p-2 sm:p-3 lg:w-(--desk-width) lg:max-w-none">
+              Not `inset-y-0`. Starting at the top of the window put the panel
+              over the header and jammed its own top edge against the edge of
+              the screen - and that top edge is a notch with the tabs standing
+              in it, so what was cut off was the way between the two panels.
+              A surface whose controls are cut out of its edge cannot have its
+              edge at the edge of anything.
+
+              Held off the sides and the floor as well: the inset is what makes
+              it read as a panel resting against the page rather than a second
+              column the page was built with. Full width on a phone, where
+              there is no room to float anything. */}
+          <div className="fixed top-(--nav-height) right-0 bottom-0 z-50 flex w-full max-w-[560px] flex-col p-2 sm:p-3 lg:w-(--desk-width) lg:max-w-none">
             <DockPanel
               answers={answers}
               where={desk.where}
