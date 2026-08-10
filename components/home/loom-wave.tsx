@@ -469,6 +469,68 @@ export function LoomWave({
     const struck = new Float32Array(COUNT).fill(-Infinity);
     const force = new Float32Array(COUNT);
 
+    /* Everything about a column that does not depend on the clock.
+
+       This is the whole of the optimisation and it is one observation: the
+       grain, the spike, the arch at the ends, the stroke weights and every
+       colour string are functions of the column's index alone. They were being
+       recomputed for all three hundred columns on all sixty frames a second,
+       and two of them are expensive - `sin(i * rate) ** 14` is a `pow` with a
+       fractional base, and every colour was an array from `sample` and a
+       string from `css` built and thrown away. That is roughly twelve hundred
+       allocations a frame for values that were the same as last frame.
+
+       Built once here and read from arrays for the rest of the component's
+       life. Nothing about the picture changes: these are the same numbers and
+       the same strings, worked out at a different time. */
+    const barHeight = new Float32Array(COUNT);
+    const barMid = new Float32Array(COUNT);
+    const grain = new Float32Array(COUNT);
+    const ghostGrain = new Float32Array(COUNT);
+    const edgeAt = new Float32Array(COUNT);
+    const barWeight = new Float32Array(COUNT);
+    const dotAt = new Float32Array(COUNT);
+
+    /* The ramps sampled per column, kept as numbers so a column that is
+       actually ringing can be re-tinted without sampling again. */
+    const dimAt: Rgb[] = [];
+    const rampAt: Rgb[] = [];
+
+    /* And the strings for a column at rest, which is nearly all of them
+       nearly all of the time. */
+    const strokeDim: string[] = [];
+    const strokeLit: string[] = [];
+    const strokeGhost: string[] = [];
+    const fillDot: string[] = [];
+
+    for (let i = 0; i < COUNT; i += 1) {
+      const along = i / (COUNT - 1);
+
+      let rough = 0;
+      for (const g of BAR.rough) rough += g.reach * Math.sin(i * g.rate);
+      grain[i] =
+        rough +
+        BAR.spike.reach * Math.sin(i * BAR.spike.rate) ** BAR.spike.sharpness;
+
+      ghostGrain[i] = BAR.ghost + BAR.ghostRough * Math.sin(i * 0.41);
+
+      const edge = Math.sin(Math.PI * along);
+      edgeAt[i] = edge;
+      barWeight[i] = i % 7 === 0 ? 2.1 : i % 3 === 0 ? 1.3 : 0.85;
+      dotAt[i] = i % 11 === 0 ? 1.35 : i % 5 === 0 ? 0.92 : 0;
+
+      const dim = sample(DIM_RGB, along);
+      const ramp = sample(RAMP_RGB, along);
+      dimAt.push(dim);
+      rampAt.push(ramp);
+
+      const alpha = (0.34 + edge * 0.64) * 0.85;
+      strokeDim.push(css(dim, alpha * 0.9));
+      strokeLit.push(css(ramp, Math.min(1, alpha * 1.2)));
+      strokeGhost.push(css(sample(GHOST_RGB, along), 0.16 + edge * 0.24));
+      fillDot.push(css(dim, 0.4 + edge * 0.5));
+    }
+
     /** How much a thread is ringing right now, from nought to one. Nought as
         well before its strike has arrived - `spread` sets each neighbour's
         `struck` a little into the future, and a ripple is exactly a strike
@@ -683,25 +745,16 @@ export function LoomWave({
           t * ENV.cluster.speed * speed,
       );
 
-      let reach =
+      /* One multiply where there were four sines and a `pow`: the grain and
+         the spike are per column and were cached at setup. */
+      const reach =
         height *
         ROOM *
-        (BAR.floor + ENV.main * main * main + ENV.cluster.reach * free * free);
+        (BAR.floor +
+          ENV.main * main * main +
+          ENV.cluster.reach * free * free +
+          grain[i]);
 
-      for (const grain of BAR.rough) {
-        reach += height * ROOM * grain.reach * Math.sin(i * grain.rate);
-      }
-
-      reach +=
-        height *
-        ROOM *
-        BAR.spike.reach *
-        Math.sin(i * BAR.spike.rate) ** BAR.spike.sharpness;
-
-      /* Never shorter than `BAR.min`. The waists are pinched, not cut: a
-         column that vanished would leave a hole in the field, and a row of
-         columns with holes in it is not a wave, it is a gap with bars either
-         side. */
       return Math.max(reach, height * ROOM * BAR.min);
     };
 
@@ -720,26 +773,67 @@ export function LoomWave({
      */
     const everyNth = () => Math.max(1, Math.round(COUNT / (width / 6)));
 
+    /* The two gradients, kept rather than rebuilt.
+
+       Neither depends on anything but the width, and both were being made
+       fresh every frame - two objects a frame, a hundred and twenty a second,
+       all of them identical to the last. Cached against the width they were
+       cut for, so a resize makes new ones and nothing else does. */
+    let rampGrad: CanvasGradient | null = null;
+    let edgeGrad: CanvasGradient | null = null;
+    let gradFor = -1;
+
+    const freshGrads = () => {
+      if (gradFor === width) return;
+      gradFor = width;
+
+      rampGrad = ctx.createLinearGradient(0, 0, width, 0);
+      for (const [at, hex] of RAMP) rampGrad.addColorStop(at, hex);
+
+      edgeGrad = ctx.createLinearGradient(0, 0, width, 0);
+      edgeGrad.addColorStop(0, "rgba(0,0,0,1)");
+      edgeGrad.addColorStop(0.05, "rgba(0,0,0,0.72)");
+      edgeGrad.addColorStop(0.12, "rgba(0,0,0,0)");
+      edgeGrad.addColorStop(0.88, "rgba(0,0,0,0)");
+      edgeGrad.addColorStop(0.95, "rgba(0,0,0,0.72)");
+      edgeGrad.addColorStop(1, "rgba(0,0,0,1)");
+    };
+
+    const ramp = () => {
+      freshGrads();
+      return rampGrad as CanvasGradient;
+    };
+
+    const edges = () => {
+      freshGrads();
+      return edgeGrad as CanvasGradient;
+    };
+
     /** The bar field: one column per thread, standing on the line. */
     const drawBars = (t: number) => {
       const step = everyNth();
+      const lift = height * ROOM;
 
       /* The pale layer first, taller and thinner, so the field in front has
-         something to stand against rather than sitting on the page. */
+         something to stand against rather than sitting on the page.
+
+         Its height is the field's plus its own extra, so the field's is worked
+         out here and kept for the second pass rather than asked for twice -
+         `barAt` was being called for every column in both loops, and it is the
+         most expensive thing either of them does. */
       for (let i = 0; i < COUNT; i += step) {
         const along = i / (COUNT - 1);
         const x = along * width;
         const middle = ride(along, t);
-        const reach =
-          barAt(along, i, t) +
-          height * ROOM * (BAR.ghost + BAR.ghostRough * Math.sin(i * 0.41));
+        const reach = barAt(along, i, t);
+        barHeight[i] = reach;
+        barMid[i] = middle;
 
-        const edge = Math.sin(Math.PI * along);
-        ctx.strokeStyle = css(sample(GHOST_RGB, along), 0.16 + edge * 0.24);
+        ctx.strokeStyle = strokeGhost[i];
         ctx.lineWidth = i % 4 === 0 ? 0.9 : 0.6;
         ctx.beginPath();
-        ctx.moveTo(x, middle - reach);
-        ctx.lineTo(x, middle + reach);
+        ctx.moveTo(x, middle - reach - lift * ghostGrain[i]);
+        ctx.lineTo(x, middle + reach + lift * ghostGrain[i]);
         ctx.stroke();
       }
 
@@ -751,29 +845,29 @@ export function LoomWave({
       for (let i = 0; i < COUNT; i += step) {
         const along = i / (COUNT - 1);
         const x = along * width;
-        const middle = ride(along, t);
-        const reach = barAt(along, i, t) * ringStretch(i, t, along);
-
-        /* Thinned at both ends. An arch rather than a ramp, because the field
-           has two ends and both of them should run out. */
-        const edge = Math.sin(Math.PI * along);
+        const middle = barMid[i];
         const rung = ringing(i, t);
-        const weight = i % 7 === 0 ? 2.1 : i % 3 === 0 ? 1.3 : 0.85;
-        const alpha = (0.34 + edge * 0.64) * 0.85;
+        const reach =
+          rung > 0.02 ? barHeight[i] * ringStretch(i, t, along) : barHeight[i];
 
-        ctx.lineWidth = weight * (1 + rung * 0.7);
+        /* A column at rest takes the strings built at setup. Only one that is
+           actually ringing is worth mixing a colour for, and at any moment
+           that is a handful of the three hundred. */
+        const lit = rung > 0.02;
+        ctx.lineWidth = barWeight[i] * (lit ? 1 + rung * 0.7 : 1);
 
-        ctx.strokeStyle = glow(sample(DIM_RGB, along), alpha * 0.9, rung);
+        const alpha = (0.34 + edgeAt[i] * 0.64) * 0.85;
+        ctx.strokeStyle = lit
+          ? glow(dimAt[i], alpha * 0.9, rung)
+          : strokeDim[i];
         ctx.beginPath();
         ctx.moveTo(x, middle - reach);
         ctx.lineTo(x, middle + reach);
         ctx.stroke();
 
-        ctx.strokeStyle = glow(
-          sample(RAMP_RGB, along),
-          Math.min(1, alpha * 1.2),
-          rung,
-        );
+        ctx.strokeStyle = lit
+          ? glow(rampAt[i], Math.min(1, alpha * 1.2), rung)
+          : strokeLit[i];
         ctx.beginPath();
         ctx.moveTo(x, middle - reach * 0.52);
         ctx.lineTo(x, middle + reach * 0.52);
@@ -781,9 +875,9 @@ export function LoomWave({
 
         /* A dot on some of the tips. It is the one thing here that is not a
            thread, and it is what stops the tallest reading as scratches. */
-        if (i % 5 === 0 || i % 11 === 0) {
-          const dot = (i % 11 === 0 ? 1.35 : 0.92) * (1 + rung * 0.6);
-          ctx.fillStyle = css(sample(DIM_RGB, along), 0.4 + edge * 0.5);
+        if (dotAt[i] > 0) {
+          const dot = dotAt[i] * (lit ? 1 + rung * 0.6 : 1);
+          ctx.fillStyle = fillDot[i];
           ctx.beginPath();
           ctx.arc(x, middle - reach, dot, 0, Math.PI * 2);
           ctx.fill();
@@ -836,10 +930,7 @@ export function LoomWave({
          polyline takes a single stroke colour, so the alternative to this is
          either a flat ribbon or a stroke per segment - and a stroke per
          segment is sixty times a hundred and sixty of them. */
-      const paint = ctx.createLinearGradient(0, 0, width, 0);
-      for (const [at, hex] of RAMP) paint.addColorStop(at, hex);
-
-      ctx.strokeStyle = paint;
+      ctx.strokeStyle = ramp();
       ctx.lineWidth = RIBBON.weight;
 
       /* Fewer curves and fewer points on a narrow box.
@@ -1004,14 +1095,7 @@ export function LoomWave({
          threads simply stop existing towards the edges and whatever is behind
          shows through, on any page and any colour. */
       ctx.globalCompositeOperation = "destination-out";
-      const fade = ctx.createLinearGradient(0, 0, width, 0);
-      fade.addColorStop(0, "rgba(0,0,0,1)");
-      fade.addColorStop(0.05, "rgba(0,0,0,0.72)");
-      fade.addColorStop(0.12, "rgba(0,0,0,0)");
-      fade.addColorStop(0.88, "rgba(0,0,0,0)");
-      fade.addColorStop(0.95, "rgba(0,0,0,0.72)");
-      fade.addColorStop(1, "rgba(0,0,0,1)");
-      ctx.fillStyle = fade;
+      ctx.fillStyle = edges();
       ctx.fillRect(0, 0, width, height);
       ctx.globalCompositeOperation = "source-over";
     };
