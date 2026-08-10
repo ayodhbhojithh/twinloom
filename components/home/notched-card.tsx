@@ -1677,11 +1677,16 @@ export function NotchedCard({ className }: { className?: string }) {
                      was. At 84 per cent it took half the height of the card and
                      pushed the last button off the bottom; at 52 it had gone
                      from being the thing the screen opens on to a badge above
-                     some type. Seventy per cent, capped at 250, is the size at
-                     which it is still the first thing you see - and the room for
-                     it came from the clearance above, which was reserving space
-                     for a row of links a phone does not have. */
-                  className="pointer-events-none w-[84%] max-w-[320px] shrink-0 max-sm:w-[70%] max-sm:max-w-[250px] lg:order-2 lg:-ml-[12%] lg:w-[54%] lg:max-w-none"
+                     some type. Ninety per cent, capped at 310, is near enough
+                     the full width of the card - which it can afford, because
+                     the picture is a mark in the middle of a square file with a
+                     good deal of air round it. The drawing grows; the ink stops
+                     well short of either edge.
+
+                     The room for it came from the clearance above, which was
+                     reserving space for a row of links a phone does not
+                     have. */
+                  className="pointer-events-none w-[84%] max-w-[320px] shrink-0 max-sm:w-[90%] max-sm:max-w-[310px] lg:order-2 lg:-ml-[12%] lg:w-[54%] lg:max-w-none"
                 >
                   <MarkStage />
                 </motion.div>
