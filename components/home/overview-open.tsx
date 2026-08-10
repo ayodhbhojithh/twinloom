@@ -1,7 +1,16 @@
 import Image from "next/image";
-import { Info } from "lucide-react";
+import Link from "next/link";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  CalendarDays,
+  Info,
+  PencilLine,
+} from "lucide-react";
 
+import { SisterSentence } from "@/components/blocks";
 import { INCLUDED, OFFER, SERVICES } from "@/lib/services";
+import { ROUTES } from "@/lib/site";
 
 /* ---------------------------------------------------------------------------
    The company, opened.
@@ -117,8 +126,14 @@ export function OverviewOpen() {
                 <b className="mt-2.5 block text-[12.5px] leading-[1.25] font-bold tracking-[-0.02em] text-ink">
                   {card.name}
                 </b>
-                <p className="mt-1 line-clamp-3 text-[11px] leading-[1.45] text-quiet">
-                  {card.say}
+                {/* No clamp on the one card that carries a link.
+
+                    Three lines is what the longest of these sentences takes,
+                    and the sentence naming the sister company ends on the
+                    fourth - so the clamp was cutting the card's only control
+                    off the bottom of it. */}
+                <p className="mt-1 text-[11px] leading-[1.45] text-quiet">
+                  <SisterSentence say={card.say} />
                 </p>
               </div>
             ))}
@@ -168,11 +183,17 @@ export function OverviewOpen() {
             size.
           </h3>
 
-          <p className="mt-3 max-w-[56ch] text-[13.5px] leading-[1.6] text-quiet">
-            Not a tier, not an upgrade, and not something to ask for.
-            <span className="block">
-              A five page site gets the list. A fifty page site gets the list.
-            </span>
+          {/* One paragraph, not two lines.
+
+              The second sentence was in a `block` span, which held it to its own
+              line whatever the measure was - so a wider cap changed nothing and
+              the pair sat as two short lines under a heading running the full
+              width of the column. They are a statement and the illustration of
+              it, which is a paragraph. Set as one it fills the column the
+              heading already sets. */}
+          <p className="mt-3 max-w-[78ch] text-[13.5px] leading-[1.6] text-quiet">
+            Not a tier, not an upgrade, and not something to ask for. A five
+            page site gets the list. A fifty page site gets the list.
           </p>
 
           {/* The rule between rows is the faintest one the palette has. Eleven
@@ -205,10 +226,10 @@ export function OverviewOpen() {
 
           {/* What happens next, which is the one thing this panel does not
             already answer. */}
-          <p className="mt-5 flex items-start gap-3 rounded-card bg-canvas px-5 py-3.5 text-[13px] leading-[1.6] text-quiet">
+          <p className="mt-4 flex items-start gap-2.5 rounded-card bg-canvas px-4 py-2.5 text-[12px] leading-[1.55] text-quiet">
             <Info
               aria-hidden
-              className="mt-0.5 size-4 flex-none text-idx"
+              className="mt-px size-3.5 flex-none text-idx"
               strokeWidth={2}
             />
             <span>
@@ -217,6 +238,51 @@ export function OverviewOpen() {
               work for you, and we will reach out to you to set up the meeting.
             </span>
           </p>
+
+          {/* And the two ways out of it.
+
+              This panel answered everything and asked for nothing. Somebody who
+              has read six disciplines and eleven inclusions has read the whole
+              case, and what was at the foot of it was a note explaining that a
+              meeting can be booked - which describes a door rather than being
+              one. The way to close a panel like this is the same way the card
+              behind it opens: scope it, or talk first.
+
+              Two, and not the third. The hero's row carries "View our services"
+              as well, and that points at a section of the page this panel is
+              lying on top of - a button whose whole effect is to scroll
+              something nobody can see. The six disciplines are in the other half
+              of this panel anyway.
+
+              The doors this card sets, at this card's sizes. Filled first and
+              outlined second, so the pair reads as one choice with a default
+              rather than two buttons of equal weight. */}
+          <div className="mt-5 flex flex-wrap justify-center gap-2.5">
+            <Link
+              href={ROUTES.build}
+              className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+            >
+              <PencilLine aria-hidden className="size-4 shrink-0" />
+              Scope your website
+              <ArrowRight
+                aria-hidden
+                className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
+                strokeWidth={2.4}
+              />
+            </Link>
+
+            <Link
+              href={ROUTES.book}
+              className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
+            >
+              <CalendarDays aria-hidden className="size-4 shrink-0 text-idx" />
+              Book a meeting
+              <ArrowUpRight
+                aria-hidden
+                className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+              />
+            </Link>
+          </div>
         </div>
       </div>
     </>

@@ -5,6 +5,7 @@ import { ArrowUpRight, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { SisterSentence } from "@/components/blocks";
 import { CutPanel } from "@/components/layout/cut-panel";
 import { OFFER, SERVICES } from "@/lib/services";
 import { ROUTES } from "@/lib/site";
@@ -289,7 +290,7 @@ export function ServiceWall({
                   here once and those were right to go, because a list nobody
                   can stop to read is furniture; a line of prose is not. */}
               <p className="mt-1 text-[10.5px] leading-[1.5] text-quiet sm:mt-1.5 sm:text-[13.5px] sm:leading-[1.6]">
-                {entry.sub}
+                <SisterSentence say={entry.sub} />
               </p>
             </div>
           </article>
