@@ -42,6 +42,7 @@ export function DeskDock({
   face,
   onFace,
   underHeader = true,
+  showTab = true,
 }: {
   /* Owned by the shell, because opening the desk moves the page aside -
      and the thing that lays the page out has to be the thing that knows. */
@@ -49,6 +50,15 @@ export function DeskDock({
   onFace: (face: Face | null) => void;
   /** Whether there is a bar at the top of the window to start below. */
   underHeader?: boolean;
+  /**
+   * Whether the tab is offered at all.
+   *
+   * The panel is unaffected either way: a desk somebody has open stays open,
+   * because a panel that closed itself on a scroll would throw away whatever
+   * they were in the middle of writing. This is only about whether the way in
+   * is on screen.
+   */
+  showTab?: boolean;
 }) {
   const answers = useSyncExternalStore(
     subscribeAnswers,
@@ -182,12 +192,14 @@ export function DeskDock({
         </>
       ) : null}
 
-      <DockTab
-        answers={answers}
-        withSite={desk.withSite}
-        open={Boolean(face)}
-        onOpen={onFace}
-      />
+      {showTab ? (
+        <DockTab
+          answers={answers}
+          withSite={desk.withSite}
+          open={Boolean(face)}
+          onOpen={onFace}
+        />
+      ) : null}
     </>
   );
 }

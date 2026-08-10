@@ -169,7 +169,24 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           Below the header in the markup and above it in nothing: the tab and
           the panel carry their own z, and the header's menu sheet is higher
           than both, so a menu open over the desk still covers it. */}
-      <DeskDock face={face} onFace={setFace} underHeader={underHeader} />
+      {/* Not while the landing card is filling the screen.
+
+          The tab is a small black flag against the right edge, and on every
+          other page it stands against the page's own margin. On the home hero
+          there is no margin: the card is the window, so the flag lands on the
+          card itself - a second object clipped to the one thing that screen is.
+          It arrives with the header, on the same scroll, which is the moment the
+          page starts behaving like a page.
+
+          `floating && !past` is exactly that state, and it is already worked out
+          for the header - see `underHeader`. One measurement, two things that
+          depend on it. */}
+      <DeskDock
+        face={face}
+        onFace={setFace}
+        underHeader={underHeader}
+        showTab={!(floating && !past)}
+      />
     </>
   );
 }

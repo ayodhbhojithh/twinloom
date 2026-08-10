@@ -1538,7 +1538,12 @@ export function NotchedCard({ className }: { className?: string }) {
         <div
           className="pointer-events-none absolute inset-0 z-10 flex items-stretch"
           style={{
-            paddingTop: head,
+            /* `head` clears the row of links, and there is no row of links on a
+               phone - the bar is a wordmark and a menu button, and the notch
+               beside them is shallower too. Reserving the full desktop number
+               left a hand's depth of empty card above the mark and pushed
+               everything into the bottom half of the screen. */
+            paddingTop: size.w < TIGHT ? cut.barDepth + 44 : head,
             /* Almost nothing at the foot. It used to clear the notch's depth,
                which was right while the notch was in the top edge and one number
                did both ends - the notch is in the corner now and the bottom edge
@@ -1636,7 +1641,12 @@ export function NotchedCard({ className }: { className?: string }) {
                   as having sunk. The padding is inside the centred box, so it
                   takes half its own height off the middle and lifts the whole
                   two-up by that much. */}
-              <div className="flex flex-1 flex-col items-center justify-center gap-6 pb-6 sm:pb-10 lg:flex-row lg:items-center lg:gap-8 2xl:gap-12">
+              {/* Below `sm` every number here comes down, and every one of them
+                  is written as `max-sm` rather than as a lower base with an `sm`
+                  restore. The desktop screen is then provably untouched: there
+                  is no shared value to get wrong, and reading any line tells you
+                  which width it is for. */}
+              <div className="flex flex-1 flex-col items-center justify-center gap-6 pb-6 max-sm:gap-3 max-sm:pb-1 sm:pb-10 lg:flex-row lg:items-center lg:gap-8 2xl:gap-12">
                 {/* Drawn wider than the room it takes, and grown leftward.
 
                     At a straight 52 per cent the mark was half the row and the
@@ -1663,7 +1673,15 @@ export function NotchedCard({ className }: { className?: string }) {
                     as twice. */}
                 <motion.div
                   variants={HERO_MARK}
-                  className="pointer-events-none w-[84%] max-w-[320px] shrink-0 lg:order-2 lg:-ml-[12%] lg:w-[54%] lg:max-w-none"
+                  /* Smaller on a phone than on a desk, but not by as much as it
+                     was. At 84 per cent it took half the height of the card and
+                     pushed the last button off the bottom; at 52 it had gone
+                     from being the thing the screen opens on to a badge above
+                     some type. Seventy per cent, capped at 250, is the size at
+                     which it is still the first thing you see - and the room for
+                     it came from the clearance above, which was reserving space
+                     for a row of links a phone does not have. */
+                  className="pointer-events-none w-[84%] max-w-[320px] shrink-0 max-sm:w-[70%] max-sm:max-w-[250px] lg:order-2 lg:-ml-[12%] lg:w-[54%] lg:max-w-none"
                 >
                   <MarkStage />
                 </motion.div>
@@ -1681,7 +1699,7 @@ export function NotchedCard({ className }: { className?: string }) {
                     label. */}
                   <motion.ul
                     variants={HERO_RISE}
-                    className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 font-mono text-[10px] font-bold tracking-[0.15em] text-idx uppercase lg:justify-start lg:gap-x-3.5 lg:text-[11px] 2xl:text-[11.5px]"
+                    className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 font-mono text-[10px] font-bold tracking-[0.15em] text-idx uppercase max-sm:gap-x-2 max-sm:text-[8.5px] max-sm:tracking-[0.12em] lg:justify-start lg:gap-x-3.5 lg:text-[11px] 2xl:text-[11.5px]"
                   >
                     {shown.kicker?.map((trade, n) => (
                       <li key={trade} className="flex items-center gap-2.5">
@@ -1732,7 +1750,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       right at 62px of headline is mean at 32. */}
                   <motion.h1
                     variants={HERO_RISE}
-                    className="mx-auto mt-3 max-w-[26ch] text-[clamp(28px,3.4vw,62px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink sm:mt-4 lg:mx-0 lg:mt-5"
+                    className="mx-auto mt-3 max-w-[26ch] text-[clamp(28px,3.4vw,62px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink max-sm:mt-2 max-sm:text-[25px] max-sm:leading-[1.08] sm:mt-4 lg:mx-0 lg:mt-5"
                   >
                     {shown.claim?.[0]}
                     <span className="thread-text block">
@@ -1742,7 +1760,7 @@ export function NotchedCard({ className }: { className?: string }) {
 
                   <motion.p
                     variants={HERO_RISE}
-                    className="mx-auto mt-4 max-w-[44ch] text-[clamp(15px,1.3vw,24px)] leading-[1.4] font-bold tracking-[-0.022em] text-ink sm:mt-5 lg:mx-0 lg:mt-6 2xl:mt-7"
+                    className="mx-auto mt-4 max-w-[44ch] text-[clamp(15px,1.3vw,24px)] leading-[1.4] font-bold tracking-[-0.022em] text-ink max-sm:mt-2.5 max-sm:text-[13.5px] sm:mt-5 lg:mx-0 lg:mt-6 2xl:mt-7"
                   >
                     {shown.lead}
                   </motion.p>
@@ -1758,7 +1776,13 @@ export function NotchedCard({ className }: { className?: string }) {
                       them is wrong the day the other is fixed. */}
                   <motion.p
                     variants={HERO_RISE}
-                    className="pointer-events-auto mx-auto mt-4 max-w-[62ch] text-[13.5px] leading-[1.68] text-quiet sm:mt-5 sm:text-[14.5px] lg:mx-0 lg:mt-6 lg:text-[15.5px] lg:leading-[1.75] 2xl:mt-7 2xl:text-[16.5px]"
+                    /* Three lines on a phone and the rest cut. The paragraph is
+                       the one thing on this screen that repeats what the lead
+                       above it already said, so it is the right thing to shorten
+                       when the room runs out - and clamped rather than hidden,
+                       because a paragraph that vanishes below a breakpoint is a
+                       paragraph nobody knows they are missing. */
+                    className="pointer-events-auto mx-auto mt-4 max-w-[62ch] text-[13.5px] leading-[1.68] text-quiet max-sm:mt-2.5 max-sm:line-clamp-3 max-sm:text-[12px] max-sm:leading-[1.55] sm:mt-5 sm:text-[14.5px] lg:mx-0 lg:mt-6 lg:text-[15.5px] lg:leading-[1.75] 2xl:mt-7 2xl:text-[16.5px]"
                   >
                     <SisterSentence say={shown.note ?? ""} />
                   </motion.p>
@@ -1782,11 +1806,20 @@ export function NotchedCard({ className }: { className?: string }) {
                       did. */}
                   <motion.div
                     variants={HERO_RISE}
-                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 sm:mt-8 lg:mt-9 lg:flex-nowrap lg:justify-start lg:gap-2.5 2xl:mt-10"
+                    /* Stacked and full width on a phone.
+
+                       Three pills of three different lengths wrapped and centred
+                       is a block ragged on both sides, under a headline that is
+                       centred and a paragraph justified by its measure - three
+                       different edges in four elements. One width down the
+                       column gives the screen a single left and right edge, and
+                       it is what a control at the foot of a phone looks like
+                       everywhere else. */
+                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 max-sm:mx-auto max-sm:mt-4 max-sm:w-full max-sm:max-w-[260px] max-sm:flex-col max-sm:gap-1.5 sm:mt-8 lg:mt-9 lg:flex-nowrap lg:justify-start lg:gap-2.5 2xl:mt-10"
                   >
                     <Link
                       href={ROUTES.build}
-                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]"
+                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:justify-center max-sm:gap-1.5 max-sm:px-3 max-sm:py-2 max-sm:text-[12px] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]"
                     >
                       <PencilLine aria-hidden className="size-4 shrink-0" />
                       Scope your website
@@ -1810,7 +1843,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       },
                     ].map((way) => {
                       const className =
-                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]";
+                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:justify-center max-sm:gap-1.5 max-sm:px-3 max-sm:py-2 max-sm:text-[12px] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]";
                       const body = (
                         <>
                           <way.icon
