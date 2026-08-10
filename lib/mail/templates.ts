@@ -23,8 +23,8 @@ import {
    is, and some people read mail as text on purpose.
 --------------------------------------------------------------------------- */
 
-const { INK, BODY, LABEL, MARK } = palette;
-const { SANS } = fonts;
+const { INK, BODY, QUIET, LABEL, MARK, CANVAS } = palette;
+const { SANS, MONO } = fonts;
 
 export interface Message {
   subject: string;
@@ -391,6 +391,261 @@ export function bookingConfirmation({
       title: "Your meeting is booked",
       preview: `${when} in ${zone}. Nothing to prepare and nothing to bring.`,
       body,
+    }),
+  };
+}
+
+/* ---------------------------------------------------------------------------
+   The one that comes to us.
+
+   `scopeDocument` in `lib/build/submit` writes the request out as plain text,
+   and that text is the record: it is what goes in the log, it is what a text
+   client shows, and it is built in the browser because only the browser has the
+   derivations that turn answers into pages. None of that changes here.
+
+   What changes is that the text was also the whole of the email. Eight sections
+   of labels, values and lists arrived as one unbroken column of 13px prose with
+   no heading weight, no alignment and no separation - so reading it meant
+   finding the capital letters and working out where each section stopped. This
+   reads the same text back and sets it.
+
+   Parsed rather than restructured at the source, and that is deliberate. The
+   document has one author; giving it a second representation to keep in step
+   would mean every new line had to be added twice, and the day they disagree is
+   the day the email stops matching the log.
+--------------------------------------------------------------------------- */
+
+/** The two sections written as `Label: value`, and the only two. */
+const FIELD_SECTIONS = new Set(["WHO IS ASKING", "THE ORGANISATION"]);
+
+/** A heading is a line that is already shouting. */
+const isHeading = (line: string) =>
+  /[A-Z]/.test(line) && line === line.toUpperCase() && !line.startsWith("-");
+
+const linkify = (value: string) =>
+  /^https?:\/\//.test(value)
+    ? `<a href="${esc(value)}" style="color:${MARK};text-decoration:underline;word-break:break-all">${esc(
+        value,
+      )}</a>`
+    : esc(value);
+
+/**
+ * The document, set.
+ *
+ * One pass down the lines, because the grammar is small enough to read in one:
+ * a shouting line opens a section, two spaces make a continuation of whatever
+ * was above it, a leading dash makes a bullet, a trailing colon makes a
+ * sub-heading, and inside the two sections that use them a colon makes a row.
+ * Anything else is a sentence somebody typed.
+ */
+function setDocument(document: string) {
+  const out: string[] = [];
+  let section = "";
+  let open = false;
+
+  const shut = () => {
+    if (open) out.push("</table>");
+    open = false;
+  };
+
+  const row = (cells: string) => {
+    if (!open) {
+      out.push(
+        `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0">`,
+      );
+      open = true;
+    }
+    out.push(`<tr>${cells}</tr>`);
+  };
+
+  for (const raw of document.split("\n")) {
+    const line = raw.trimEnd();
+    if (!line.trim()) continue;
+
+    if (isHeading(line)) {
+      shut();
+      section = line.replace(/\s*\(.*\)$/, "");
+      /* The count in the heading - "(4 pages)" - set apart from the heading
+         itself. It is a fact about the section rather than part of its name,
+         and at the same weight it reads as one long label. */
+      const count = line.match(/\((.*)\)$/)?.[1] ?? "";
+      out.push(
+        `<div style="margin:26px 0 0;padding:0 0 8px;border-bottom:1px solid #e8eaee">
+           <span style="font-family:${MONO};font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:${LABEL};line-height:1">${esc(
+             section,
+           )}</span>${
+             count
+               ? `<span style="font-family:${MONO};font-size:9px;font-weight:700;letter-spacing:0.16em;color:${MARK};line-height:1"> ${esc(
+                   count,
+                 )}</span>`
+               : ""
+           }
+         </div>`,
+      );
+      continue;
+    }
+
+    /* Indented: a page under its zone, or the address of the reference above
+       it. Set in the mono face and pulled in, so a run of them reads as a list
+       belonging to the line before rather than as more sentences. */
+    if (raw.startsWith("  ")) {
+      row(
+        `<td style="padding:5px 0 0 16px;font-family:${MONO};font-size:11.5px;line-height:1.6;color:${QUIET}">${linkify(
+          line.trim(),
+        )}</td>`,
+      );
+      continue;
+    }
+
+    if (line.startsWith("- ")) {
+      const text = line.slice(2);
+      row(
+        `<td width="14" valign="top" style="padding:6px 0 0;font-family:${SANS};font-size:13px;line-height:1.55;color:${MARK}">&bull;</td>
+         <td style="padding:6px 0 0;font-family:${SANS};font-size:13px;line-height:1.55;color:${BODY}">${linkify(
+           text,
+         )}</td>`,
+      );
+      continue;
+    }
+
+    /* A zone name inside the pages: "Always there:" with its pages under it. */
+    if (line.endsWith(":") && !line.slice(0, -1).includes(": ")) {
+      shut();
+      out.push(
+        `<div style="margin:14px 0 0;font-family:${SANS};font-size:12px;font-weight:700;letter-spacing:-0.01em;color:${INK};line-height:1.4">${esc(
+          line.slice(0, -1),
+        )}</div>`,
+      );
+      continue;
+    }
+
+    const at = line.indexOf(": ");
+
+    if (at > 0 && FIELD_SECTIONS.has(section)) {
+      row(
+        `<td width="38%" valign="top" style="padding:7px 12px 0 0;font-family:${SANS};font-size:12px;line-height:1.5;color:${LABEL}">${esc(
+          line.slice(0, at),
+        )}</td>
+         <td valign="top" style="padding:7px 0 0;font-family:${SANS};font-size:13px;line-height:1.5;color:${INK}">${linkify(
+           line.slice(at + 2),
+         )}</td>`,
+      );
+      continue;
+    }
+
+    /* Whatever they wrote, as they wrote it. */
+    shut();
+    out.push(
+      `<div style="margin:10px 0 0;font-family:${SANS};font-size:13px;line-height:1.65;color:${BODY};white-space:pre-wrap">${esc(
+        line,
+      )}</div>`,
+    );
+  }
+
+  shut();
+  return out.join("");
+}
+
+/**
+ * The notification of a scoping request, for our own inbox.
+ *
+ * Everything above the document is what somebody needs before they decide to
+ * read it: whose it is, how to reach them, and which reference it is filed
+ * under. The name and the address are links because the first thing anybody
+ * does with this email is answer it, and a mail address you have to select and
+ * copy is one nobody answers from their phone.
+ */
+export function scopeNotice({
+  ref,
+  name,
+  company,
+  email,
+  phone,
+  document,
+  follow,
+}: {
+  ref: string;
+  name: string;
+  company: string;
+  email: string;
+  phone?: string;
+  document: string;
+  follow?: boolean;
+}): Message {
+  const fact = (label: string, value: string) =>
+    `<tr>
+       <td width="34%" valign="top" style="padding:6px 12px 0 0;font-family:${SANS};font-size:11.5px;line-height:1.5;color:${LABEL}">${esc(
+         label,
+       )}</td>
+       <td valign="top" style="padding:6px 0 0;font-family:${SANS};font-size:13px;line-height:1.5;color:${INK}">${value}</td>
+     </tr>`;
+
+  const body = `
+    ${kicker(follow ? "More detail" : "Scoping request")}
+    <h1 style="margin:12px 0 0;font-family:${SANS};font-size:22px;line-height:1.2;font-weight:700;letter-spacing:-0.022em;color:${INK}">${esc(
+      company,
+    )}</h1>
+
+    ${
+      follow
+        ? `<div style="margin:16px 0 0;padding:12px 14px;background:${CANVAS};border-radius:12px;font-family:${SANS};font-size:12.5px;line-height:1.6;color:${BODY}">A fuller answer to a request already sent under this reference. <b style="color:${INK};font-weight:600">This is the version to read.</b></div>`
+        : ""
+    }
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:18px 0 0">
+      ${fact("From", esc(name))}
+      ${fact(
+        "Email",
+        `<a href="mailto:${esc(email)}" style="color:${MARK};text-decoration:underline">${esc(
+          email,
+        )}</a>`,
+      )}
+      ${
+        phone
+          ? fact(
+              "Phone",
+              `<a href="tel:${esc(phone.replace(/[^\d+]/g, ""))}" style="color:${MARK};text-decoration:underline">${esc(
+                phone,
+              )}</a>`,
+            )
+          : ""
+      }
+      ${fact(
+        "Reference",
+        `<span style="font-family:${MONO};font-size:12.5px;font-weight:700">${esc(
+          ref,
+        )}</span>`,
+      )}
+    </table>
+
+    ${setDocument(document)}`;
+
+  const text = [
+    follow
+      ? "A fuller answer to a request already sent under this reference. This is the version to read."
+      : "",
+    `From: ${name} at ${company} <${email}>`,
+    phone ? `Phone: ${phone}` : "",
+    `Reference: ${ref}`,
+    "",
+    document,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return {
+    subject: follow
+      ? `More detail on ${ref}: ${company}`
+      : `Scoping request ${ref}: ${company}`,
+    text,
+    html: shell({
+      title: follow ? `More detail on ${ref}` : `Scoping request ${ref}`,
+      preview: `${name} at ${company}. ${ref}.`,
+      body,
+      /* Wider and read from the left, unlike everything else this file sends.
+         See `shell`: a note is centred, a filled-in document is not. */
+      width: 620,
+      align: "left",
     }),
   };
 }

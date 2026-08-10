@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { send, wiring } from "@/lib/booking/google";
-import { scopeReceipt } from "@/lib/mail/templates";
+import { scopeNotice, scopeReceipt } from "@/lib/mail/templates";
 import { isReference, makeReference } from "@/lib/build/reference";
 import { absolute } from "@/lib/seo";
 import { CONTACT_INFO, ROUTES } from "@/lib/site";
@@ -105,30 +105,29 @@ ${body.document}`,
   const w = wiring();
 
   if (w) {
-    await send(
-      w,
-      w.notify,
-      follow
-        ? `More detail on ${ref}: ${ask.company}`
-        : `Scoping request ${ref}: ${ask.company}`,
-      [
-        /* Said at the top, before the document. Whoever opens this needs to
-           know it supersedes an earlier one before they start reading it, not
-           after. */
-        follow
-          ? "A fuller answer to a request already sent under this reference. This is the version to read."
-          : "",
-        `From: ${ask.name} at ${ask.company} <${ask.email}>`,
-        ask.phone ? `Phone: ${ask.phone}` : "",
-        `Reference: ${ref}`,
-        "",
-        body.document,
-      ]
-        .filter(Boolean)
-        .join("\n"),
-    ).catch((wrong) => {
-      console.error(`[scope ${ref}] could not be forwarded`, wrong);
+    /* Set rather than pasted.
+
+       The document is the record and it goes out unchanged - it is what the log
+       holds and what a text client shows. What it also used to be is the whole
+       of the HTML, which meant eight sections of labels and lists arriving as
+       one unbroken column with no heading weight and no alignment. `scopeNotice`
+       reads the same text back and sets it; nothing about what is sent has
+       changed except that it can be read. */
+    const notice = scopeNotice({
+      ref,
+      name: ask.name!.trim(),
+      company: ask.company!.trim(),
+      email: ask.email!.trim(),
+      phone: ask.phone?.trim(),
+      document: body.document,
+      follow,
     });
+
+    await send(w, w.notify, notice.subject, notice.text, notice.html).catch(
+      (wrong) => {
+        console.error(`[scope ${ref}] could not be forwarded`, wrong);
+      },
+    );
 
     /* And the person who sent it.
 

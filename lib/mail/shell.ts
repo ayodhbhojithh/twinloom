@@ -136,17 +136,31 @@ export const rule = `<div style="height:26px;line-height:26px;font-size:0">&nbsp
  * One centred column at 460 - narrower than a web measure on purpose, because
  * a reading pane is a third of a screen, and a message that needs the full
  * width of a laptop is a message read in a scrollbar.
+ *
+ * Both of those are defaults rather than rules, because the two kinds of
+ * message this site sends are not the same shape. What goes to somebody outside
+ * the company is four sentences and a reference, and it is centred because a
+ * short centred message reads as a note. What comes to us is a filled-in
+ * document - eight sections of labels and values - and a document is read down
+ * a left edge at whatever width it needs. Centring that would rag both sides of
+ * every list in it.
  */
 export function shell({
   title,
   preview,
   body,
+  width = 460,
+  align = "center",
 }: {
   /** The `<title>`, and what a reading pane may show as the subject line. */
   title: string;
   /** The first line a client previews. Written, not left to chance. */
   preview: string;
   body: string;
+  /** How wide the column may get before it stops growing. */
+  width?: number;
+  /** Which edge the message is read from. */
+  align?: "center" | "left";
 }) {
   return `<!doctype html>
 <html lang="en">
@@ -171,16 +185,16 @@ export function shell({
          centred column and type jammed against two edges. -->
     <td align="center" style="padding:36px 20px 40px">
 
-      <table role="presentation" width="460" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:460px">
+      <table role="presentation" width="${width}" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:${width}px">
 
         <tr>
-          <td align="center" style="padding:0 0 26px">
+          <td align="${align}" style="padding:0 0 26px">
             <span style="font-family:${SANS};font-size:14px;font-weight:700;letter-spacing:-0.02em;color:${INK}">TwinLoom</span>
           </td>
         </tr>
 
         <tr>
-          <td align="center">${body}</td>
+          <td align="${align}">${body}</td>
         </tr>
 
         <!-- Who sent it. Company law wants it findable, and a message with no
