@@ -170,13 +170,7 @@ export function ServiceWall({
   const still = at.start && at.end;
 
   return (
-    <div
-      className={cn(
-        "group relative",
-        bleed ? "page-bleed" : "",
-        className,
-      )}
-    >
+    <div className={cn("group relative", bleed ? "page-bleed" : "", className)}>
       <div
         ref={track}
         /* Faded at both ends rather than cut off - but only while there is
