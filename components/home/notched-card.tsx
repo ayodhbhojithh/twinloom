@@ -2135,48 +2135,48 @@ function FilmDoors({ onSize }: { onSize: (w: number, h: number) => void }) {
        on the page, and the air round them is the cut's own. */
     <div
       ref={box}
-      className="pointer-events-auto flex w-max flex-col items-stretch gap-2 sm:gap-2.5"
+      className="pointer-events-auto flex w-max flex-col items-stretch gap-2 sm:gap-3"
     >
       <Link
         href={ROUTES.build}
-        className="group/way thread-fill inline-flex items-center gap-1.5 rounded-pill px-3 py-2 text-[11.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 sm:gap-2 sm:px-4.5 sm:py-2.5 sm:text-[13px]"
+        className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
       >
-        <PencilLine aria-hidden className="size-3.5 shrink-0 sm:size-4" />
+        <PencilLine aria-hidden className="size-4 shrink-0 sm:size-[18px]" />
         Scope your website
         <ArrowRight
           aria-hidden
-          className="ml-auto size-3.5 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-4"
+          className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-[18px]"
           strokeWidth={2.4}
         />
       </Link>
 
       <a
         href={ROUTES.services}
-        className="group/way inline-flex items-center gap-1.5 rounded-pill border border-hair bg-field px-3 py-2 text-[11.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink sm:gap-2 sm:px-4.5 sm:py-2.5 sm:text-[13px]"
+        className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
       >
         <LayoutGrid
           aria-hidden
-          className="size-3.5 shrink-0 text-idx sm:size-4"
+          className="size-4 shrink-0 text-idx sm:size-[18px]"
         />
         View our services
         <ArrowRight
           aria-hidden
-          className="ml-auto size-3.5 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-4"
+          className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-[18px]"
         />
       </a>
 
       <Link
         href={ROUTES.book}
-        className="group/way inline-flex items-center gap-1.5 rounded-pill border border-hair bg-field px-3 py-2 text-[11.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink sm:gap-2 sm:px-4.5 sm:py-2.5 sm:text-[13px]"
+        className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
       >
         <CalendarDays
           aria-hidden
-          className="size-3.5 shrink-0 text-idx sm:size-4"
+          className="size-4 shrink-0 text-idx sm:size-[18px]"
         />
         Book a meeting
         <ArrowRight
           aria-hidden
-          className="ml-auto size-3.5 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-4"
+          className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-[18px]"
         />
       </Link>
     </div>
