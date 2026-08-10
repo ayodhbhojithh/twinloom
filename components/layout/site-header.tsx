@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight, Mail, Menu, Phone, X } from "lucide-react";
@@ -317,26 +318,39 @@ export function SiteHeader({
       </div>
 
       {/* A panel rather than a library sheet: it is a list of links over a white
-          field, and the whole header is already hairlines and type. */}
-      {open ? (
-        <div
-          id="site-menu"
-          className="fixed inset-0 z-50 flex flex-col bg-field xl:hidden"
-        >
-          <div className="flex items-center gap-4 border-b border-border px-5 py-2.5 sm:px-8">
-            <Wordmark as="text" className="min-w-0" />
+          field, and the whole header is already hairlines and type.
 
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              aria-label="Close menu"
-              className="ml-auto flex size-8 shrink-0 items-center justify-center rounded-field text-ink transition-colors hover:bg-hair"
+          Portalled to `body`, and it has to be. `fixed` positions against the
+          window but it does not escape a stacking context: on the landing card
+          this header sits inside a `z-20` box, so the panel's own `z-50` only
+          ever competed with that box's siblings from the inside. The card's
+          three turn arrows are a band at `z-30` beside it, and they were
+          painting straight through an opaque white menu and coming out between
+          the wordmark and the close button.
+
+          Rendered from `body` the panel is a sibling of everything on the page
+          rather than a descendant of one corner of it, and `z-50` means what it
+          says. Nothing about the markup changes - only where it is attached. */}
+      {open
+        ? createPortal(
+            <div
+              id="site-menu"
+              className="fixed inset-0 z-50 flex flex-col bg-field xl:hidden"
             >
-              <X className="size-[18px]" />
-            </button>
-          </div>
+              <div className="flex items-center gap-4 border-b border-border px-5 py-2.5 sm:px-8">
+                <Wordmark as="text" className="min-w-0" />
 
-          {/* One gutter, both sides.
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  aria-label="Close menu"
+                  className="ml-auto flex size-8 shrink-0 items-center justify-center rounded-field text-ink transition-colors hover:bg-hair"
+                >
+                  <X className="size-[18px]" />
+                </button>
+              </div>
+
+              {/* One gutter, both sides.
 
               It used to be inset on the leading edge only, so the 2px marker
               could hang out into the sheet's own padding and the labels still
@@ -344,18 +358,18 @@ export function SiteHeader({
               current row is filled instead - so there is nothing to hang, and
               a list whose rows are the target wants its rows to reach both
               edges of the sheet. */}
-          <nav
-            aria-label="All pages, mobile"
-            className="flex-1 overflow-x-hidden overflow-y-auto px-3 pt-3 pb-8 sm:px-6"
-          >
-            <RailNav
-              size="menu"
-              pathname={pathname}
-              onNavigate={() => setOpen(false)}
-            />
-          </nav>
+              <nav
+                aria-label="All pages, mobile"
+                className="flex-1 overflow-x-hidden overflow-y-auto px-3 pt-3 pb-8 sm:px-6"
+              >
+                <RailNav
+                  size="menu"
+                  pathname={pathname}
+                  onNavigate={() => setOpen(false)}
+                />
+              </nav>
 
-          {/* The foot: both ways in, and how to reach a person.
+              {/* The foot: both ways in, and how to reach a person.
 
               It was one flat blue rectangle across the width of the sheet, which
               is the shape of an app's primary button and the one shape this site
@@ -368,53 +382,55 @@ export function SiteHeader({
               under them the phone number and the address, because a menu open on
               a phone is the one place on this site where the fastest thing to do
               is press a number. */}
-          <div className="border-t border-border px-5 py-4 sm:px-8">
-            <div className="flex gap-2.5">
-              <Link
-                href={ROUTES.book}
-                onClick={() => setOpen(false)}
-                className="group/way inline-flex flex-1 items-center justify-center gap-2 rounded-pill bg-canvas px-4 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:bg-hair"
-              >
-                Book a meeting
-                <ArrowUpRight
-                  aria-hidden
-                  className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
-                />
-              </Link>
+              <div className="border-t border-border px-5 py-4 sm:px-8">
+                <div className="flex gap-2.5">
+                  <Link
+                    href={ROUTES.book}
+                    onClick={() => setOpen(false)}
+                    className="group/way inline-flex flex-1 items-center justify-center gap-2 rounded-pill bg-canvas px-4 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:bg-hair"
+                  >
+                    Book a meeting
+                    <ArrowUpRight
+                      aria-hidden
+                      className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                    />
+                  </Link>
 
-              <Link
-                href={HEADER_CTA.href}
-                onClick={() => setOpen(false)}
-                className="group/way thread-fill inline-flex flex-1 items-center justify-center gap-2 rounded-pill px-4 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
-              >
-                {HEADER_CTA.label}
-                <ArrowUpRight
-                  aria-hidden
-                  className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
-                />
-              </Link>
-            </div>
+                  <Link
+                    href={HEADER_CTA.href}
+                    onClick={() => setOpen(false)}
+                    className="group/way thread-fill inline-flex flex-1 items-center justify-center gap-2 rounded-pill px-4 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+                  >
+                    {HEADER_CTA.label}
+                    <ArrowUpRight
+                      aria-hidden
+                      className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
+                    />
+                  </Link>
+                </div>
 
-            <div className="mt-3.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5">
-              <a
-                href={CONTACT_INFO.phoneHref}
-                className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-body transition-colors hover:text-ink"
-              >
-                <Phone aria-hidden className="size-3.5 text-label" />
-                {CONTACT_INFO.phone}
-              </a>
+                <div className="mt-3.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5">
+                  <a
+                    href={CONTACT_INFO.phoneHref}
+                    className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-body transition-colors hover:text-ink"
+                  >
+                    <Phone aria-hidden className="size-3.5 text-label" />
+                    {CONTACT_INFO.phone}
+                  </a>
 
-              <a
-                href={`mailto:${CONTACT_INFO.primaryEmail}`}
-                className="inline-flex items-center gap-1.5 text-[13px] text-quiet transition-colors hover:text-ink"
-              >
-                <Mail aria-hidden className="size-3.5 text-label" />
-                {CONTACT_INFO.primaryEmail}
-              </a>
-            </div>
-          </div>
-        </div>
-      ) : null}
+                  <a
+                    href={`mailto:${CONTACT_INFO.primaryEmail}`}
+                    className="inline-flex items-center gap-1.5 text-[13px] text-quiet transition-colors hover:text-ink"
+                  >
+                    <Mail aria-hidden className="size-3.5 text-label" />
+                    {CONTACT_INFO.primaryEmail}
+                  </a>
+                </div>
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </header>
   );
 }

@@ -1154,6 +1154,12 @@ export function NotchedCard({ className }: { className?: string }) {
           depending on what is drawn under it. */}
       {/* `pointer-events-none` on the box, `auto` on the pill inside it.
 
+          The mobile menu has to escape this band rather than out-rank it. It is
+          rendered inside the header, and the header is inside a `z-20` box on
+          this card - so its own `z-50` only ever competed inside that box, and
+          this band at `z-30` painted straight through an opaque white panel. It
+          is portalled to `body` now; see `site-header`.
+
           This is a full-width band across the top of the card at `z-30`, there
           only to centre the three controls in the notch - and sitting above the
           header at `z-20`, it was taking every click meant for the menu button
