@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { send, wiring } from "@/lib/booking/google";
 import { scopeReceipt } from "@/lib/mail/templates";
 import { isReference, makeReference } from "@/lib/build/reference";
+import { absolute } from "@/lib/seo";
+import { CONTACT_INFO, ROUTES } from "@/lib/site";
 
 /* ---------------------------------------------------------------------------
    Where a scoping request lands.
@@ -29,7 +31,7 @@ export async function POST(request: Request) {
     follow?: unknown;
     document?: string;
     ask?: Record<string, string>;
-    answers?: { refs?: { url?: unknown }[] };
+    answers?: { refs?: { url?: unknown; text?: unknown }[]; text?: unknown };
   };
 
   try {
@@ -138,15 +140,55 @@ ${body.document}`,
 
        Sent second, and its failure is caught separately. If ours goes and
        theirs does not, the request is still received. */
+    /* What they will recognise sending, counted from what actually arrived.
+
+       A ref with a `url` is a file that reached Cloudinary; a ref without one
+       is something typed on the desk. They are one list in the store because
+       they are one column on the screen, and they are two lines in the receipt
+       because "three attachments" and "two notes" are two different things to
+       have forgotten. */
     const refs = Array.isArray(body.answers?.refs) ? body.answers.refs : [];
     const files = refs.filter(
       (entry) => typeof entry?.url === "string" && entry.url,
     ).length;
+    const notes = refs.length - files;
+
+    /* Whether they wrote anything in their own words.
+
+       The quick route is a single box of prose and the run-through is a set of
+       answers with prose scattered through it, so this asks the one question
+       both can answer: is there any free text at all. Written as an unknown and
+       narrowed, because it is whatever the browser posted. */
+    const written = body.answers?.text;
+    const described =
+      typeof written === "object" && written !== null
+        ? Object.values(written as Record<string, unknown>).some(
+            (value) => typeof value === "string" && value.trim().length > 0,
+          )
+        : false;
 
     const receipt = scopeReceipt({
       name: ask.name!.trim(),
       ref,
+      described,
       attachments: files,
+      notes,
+      /* `none` for now, and it is the honest one of the three.
+
+         The other two - a call already booked, or times offered for us to
+         confirm - are real states this message is written to carry, and neither
+         can happen yet: nothing in the run-through asks for either, so a
+         submission carries no meeting at all. When that step exists it sets
+         this, and the wording for all three is already here. */
+      meeting: { kind: "none" },
+      /* No `archive`. There is nowhere to read a submission back - nothing is
+         stored, the email is the record - so the line is left out rather than
+         shipped as a link that goes nowhere, which is the one thing in a
+         receipt everybody presses. */
+      addTo: absolute(ROUTES.build),
+      contactEmail: CONTACT_INFO.primaryEmail,
+      phone: CONTACT_INFO.phone,
+      privacyUrl: absolute(ROUTES.privacy),
       follow,
     });
 

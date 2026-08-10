@@ -7,7 +7,6 @@ import {
   plate,
   rule,
   shell,
-  step,
 } from "./shell";
 
 /* ---------------------------------------------------------------------------
@@ -24,7 +23,7 @@ import {
    is, and some people read mail as text on purpose.
 --------------------------------------------------------------------------- */
 
-const { INK, BODY, LABEL } = palette;
+const { INK, BODY, LABEL, MARK } = palette;
 const { SANS } = fonts;
 
 export interface Message {
@@ -49,23 +48,73 @@ const h1 = (text: string) =>
 const p = (text: string, size = 13) =>
   `<div style="margin:12px auto 0;max-width:380px;font-family:${SANS};font-size:${size}px;line-height:1.65;color:${BODY}">${text}</div>`;
 
+export interface Meeting {
+  /**
+   * Which of the three things is true about talking it through.
+   *
+   * Three states rather than a nullable date, because "we will confirm one of
+   * your times" and "we will be in touch to arrange one" are different promises
+   * and a reader can tell which one they were given. A single optional date
+   * collapses them into "no date", which reads as the first message about a
+   * meeting having gone missing.
+   */
+  kind: "booked" | "slots" | "none";
+  /** When, written out, for `booked`. Formatted by the caller: this file has no
+      business deciding whether a date is British or American. */
+  when?: string;
+}
+
 /**
  * The receipt for a scoping request.
  *
  * The thing it exists to carry is the reference. Everything somebody attached
  * is filed under it, and until this message arrived the only place it had ever
  * appeared was a screen they were about to close.
+ *
+ * What it does not do any more is describe a process that does not happen. It
+ * promised a written scope back within two working days, in three numbered
+ * steps, with a button to book a call - which is a commitment made by an email
+ * template on behalf of whoever opens the inbox. What follows a submission is a
+ * conversation, so that is what it says.
  */
 export function scopeReceipt({
   name,
   ref,
+  described,
   attachments,
+  notes,
+  meeting = { kind: "none" },
+  archive,
+  addTo,
+  contactEmail,
+  phone,
+  privacyUrl,
   follow,
 }: {
   name: string;
   ref: string;
+  /** Whether they wrote anything in their own words, which most do and some do
+      not - a request can be four fields and three files. */
+  described?: boolean;
   /** How many files came with it, so the message can say where they went. */
   attachments: number;
+  /** How many things were put on the desk that were not files. */
+  notes: number;
+  meeting?: Meeting;
+  /**
+   * Where the whole submission can be read back.
+   *
+   * Optional, and left out until there is somewhere for it to point. A link in
+   * a receipt that goes nowhere is worse than no link: it is the one thing in
+   * the message somebody will try.
+   */
+  archive?: string;
+  /** Where to go to add to the request. The build tool, which files under the
+      same reference. */
+  addTo?: string;
+  contactEmail: string;
+  phone?: string;
+  privacyUrl: string;
   /**
    * A fuller answer to a request already sent, rather than a new one.
    *
@@ -76,48 +125,97 @@ export function scopeReceipt({
    */
   follow?: boolean;
 }): Message {
+  /* What they sent, as the things they will recognise sending.
+
+     Counted rather than listed. Naming three files back at somebody is a
+     manifest, and a manifest invites the reader to audit it - which is the one
+     thing this message must not make them do, because there is nothing here
+     they can act on if a count is wrong. What a count does is let them notice
+     that something they meant to attach is not in it. */
+  const sent = [
+    described ? "Your description, in your own words" : "",
+    attachments > 0
+      ? `${attachments} ${attachments === 1 ? "attachment" : "attachments"}`
+      : "",
+    notes > 0 ? `${notes} ${notes === 1 ? "note" : "notes"}` : "",
+  ].filter(Boolean);
+
+  /* Never an empty list. A request with no description, no file and no note is
+     four contact fields and a set of answers, which is still a request - and a
+     heading over nothing reads as a message that failed to load. */
+  if (!sent.length) sent.push("Your answers to the questions");
+
+  const talk =
+    meeting.kind === "booked" && meeting.when
+      ? `You booked a call for ${meeting.when}.`
+      : meeting.kind === "slots"
+        ? "You gave us some times that suit you. We will confirm one of them."
+        : "We will be in touch to arrange a time.";
+
+  const item = (text: string) =>
+    `<div style="margin:6px auto 0;max-width:380px;font-family:${SANS};font-size:13px;line-height:1.6;color:${BODY}">${text}</div>`;
+
+  const heading = (text: string) =>
+    `<div style="font-family:${SANS};font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:${LABEL};line-height:1">${esc(
+      text,
+    )}</div>`;
+
+  const link = (href: string, text: string) =>
+    `<a href="${esc(href)}" style="color:${MARK};text-decoration:underline">${esc(
+      text,
+    )}</a>`;
+
   const body = `
     ${kicker(follow ? "More received" : "Received")}
-    ${h1(
-      follow
-        ? "We have the rest of it."
-        : "We have your scoping request.",
-    )}
+    ${h1(follow ? "We have the rest of it." : "We have your scoping request.")}
     ${p(
       follow
         ? `Thank you, ${esc(
             name,
           )}. This is the fuller answer to the request you sent earlier, under the same reference - it is the version we will read.`
-        : `Thank you, ${esc(
-            name,
-          )}. A person reads every one of these - what comes back is a written scope in your own words, within two working days.`,
+        : `Hello ${esc(name)}.`,
     )}
 
     ${plate("Your reference", ref)}
 
     ${p(
-      attachments > 0
-        ? `Quote it in any reply. The ${attachments} ${
-            attachments === 1 ? "file" : "files"
-          } you attached are filed under it.`
-        : "Quote it in any reply, and anything you add later is filed under it.",
+      "Quote it in any reply, and anything you add later is filed under it rather than arriving as a second request.",
       12,
     )}
 
     ${rule}
 
-    <div style="font-family:${SANS};font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:${LABEL};line-height:1">What happens next</div>
+    ${heading("What you sent")}
+    ${sent.map((line) => item(esc(line))).join("")}
+    ${archive ? item(link(archive, "Everything you sent")) : ""}
 
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:2px 0 0">
-      ${step(1, "We read it", "In full, and we work out what is missing rather than guessing at it.")}
-      ${step(2, "A written scope comes back", "Your answers turned into a description of a website, with anything we assumed marked as an assumption.")}
-      ${step(3, "You tell us what is wrong with it", "Nothing is priced until that document is right. It is a description, not a quote.")}
-    </table>
+    ${rule}
 
-    ${button("https://twinloom.com/book", "Book a time to talk it through")}
-
+    ${heading("What happens next")}
     ${p(
-      `Nothing here commits you to anything, and you can reply to this message with anything you forgot.`,
+      "We read it in full. Then we talk it through with you properly - your requirements in more depth, how we work, and what the next steps look like.",
+    )}
+    ${p("Nothing you have sent commits you to anything, and nothing in it is priced.")}
+    ${p(`<b style="color:${INK};font-weight:600">${esc(talk)}</b>`)}
+
+    ${rule}
+
+    ${heading("Forgotten something?")}
+    ${p(
+      addTo
+        ? `Reply to this message, or ${link(
+            addTo,
+            "add to your request",
+          )} - it goes under the same reference.`
+        : "Reply to this message and it goes under the same reference.",
+    )}
+    ${p(
+      phone
+        ? `Anything else, email ${link(
+            `mailto:${contactEmail}`,
+            contactEmail,
+          )} or call ${esc(phone)}.`
+        : `Anything else, email ${link(`mailto:${contactEmail}`, contactEmail)}.`,
       12,
     )}`;
 
@@ -130,46 +228,57 @@ export function scopeReceipt({
           "sent earlier, under the same reference, and it is the version we will",
           "read.",
         ]
-      : [
-          "We have your scoping request. A person reads every one of these - what",
-          "comes back is a written scope in your own words, within two working days.",
-        ]),
+      : ["We have your scoping request."]),
     "",
-    `Your reference is ${ref}.`,
-    attachments > 0
-      ? `Quote it in any reply. The ${attachments} ${
-          attachments === 1 ? "file" : "files"
-        } you attached are filed under it.`
-      : "Quote it in any reply, and anything you add later is filed under it.",
+    `Your reference is ${ref}. Quote it in any reply, and anything you`,
+    "add later is filed under it rather than arriving as a second request.",
+    "",
+    "WHAT YOU SENT",
+    ...sent.map((line) => `  ${line}`),
+    ...(archive ? [`  Everything you sent: ${archive}`] : []),
     "",
     "WHAT HAPPENS NEXT",
-    "1. We read it, in full, and work out what is missing rather than guessing.",
-    "2. A written scope comes back, with anything we assumed marked as an assumption.",
-    "3. You tell us what is wrong with it. Nothing is priced until it is right.",
+    "  We read it in full. Then we talk it through with you properly - your",
+    "  requirements in more depth, how we work, and what the next steps look",
+    "  like.",
     "",
-    "If you would rather talk it through first: https://twinloom.com/book",
+    "  Nothing you have sent commits you to anything, and nothing in it is",
+    "  priced.",
     "",
-    "Nothing here commits you to anything, and you can reply to this message",
-    "with anything you forgot.",
+    `  ${talk}`,
+    "",
+    "FORGOTTEN SOMETHING?",
+    /* The address on its own line rather than inside the sentence. A URL set
+       mid-clause is a URL that wraps mid-clause, and the half of it on the
+       second line stops being a link in every plain-text reader there is. */
+    addTo
+      ? "Reply to this message, or add to your request - it goes under the"
+      : "Reply to this message and it goes under the same reference.",
+    ...(addTo ? ["same reference:", `  ${addTo}`] : []),
+    "",
+    phone
+      ? `Anything else, email ${contactEmail} or call ${phone}.`
+      : `Anything else, email ${contactEmail}.`,
     "",
     "TwinLoom is a trading name of TwinCoreTech Ltd, registered in England and",
     "Wales, company number 15997244.",
+    `What we do with your details: ${privacyUrl}`,
   ].join("\n");
 
   return {
     /* Two receipts with one subject line would sit on top of each other in a
        thread and read as the same message sent twice. A follow-up says so. */
     subject: follow
-      ? `We have the rest of your scoping request - ${ref}`
-      : `We have your scoping request - ${ref}`,
+      ? `More detail on your scoping request - ${ref}`
+      : `Your scoping request - ${ref}`,
     text,
     html: shell({
       title: follow
         ? "We have the rest of your scoping request"
         : "We have your scoping request",
       preview: follow
-        ? `The rest of ${ref}. A written scope comes back within two working days.`
-        : `Your reference is ${ref}. A written scope comes back within two working days.`,
+        ? `The rest of ${ref}. We read it in full, then we talk it through.`
+        : `Your reference is ${ref}. We read it in full, then we talk it through.`,
       body,
     }),
   };
