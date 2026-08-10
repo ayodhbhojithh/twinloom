@@ -636,11 +636,17 @@ export function NotchedCard({ className }: { className?: string }) {
           <span
             aria-hidden
             className="absolute inset-0"
+            /* The clearing is a shade smaller than it was: 18 and 66 rather
+               than 22 and 74. The texture is a wave now, and a wave shown only
+               in the last quarter of the card is a wave nobody can see travel -
+               there was no run of field long enough for a crest to cross. This
+               still clears the whole of the headline, the paragraph and the
+               buttons, which is all it was ever for. */
             style={{
               maskImage:
-                "radial-gradient(ellipse 62% 66% at 50% 50%, transparent 0%, transparent 22%, black 74%)",
+                "radial-gradient(ellipse 62% 66% at 50% 50%, transparent 0%, transparent 18%, black 66%)",
               WebkitMaskImage:
-                "radial-gradient(ellipse 62% 66% at 50% 50%, transparent 0%, transparent 22%, black 74%)",
+                "radial-gradient(ellipse 62% 66% at 50% 50%, transparent 0%, transparent 18%, black 66%)",
             }}
           >
             <DotField className="absolute inset-0" />
@@ -1189,7 +1195,7 @@ export function NotchedCard({ className }: { className?: string }) {
                   as having sunk. The padding is inside the centred box, so it
                   takes half its own height off the middle and lifts the whole
                   two-up by that much. */}
-              <div className="flex flex-1 flex-col items-center justify-center gap-6 pb-6 sm:pb-10 lg:flex-row lg:items-center lg:gap-8">
+              <div className="flex flex-1 flex-col items-center justify-center gap-6 pb-6 sm:pb-10 lg:flex-row lg:items-center lg:gap-8 2xl:gap-12">
                 {/* Drawn wider than the room it takes, and grown leftward.
 
                     At a straight 52 per cent the mark was half the row and the
@@ -1234,7 +1240,7 @@ export function NotchedCard({ className }: { className?: string }) {
                     label. */}
                   <motion.ul
                     variants={HERO_RISE}
-                    className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 font-mono text-[10px] font-bold tracking-[0.15em] text-idx uppercase lg:justify-start"
+                    className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 font-mono text-[10px] font-bold tracking-[0.15em] text-idx uppercase lg:justify-start lg:gap-x-3.5 lg:text-[11px] 2xl:text-[11.5px]"
                   >
                     {shown.kicker?.map((trade, n) => (
                       <li key={trade} className="flex items-center gap-2.5">
@@ -1249,12 +1255,28 @@ export function NotchedCard({ className }: { className?: string }) {
                     ))}
                   </motion.ul>
 
-                  {/* The gaps are the grouping, and they were all much of a
-                      muchness: four, five, four, seven, which says the trades
-                      belong to the headline about as much as the headline
-                      belongs to the line under it - and the lead and the
-                      paragraph, which are a claim and its explanation, sat
-                      closer together than either sat to anything else.
+                  {/* The gaps are the grouping, and they climb with the screen.
+
+                      Every one of them steps at `lg` and the two largest step
+                      again at `2xl`. A ladder set for a laptop is a ladder a
+                      wide screen reads as a block: the type grows with the
+                      window - the claim and the lead are both `clamp`, and
+                      their caps are what a wide screen actually gets, since
+                      `3.4vw` passes fifty-one well before fifteen hundred - so
+                      gaps that do not grow with it close up. The paragraph and
+                      the doors are told in so many words, because neither is
+                      fluid: a fixed thirteen and a half on a two thousand pixel
+                      window is a caption.
+
+                      The proportions are the same at every width, which is what
+                      makes it one ladder rather than three:
+
+                      The gaps were all much of a muchness once: four, five,
+                      four, seven, which says the trades belong to the headline
+                      about as much as the headline belongs to the line under it
+                      - and the lead and the paragraph, which are a claim and its
+                      explanation, sat closer together than either sat to
+                      anything else.
 
                       Set as a ladder instead. The trades are a label on the
                       headline and stay tight to it. The lead is the second
@@ -1269,7 +1291,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       right at 62px of headline is mean at 32. */}
                   <motion.h1
                     variants={HERO_RISE}
-                    className="mx-auto mt-3 max-w-[26ch] text-[clamp(28px,3.4vw,51px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink lg:mx-0"
+                    className="mx-auto mt-3 max-w-[26ch] text-[clamp(28px,3.4vw,62px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink sm:mt-4 lg:mx-0 lg:mt-5"
                   >
                     {shown.claim?.[0]}
                     <span className="thread-text block">
@@ -1279,7 +1301,7 @@ export function NotchedCard({ className }: { className?: string }) {
 
                   <motion.p
                     variants={HERO_RISE}
-                    className="mx-auto mt-4 max-w-[44ch] text-[clamp(15px,1.3vw,19.5px)] leading-[1.38] font-bold tracking-[-0.022em] text-ink sm:mt-5 lg:mx-0"
+                    className="mx-auto mt-4 max-w-[44ch] text-[clamp(15px,1.3vw,24px)] leading-[1.4] font-bold tracking-[-0.022em] text-ink sm:mt-5 lg:mx-0 lg:mt-6 2xl:mt-7"
                   >
                     {shown.lead}
                   </motion.p>
@@ -1295,7 +1317,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       them is wrong the day the other is fixed. */}
                   <motion.p
                     variants={HERO_RISE}
-                    className="pointer-events-auto mx-auto mt-4 max-w-[62ch] text-[13.5px] leading-[1.68] text-quiet sm:mt-5 sm:text-[14.5px] lg:mx-0"
+                    className="pointer-events-auto mx-auto mt-4 max-w-[62ch] text-[13.5px] leading-[1.68] text-quiet sm:mt-5 sm:text-[14.5px] lg:mx-0 lg:mt-6 lg:text-[15.5px] lg:leading-[1.75] 2xl:mt-7 2xl:text-[16.5px]"
                   >
                     <SisterSentence say={shown.note ?? ""} />
                   </motion.p>
@@ -1319,11 +1341,11 @@ export function NotchedCard({ className }: { className?: string }) {
                       did. */}
                   <motion.div
                     variants={HERO_RISE}
-                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 sm:mt-8 lg:flex-nowrap lg:justify-start"
+                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 sm:mt-8 lg:mt-9 lg:flex-nowrap lg:justify-start lg:gap-2.5 2xl:mt-10"
                   >
                     <Link
                       href={ROUTES.build}
-                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]"
                     >
                       <PencilLine aria-hidden className="size-4 shrink-0" />
                       Scope your website
@@ -1347,7 +1369,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       },
                     ].map((way) => {
                       const className =
-                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink";
+                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]";
                       const body = (
                         <>
                           <way.icon
@@ -1415,7 +1437,7 @@ export function NotchedCard({ className }: { className?: string }) {
                     sizes="64px"
                     className="size-7 flex-none object-contain"
                   />
-                  <span className="text-[14px] font-bold tracking-[-0.02em] text-ink">
+                  <span className="text-[14px] font-bold tracking-[-0.02em] text-ink lg:text-[15px]">
                     {SISTER.name}
                   </span>
                   {/* A rule between them, not a bullet. The two are a name and a
@@ -1427,7 +1449,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       "more than", which puts "a website." alone on a second
                       line - a two word orphan under a caption that is one
                       sentence long. Seventy-six is the sentence. */}
-                  <span className="max-w-[76ch] text-[12.5px] leading-[1.5] text-quiet">
+                  <span className="max-w-[76ch] text-[12.5px] leading-[1.5] text-quiet lg:text-[13.5px]">
                     Custom software development for businesses that need more
                     than a website.
                   </span>

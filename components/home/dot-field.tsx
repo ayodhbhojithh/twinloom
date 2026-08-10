@@ -29,11 +29,6 @@ import { cn } from "@/lib/utils";
      circles is the better part of a hundred thousand points a frame. A rect is
      four. At a pixel and a half, under a mask, at half the strength of a
      hairline, nobody has ever told the two apart.
-   - It waits. Everything on the first screen arrives in the first second and a
-     half - the words, the mark, ten balls dropping - and a texture redrawing
-     under all of it is the thing that made that run stutter. It holds its first
-     frame until they have landed, which nobody can see, because a still grid is
-     what it looked like anyway.
    - No trigonometry in the inner loop. The wave is `sin(a + b)` with `a` per
      column and `b` per row, so the two are worked out once each along the
      edges and the identity `sin a cos b + cos a sin b` puts them together with
@@ -57,11 +52,22 @@ const DOT = 1.5;
  * rather than a surface passing under them. A pulse is a dot changing; a wave is
  * a dot moving.
  *
- * At plus or minus a sixth it does the one job it is for: a crest is a shade
- * heavier than a trough, which reads as nearer. Centred on one, so the field's
- * average weight is exactly the weight the flat grid had.
+ * A third either way, which is more than that argument first allowed and is the
+ * right amount for a different reason. The displacement is capped by the grid -
+ * nine pixels out of twenty is as far as a dot can be lifted before it crosses
+ * into the row above - so position alone can only ever say so much, and at that
+ * size the wave was there and nobody could find it.
+ *
+ * Weight is not capped by anything. A crest drawn heavier is a bright band, and
+ * a bright band travelling across a field is the most legible wave there is. It
+ * only read as a pulse before because it was the whole of the signal while the
+ * crest crawled; with the crest crossing the card in four seconds it reads as
+ * what it is, which is the near side of a swell.
+ *
+ * Centred on one, so the field's average weight is exactly the weight the flat
+ * grid had.
  */
-const WEIGHT = 0.17;
+const WEIGHT = 0.34;
 
 /**
  * How far a dot is lifted out of its row.
@@ -95,8 +101,6 @@ export function DotField({ className }: { className?: string }) {
     let clock = 0;
     let last = 0;
     let seen = true;
-    let woken = false;
-    let waking = 0;
 
     const still = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -112,14 +116,16 @@ export function DotField({ className }: { className?: string }) {
         .trim();
       /* Whatever form the token is in - hex, `oklch`, `rgb` - `color-mix` takes
          it, so the alpha is applied by the browser rather than parsed here. */
-      /* Sixty-five rather than the fifty-two the flat grid was set at. A
-         moving dot is a fainter dot: it is drawn at a fresh sub-pixel position
-         every frame, so the antialiaser spreads its ink over two pixels instead
-         of settling it into one, and the same value that read as a texture
-         standing still read as a smudge once it moved. */
+      /* Well over the fifty-two the flat grid was set at, and for two reasons
+         that compound. A moving dot is a fainter dot - it lands on a fresh
+         sub-pixel position every frame, so the antialiaser spreads its ink over
+         two pixels instead of settling it into one. And what is left after that
+         is then faded again by the mask over it, which is a texture that only
+         exists at the edges of the card. Fifty-two was a value chosen for ink
+         that stayed still and was never dimmed twice. */
       ink = raw
-        ? `color-mix(in oklab, ${raw} 65%, transparent)`
-        : "rgba(0,0,0,0.12)";
+        ? `color-mix(in oklab, ${raw} 74%, transparent)`
+        : "rgba(0,0,0,0.14)";
     };
 
     /* Along the edges, not through the middle.
@@ -160,14 +166,21 @@ export function DotField({ className }: { className?: string }) {
 
          Long wavelengths on both: this is a card the width of a window, and a
          wave that fits into it twice is weather where one that fits ten times
-         is corduroy. */
+         is corduroy.
+
+         And quick enough to be seen. At the rate this first ran, the crest took
+         eight seconds to cross and any one dot travelled about seven pixels in
+         a second - which is not slow motion, it is no motion, because nobody
+         watches a background for eight seconds to find out. It crosses in
+         around four and a half now, which is a wave passing rather than a
+         pattern that might be drifting. */
       for (let i = 0; i < cols; i += 1) {
-        const a = (i * PITCH) / 300 + t * 0.75;
+        const a = (i * PITCH) / 260 + t * 1.35;
         colSin[i] = Math.sin(a);
         colCos[i] = Math.cos(a);
       }
       for (let j = 0; j < rows; j += 1) {
-        const b = (j * PITCH) / 900 - t * 0.16;
+        const b = (j * PITCH) / 760 - t * 0.28;
         rowSin[j] = Math.sin(b);
         rowCos[j] = Math.cos(b);
       }
@@ -211,26 +224,23 @@ export function DotField({ className }: { className?: string }) {
       frame = requestAnimationFrame(tick);
     };
 
-    /** How long the first screen's own entrance takes to finish. */
-    const HOLD = 1500;
+    /* Straight away, not after the entrance.
 
+       It was held back a second and a half so nothing competed with the words
+       arriving, and a second and a half is longer than anybody waits before
+       deciding a thing does not move - so what the hold bought was a texture
+       that appeared to be the still one it replaced. The cost it was avoiding
+       went with the arcs; there is nothing left to stagger away from. */
     const run = () => {
       cancelAnimationFrame(frame);
-      window.clearTimeout(waking);
 
       if (still.matches || !seen) {
         draw(clock);
         return;
       }
 
-      const start = () => {
-        woken = true;
-        last = 0;
-        frame = requestAnimationFrame(tick);
-      };
-
-      if (woken) start();
-      else waking = window.setTimeout(start, HOLD);
+      last = 0;
+      frame = requestAnimationFrame(tick);
     };
 
     const size = () => {
@@ -269,7 +279,6 @@ export function DotField({ className }: { className?: string }) {
 
     return () => {
       cancelAnimationFrame(frame);
-      window.clearTimeout(waking);
       bounds.disconnect();
       eye.disconnect();
       still.removeEventListener("change", run);
