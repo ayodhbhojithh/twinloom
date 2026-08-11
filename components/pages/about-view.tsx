@@ -1,5 +1,4 @@
 import {
-  ArrowRight,
   ArrowUpRight,
   Boxes,
   CalendarClock,
@@ -10,14 +9,12 @@ import {
   Palette,
   PencilLine,
   Phone,
-  Route,
 } from "lucide-react";
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 
 import { PageShell } from "@/components/layout";
 import { CutPanel } from "@/components/layout/cut-panel";
-import { STOPS } from "@/lib/journey";
 import { INCLUDED } from "@/lib/services";
 import { CONTACT_INFO, ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -440,134 +437,22 @@ export function AboutView() {
         </CutPanel>
       </section>
 
-      {/* How it proceeds. The count comes from the run itself rather than from
-          a number typed on this page, so adding a step cannot leave this saying
-          thirteen. */}
-      <section className="reveal mt-16 [--step:4] max-sm:mt-9">
-        <Head
-          n="How we work"
-          sub={`From the first conversation to the site going live, in ${STOPS.length} steps. You can see all of them before you commit to any.`}
-        />
+      {/* Nothing else on this page.
 
-        <CutPanel
-          tone="field"
-          className="mt-7 w-full max-sm:mt-5"
-          corner={
-            <Link
-              href={ROUTES.how}
-              aria-label="See how we work"
-              title="See how we work"
-              className="flex size-11 items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
-            >
-              <ArrowUpRight className="size-[18px]" strokeWidth={2.2} />
-            </Link>
-          }
-        >
-          <h3 className="max-w-[min(44ch,var(--notch-free,96ch))] text-[clamp(19px,1.7vw,25px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink max-sm:text-[17.5px]">
-            It starts with a conversation.
-          </h3>
+          Two sections came off the foot of it: the run of thirteen steps,
+          and an ask under it.
 
-          {/* Two paragraphs and a break between them, and the break is the
-              point: the first is everything before the work is agreed and the
-              second is everything after it. Written as one column of two rather
-              than two columns of one, because they are consecutive - side by
-              side, the eye reads whichever is nearer first. */}
-          {/* Wider, and still capped. Everything else on this page can take
-              the window; prose cannot - a line of text the width of a desk is a
-              line the eye loses its place in on the way back. The cap is what
-              keeps this two columns of sixty rather than one of a hundred and
-              twenty. */}
-          <div className="mt-5 grid max-w-[128ch] gap-x-14 gap-y-4 max-sm:mt-3.5 max-sm:gap-y-3 lg:grid-cols-2">
-            <p className="text-[15px] leading-[1.65] text-body max-sm:text-[13px] max-sm:leading-[1.55]">
-              Start by booking a meeting to talk through what you need. Or, if
-              you have already done some thinking, send us your requirements in
-              as little or as much detail as you want - send it straight away,
-              or work through the scoping questions first.
-            </p>
+          The steps were a summary of `/how-we-work`, which is a page of its
+          own in the bar above - so this page ended by retelling another one,
+          and the retelling was two paragraphs where the real thing is
+          thirteen named steps on three surfaces. A link to it belongs here;
+          a shorter copy of it does not.
 
-            <p className="text-[15px] leading-[1.65] text-body max-sm:text-[13px] max-sm:leading-[1.55]">
-              Once the scope is agreed and the contract is signed, we start your
-              project and keep you informed all the way through.
-            </p>
-          </div>
-
-          {/* The way to the whole of it, and then the three ways to start it.
-
-              "See all thirteen steps" counted the run for you, which is a
-              precise number in a place nobody needs one - and it made the link a
-              statistic rather than an invitation. The three ways under it are
-              the same three this page offers at its foot; here they are the
-              answer to a paragraph that has just told you what happens next. */}
-          <Link
-            href={ROUTES.how}
-            className="group/all mt-7 inline-flex items-center justify-center gap-2 rounded-pill bg-canvas px-4.5 py-2.5 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair max-sm:mt-5 max-sm:w-full max-sm:px-4 max-sm:text-[12.5px]"
-          >
-            <Route aria-hidden className="size-4" strokeWidth={1.9} />
-            See how we work
-            <ArrowUpRight
-              aria-hidden
-              className="size-4 transition-transform group-hover/all:translate-x-0.5 group-hover/all:-translate-y-0.5"
-            />
-          </Link>
-
-          <Ways className="mt-5 max-sm:mt-4" />
-        </CutPanel>
-      </section>
-
-      {/* The end of the page, and one panel rather than two.
-
-          Two stood here: a wall of specialist disciplines, and an ask under it.
-          The wall is gone because this page is about who we are, and a row of
-          six trades read from the services list was that page answering a
-          question this one had not asked - it is on the home page's own
-          services section now, where somebody looking for it is looking for
-          it.
-
-          The ask that stood below it went with it, not as well. Its words are
-          here: leaving both would be two panels in a row asking for the same
-          thing, which is the one thing every other page on this site is careful
-          not to do.
-
-          Two ways rather than three. Writing it down and putting it in the diary
-          are the two anybody actually chooses between, and a third option in a
-          row of three is a third of the attention gone. */}
-      <section className="reveal mt-16 [--step:5] max-sm:mt-9">
-        <CutPanel tone="field" className="w-full">
-          <h2 className="max-w-[min(40ch,var(--notch-free,96ch))] text-[clamp(21px,1.9vw,28px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink max-sm:text-[19px]">
-            Start with what you need.
-          </h2>
-
-          <p className="mt-3 max-w-[100ch] text-[15px] leading-[1.65] text-quiet max-sm:mt-2 max-sm:text-[13px] max-sm:leading-[1.55]">
-            Tell us what you are looking to build, improve or connect. We will
-            help you work out the rest.
-          </p>
-
-          <div className="mt-7 flex flex-wrap items-center gap-2.5 max-sm:mt-5 max-sm:gap-2">
-            <Link
-              href={ROUTES.build}
-              className="group/way thread-fill inline-flex items-center justify-center gap-2 rounded-pill px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:w-full max-sm:px-4 max-sm:py-2.5 max-sm:text-[13px]"
-            >
-              Send us your requirements
-              <ArrowRight
-                aria-hidden
-                className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5"
-                strokeWidth={2.4}
-              />
-            </Link>
-
-            <Link
-              href={ROUTES.book}
-              className="group/way inline-flex items-center justify-center gap-2 rounded-pill border border-hair bg-field px-5 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:w-full max-sm:px-4 max-sm:py-2.5 max-sm:text-[13px]"
-            >
-              Book a meeting
-              <ArrowUpRight
-                aria-hidden
-                className="size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5"
-              />
-            </Link>
-          </div>
-        </CutPanel>
-      </section>
+          The ask went with it because the footer directly beneath this
+          carries the same two ways in under the same kind of heading. Two
+          asks, a screen apart, in one column, is the one thing every other
+          page on this site is careful not to do - and the one that stays is
+          the one on every page. */}
     </PageShell>
   );
 }

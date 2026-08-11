@@ -571,32 +571,19 @@ const HERO_MARK = {
 } as const;
 
 /**
- * The air around the film screen's doors, on every side of the cut they stand
- * in.
+ * How far the film screen's doors stand off the corner they sit in.
  *
- * Twenty-two. The cut is drawn from the stack, so this is the only number that
- * decides how much room the three of them are given - and it is one number
- * rather than four, because the point of measuring a cut from its contents is
- * that nothing about the corner has to be re-agreed when a label changes.
+ * Eighteen, at every width. It is a control rather than a column of type, so it
+ * takes a fixed inset rather than the card's own - which is a share of the
+ * width, and would put this stack in a visibly different place on a phone than
+ * on a desk.
  */
-const AIR = 22;
+const EDGE = 18;
 
 export function NotchedCard({ className }: { className?: string }) {
   const box = useRef<HTMLDivElement>(null);
 
   const [size, setSize] = useState({ w: 0, h: 0 });
-
-  /* How big the film screen's three doors came out.
-     
-     Read back from the stack rather than declared, because the cut they stand in
-     is measured from them - see `dropW` below. Nought on every other screen, and
-     nought on the first frame of that one, which is what makes the corner fall
-     back to the size it is for a disc. */
-  const [doors, setDoors] = useState({ w: 0, h: 0 });
-
-  const takeDoors = useCallback((w: number, h: number) => {
-    setDoors((was) => (was.w === w && was.h === h ? was : { w, h }));
-  }, []);
 
   const [at, setAt] = useState(0);
   const [open, setOpen] = useState<Project | null>(null);
@@ -827,39 +814,25 @@ export function NotchedCard({ className }: { className?: string }) {
        around a 44px target. */
     const drop = Math.max(flare * 2 + 16, Math.min(w * 0.075, 96));
 
-    /* And on the film, what stands there is not a 44px target.
+    /* Except on the film, where there is no cut at all.
 
-       That screen replaces the way down the page with the three doors, and the
-       rule this card is built on is that anything you can press stands in a
-       piece cut out of the card rather than on top of it. So the cut is not a
-       fixed square that the doors are then kept clear of - it is measured from
-       them: whatever the stack came out as, plus the same air the disc has, and
-       the corner opens to hold it.
+       That screen has no way down the page standing in the corner - the three
+       doors replace it - and for a while the corner was opened to their measure
+       so they could stand in it, which is the rule the rest of this card
+       follows: what you press stands in a piece cut out of the surface.
 
-       Held under what the card can actually give up. A cut wider than the edge
-       it is taken out of is not a cut, it is a card with a corner missing, and
-       `outline` would fold the path through itself drawing it. The floor is the
-       disc's own size, so before the stack has been measured - the first frame,
-       and any width where it comes out smaller - the corner is exactly what it
-       has always been.
-       And on that screen only. The measurement is kept in state, so it is still
-       there once the card has been turned to the next slide - gated on the view
-       as well, or every other screen inherits a corner cut the size of three
-       buttons that are no longer standing in it.
+       It is the wrong rule here, and the picture is why. Every other cut on this
+       card opens onto the page, and reads as a corner given up because what
+       shows through is the page. A hole in a photograph reads as a photograph
+       with a piece missing - and this one was a quarter of the frame, taken out
+       of the one screen whose entire content is the frame.
 
-       Twenty-eight on both, which is fourteen a side once the stack is centred
-       in it. One number for all four edges: the plate is inset from the card's
-       bottom by exactly what it is inset from the card's right, and the air
-       above and left of it - where the picture is - matches. An extra allowance
-       at the foot was tried and it is the thing that reads as wrong, because
-       there is nothing at that edge for the extra to be clearing. */
-    const held = shown.view === "film" && doors.w > 0 && doors.h > 0;
-    const dropW = held
-      ? Math.max(drop, Math.min(doors.w + 28, w - 2 * (radius + flare) - 24))
-      : drop;
-    const dropH = held
-      ? Math.max(drop, Math.min(doors.h + AIR * 2, h * 0.5))
-      : drop;
+       So the corner stays a corner and the doors sit on the picture. `0` is what
+       `outline` reads as no cut at all, the same as the bite at the other end of
+       this edge. */
+    const onFilm = shown.view === "film";
+    const dropW = onFilm ? 0 : drop;
+    const dropH = onFilm ? 0 : drop;
 
     return {
       radius,
@@ -1424,25 +1397,39 @@ export function NotchedCard({ className }: { className?: string }) {
           Stacked and one width: in a row the eye reads left to right and the
           loud one goes first; in a stack it reads top to bottom, so the filled
           one is at the top and all three are as wide as the longest label. */}
-      {/* The three doors, standing in the corner the way down the page used to.
+      {/* The three doors, on the picture rather than in a hole cut out of it.
 
-          Not laid over the picture near that corner, which is what they were
-          doing: a stack floating on the film a few pixels inside the cut, with
-          the disc beside it, so the screen offered four ways on in two different
-          idioms - one set on the picture and one set in the card.
+          They stood in the corner for a while, in an opening measured to hold
+          them - which is this card's rule everywhere else and the wrong one
+          here. A cut is a piece of the card given back to the page, and it reads
+          as one because what shows through is the page. On this screen what
+          shows through is a photograph, and a quarter of the frame taken out to
+          make room for three buttons is a picture with a corner missing.
 
-          This card's rule is that anything you can press has a piece cut out for
-          it to stand in. The disc obeyed it and the doors did not, so the doors
-          take the disc's place: the cut opens to their measure, they stand in
-          it, and on this screen there is no disc at all. Outside the card's
-          surface rather than on top of it, on the page, exactly as the disc
-          was. */}
+          Hard into the bottom right, and by one number rather than by the
+          card's own inset.
+
+          The inset is a share of the width - twenty-two on a phone and
+          fifty-six on a wide screen - which is right for words, because a
+          measure has to stand off an edge in proportion to how long its lines
+          are. These are not words. They are a control in a corner, and a
+          control that sits an inch from the corner on a desk and a quarter of
+          one on a phone is in a different place on each. `EDGE` is that place,
+          the same on both. */}
       {shown.view === "film" ? (
         <div
-          className="absolute right-0 bottom-0 z-10 flex items-center justify-center"
-          style={{ width: cut.dropWidth, height: cut.dropHeight }}
+          className="pointer-events-none absolute z-10 flex justify-end"
+          /* `EDGE` on both sides rather than the card's inset on the left.
+
+             It bounds the flex row this stack sits in, and on a wide screen it
+             changes nothing - the plate is as wide as its longest label and
+             pushed right, so where the row starts is of no consequence. On a
+             phone the plate takes the whole row, and then the left bound is the
+             left margin. One number for both sides is what makes it symmetrical
+             there. */
+          style={{ right: EDGE, left: EDGE, bottom: EDGE }}
         >
-          <FilmDoors onSize={takeDoors} />
+          <FilmDoors />
         </div>
       ) : null}
 
@@ -2149,83 +2136,98 @@ function Tool({
  * Stacked and at one width, because they stand in a corner rather than on a
  * row. The filled one leads, since a stack is read top to bottom.
  *
- * It measures itself and hands the number back up, because the cut it is
- * standing in is drawn from it. That is the way round it has to be: a fixed cut
- * with a stack fitted into it would be a hole that three labels have to be short
- * enough for, and the labels are the part that matters.
+ * As wide as its longest label and no wider, which is what `w-max` on a column
+ * of stretched children gives: the three come out the same width as each other,
+ * and that width is the widest thing said on any of them.
  */
-function FilmDoors({ onSize }: { onSize: (w: number, h: number) => void }) {
-  const box = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const node = box.current;
-    if (!node) return;
-
-    const watch = new ResizeObserver(() => {
-      const rect = node.getBoundingClientRect();
-      onSize(Math.round(rect.width), Math.round(rect.height));
-    });
-
-    watch.observe(node);
-    return () => watch.disconnect();
-  }, [onSize]);
-
+function FilmDoors() {
   return (
-    /* No plate under them.
+    /* An ink plate under them, and now it earns its place.
 
-       There was an ink one, on the argument that through the cut there is no
-       white behind these three and a bordered white pill wants something to be
-       bordered against. What it actually did was put a second surface inside a
-       hole cut out of the first, a few pixels in from an edge already drawn by
-       the outline - two shapes saying the same thing, and the smaller one
-       redrawing a corner the card had just cut.
+       It had one before, while the corner was cut to their measure - and there
+       it was a second surface inside a hole cut out of the first, a few pixels
+       in from an edge the outline had just drawn. Two shapes saying the same
+       thing, so it came off with the cut.
 
-       The cut is the surface. The three pills stand in it the way the disc did,
-       on the page, and the air round them is the cut's own. */
-    <div
-      ref={box}
-      className="pointer-events-auto flex w-max flex-col items-stretch gap-2 sm:gap-3"
-    >
+       With the corner gone there is nothing under these three but the film: a
+       hundred and twenty frames of a room in white and beige, so a white pill
+       has nothing to be a pill against and the gradient one reads as part of the
+       scene. The plate is the ground the card would have given them, drawn where
+       the card cannot.
+
+       Ink rather than a tint or a blur. A translucent plate moves with whatever
+       is behind it, which is the fault being fixed, and the card already owns
+       this black - the notch, the discs and the way down the page are all drawn
+       in it. */
+    /* As wide as its longest label on a screen, and the whole width on a
+       phone.
+
+       `w-max` is what makes this a panel in the corner of a picture rather than
+       a band across the foot of one, and that holds while the card is wide: the
+       plate is a third of the edge and the film is what the screen is. On a
+       phone it is a third of three hundred points - a narrow black column
+       against one side, with the frame showing in a strip beside it that is too
+       thin to be a picture and too wide to be a margin.
+
+       Full width there, so the plate is the foot of the card and the film is
+       everything above it. The buttons were already stretched to each other, so
+       they simply take the width with it. */
+    <div className="pointer-events-auto flex w-max flex-col items-stretch gap-2 rounded-[22px] bg-ink p-3 shadow-[0_16px_44px_rgba(10,18,32,0.34)] max-sm:w-full max-sm:gap-1.5 max-sm:rounded-[18px] max-sm:p-2.5 sm:gap-3 sm:p-3.5">
       <Link
         href={ROUTES.build}
-        className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
+        className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:gap-2 max-sm:px-3.5 max-sm:py-2 max-sm:text-[12px] sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
       >
-        <PencilLine aria-hidden className="size-4 shrink-0 sm:size-[18px]" />
+        <PencilLine
+          aria-hidden
+          className="size-4 shrink-0 max-sm:size-3.5 sm:size-[18px]"
+        />
         Scope your website
         <ArrowRight
           aria-hidden
-          className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-[18px]"
+          className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 max-sm:size-3.5 sm:size-[18px]"
           strokeWidth={2.4}
         />
       </Link>
 
       <a
         href={ROUTES.services}
-        className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
+        /* White, at every width. They were ink on a phone for a while, which
+           was the right answer to the wrong arrangement: with nothing behind
+           them but the reel, a white pill had nothing to be a pill against. The
+           plate is behind them now, so white is what reads - and the hairline
+           border, which was invisible against the film, has an ink surface to be
+           a hairline on. */
+        className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:gap-2 max-sm:px-3.5 max-sm:py-2 max-sm:text-[12px] sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
       >
         <LayoutGrid
           aria-hidden
-          className="size-4 shrink-0 text-idx sm:size-[18px]"
+          className="size-4 shrink-0 text-idx max-sm:size-3.5 sm:size-[18px]"
         />
         View our services
         <ArrowRight
           aria-hidden
-          className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-[18px]"
+          className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 max-sm:size-3.5 sm:size-[18px]"
         />
       </a>
 
       <Link
         href={ROUTES.book}
-        className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
+        /* White, at every width. They were ink on a phone for a while, which
+           was the right answer to the wrong arrangement: with nothing behind
+           them but the reel, a white pill had nothing to be a pill against. The
+           plate is behind them now, so white is what reads - and the hairline
+           border, which was invisible against the film, has an ink surface to be
+           a hairline on. */
+        className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:gap-2 max-sm:px-3.5 max-sm:py-2 max-sm:text-[12px] sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
       >
         <CalendarDays
           aria-hidden
-          className="size-4 shrink-0 text-idx sm:size-[18px]"
+          className="size-4 shrink-0 text-idx max-sm:size-3.5 sm:size-[18px]"
         />
         Book a meeting
         <ArrowRight
           aria-hidden
-          className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 sm:size-[18px]"
+          className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 max-sm:size-3.5 sm:size-[18px]"
         />
       </Link>
     </div>
