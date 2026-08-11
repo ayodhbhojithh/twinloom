@@ -1435,7 +1435,24 @@ export function NotchedCard({ className }: { className?: string }) {
                  beats static content in the same stacking context however
                  early in the markup it appears - the beads came out on top of
                  the sentence they are meant to be under. */
-              className="relative flex h-full w-full flex-col gap-5"
+              /* `h-auto` on a phone, and it is the whole of why this screen sat
+                 high with a band of empty card under it.
+
+                 `h-full` is `height: 100%`, and the box it is measured against
+                 has a minimum rather than a height - so it resolves to `auto`,
+                 which is content height. That much was survivable. What was not
+                 is that a flex child is only stretched by `align-items: stretch`
+                 when its cross size is `auto`: writing any height at all, even
+                 one that computes to auto, opts the element out of the stretch
+                 that would have filled the parent. So the one property asking
+                 for the full height was the property preventing it.
+
+                 Left as `auto` below `sm`, the stretch applies and the column is
+                 the height of the screen it stands in - which is what the two-up
+                 inside it needs before `justify-center` can mean anything. Above
+                 `sm` the card is a fixed screenful, `100%` resolves against a
+                 real number, and `h-full` is right. */
+              className="relative flex h-full w-full flex-col gap-5 max-sm:h-auto"
             >
               {/* The words take the larger share, not the picture.
 
@@ -1491,8 +1508,12 @@ export function NotchedCard({ className }: { className?: string }) {
                      from being the thing the screen opens on to a badge above
                      some type.
 
-                     Seventy-four per cent, capped at 248, and it was ninety
-                     capped at 310. The screen has gained a third line of
+                     Fifty-eight per cent, capped at 186, and it was ninety
+                     capped at 310 before the claim gained a third line. It has
+                     come down twice since: the mark is the first thing on the
+                     screen and does not have to be the largest, and the three
+                     doors under it are what somebody is actually here to press
+                     - so the room goes to them. The screen has gained a third line of
                      headline since that number was chosen, and between them the
                      mark and the words were taking the whole card - the first
                      thing on a screen does not have to be the largest thing on
@@ -1507,7 +1528,7 @@ export function NotchedCard({ className }: { className?: string }) {
                      The room for it came from the clearance above, which was
                      reserving space for a row of links a phone does not
                      have. */
-                  className="pointer-events-none w-[84%] max-w-[320px] shrink-0 max-sm:w-[66%] max-sm:max-w-[212px] lg:order-2 lg:-ml-[12%] lg:w-[54%] lg:max-w-none"
+                  className="pointer-events-none w-[84%] max-w-[320px] shrink-0 max-sm:w-[58%] max-sm:max-w-[186px] lg:order-2 lg:-ml-[12%] lg:w-[54%] lg:max-w-none"
                 >
                   <MarkStage />
                 </motion.div>
@@ -1722,11 +1743,11 @@ export function NotchedCard({ className }: { className?: string }) {
                        another measure inside it is a second margin nobody
                        asked for. They run to the card's own padding now, which
                        is the edge everything else on this screen runs to. */
-                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 max-sm:mx-auto max-sm:mt-3.5 max-sm:w-full max-sm:flex-col max-sm:gap-1.5 sm:mt-8 lg:mt-9 lg:flex-nowrap lg:justify-start lg:gap-2.5 2xl:mt-10"
+                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 max-sm:mx-auto max-sm:mt-4 max-sm:w-full max-sm:flex-col max-sm:gap-2 sm:mt-8 lg:mt-9 lg:flex-nowrap lg:justify-start lg:gap-2.5 2xl:mt-10"
                   >
                     <Link
                       href={ROUTES.build}
-                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:justify-center max-sm:gap-2 max-sm:px-3.5 max-sm:py-2 max-sm:text-[min(13px,3.4vw)] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]"
+                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:justify-center max-sm:gap-2 max-sm:px-4 max-sm:py-2.5 max-sm:text-[min(14px,3.7vw)] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]"
                     >
                       <PencilLine aria-hidden className="size-4 shrink-0" />
                       Scope your website
@@ -1750,7 +1771,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       },
                     ].map((way) => {
                       const className =
-                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:justify-center max-sm:gap-2 max-sm:px-3.5 max-sm:py-2 max-sm:text-[min(13px,3.4vw)] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]";
+                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:justify-center max-sm:gap-2 max-sm:px-4 max-sm:py-2.5 max-sm:text-[min(14px,3.7vw)] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]";
                       const body = (
                         <>
                           <way.icon
