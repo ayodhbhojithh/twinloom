@@ -72,9 +72,17 @@ export function OverviewOpen() {
               aria-hidden
               draggable={false}
               sizes="192px"
-              className="size-16 flex-none object-contain max-sm:size-11"
+              className="size-12 flex-none object-contain max-sm:size-10"
             />
-            <span className="text-[clamp(22px,2.2vw,32px)] leading-none font-extrabold tracking-[-0.03em] text-ink">
+            {/* Smaller than it was.
+
+              It ran to 32 at the top of the ramp, which is the size of a page
+              heading - and this is not one. The panel's heading came off above
+              it, so the name was left as the largest thing on the surface,
+              introducing a panel whose contents are six cards set at thirteen
+              pixels. It is a mark and a name at the head of a sheet, so it is
+              set at about the size of the words it stands over. */}
+            <span className="text-[clamp(18px,1.6vw,24px)] leading-none font-extrabold tracking-[-0.03em] text-ink">
               TwinLoom
             </span>
           </div>
