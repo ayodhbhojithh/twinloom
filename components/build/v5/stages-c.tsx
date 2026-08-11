@@ -187,15 +187,29 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
             </span>
           </div>
 
-          <H>Thank you for your submission.</H>
+          {/* Air under the mark, which had none.
+
+              `H` carries no margin of its own - it is written to sit under
+              whatever introduces it - so the tick and the sentence were sharing
+              a line box and read as one lump rather than as a mark and the
+              thing it marks.
+
+              The rhythm down the screen is one step per relationship: five
+              between the tick and the sentence they belong to, nine before the
+              reference because that is a different thing, and ten before the
+              way out because that is a different thing again. Even spacing
+              would say all three were the same kind of break. */}
+          <div className="mt-5 max-sm:mt-4">
+            <H>Thank you for your submission.</H>
+          </div>
 
           {/* The reference, quoted back. It is the one thing somebody wants
               from a confirmation screen that they cannot work out for
               themselves, and the one thing worth writing down. */}
           {answers.ref ? (
-            <p className="mt-7 max-sm:mt-5">
+            <p className="mt-9 max-sm:mt-7">
               <Kicker className="block">Your reference</Kicker>
-              <b className="mt-1.5 block font-mono text-[17px] font-bold tracking-[0.08em] text-ink tabular-nums max-sm:text-[15px]">
+              <b className="mt-2.5 block font-mono text-[17px] leading-none font-bold tracking-[0.08em] text-ink tabular-nums max-sm:mt-2 max-sm:text-[15px]">
                 {answers.ref}
               </b>
             </p>
@@ -203,7 +217,7 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
 
           {/* One way on, and it is quiet. The screen is a receipt; a filled
               button on it would be asking for something. */}
-          <div className="mt-8 flex justify-center max-sm:mt-6">
+          <div className="mt-10 flex justify-center max-sm:mt-8">
             <Pill onClick={() => setSent(false)}>Keep answering</Pill>
           </div>
         </div>
