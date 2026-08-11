@@ -170,15 +170,36 @@ export function readiness(a: Answers): Readiness {
 
 /** What has actually been said, as lines. `true` marks a ticked one. */
 /**
- * What each free-text field is called, by the id it writes under.
+ * Which question a free-text answer belongs to, by the id it writes under.
  *
- * Built from the copy the steps themselves render, so there is one place a
- * question is named and this is not it.
+ * The step's name rather than the field's label, because the step is what the
+ * reader has in front of them: the rail across the top of the run is named "Your
+ * organisation and industry", "Your visitors", "Are you selling?" - and an
+ * answer that says which of those it came from can be put back where it belongs.
+ * The field's own label is written to be read under its input, where the
+ * question is already on screen: "Somebody else - tell us in your own words."
+ * makes sense there and says nothing in a list.
+ *
+ * The label is added only where a step has more than one of these - `sell` asks
+ * about what is sold and how it is paid for - so the common case is one clean
+ * name and the ambiguous case is still unambiguous.
+ *
+ * Read from the same two sources the run itself is drawn from, so a step renamed
+ * or a box moved is renamed and moved here.
  */
 const OWN_LABELS: Record<string, string> = Object.fromEntries(
-  Object.values(STEP_COPY).flatMap((copy) =>
-    copy.miss.map((box) => [box.id, box.label] as const),
-  ),
+  Object.entries(STEP_COPY).flatMap(([key, copy]) => {
+    const name = STEPS.find((step) => step.k === key)?.n ?? key;
+    const many = copy.miss.length > 1;
+
+    return copy.miss.map(
+      (box) =>
+        [
+          box.id,
+          many ? `${name} - ${box.label.replace(/\.$/, "")}` : name,
+        ] as const,
+    );
+  }),
 );
 
 export function told(a: Answers): { tick: boolean; line: string }[] {
@@ -245,9 +266,10 @@ export function told(a: Answers): { tick: boolean; line: string }[] {
      it has to talk to. Written down and then detached from the question - which
      is worse than not showing them, because it looks like a record.
 
-     The label is the one the field itself carries, read from the same copy the
-     step renders - so a question renamed is renamed here too, and the two cannot
-     drift. */
+     What names it is the step - the same words on the card at the top of the
+     run - so a line here can be put back against the question it answers. See
+     `OWN_LABELS`, which is built from the run's own two sources rather than
+     written out a second time. */
   for (const listId of Object.keys(a.own)) {
     const asked = OWN_LABELS[listId];
 
