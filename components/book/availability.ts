@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { addDays, startOfToday, type Busy } from "./diary";
+import { type Busy } from "./diary";
 
 /* ---------------------------------------------------------------------------
    The diary, as the browser sees it.

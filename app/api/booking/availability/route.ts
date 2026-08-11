@@ -21,29 +21,20 @@ import { busyBetween, CalendarError, wiring } from "@/lib/booking/google";
 /** Ninety-two days. Longer than the diary is open, and a bounded query. */
 const MOST_DAYS = 92;
 
-/**
- * And a day of slack on top of it, because a day is not always a day.
- *
- * The browser asks for exactly `MOST_DAYS`, counted the way a person counts
- * them - `setDate(+92)`, ninety-two dates on a calendar. The check here counted
- * milliseconds. Those agree everywhere that has no daylight saving and disagree
- * twice a year everywhere that does: crossing into GMT in October there are
- * twenty-five hours in one of those days, so ninety-two dates is an hour longer
- * than ninety-two times a day's worth of milliseconds, and the request that was
- * exactly at the limit went a fraction over it.
- *
- * Which made this a bug nobody could reproduce anywhere but here, and only
- * between August and the end of October: everywhere on UTC it was fine all
- * year, and in the UK it started failing the day the window began to span the
- * clock change.
- *
- * A day of slack rather than a rewrite in dates. The ceiling exists to stop an
- * unbounded query being asked for, and an hour either way is not that - so the
- * cheapest correct thing is to leave room for the calendar to be a calendar.
- */
-const SLACK = 86_400_000;
+/* The day of slack that used to sit here has gone with the check it was for.
 
-export async function POST(request: Request) {
+   It existed because the browser counted ninety-two dates on a calendar and this
+   file counted ninety-two times a day's worth of milliseconds, and those two
+   disagree by an hour twice a year wherever the clocks change - so a request
+   that was exactly at the limit went a fraction over it every autumn in the UK.
+
+   There is no browser-sent window to bound any more: the window is the constant
+   below, measured here, and a constant cannot exceed itself. */
+
+/* No argument. The request carries nothing this route reads: the window is
+   ours, the calendar is ours, and the only thing the browser is asking is
+   "when are you busy" - which is the same question however it is phrased. */
+export async function POST() {
   const w = wiring();
 
   if (!w) {
