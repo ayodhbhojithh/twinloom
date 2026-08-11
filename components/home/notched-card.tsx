@@ -2230,46 +2230,57 @@ function Tool({
  * of stretched children gives: the three come out the same width as each other,
  * and that width is the widest thing said on any of them.
  */
+/* The two quiet doors, and why they carry no line.
+
+   The hairline was for a white pill standing on a white card, where without one
+   the pill has no edge. On the ink plate it has an edge - the plate is the edge
+   - so the border was a second boundary drawn a pixel inside the first, and
+   against black a light grey line reads as a halo rather than as an outline.
+
+   And ninety-two per cent rather than the full white, which is the same
+   argument made about weight: the filled one above is the button that leads, and
+   three things at full strength on one plate is three firsts. Held back a
+   little, these two are plainly the same kind of thing as each other and plainly
+   not the first. */
 function FilmDoors() {
   return (
-    /* An ink plate under them, and now it earns its place.
+    /* No plate under them.
 
-       It had one before, while the corner was cut to their measure - and there
-       it was a second surface inside a hole cut out of the first, a few pixels
-       in from an edge the outline had just drawn. Two shapes saying the same
-       thing, so it came off with the cut.
+       There was an ink one, and what it was doing was giving three white pills a
+       ground to stand on over a picture that has none. Without it they stand on
+       the picture itself - so each carries its own shadow instead, which is the
+       same job done by the three objects that need it rather than by a fourth
+       object drawn behind them.
 
-       With the corner gone there is nothing under these three but the film: a
-       hundred and twenty frames of a room in white and beige, so a white pill
-       has nothing to be a pill against and the gradient one reads as part of the
-       scene. The plate is the ground the card would have given them, drawn where
-       the card cannot.
-
-       Ink rather than a tint or a blur. A translucent plate moves with whatever
-       is behind it, which is the fault being fixed, and the card already owns
-       this black - the notch, the discs and the way down the page are all drawn
-       in it. */
-    /* As wide as its longest label on a screen, and the whole width on a
-       phone.
-
-       `w-max` is what makes this a panel in the corner of a picture rather than
-       a band across the foot of one, and that holds while the card is wide: the
-       plate is a third of the edge and the film is what the screen is. On a
-       phone it is a third of three hundred points - a narrow black column
-       against one side, with the frame showing in a strip beside it that is too
-       thin to be a picture and too wide to be a margin.
-
-       Full width there, so the plate is the foot of the card and the film is
-       everything above it. The buttons were already stretched to each other, so
-       they simply take the width with it. */
-    <div className="pointer-events-auto flex w-max flex-col items-stretch gap-2 rounded-[22px] bg-ink p-3 shadow-[0_16px_44px_rgba(10,18,32,0.34)] max-sm:w-full max-sm:gap-1.5 max-sm:rounded-[18px] max-sm:p-2.5 sm:gap-3 sm:p-3.5">
+       A shadow rather than a border: over a hundred and twenty frames of pale
+       fabric a hairline is sometimes there and sometimes not, and a shadow is
+       darker than every frame of it. */
+    <div className="pointer-events-auto flex w-max flex-col items-stretch gap-2 max-sm:w-full max-sm:gap-2 sm:gap-2.5">
       <Link
         href={ROUTES.build}
-        className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:gap-2 max-sm:px-3.5 max-sm:py-2 max-sm:text-[12px] sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
+        /* White like the two under it, and full strength where they are
+           held back.
+
+           It carried the mark's gradient, which is the site's filled button and
+           right nearly everywhere - but this plate is three pills on ink, and a
+           gradient one above two white ones was the only object on the card
+           where the brand colour was being used to rank a control rather than to
+           be the brand. Three of one thing, and what marks the first is the
+           colour in its icon rather than behind its label.
+
+           All three at full white now that the plate has gone: ninety-two per
+           cent was a way of holding two of them back against an ink ground, and
+           over a photograph any translucency at all is the pill taking on
+           whatever frame is underneath it. */
+        className="group/way inline-flex items-center gap-2 rounded-pill bg-field px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink shadow-[0_8px_24px_rgba(12,20,36,0.22)] transition-opacity hover:opacity-90 max-sm:gap-2 max-sm:px-3.5 max-sm:py-2 max-sm:text-[12px] sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
       >
+        {/* The one coloured thing left on the plate, and the whole of what
+            marks this as the way in. A gradient behind a label is a button
+            shouting; the same gradient in the icon in front of it is the same
+            mark, at the size the other two carry their icons at. */}
         <PencilLine
           aria-hidden
-          className="size-4 shrink-0 max-sm:size-3.5 sm:size-[18px]"
+          className="size-4 shrink-0 text-thread-blue max-sm:size-3.5 sm:size-[18px]"
         />
         Scope your website
         <ArrowRight
@@ -2287,7 +2298,7 @@ function FilmDoors() {
            plate is behind them now, so white is what reads - and the hairline
            border, which was invisible against the film, has an ink surface to be
            a hairline on. */
-        className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:gap-2 max-sm:px-3.5 max-sm:py-2 max-sm:text-[12px] sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
+        className="group/way inline-flex items-center gap-2 rounded-pill bg-field px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink shadow-[0_8px_24px_rgba(12,20,36,0.22)] transition-opacity hover:opacity-90 max-sm:gap-2 max-sm:px-3.5 max-sm:py-2 max-sm:text-[12px] sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
       >
         <LayoutGrid
           aria-hidden
@@ -2308,7 +2319,7 @@ function FilmDoors() {
            plate is behind them now, so white is what reads - and the hairline
            border, which was invisible against the film, has an ink surface to be
            a hairline on. */
-        className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:gap-2 max-sm:px-3.5 max-sm:py-2 max-sm:text-[12px] sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
+        className="group/way inline-flex items-center gap-2 rounded-pill bg-field px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink shadow-[0_8px_24px_rgba(12,20,36,0.22)] transition-opacity hover:opacity-90 max-sm:gap-2 max-sm:px-3.5 max-sm:py-2 max-sm:text-[12px] sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
       >
         <CalendarDays
           aria-hidden
