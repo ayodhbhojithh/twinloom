@@ -6,7 +6,6 @@ import { Check, Search } from "lucide-react";
 import { ORG_KINDS, SECTORS, SECTOR_TAGS, TYPE_NAMES } from "@/lib/build/v5";
 import { SYSTEM_LINKS } from "@/lib/build/v5-systems";
 import {
-  addOwn,
   chipOn,
   isOn,
   picked,
@@ -17,7 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 
 import { StageStep } from "./frame";
-import { AddRow, H, Kicker, Sub, SubTitle, TickRow } from "./kit";
+import { H, Kicker, OwnList, Sub, SubTitle, TickRow } from "./kit";
 
 /* ---------------------------------------------------------------------------
    The three steps v5.4 added: the organisation, the working parts inside a
@@ -255,16 +254,25 @@ export function StageOrg({ at, answers, onGo }: StepProps) {
         </section>
       ) : null}
 
-      {/* Held to the reading measure and off whatever is above it. Run
-          full width against the panel it follows, it read as part of that
-          panel rather than as the next thing to do. */}
-      <div className="mt-6 mx-auto max-w-[720px]">
-        <AddRow
-          label="Something else"
-          placeholder="Tell us in your own words."
-          onAdd={(value) => addOwn("org-own", value, "org")}
-        />
-      </div>
+      {/* `OwnList` rather than a bare `AddRow`, which is the difference
+          between writing something down and being shown it.
+
+          Three steps here had the row on its own: it called `addOwn`, the store
+          took the line, the desk panel listed it - and the page it was typed on
+          showed nothing at all. So the field emptied on submit and there was no
+          evidence anywhere in front of the reader that it had gone anywhere,
+          which is the exact shape of "I typed it twice because I could not tell
+          if the first one took".
+
+          `OwnList` is the row plus what has been said through it, each line with
+          a way to take it off again. */}
+      <OwnList
+        listId="org-own"
+        label="Something else"
+        placeholder="Tell us in your own words."
+        answers={answers}
+        stepKey="org"
+      />
     </StageStep>
   );
 }
@@ -298,16 +306,16 @@ export function StageWidgets({ at, answers, onGo }: StepProps) {
         </p>
       </section>
 
-      {/* Held to the reading measure and off whatever is above it. Run
-          full width against the panel it follows, it read as part of that
-          panel rather than as the next thing to do. */}
-      <div className="mt-6 mx-auto max-w-[720px]">
-        <AddRow
-          label="Tell us what it has to do"
-          placeholder="A calculator that works out what a job costs, a map of where you deliver, a search that reads your stock."
-          onAdd={(value) => addOwn("widgets-own", value, "widgets")}
-        />
-      </div>
+      {/* The list as well as the row - see the organisation step. This one
+          matters most of the three: it is the step with no catalogue to tick,
+          so what somebody writes here is the whole of their answer. */}
+      <OwnList
+        listId="widgets-own"
+        label="Tell us what it has to do"
+        placeholder="A calculator that works out what a job costs, a map of where you deliver, a search that reads your stock."
+        answers={answers}
+        stepKey="widgets"
+      />
     </StageStep>
   );
 }
@@ -362,13 +370,13 @@ export function StageSystems({ at, answers, onGo }: StepProps) {
         ))}
       </div>
 
-      <div className="mt-6 mx-auto max-w-[720px]">
-        <AddRow
-          label="Something else it has to talk to"
-          placeholder="Name it, and what it is called."
-          onAdd={(value) => addOwn("systems-own", value, "systems")}
-        />
-      </div>
+      <OwnList
+        listId="systems-own"
+        label="Something else it has to talk to"
+        placeholder="Name it, and what it is called."
+        answers={answers}
+        stepKey="systems"
+      />
     </StageStep>
   );
 }
