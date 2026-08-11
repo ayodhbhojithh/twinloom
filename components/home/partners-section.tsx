@@ -40,11 +40,17 @@ export function PartnersSection() {
         <ServiceWall bleed />
       </div>
 
-      <p className="reveal mx-auto mt-6 max-w-[92ch] text-center text-[14px] leading-[1.6] text-quiet [--step:2] max-sm:mt-5 max-sm:text-[12.5px] max-sm:leading-[1.55]">
-        One contract, one invoice, and named in the proposal before the work
-        starts. Most projects need none of them - a specialist is added because
-        the work justifies one.
-      </p>
+      {/* No line under the wall.
+
+          "One contract, one invoice, and named in the proposal before the work
+          starts. Most projects need none of them - a specialist is added because
+          the work justifies one." was written when this section was a wall of
+          partner disciplines, and it was answering the question that raises:
+          who are these other people and what will they cost me. There are no
+          partners on it now - it is the six things we do, each with its own
+          sentence - so the reassurance was answering a question the section had
+          stopped asking, and "most projects need none of them" read as six
+          services being talked out of. */}
     </section>
   );
 }
