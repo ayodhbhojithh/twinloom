@@ -34,6 +34,24 @@ export const SLOTS: readonly { hour: number; minute: number }[] = [
 export const LEAD_DAYS = 2;
 
 /**
+ * The same lead, as an amount of time rather than a number of dates - and the
+ * one the browser and the route both measure against.
+ *
+ * They measured it differently, which is the whole of the bug this fixes. The
+ * picker offered every slot that had not already started; the route refuses
+ * anything less than forty-eight hours away. Those agree on a day three dates
+ * out and disagree on the first bookable one: at two in the afternoon, the day
+ * after tomorrow's half past nine is forty-three and a half hours away, so the
+ * picker showed it, somebody chose it, filled in their name and their email,
+ * and the last screen told them to pick a later day.
+ *
+ * A rule enforced in one place and not shown in the other is a rule people meet
+ * as a refusal. One number, read by both - see `takenSlots` and the booking
+ * route.
+ */
+export const LEAD_MS = LEAD_DAYS * 86_400_000;
+
+/**
  * How far a zone is from UTC at a given instant.
  *
  * Formatting the instant in the target zone and reading the fields back is the
@@ -88,7 +106,9 @@ export function officeInstant(
   let stamp = Date.UTC(year, month, day, hour, minute);
 
   for (let pass = 0; pass < 2; pass += 1) {
-    stamp = Date.UTC(year, month, day, hour, minute) - zoneOffset(OFFICE_ZONE, new Date(stamp));
+    stamp =
+      Date.UTC(year, month, day, hour, minute) -
+      zoneOffset(OFFICE_ZONE, new Date(stamp));
   }
 
   return new Date(stamp);
@@ -184,8 +204,12 @@ export function takenSlots(
     const from = slotInstant(date, slot).getTime();
     const to = from + minutes * 60_000;
 
-    /* Anything already begun is gone, however free the calendar looks. */
-    if (from <= Date.now()) return true;
+    /* Anything inside the notice period is gone, however free the calendar
+       looks - which includes anything already begun. The route makes the same
+       comparison at the moment of writing; making it here as well is what stops
+       it ever being made in front of somebody who has finished filling the form
+       in. */
+    if (from < Date.now() + LEAD_MS) return true;
 
     return busy.some((entry) => {
       const start = new Date(entry.start).getTime() - pad;
@@ -293,12 +317,10 @@ export function getReaderOnServer(): Reader | null {
  */
 function readWeekStart(locale: string): number {
   try {
-    const info = (
-      new Intl.Locale(locale) as Intl.Locale & {
-        getWeekInfo?: () => { firstDay: number };
-        weekInfo?: { firstDay: number };
-      }
-    );
+    const info = new Intl.Locale(locale) as Intl.Locale & {
+      getWeekInfo?: () => { firstDay: number };
+      weekInfo?: { firstDay: number };
+    };
     const firstDay = info.getWeekInfo?.().firstDay ?? info.weekInfo?.firstDay;
     /* CLDR counts Monday as 1 and Sunday as 7; `Date` counts Sunday as 0. */
     if (firstDay) return firstDay % 7;

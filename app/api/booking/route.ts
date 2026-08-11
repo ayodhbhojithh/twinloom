@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { LEAD_MS } from "@/components/book/diary";
+
 import { book, busyBetween, clashes, send, wiring } from "@/lib/booking/google";
 import { bookingConfirmation } from "@/lib/mail/templates";
 import { BUFFER_MINUTES } from "@/components/book/diary";
@@ -30,8 +32,12 @@ const LOOKS_LIKE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 /** What may be asked for. A length outside this is not a meeting we offer. */
 const LENGTHS = new Set([15, 30, 45, 60]);
 
-/** Two clear days, matching the diary the browser was drawn from. */
-const LEAD_MS = 2 * 86_400_000;
+/* The notice period is `LEAD_MS`, imported rather than written again.
+
+   It was two days written out here and two days written out in the diary the
+   browser draws from, and the two were compared differently - dates there,
+   milliseconds here - so the picker offered slots this refused. One constant,
+   one comparison, and the offer matches the answer. */
 
 export async function POST(request: Request) {
   const w = wiring();
@@ -131,7 +137,13 @@ export async function POST(request: Request) {
       new Date(end.getTime() + pad),
     );
 
-    if (clashes(busy, new Date(start.getTime() - pad), new Date(end.getTime() + pad))) {
+    if (
+      clashes(
+        busy,
+        new Date(start.getTime() - pad),
+        new Date(end.getTime() + pad),
+      )
+    ) {
       return NextResponse.json(
         {
           ok: false,
