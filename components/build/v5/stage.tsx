@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { outline, type Cuts } from "@/components/home/notched-card";
+import { outline, type Cuts } from "@/components/home/outline";
 import { cn } from "@/lib/utils";
 
 /* ---------------------------------------------------------------------------

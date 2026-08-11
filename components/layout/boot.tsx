@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-import { outline, type Cuts } from "@/components/home/notched-card";
+import { outline, type Cuts } from "@/components/home/outline";
 
 /* ---------------------------------------------------------------------------
    The wait, before the site is worth looking at.

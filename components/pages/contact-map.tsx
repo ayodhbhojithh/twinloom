@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 
-import { outline, type Cuts } from "@/components/home/notched-card";
+import { outline, type Cuts } from "@/components/home/outline";
 import { CONTACT_INFO } from "@/lib/site";
 
 /* ---------------------------------------------------------------------------
