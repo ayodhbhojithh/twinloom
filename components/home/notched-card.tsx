@@ -569,16 +569,6 @@ const HERO_MARK = {
   },
 } as const;
 
-/**
- * How far the film screen's doors stand off the corner they sit in.
- *
- * Eighteen, at every width. It is a control rather than a column of type, so it
- * takes a fixed inset rather than the card's own - which is a share of the
- * width, and would put this stack in a visibly different place on a phone than
- * on a desk.
- */
-const EDGE = 18;
-
 export function NotchedCard({ className }: { className?: string }) {
   const box = useRef<HTMLDivElement>(null);
 
@@ -813,25 +803,8 @@ export function NotchedCard({ className }: { className?: string }) {
        around a 44px target. */
     const drop = Math.max(flare * 2 + 16, Math.min(w * 0.075, 96));
 
-    /* Except on the film, where there is no cut at all.
-
-       That screen has no way down the page standing in the corner - the three
-       doors replace it - and for a while the corner was opened to their measure
-       so they could stand in it, which is the rule the rest of this card
-       follows: what you press stands in a piece cut out of the surface.
-
-       It is the wrong rule here, and the picture is why. Every other cut on this
-       card opens onto the page, and reads as a corner given up because what
-       shows through is the page. A hole in a photograph reads as a photograph
-       with a piece missing - and this one was a quarter of the frame, taken out
-       of the one screen whose entire content is the frame.
-
-       So the corner stays a corner and the doors sit on the picture. `0` is what
-       `outline` reads as no cut at all, the same as the bite at the other end of
-       this edge. */
-    const onFilm = shown.view === "film";
-    const dropW = onFilm ? 0 : drop;
-    const dropH = onFilm ? 0 : drop;
+    const dropW = drop;
+    const dropH = drop;
 
     return {
       radius,
@@ -1409,41 +1382,18 @@ export function NotchedCard({ className }: { className?: string }) {
           Stacked and one width: in a row the eye reads left to right and the
           loud one goes first; in a stack it reads top to bottom, so the filled
           one is at the top and all three are as wide as the longest label. */}
-      {/* The three doors, on the picture rather than in a hole cut out of it.
+      {/* No ways on standing over the film.
 
-          They stood in the corner for a while, in an opening measured to hold
-          them - which is this card's rule everywhere else and the wrong one
-          here. A cut is a piece of the card given back to the page, and it reads
-          as one because what shows through is the page. On this screen what
-          shows through is a photograph, and a quarter of the frame taken out to
-          make room for three buttons is a picture with a corner missing.
+          There were three, stacked in the bottom right - the same three the
+          first screen offers - and the argument for them was that somebody
+          turning from that screen to this one should find the doors where they
+          left them. What it cost was the thing this screen is: a photograph with
+          a panel of controls parked on it, and a corner of the card given over
+          to holding them.
 
-          Hard into the bottom right, and by one number rather than by the
-          card's own inset.
-
-          The inset is a share of the width - twenty-two on a phone and
-          fifty-six on a wide screen - which is right for words, because a
-          measure has to stand off an edge in proportion to how long its lines
-          are. These are not words. They are a control in a corner, and a
-          control that sits an inch from the corner on a desk and a quarter of
-          one on a phone is in a different place on each. `EDGE` is that place,
-          the same on both. */}
-      {shown.view === "film" ? (
-        <div
-          className="pointer-events-none absolute z-10 flex justify-end"
-          /* `EDGE` on both sides rather than the card's inset on the left.
-
-             It bounds the flex row this stack sits in, and on a wide screen it
-             changes nothing - the plate is as wide as its longest label and
-             pushed right, so where the row starts is of no consequence. On a
-             phone the plate takes the whole row, and then the left bound is the
-             left margin. One number for both sides is what makes it symmetrical
-             there. */
-          style={{ right: EDGE, left: EDGE, bottom: EDGE }}
-        >
-          <FilmDoors />
-        </div>
-      ) : null}
+          The card's own way on is a disc standing in the corner cut, on every
+          other screen, and there is no reason for this one to differ. The three
+          doors are one turn of an arrow away. */}
 
       {/* The fourth screen: the other company's name, and nothing else.
 
@@ -1960,11 +1910,11 @@ export function NotchedCard({ className }: { className?: string }) {
                        another measure inside it is a second margin nobody
                        asked for. They run to the card's own padding now, which
                        is the edge everything else on this screen runs to. */
-                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 max-sm:mx-auto max-sm:mt-4 max-sm:w-full max-sm:flex-col max-sm:gap-1.5 sm:mt-8 lg:mt-9 lg:flex-nowrap lg:justify-start lg:gap-2.5 2xl:mt-10"
+                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 max-sm:mx-auto max-sm:mt-4 max-sm:w-full max-sm:flex-col max-sm:gap-2 sm:mt-8 lg:mt-9 lg:flex-nowrap lg:justify-start lg:gap-2.5 2xl:mt-10"
                   >
                     <Link
                       href={ROUTES.build}
-                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:justify-center max-sm:gap-1.5 max-sm:px-3 max-sm:py-2 max-sm:text-[12px] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]"
+                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:justify-center max-sm:gap-2 max-sm:px-4 max-sm:py-2.5 max-sm:text-[13.5px] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]"
                     >
                       <PencilLine aria-hidden className="size-4 shrink-0" />
                       Scope your website
@@ -1988,7 +1938,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       },
                     ].map((way) => {
                       const className =
-                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:justify-center max-sm:gap-1.5 max-sm:px-3 max-sm:py-2 max-sm:text-[12px] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]";
+                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:justify-center max-sm:gap-2 max-sm:px-4 max-sm:py-2.5 max-sm:text-[13.5px] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]";
                       const body = (
                         <>
                           <way.icon
@@ -2157,37 +2107,39 @@ export function NotchedCard({ className }: { className?: string }) {
           An anchor rather than a scroll handler. It works before the JavaScript
           arrives, it can be opened in a new tab or copied, and the smooth part
           is the browser's job through `scroll-behavior`. */}
-      {shown.view === "film" ? null : (
-        <div
-          className="absolute right-0 bottom-0 flex items-center justify-center"
-          style={{ width: cut.dropWidth, height: cut.dropHeight }}
+      {/* On every screen, the film included. It was off there while that screen
+          carried its own stack of ways on - a black disc beside a black plate is
+          a control nobody can see. Both have gone, so the corner holds the disc
+          again: one way on, in one place, on all five. */}
+      <div
+        className="absolute right-0 bottom-0 flex items-center justify-center"
+        style={{ width: cut.dropWidth, height: cut.dropHeight }}
+      >
+        <a
+          href="#build"
+          aria-label="Go to Build your website"
+          className="group/down relative flex size-11 cursor-pointer items-center justify-center overflow-hidden rounded-pill bg-ink text-white transition-opacity hover:opacity-90 hover:[--drip:1s]"
         >
-          <a
-            href="#build"
-            aria-label="Go to Build your website"
-            className="group/down relative flex size-11 cursor-pointer items-center justify-center overflow-hidden rounded-pill bg-ink text-white transition-opacity hover:opacity-90 hover:[--drip:1s]"
-          >
-            {/* The column above the arrowhead. One class, three indexes: `--i`
+          {/* The column above the arrowhead. One class, three indexes: `--i`
                 both places a dot and delays it, so the cascade always runs top
                 to bottom at the spacing it is drawn at. Hidden from anything
                 reading the page out, because it is the button's rhythm and not
                 part of what the button says. */}
-            {[0, 1, 2].map((i) => (
-              <span
-                key={i}
-                aria-hidden
-                className="drip"
-                style={{ "--i": i } as React.CSSProperties}
-              />
-            ))}
-
-            <ArrowDown
-              className="relative size-[18px] transition-transform duration-300 group-hover/down:translate-y-0.5"
-              strokeWidth={2.2}
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              aria-hidden
+              className="drip"
+              style={{ "--i": i } as React.CSSProperties}
             />
-          </a>
-        </div>
-      )}
+          ))}
+
+          <ArrowDown
+            className="relative size-[18px] transition-transform duration-300 group-hover/down:translate-y-0.5"
+            strokeWidth={2.2}
+          />
+        </a>
+      </div>
     </div>
   );
 }
@@ -2230,110 +2182,6 @@ function Tool({
  * of stretched children gives: the three come out the same width as each other,
  * and that width is the widest thing said on any of them.
  */
-/* The two quiet doors, and why they carry no line.
-
-   The hairline was for a white pill standing on a white card, where without one
-   the pill has no edge. On the ink plate it has an edge - the plate is the edge
-   - so the border was a second boundary drawn a pixel inside the first, and
-   against black a light grey line reads as a halo rather than as an outline.
-
-   And ninety-two per cent rather than the full white, which is the same
-   argument made about weight: the filled one above is the button that leads, and
-   three things at full strength on one plate is three firsts. Held back a
-   little, these two are plainly the same kind of thing as each other and plainly
-   not the first. */
-function FilmDoors() {
-  return (
-    /* No plate under them.
-
-       There was an ink one, and what it was doing was giving three white pills a
-       ground to stand on over a picture that has none. Without it they stand on
-       the picture itself - so each carries its own shadow instead, which is the
-       same job done by the three objects that need it rather than by a fourth
-       object drawn behind them.
-
-       A shadow rather than a border: over a hundred and twenty frames of pale
-       fabric a hairline is sometimes there and sometimes not, and a shadow is
-       darker than every frame of it. */
-    <div className="pointer-events-auto flex w-max flex-col items-stretch gap-2 max-sm:w-full max-sm:gap-2 sm:gap-2.5">
-      <Link
-        href={ROUTES.build}
-        /* White like the two under it, and full strength where they are
-           held back.
-
-           It carried the mark's gradient, which is the site's filled button and
-           right nearly everywhere - but this plate is three pills on ink, and a
-           gradient one above two white ones was the only object on the card
-           where the brand colour was being used to rank a control rather than to
-           be the brand. Three of one thing, and what marks the first is the
-           colour in its icon rather than behind its label.
-
-           All three at full white now that the plate has gone: ninety-two per
-           cent was a way of holding two of them back against an ink ground, and
-           over a photograph any translucency at all is the pill taking on
-           whatever frame is underneath it. */
-        className="group/way inline-flex items-center gap-2 rounded-pill bg-field px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink shadow-[0_8px_24px_rgba(12,20,36,0.22)] transition-opacity hover:opacity-90 max-sm:gap-2 max-sm:px-3.5 max-sm:py-2 max-sm:text-[12px] sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
-      >
-        {/* The one coloured thing left on the plate, and the whole of what
-            marks this as the way in. A gradient behind a label is a button
-            shouting; the same gradient in the icon in front of it is the same
-            mark, at the size the other two carry their icons at. */}
-        <PencilLine
-          aria-hidden
-          className="size-4 shrink-0 text-thread-blue max-sm:size-3.5 sm:size-[18px]"
-        />
-        Scope your website
-        <ArrowRight
-          aria-hidden
-          className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 max-sm:size-3.5 sm:size-[18px]"
-          strokeWidth={2.4}
-        />
-      </Link>
-
-      <a
-        href={ROUTES.services}
-        /* White, at every width. They were ink on a phone for a while, which
-           was the right answer to the wrong arrangement: with nothing behind
-           them but the reel, a white pill had nothing to be a pill against. The
-           plate is behind them now, so white is what reads - and the hairline
-           border, which was invisible against the film, has an ink surface to be
-           a hairline on. */
-        className="group/way inline-flex items-center gap-2 rounded-pill bg-field px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink shadow-[0_8px_24px_rgba(12,20,36,0.22)] transition-opacity hover:opacity-90 max-sm:gap-2 max-sm:px-3.5 max-sm:py-2 max-sm:text-[12px] sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
-      >
-        <LayoutGrid
-          aria-hidden
-          className="size-4 shrink-0 text-idx max-sm:size-3.5 sm:size-[18px]"
-        />
-        View our services
-        <ArrowRight
-          aria-hidden
-          className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 max-sm:size-3.5 sm:size-[18px]"
-        />
-      </a>
-
-      <Link
-        href={ROUTES.book}
-        /* White, at every width. They were ink on a phone for a while, which
-           was the right answer to the wrong arrangement: with nothing behind
-           them but the reel, a white pill had nothing to be a pill against. The
-           plate is behind them now, so white is what reads - and the hairline
-           border, which was invisible against the film, has an ink surface to be
-           a hairline on. */
-        className="group/way inline-flex items-center gap-2 rounded-pill bg-field px-4 py-2.5 text-[13px] font-semibold whitespace-nowrap text-ink shadow-[0_8px_24px_rgba(12,20,36,0.22)] transition-opacity hover:opacity-90 max-sm:gap-2 max-sm:px-3.5 max-sm:py-2 max-sm:text-[12px] sm:gap-2.5 sm:px-5.5 sm:py-3.5 sm:text-[15px]"
-      >
-        <CalendarDays
-          aria-hidden
-          className="size-4 shrink-0 text-idx max-sm:size-3.5 sm:size-[18px]"
-        />
-        Book a meeting
-        <ArrowRight
-          aria-hidden
-          className="ml-auto size-4 shrink-0 transition-transform group-hover/way:translate-x-0.5 max-sm:size-3.5 sm:size-[18px]"
-        />
-      </Link>
-    </div>
-  );
-}
 
 /**
  * The words over the film, and the only thing a scrub redraws.
