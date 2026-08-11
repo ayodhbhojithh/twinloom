@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { Cookie } from "lucide-react";
@@ -28,20 +28,29 @@ import { ROUTES } from "@/lib/site";
  * asks the question anyway, because the answer is what an analytics script would
  * have to check before it could ever load. See `lib/consent`.
  */
+/** Nothing to subscribe to: the answer to "are we in a browser" never changes
+ *  within a page's life. */
+const stay = () => () => {};
+
 export function CookieNotice() {
   const choice = useConsent();
 
-  /* Portalled, and only after mount.
+  /* Portalled, and only once the browser has it.
    *
-   * `document` does not exist while this is rendered on the server, and the
-   * choice is in `localStorage` - which the server cannot read either. Rendering
-   * nothing until the browser has both is what stops a notice appearing for a
-   * second in front of somebody who answered a month ago. */
-  const [here, setHere] = useState(false);
-
-  useEffect(() => {
-    setHere(true);
-  }, []);
+   * `document` does not exist while this renders on the server, and the choice
+   * is in `localStorage`, which the server cannot read either. Rendering nothing
+   * until both are available is what stops a notice appearing for a second in
+   * front of somebody who answered a month ago.
+   *
+   * A store with no store rather than state set from an effect: the snapshot is
+   * `false` on the server and during hydration and `true` after it, which is the
+   * question being asked, and it asks it without a second render scheduled from
+   * inside the first. */
+  const here = useSyncExternalStore(
+    stay,
+    () => true,
+    () => false,
+  );
 
   if (!here || choice !== null) return null;
 
