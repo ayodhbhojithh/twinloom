@@ -109,7 +109,7 @@ export function StepRail({
                 aria-current={here ? "step" : undefined}
                 onClick={() => onGo(n)}
                 className={cn(
-                  "group/step flex w-[104px] flex-col items-center gap-2.5 px-1 max-sm:w-9 max-sm:gap-0 max-sm:px-0 sm:w-[132px]",
+                  "group/step flex w-[104px] flex-col items-center gap-2.5 px-1 max-sm:w-7 max-sm:gap-0 max-sm:px-0 sm:w-[132px]",
                   open ? "cursor-pointer" : "cursor-default",
                 )}
               >
@@ -165,7 +165,7 @@ export function StepRail({
                 <span
                   aria-hidden
                   className={cn(
-                    "mt-[5px] -mx-6 h-0.5 w-12 rounded-pill transition-colors max-sm:mx-0 max-sm:w-5 sm:w-16",
+                    "mt-[5px] -mx-6 h-0.5 w-12 rounded-pill transition-colors max-sm:mx-0 max-sm:w-4 sm:w-16",
                     n < reached ? "bg-mark" : "bg-hair",
                   )}
                 />

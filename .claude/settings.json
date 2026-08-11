@@ -184,7 +184,8 @@
       "Bash(grep -n \"^import\\\\|^/\\\\*\\\\|^const\\\\|^export\")",
       "Bash(awk 'NR>=150 && NR<=340' components/home/notched-card.tsx)",
       "Bash(grep -n \"^/\\\\* ---\" components/home/notched-card.tsx)",
-      "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/overview.py\")"
+      "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/overview.py\")",
+      "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/book2.py\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\prave\\Desktop\\PROJECTS\\very-good-websites\\components\\home",

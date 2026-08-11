@@ -321,7 +321,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
           on it or standing in a piece cut out of it, which is the rule the
           landing card states and the rest of the site follows. */}
       <div className="page-frame w-full shrink-0 text-center">
-        <h1 className="section-head mx-auto max-w-[22ch] text-ink [text-wrap:pretty]">
+        <h1 className="section-head mx-auto max-w-[22ch] text-ink [text-wrap:pretty] max-sm:text-[24px]">
           Pick a time
           <span className="text-quiet"> that suits you.</span>
         </h1>
@@ -384,12 +384,19 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
                            same height one under another, and 190 apiece put the
                            third one below the fold with the lengths under that
                            - so on a phone the height is whatever the words in
-                           it come to. */
-                        "flex h-full min-h-[190px] w-full cursor-pointer flex-col justify-between rounded-[18px] p-5 text-left transition-colors max-sm:min-h-0 max-sm:rounded-[15px] max-sm:p-3.5",
+                           it come to.
+
+                           And on a phone the card turns on its side: the icon
+                           in a column of its own at the left, the name and the
+                           sentence beside it, the tick out of the flow at the
+                           top right. Stacked, the three parts were three rows of
+                           a card that is one thought, and the icon had a line to
+                           itself with nothing on it. */
+                        "flex h-full min-h-[190px] w-full cursor-pointer flex-col justify-between rounded-[18px] p-5 text-left transition-colors max-sm:relative max-sm:grid max-sm:min-h-0 max-sm:grid-cols-[auto_minmax(0,1fr)] max-sm:gap-x-3 max-sm:rounded-[15px] max-sm:p-3.5",
                         on ? "bg-ink" : "bg-canvas hover:bg-canvas-firm",
                       )}
                     >
-                      <span className="flex items-start justify-between gap-3">
+                      <span className="flex items-start justify-between gap-3 max-sm:row-span-2 max-sm:self-start">
                         <span
                           aria-hidden
                           className={cn(
@@ -405,7 +412,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
                         <span
                           aria-hidden
                           className={cn(
-                            "mt-0.5 flex size-[20px] shrink-0 items-center justify-center rounded-pill transition-colors",
+                            "mt-0.5 flex size-[20px] shrink-0 items-center justify-center rounded-pill transition-colors max-sm:absolute max-sm:top-3 max-sm:right-3 max-sm:mt-0 max-sm:size-[17px]",
                             on
                               ? "bg-mark text-white"
                               : "bg-field text-transparent",
@@ -415,10 +422,10 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
                         </span>
                       </span>
 
-                      <span className="mt-6 flex items-baseline gap-2 max-sm:mt-3">
+                      <span className="mt-6 flex items-baseline gap-2 max-sm:col-start-2 max-sm:mt-0 max-sm:pr-6">
                         <span
                           className={cn(
-                            "text-[15.5px] font-bold",
+                            "text-[15.5px] font-bold max-sm:text-[14px]",
                             on ? "text-white" : "text-ink",
                           )}
                         >
@@ -436,7 +443,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
 
                       <span
                         className={cn(
-                          "mt-1.5 text-[13px] leading-[1.45] max-sm:mt-1 max-sm:text-[12.5px]",
+                          "mt-1.5 text-[13px] leading-[1.45] max-sm:col-start-2 max-sm:mt-0.5 max-sm:text-[12px] max-sm:leading-[1.4]",
                           on ? "text-white/70" : "text-quiet",
                         )}
                       >
