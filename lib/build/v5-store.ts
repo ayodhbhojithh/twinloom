@@ -94,8 +94,104 @@ const EMPTY: Answers = {
   ref: null,
 };
 
-let answers: Answers = EMPTY;
+/* ------------------------------------------------------------------ keeping
+
+   Everything above is held for the life of a tab rather than the life of a
+   render, and until now that meant the life of a *page*: a reload, a back
+   button, or a trip to the booking page and back emptied ten steps of work with
+   no warning and no way to recover it. Somebody who answered eight questions and
+   pressed refresh started again from nothing.
+
+   `sessionStorage` rather than `localStorage`, deliberately. This holds a name,
+   an email address, a phone number and a description of somebody's business, and
+   the right lifetime for that is the visit it was typed in: it survives reloads
+   and navigation, and it is gone when the tab is closed. A run left on a shared
+   machine should not be readable a week later.
+
+   Written on every change rather than on a timer. The object is a few kilobytes
+   of plain data and `JSON.stringify` on it is measured in microseconds, so there
+   is nothing to schedule - and a debounce is a window in which a refresh loses
+   the last thing somebody typed, which is the one moment this exists for.
+
+   Two things are deliberately not kept: `sending`, because a request cannot
+   still be in flight in a page that has been reloaded, and `problem`, because a
+   failure from before the reload is not a failure of anything now on screen.
+   Everything else, `sent` and `ref` included, so a confirmation survives a
+   reload as well as the answers do.
+--------------------------------------------------------------------------- */
+
+const KEY = "twinloom.build";
+
+/** The counter travels with the answers, or two refs written either side of a
+ *  reload would both be number one. */
+interface Kept {
+  answers: Answers;
+  seq: number;
+}
+
+function load(): Kept | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const raw = window.sessionStorage.getItem(KEY);
+    if (!raw) return null;
+
+    const held = JSON.parse(raw) as Partial<Kept>;
+    if (!held?.answers) return null;
+
+    return {
+      /* Spread over `EMPTY` rather than trusted whole: what was written may have
+         been written by an older version of this file, and a missing key is a
+         crash at the first read rather than a mildly stale answer. */
+      answers: {
+        ...EMPTY,
+        ...held.answers,
+        sending: false,
+        problem: null,
+      },
+      seq: typeof held.seq === "number" ? held.seq : 0,
+    };
+  } catch {
+    /* Unreadable, from a half-written record or a browser refusing storage.
+       Treated as nothing kept, which is where everybody started anyway. */
+    return null;
+  }
+}
+
+const kept = load();
+
+let answers: Answers = kept?.answers ?? EMPTY;
 const listeners = new Set<() => void>();
+
+function keep() {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.sessionStorage.setItem(
+      KEY,
+      JSON.stringify({
+        answers: { ...answers, sending: false, problem: null },
+        seq,
+      }),
+    );
+  } catch {
+    /* Full, or refused. The run carries on in memory exactly as it did before
+       any of this was written - the only thing lost is surviving a reload, and
+       there is nothing useful to say about that at this moment. */
+  }
+}
+
+/** Empty the kept run. Called once a submission has landed - see `submit`. */
+export function forgetAnswers() {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.sessionStorage.removeItem(KEY);
+  } catch {
+    /* Nothing to do, and nothing depends on it: what is in memory is what the
+       page is showing. */
+  }
+}
 
 /**
  * One counter for everything anybody writes down, wherever they write it.
@@ -104,10 +200,11 @@ const listeners = new Set<() => void>();
  * the order the code happens to hold them, and only a single sequence across
  * every list can do that.
  */
-let seq = 0;
+let seq = kept?.seq ?? 0;
 
 export function nextSeq() {
   seq += 1;
+  keep();
   return seq;
 }
 
@@ -130,6 +227,7 @@ export function updateAnswers(change: (current: Answers) => Answers) {
   const next = change(answers);
   if (next === answers) return;
   answers = next;
+  keep();
   for (const listener of listeners) listener();
 }
 

@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState, useSyncExternalStore } from "react";
+import Link from "next/link";
 import {
+  ArrowRight,
   CalendarDays,
   Check,
   Clock,
@@ -14,6 +16,7 @@ import {
 
 import { CutPanel } from "@/components/layout/cut-panel";
 import { collect, drop } from "@/lib/build/handoff";
+import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 import { Calendar } from "./calendar";
@@ -299,6 +302,11 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
         zone={zone}
         email={details.email}
         meet={meet}
+        /* Where they came from, so the run they are in the middle of is one
+           press away. `carried` is read once at mount and the handoff is
+           dropped on success - see `drop` - so this is still true after the
+           booking has landed, which is exactly when it is needed. */
+        back={carried ? ROUTES.build : null}
         onRestart={restart}
       />
     );
@@ -863,6 +871,7 @@ function Finished({
   zone,
   email,
   meet,
+  back,
   onRestart,
 }: {
   meeting: ReturnType<typeof findMeeting>;
@@ -873,6 +882,19 @@ function Finished({
   email: string;
   /** The joining link, where the calendar made one. */
   meet: string | null;
+  /**
+   * The run this booking was made from the middle of, where there is one.
+   *
+   * Somebody who pressed "Choose a time" inside the scoping run has not finished
+   * it - the meeting is one answer on step ten and the document still has to be
+   * sent. Booked and left on this screen, the only ways out were "start again"
+   * and the browser's back button, so a run that was nine steps done ended here
+   * with no sign that it was still waiting.
+   *
+   * The answers are kept for the visit now, so going back lands exactly where
+   * they left off - see `lib/build/v5-store`.
+   */
+  back: string | null;
   onRestart: () => void;
 }) {
   return (
@@ -947,6 +969,26 @@ function Finished({
           </Line>
         ) : null}
       </dl>
+
+      {/* The way back into the run, where this booking was made from one.
+
+          It is the last thing on the screen and the loudest, because it is the
+          thing still outstanding: the meeting is booked and the document it is
+          about has not been sent. Somebody who stops here has a slot in the
+          diary and nothing to talk about at it. */}
+      {back ? (
+        <Link
+          href={back}
+          className="group/back thread-fill mx-auto mt-7 inline-flex items-center justify-center gap-2 rounded-pill px-5 py-3 text-[14px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:mt-5 max-sm:w-full max-sm:px-4 max-sm:py-2.5 max-sm:text-[13px]"
+        >
+          Back to your requirements
+          <ArrowRight
+            aria-hidden
+            className="size-4 shrink-0 transition-transform group-hover/back:translate-x-0.5"
+            strokeWidth={2.4}
+          />
+        </Link>
+      ) : null}
     </CutPanel>
   );
 }
