@@ -866,7 +866,20 @@ export function NotchedCard({ className }: { className?: string }) {
      card sets that variable to this number when it renders the bar. The two
      agree either way, so this can be whatever the card wants rather than
      whatever the page happens to use. */
-  const pad = Math.max(24, Math.min(size.w * 0.06, 112));
+  /* Except on a phone, where a sixteenth of the width is what the words are
+     paying for it.
+
+     A card three hundred and seventy-five points wide gives 24 to each side by
+     the floor above, and what is left has to hold "Connected to your systems."
+     on one line at a size a headline can be read at - which it does not, so the
+     last line of a three line claim wrapped onto a fourth. There is nothing in
+     the margin to protect: it is a card standing in a page that already insets
+     itself, so the gutter here is drawn against the card's own edge rather than
+     against the window's. Fourteen leaves the words the difference. */
+  const pad =
+    size.w < TIGHT
+      ? Math.max(14, size.w * 0.035)
+      : Math.max(24, Math.min(size.w * 0.06, 112));
 
   /* Clear of the floor of the cut, not level with it.
 
@@ -1579,8 +1592,16 @@ export function NotchedCard({ className }: { className?: string }) {
                phone - the bar is a wordmark and a menu button, and the notch
                beside them is shallower too. Reserving the full desktop number
                left a hand's depth of empty card above the mark and pushed
-               everything into the bottom half of the screen. */
-            paddingTop: size.w < TIGHT ? cut.barDepth + 44 : head,
+               everything into the bottom half of the screen.
+
+               Twenty past the notch rather than forty-four. The screen is
+               centred in what is left, so this is not a gap above the mark - it
+               is a floor the whole column is measured from, and every pixel of
+               it is one the column cannot use. Forty-four was set when the claim
+               was two lines and the mark was ninety per cent of the card; the
+               claim is three lines now, and what the column wants is the room,
+               not the air above it. */
+            paddingTop: size.w < TIGHT ? cut.barDepth + 20 : head,
             /* Almost nothing at the foot on a desk. It used to clear the
                notch's depth, which was right while the notch was in the top edge
                and one number did both ends - the notch is in the corner now and
@@ -1811,7 +1832,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       right at 62px of headline is mean at 32. */}
                   <motion.h1
                     variants={HERO_RISE}
-                    className="mx-auto mt-3 max-w-[26ch] text-[clamp(28px,3.2vw,88px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink max-sm:mt-3 max-sm:max-w-none max-sm:text-[28px] max-sm:leading-[1.06] max-sm:tracking-[-0.042em] sm:mt-4 lg:mx-0 lg:mt-5"
+                    className="mx-auto mt-3 max-w-[26ch] text-[clamp(28px,3.2vw,88px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink max-sm:mt-3 max-sm:max-w-none max-sm:text-[min(25px,6.4vw)] max-sm:leading-[1.08] max-sm:tracking-[-0.045em] sm:mt-4 lg:mx-0 lg:mt-5"
                   >
                     {/* Larger where there is room to be larger.
 
@@ -1833,8 +1854,18 @@ export function NotchedCard({ className }: { className?: string }) {
                         before, and the cap is high enough that a window past
                         about two thousand keeps growing instead of stopping.
 
-                        The floor stays at 28 and the phone has its own number
-                        below `sm`, so nothing about a small screen moves.
+                        The phone has its own number below `sm` and does not read
+                        the ramp at all: `min(25px, 6.4vw)`, down from a flat 28.
+                        The claim is three lines there rather than two, and its
+                        last line is twenty-six characters - at 28 that wrapped
+                        onto a fourth, which is the one thing a claim set in three
+                        cannot afford.
+
+                        Twenty-five is the size on an ordinary handset and the
+                        `vw` half is what handles the narrow ones: below about
+                        390 points the line would wrap again at a fixed size, so
+                        it comes down with the screen instead. Above `sm` neither
+                        half is read.
 
                         A line each, and the last one coloured.
 
@@ -1919,8 +1950,17 @@ export function NotchedCard({ className }: { className?: string }) {
                        different edges in four elements. One width down the
                        column gives the screen a single left and right edge, and
                        it is what a control at the foot of a phone looks like
-                       everywhere else. */
-                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 max-sm:mx-auto max-sm:mt-4 max-sm:w-full max-sm:max-w-[236px] max-sm:flex-col max-sm:gap-1.5 sm:mt-8 lg:mt-9 lg:flex-nowrap lg:justify-start lg:gap-2.5 2xl:mt-10"
+                       everywhere else.
+
+                       And the whole of that width, with no cap on it. There was
+                       one - 268, then 236 - which held the three of them to a
+                       measure in the middle of the card, so the block was
+                       narrower than the headline above it and the trades above
+                       that. On a phone the card is already a narrow column;
+                       another measure inside it is a second margin nobody
+                       asked for. They run to the card's own padding now, which
+                       is the edge everything else on this screen runs to. */
+                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 max-sm:mx-auto max-sm:mt-4 max-sm:w-full max-sm:flex-col max-sm:gap-1.5 sm:mt-8 lg:mt-9 lg:flex-nowrap lg:justify-start lg:gap-2.5 2xl:mt-10"
                   >
                     <Link
                       href={ROUTES.build}
