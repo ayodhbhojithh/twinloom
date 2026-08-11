@@ -89,8 +89,10 @@ export function StepStrip({
   const [shift, setShift] = useState(0);
   const [landed, setLanded] = useState(false);
   const [dragging, setDragging] = useState(false);
-  const grab = useRef<{ x: number; from: number } | null>(null);
+  const grab = useRef<{ x: number; from: number; id: number } | null>(null);
   const swiped = useRef(false);
+  /* Whether the rail has taken the pointer. Not taken on press - see `pull`. */
+  const caught = useRef(false);
   const clip = useMemo(() => `path("${CARD_PATH}")`, []);
   const clipOn = useMemo(() => `path("${CARD_PATH_ON}")`, []);
 
@@ -170,9 +172,9 @@ export function StepStrip({
      - or the window - still ends properly. */
   const take = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === "mouse" && event.button !== 0) return;
-    grab.current = { x: event.clientX, from: shift };
+    grab.current = { x: event.clientX, from: shift, id: event.pointerId };
     swiped.current = false;
-    event.currentTarget.setPointerCapture(event.pointerId);
+    caught.current = false;
     setDragging(true);
   };
 
@@ -181,9 +183,30 @@ export function StepStrip({
     const rail = track.current;
     if (!grabbed || !rail) return;
     const moved = event.clientX - grabbed.x;
+
     /* Four pixels of slack before it counts as a drag, so a click with an
-       unsteady hand is still a click. */
-    if (Math.abs(moved) > 4) swiped.current = true;
+       unsteady hand is still a click.
+
+       And the capture is taken here rather than on the press, which is the bug
+       this whole rail had: a captured pointer sends its `pointerup` to the
+       element holding the capture, and a `click` is dispatched to the common
+       ancestor of the down and the up - so with the rail capturing on
+       `pointerdown`, both ends were the rail and every click landed on the rail
+       instead of the card under the finger. Twelve buttons with `onClick`
+       handlers, none of which could ever run.
+
+       Capturing only once a drag is real gives back the ordinary case: a press
+       and release with no movement never captures, the click reaches the button,
+       and a drag that leaves the rail or the window still ends properly because
+       by then the capture is held. */
+    if (Math.abs(moved) > 4) {
+      swiped.current = true;
+
+      if (!caught.current) {
+        event.currentTarget.setPointerCapture(grabbed.id);
+        caught.current = true;
+      }
+    }
     /* Written straight to the element rather than through state. Twelve cards
        re-rendering on every pointer move is a rail that stutters under the
        finger doing the dragging. */
@@ -194,6 +217,12 @@ export function StepStrip({
     const grabbed = grab.current;
     grab.current = null;
     setDragging(false);
+
+    if (caught.current) {
+      event.currentTarget.releasePointerCapture(grabbed?.id ?? event.pointerId);
+      caught.current = false;
+    }
+
     if (!grabbed) return;
     setShift(held(grabbed.from, event.clientX - grabbed.x));
   };

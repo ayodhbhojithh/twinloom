@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { ArrowUpRight, Check } from "lucide-react";
 
-import { ASSUMPTIONS, STEPS } from "@/lib/build/v5";
+import { ASSUMPTIONS, ORG_KINDS, STEPS } from "@/lib/build/v5";
 import { asLink, isLink } from "@/lib/build/url";
 import { STEP_COPY } from "@/lib/build/v5-copy";
 import {
   addOwn,
   addRef,
+  chipsIn,
   dropOwn,
   dropRefTied,
   type Answers,
@@ -728,6 +729,35 @@ export function stepStatus(
     Object.values(answers.pick[scope] ?? {}).filter(Boolean).length;
 
   switch (key) {
+    /* The first step, and it had no case at all.
+
+       Its two questions write to `chip.orgkind` and `pick.sector`, and neither
+       was read here - so the switch fell through to the default and the card for
+       step one said "Ready when you are" however much had been answered on it.
+       Somebody who chose their organisation and their trade watched the rail
+       report that they had not started, which is the whole of what this function
+       is for.
+
+       Two things asked, so two out of two: the kind is named where it has been
+       chosen, because a name is worth more than a count when there is only ever
+       one of them. */
+    case "org": {
+      const kind = chipsIn(answers, "orgkind")[0];
+      const fields = count("sector");
+      const said = kind ? (ORG_KINDS[kind] ?? "Named") : "";
+
+      return {
+        line:
+          said && fields
+            ? `${said} · ${fields} field${fields > 1 ? "s" : ""}`
+            : said ||
+              (fields
+                ? `${fields} field${fields > 1 ? "s" : ""}`
+                : "Nothing yet"),
+        done: (kind ? 1 : 0) + (fields ? 1 : 0),
+        total: 2,
+      };
+    }
     case "arrive":
       return { line: "Nothing to answer", done: 0, total: 0 };
     case "layout": {
