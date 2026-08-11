@@ -169,7 +169,7 @@ export function HowWeWorkView() {
                     into step one, so it belongs to step one. */}
                 <div
                   className={cn(
-                    "mt-9 gap-10 max-sm:mt-6",
+                    "mt-9 gap-10 max-sm:mt-5",
                     opening &&
                       "lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)]",
                   )}
@@ -189,7 +189,15 @@ export function HowWeWorkView() {
                   <div className="relative">
                     <span
                       aria-hidden
-                      className="absolute inset-y-0 left-[16px] hidden w-0.5 rounded-pill sm:block"
+                      /* The rail runs at every width now, and its left is the
+                         centre of whichever mark the row is carrying - 16 for
+                         the 34px disc a screen gets, 13 for the 26px one a phone
+                         does. It was hidden below `sm` because the marks used to
+                         sit above their names there rather than beside them, so
+                         there was no single column for a line to run down. There
+                         is now, and the line is the one thing on this page
+                         carrying meaning rather than making an edge. */
+                      className="absolute inset-y-0 left-[13px] w-0.5 rounded-pill sm:left-[16px]"
                       style={{
                         backgroundImage: `linear-gradient(180deg, transparent 0%, ${ramp.from} 14%, ${ramp.to} 72%, transparent 100%)`,
                       }}
@@ -203,7 +211,7 @@ export function HowWeWorkView() {
                              the name rather than above it: stacked, a 34px disc
                              on its own line put every step three lines deep and
                              the thirteen of them ran to four screenfuls. */
-                          className="relative flex flex-col items-start gap-x-7 gap-y-1.5 py-3 max-sm:flex-row max-sm:flex-wrap max-sm:items-baseline max-sm:gap-x-3 max-sm:gap-y-1 max-sm:py-2 sm:flex-row sm:items-baseline"
+                          className="relative flex flex-col items-start gap-x-7 gap-y-1.5 py-3 max-sm:flex-row max-sm:flex-wrap max-sm:items-baseline max-sm:gap-x-2.5 max-sm:gap-y-0.5 max-sm:py-1.5 sm:flex-row sm:items-baseline"
                         >
                           <span
                             aria-hidden
@@ -252,7 +260,11 @@ export function HowWeWorkView() {
                           {/* The whole width on a phone, under the two above
                               it. A sentence sharing a line with a name three
                               words long leaves it four characters. */}
-                          <span className="min-w-0 grow text-[13.5px] leading-[1.6] text-quiet max-sm:w-full max-sm:pl-[38px] max-sm:text-[12.5px] max-sm:leading-[1.5]">
+                          {/* Indented to the name above it rather than to the
+                              row, so the two lines of a step share a left edge
+                              and the marks keep a column of their own. 26 for
+                              the disc plus the 10 of the gap. */}
+                          <span className="min-w-0 grow text-[13.5px] leading-[1.6] text-quiet max-sm:w-full max-sm:pl-[36px] max-sm:text-[12px] max-sm:leading-[1.45]">
                             {stop.sub}
                           </span>
                         </li>
