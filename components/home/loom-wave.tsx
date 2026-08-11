@@ -800,9 +800,22 @@ export function LoomWave({
      * same and gives it room: the threads that are drawn stand where they
      * always stood, with the ones between them left out.
      *
-     * Six pixels a thread is about where a stroke and its gap both read.
+     * Six pixels a thread is about where a stroke and its gap both read on a
+     * desk, where the thing pointing at it is a cursor a pixel wide.
+     *
+     * A finger is not. It covers about forty points, so on a phone six pixels a
+     * thread puts six or seven threads under every touch - the field answers,
+     * but never to the one thread somebody meant, and two touches a millimetre
+     * apart pluck different notes for no reason they can see. At ten the threads
+     * are far enough apart that a touch lands on one of them and the next touch
+     * lands where it looks like it should.
+     *
+     * It also thins the field, which is the other half of it: three hundred
+     * strokes across a phone is a wash rather than a sheaf, and what is left at
+     * ten reads as threads with air between them.
      */
-    const everyNth = () => Math.max(1, Math.round(COUNT / (width / 6)));
+    const everyNth = () =>
+      Math.max(1, Math.round(COUNT / (width / (width < 640 ? 10 : 6))));
 
     /* The two gradients, kept rather than rebuilt.
 
