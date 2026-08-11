@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { FOOTER_COLUMNS, FOOTER_LEGAL, LEGAL, ROUTES, SITE } from "@/lib/site";
 
+import { CookieSettings } from "./cookie-settings";
 import { CutPanel, TopDisc } from "./cut-panel";
 
 /**
@@ -82,6 +83,9 @@ export function SiteFooter() {
                     height a thumb needs; the negative margin on the row keeps
                     the set sitting where it did on the line above. */}
                 <ul className="-my-1 grid grid-cols-2 gap-x-4 max-sm:gap-x-3 sm:flex sm:flex-wrap sm:justify-end sm:gap-x-5">
+                  {/* Last in the row, and a button rather than a link: it goes
+                      nowhere, it asks the question again. The cookie policy
+                      promises this control by name, so it exists by name. */}
                   {FOOTER_LEGAL.map((link) => (
                     <li key={link.href} className="flex">
                       <Link
@@ -92,6 +96,10 @@ export function SiteFooter() {
                       </Link>
                     </li>
                   ))}
+
+                  <li className="flex">
+                    <CookieSettings />
+                  </li>
                 </ul>
               </nav>
             </div>
