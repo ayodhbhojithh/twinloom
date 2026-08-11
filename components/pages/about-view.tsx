@@ -298,16 +298,20 @@ export function AboutView() {
           className="w-full"
           aside={
             <div className="flex size-full flex-col items-center justify-center">
-              <b className="font-mono text-[22px] leading-none font-bold text-ink tabular-nums">
-                11
+              {/* The count, read from the list rather than typed. Eleven was
+                  written here as a word, so an inclusion added to `INCLUDED`
+                  left the bite saying eleven and the heading beside it saying
+                  eleven while the list under both said twelve. */}
+              <b className="font-mono text-[22px] leading-none font-bold text-ink tabular-nums max-sm:text-[18px]">
+                {INCLUDED.length}
               </b>
-              <span className="mt-1.5 font-mono text-[8px] font-bold tracking-[0.1em] text-label uppercase">
+              <span className="mt-1.5 font-mono text-[8px] font-bold tracking-[0.1em] text-label uppercase max-sm:mt-1 max-sm:text-[7.5px]">
                 Included
               </span>
             </div>
           }
           toolbar={
-            <span className="flex h-10 w-full items-center justify-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
+            <span className="flex h-10 w-full items-center justify-center px-2 text-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase max-sm:h-9 max-sm:text-[7.5px] max-sm:tracking-[0.1em]">
               Every site, whatever its size
             </span>
           }
@@ -342,12 +346,9 @@ export function AboutView() {
                   a list of eleven short lines - and eleven over three is a last
                   row with two in it. Four columns take the width the panel
                   already has, and the ragged row goes from two short to one. */}
-          <ol className="mt-10 grid w-full gap-x-8 gap-y-3.5 max-sm:mt-6 max-sm:gap-y-2.5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          <ol className="mt-10 grid w-full gap-x-8 gap-y-3.5 max-sm:mt-5 max-sm:gap-y-2 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {INCLUDED.map((line, n) => (
-              <li
-                key={line.say}
-                className="flex min-w-0 gap-3.5 max-sm:gap-2.5"
-              >
+              <li key={line.say} className="flex min-w-0 gap-3.5 max-sm:gap-2">
                 <span
                   aria-hidden
                   className="mt-px flex size-6 flex-none items-center justify-center rounded-pill bg-canvas font-mono text-[9.5px] font-bold text-idx tabular-nums max-sm:size-5 max-sm:text-[9px]"
