@@ -185,6 +185,50 @@ export const SERVICES: readonly Service[] = [
  * nearest honest one: a gauge for loading quickly, a calendar for the fortnight
  * after launch.
  */
+/**
+ * The order the six are read in, and the one list that decides it.
+ *
+ * `OFFER` and `SERVICES` are kept apart above because the distinction matters to
+ * this file - what we build, then what runs alongside it - and read end to end
+ * that puts the two biggest commitments first and second, which makes the four
+ * after them look like an appendix.
+ *
+ * This is the order somebody meets them in: the site, then keeping the site,
+ * then working out what it should be, then getting people to it, then how it
+ * looks, then the software under it. Roughly the order the work happens in, and
+ * it ends on the one built by the other company - which is the right place for
+ * it, because it is the thing you arrive at rather than the thing you came for.
+ *
+ * Here rather than in the view that first needed it. Two surfaces show these six
+ * - the services wall on the landing page and the overview panel that opens off
+ * the card - and while the order lived in the wall, the panel had no way to read
+ * it and showed them in the order the two lists happen to concatenate in. Two
+ * orders for one set of six is one of them being wrong, and which one is wrong
+ * changes depending on which you saw first.
+ */
+const ORDER = [
+  "Websites",
+  "Website Care",
+  "Digital consultancy",
+  "Digital campaign management",
+  "Brand identity",
+  "Custom software",
+] as const;
+
+/**
+ * Sorted by `ORDER` rather than filtered through it, so a discipline added above
+ * and forgotten in the list still appears - at the end, which looks wrong, which
+ * is how anybody finds out. Filtering would drop it silently.
+ */
+const at = (name: string) => {
+  const n = ORDER.indexOf(name as (typeof ORDER)[number]);
+  return n === -1 ? ORDER.length : n;
+};
+
+export const ALL_SERVICES = [...OFFER, ...SERVICES].sort(
+  (a, b) => at(a.n) - at(b.n),
+);
+
 export const INCLUDED: readonly { icon: LucideIcon; say: string }[] = [
   {
     icon: MonitorSmartphone,

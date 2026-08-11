@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 import { SisterSentence } from "@/components/blocks";
-import { INCLUDED, OFFER, SERVICES } from "@/lib/services";
+import { ALL_SERVICES, INCLUDED } from "@/lib/services";
 import { ROUTES } from "@/lib/site";
 
 /* ---------------------------------------------------------------------------
@@ -38,7 +38,7 @@ import { ROUTES } from "@/lib/site";
  * icon is the fallback the services page keeps for a discipline whose picture
  * has not been made yet, and all six of these have one.
  */
-const CARDS = [...OFFER, ...SERVICES].map((entry) => ({
+const CARDS = ALL_SERVICES.map((entry) => ({
   art: entry.art,
   name: entry.n,
   say: entry.sub,

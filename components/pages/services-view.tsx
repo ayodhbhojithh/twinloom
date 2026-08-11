@@ -7,7 +7,7 @@ import Link from "next/link";
 
 import { SisterSentence } from "@/components/blocks";
 import { CutPanel } from "@/components/layout/cut-panel";
-import { OFFER, SERVICES } from "@/lib/services";
+import { ALL_SERVICES } from "@/lib/services";
 import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -58,49 +58,10 @@ const EDGES =
    whichever have not been drawn yet fall back to the Lucide icon the entry
    already carries. */
 
-/**
- * The order the wall reads in.
- *
- * Not the order `lib/services` holds them in, and the difference is the point.
- * That file keeps two lists apart because the distinction matters to it - what
- * we build, then what runs alongside - and reading them out end to end put the
- * two biggest commitments first and second, which made the four after them look
- * like an appendix.
- *
- * This is the order somebody meets them in: the site, then keeping the site,
- * then working out what it should be, then getting people to it, then how it
- * looks, then the software under it. Roughly the order the work happens in, and
- * it ends on the one that is built by the other company - which is the right
- * place for it, because it is the thing you arrive at rather than the thing you
- * came for.
- */
-const ORDER = [
-  "Websites",
-  "Website Care",
-  "Digital consultancy",
-  "Digital campaign management",
-  "Brand identity",
-  "Custom software",
-] as const;
-
-/**
- * What the wall shows.
- *
- * The six things we do, not six partner disciplines. There are no partners to
- * name, and a wall of specialisms on a page about services was answering a
- * question nobody had asked yet - somebody arriving here wants the list of what
- * can be bought, and this is that list.
- *
- * Sorted by `ORDER` rather than filtered through it, so a discipline added to
- * `lib/services` and forgotten here still appears - at the end, which looks
- * wrong, which is how anybody finds out. Filtering would drop it silently.
- */
-const AT = (name: string) => {
-  const at = ORDER.indexOf(name as (typeof ORDER)[number]);
-  return at === -1 ? ORDER.length : at;
-};
-
-const SHOWN = [...OFFER, ...SERVICES].sort((a, b) => AT(a.n) - AT(b.n));
+/* The order the wall reads in is `ALL_SERVICES` - see `lib/services`. It used
+   to be worked out here, which meant the overview panel that shows the same six
+   had no way to read it and put them in a different order. */
+const SHOWN = ALL_SERVICES;
 
 const RULES = [
   "One contract, and it is with us.",
