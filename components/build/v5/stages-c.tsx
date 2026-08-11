@@ -162,52 +162,48 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
         corner={null}
         scrollKey="sent"
       >
-        {/* The whole screen on one centre line.
+        {/* A confirmation, and nothing else on it.
 
-            The heading and its line are centred by the kit, and everything
-            round them was left against the edge - so a confirmation with six
-            things on it had the two in the middle and the four beside them,
-            which reads as a screen that has come apart rather than one that
-            has finished.
+            It had six things: a badge, a headline, a paragraph about what we
+            read, the reference, a paragraph about the answers still being
+            yours, and a button back into the run. Every one of them was true
+            and only one of them was needed - somebody who has just pressed send
+            wants to know it arrived and to be given the number to quote.
 
-            The badge is in a block of its own so it can be given a margin.
-            Inline, the only thing between it and the heading was the leading
-            of its own line box - about six pixels under a 27px extrabold line,
-            which read as the two being one lump rather than a mark and the
-            sentence it introduces. */}
-        <div className="text-center">
-          <div className="mb-4 flex justify-center">
-            <span className="inline-flex items-center gap-2 rounded-pill bg-mark/[0.08] py-1.5 pr-4 pl-3">
-              <span aria-hidden className="size-2 rounded-pill bg-mark" />
-              <Kicker className="text-mark">Sent</Kicker>
+            The rest was said at the wrong moment. What happens next is in the
+            receipt that is already on its way; that the answers are still there
+            is obvious the moment they press the one control on the screen.
+
+            Two lines and a number, centred, on a screen with room round them.
+            The mark says sent, the sentence thanks them, the reference is the
+            thing to keep. */}
+        <div className="mx-auto max-w-[46ch] py-6 text-center max-sm:py-2">
+          <div className="flex justify-center">
+            <span
+              aria-hidden
+              className="flex size-11 items-center justify-center rounded-pill bg-mark text-white max-sm:size-10"
+            >
+              <Check className="size-[22px] max-sm:size-5" strokeWidth={2.8} />
             </span>
           </div>
 
-          <H>We read it. All of it.</H>
-          <Sub>
-            Including the parts in your own words, which are usually the useful
-            part. Two or three questions come back in writing, within two
-            working days.
-          </Sub>
+          <H>Thank you for your submission.</H>
 
           {/* The reference, quoted back. It is the one thing somebody wants
               from a confirmation screen that they cannot work out for
               themselves, and the one thing worth writing down. */}
           {answers.ref ? (
-            <p className="mt-6 flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
-              <Kicker>Your reference</Kicker>
-              <b className="font-mono text-[15px] font-bold tracking-[0.08em] text-ink tabular-nums">
+            <p className="mt-7 max-sm:mt-5">
+              <Kicker className="block">Your reference</Kicker>
+              <b className="mt-1.5 block font-mono text-[17px] font-bold tracking-[0.08em] text-ink tabular-nums max-sm:text-[15px]">
                 {answers.ref}
               </b>
             </p>
           ) : null}
 
-          <p className="mx-auto mt-5 max-w-[58ch] text-[13.5px] leading-[1.5] text-quiet sm:text-[14px]">
-            Your answers are still here and still yours - keep changing them and
-            send it again, and the newer one is the one we read.
-          </p>
-
-          <div className="mt-7 flex justify-center">
+          {/* One way on, and it is quiet. The screen is a receipt; a filled
+              button on it would be asking for something. */}
+          <div className="mt-8 flex justify-center max-sm:mt-6">
             <Pill onClick={() => setSent(false)}>Keep answering</Pill>
           </div>
         </div>
