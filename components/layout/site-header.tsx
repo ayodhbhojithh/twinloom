@@ -382,7 +382,16 @@ export function SiteHeader({
               id="site-menu"
               className="fixed inset-0 z-50 flex flex-col bg-field xl:hidden"
             >
-              <div className="flex items-center gap-4 border-b border-border px-5 py-2.5 sm:px-8">
+              {/* No rule under the name.
+
+                  The sheet is one surface and this is its head, not a separate
+                  bar sitting on top of the list - and what separates the two is
+                  the space between the name and the first row, which is already
+                  doing it. A line there draws a boundary the space had drawn,
+                  and it was the only rule anywhere in the sheet apart from the
+                  one over the foot, where there genuinely are two things to
+                  keep apart. */}
+              <div className="flex items-center gap-4 px-5 py-2.5 sm:px-8">
                 <Wordmark as="text" className="min-w-0" />
 
                 <button
