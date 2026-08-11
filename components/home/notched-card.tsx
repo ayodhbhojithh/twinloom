@@ -51,19 +51,39 @@ import { HERO_SLIDES } from "./hero-slides";
    emit an empty element and then throw it away.
 --------------------------------------------------------------------------- */
 
-const Ballpit = dynamic(() => import("./ballpit").then((m) => m.Ballpit), {
+/**
+ * The imports, held as functions so they can be called twice.
+ *
+ * `dynamic` fetches the chunk the first time the component renders, which is the
+ * first time somebody turns to that screen - and on a slow connection that is a
+ * blank while three quarters of a megabyte arrives, followed by the pit opening
+ * halfway through its own entrance. What was optimised away from the first load
+ * came back as a stall on the second slide.
+ *
+ * Calling the same function ahead of time fetches the module and does nothing
+ * else, and the second call is the browser handing back what it already has. So
+ * the screens are warmed while somebody is reading the first one - see the
+ * effect below - and by the time an arrow is pressed the code is local and the
+ * scene starts from its first frame.
+ */
+const LOAD = {
+  balls: () => import("./ballpit"),
+  particles: () => import("@/components/ui/ParticleCanvas"),
+  film: () => import("./film-stage"),
+} as const;
+
+const Ballpit = dynamic(() => LOAD.balls().then((m) => m.Ballpit), {
   ssr: false,
 });
 
 const ParticleCanvas = dynamic(
-  () => import("@/components/ui/ParticleCanvas").then((m) => m.ParticleCanvas),
+  () => LOAD.particles().then((m) => m.ParticleCanvas),
   { ssr: false },
 );
 
-const FilmStage = dynamic(
-  () => import("./film-stage").then((m) => m.FilmStage),
-  { ssr: false },
-);
+const FilmStage = dynamic(() => LOAD.film().then((m) => m.FilmStage), {
+  ssr: false,
+});
 import { type Project } from "./projects";
 
 /**
@@ -352,6 +372,55 @@ export function NotchedCard({ className }: { className?: string }) {
   }, []);
 
   const tellReel = useCallback((along: number) => reel.current?.(along), []);
+
+  /* The screens either side of this one, fetched before they are asked for.
+   *
+   * Two passes, and they answer different problems. The first runs once the
+   * browser is idle after the page has loaded: it takes the next screen only,
+   * because the next screen is the one an arrow reaches and the rest can wait
+   * for somebody to go that way. The second runs on every turn of the card and
+   * takes both neighbours, so moving through the five is a chain where each
+   * screen is fetched while the one before it is being looked at.
+   *
+   * Idle rather than immediately. Three quarters of a megabyte of WebGL parsed
+   * while the landing screen is still settling is the cost this file spent a
+   * whole pass moving off the critical path, and putting it back a second later
+   * would be undoing that with extra steps.
+   *
+   * Nothing here waits on the result and nothing reads it. The modules are
+   * cached by the browser and by the module registry, so this is a fetch whose
+   * only effect is that the next `dynamic` call resolves at once. */
+  useEffect(() => {
+    const near = [
+      HERO_SLIDES[(at + 1) % HERO_SLIDES.length],
+      HERO_SLIDES[(at - 1 + HERO_SLIDES.length) % HERO_SLIDES.length],
+    ];
+
+    const warm = () => {
+      for (const slide of near) {
+        const load = LOAD[slide.view as keyof typeof LOAD];
+        if (load) void load();
+      }
+    };
+
+    /* On arrival, wait for the browser to have nothing better to do. On a turn,
+       go now: somebody pressing an arrow has told us which way they are
+       heading, and the screen after this one is one press away. */
+    if (at !== 0) {
+      warm();
+      return;
+    }
+
+    const idle = window.requestIdleCallback;
+
+    if (idle) {
+      const id = idle(warm, { timeout: 4000 });
+      return () => window.cancelIdleCallback?.(id);
+    }
+
+    const soon = setTimeout(warm, 2000);
+    return () => clearTimeout(soon);
+  }, [at]);
 
   /* No clock. The card turns when somebody turns it - the arrows, the thumbnail
      and the keyboard all do it - and nothing moves it on its own. A carousel

@@ -860,7 +860,24 @@ function createBallpit(canvas: HTMLCanvasElement, config: Partial<PitConfig>) {
   stage.maxPixelRatio = 1.5;
   stage.resize();
 
-  const beads = new Beads(stage.renderer, { ...DEFAULTS, ...config });
+  /* The measured box, handed over before the spheres are placed rather than
+     after.
+
+     `Physics` scatters every sphere across `maxX` and `maxY` in its
+     constructor, and those came from `DEFAULTS` - a box the size of nothing in
+     particular. `onAfterResize` then replaced them with the real ones, so the
+     first frames were two hundred spheres arranged for one box being redrawn
+     into another: they arrived crowded and at the wrong scale for the card, and
+     spread outwards over the first second as if the screen were still settling.
+
+     `stage.resize()` has already run by this line, so the world's true width and
+     height are known here. Placed with them, the first frame is the picture. */
+  const beads = new Beads(stage.renderer, {
+    ...DEFAULTS,
+    ...config,
+    maxX: stage.size.wWidth / 2,
+    maxY: stage.size.wHeight / 2,
+  });
   stage.scene.add(beads);
 
   /* Where the pointer meets the plane the camera is looking at. That point is
@@ -884,11 +901,12 @@ function createBallpit(canvas: HTMLCanvasElement, config: Partial<PitConfig>) {
   );
 
   stage.onBeforeRender = (beat) => beads.update(beat);
+  /* Later resizes only. The first one is in the constructor above, and calling
+     this immediately after it was setting the same two numbers a second time. */
   stage.onAfterResize = (size) => {
     beads.config.maxX = size.wWidth / 2;
     beads.config.maxY = size.wHeight / 2;
   };
-  stage.onAfterResize(stage.size);
 
   return {
     dispose() {
