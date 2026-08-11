@@ -10,7 +10,7 @@ import { RailNav } from "./rail-nav";
 import { Wordmark } from "./wordmark";
 
 import { CONTACT_INFO, HEADER_CTA, HEADER_NAV, ROUTES } from "@/lib/site";
-import { cn } from "@/lib/utils";
+import { cn, toTop } from "@/lib/utils";
 
 /**
  * The site header.
@@ -310,6 +310,11 @@ export function SiteHeader({
               <Link
                 key={item.href}
                 href={item.href}
+                /* `on` is already the test for "this is the page you are on",
+                   which it computes to mark the row. Where that is true the
+                   router has nothing to do and the window would simply stay
+                   where it is - see `toTop`. */
+                onClick={(event) => toTop(event, on)}
                 aria-current={on ? "page" : undefined}
                 className={className}
               >

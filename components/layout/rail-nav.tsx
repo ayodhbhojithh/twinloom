@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 import { ROUTES, RAIL_PAGES, type NavLink as NavLinkData } from "@/lib/site";
-import { cn } from "@/lib/utils";
+import { cn, toTop } from "@/lib/utils";
 
 /**
  * A mark for every page in the rail.
@@ -185,9 +185,12 @@ function Row({
       /* Both here rather than one of them in the spread above, which would
          have overwritten the other. A name that stays up over the page
          somebody has just gone to is a label with nothing left to label. */
-      onClick={() => {
+      onClick={(event) => {
         onTip?.(null);
         onNavigate?.();
+        /* `here` is this row's own answer to "is this the page we are on", and
+           where it is true the link has nowhere to go - see `toTop`. */
+        toTop(event, here);
       }}
       aria-current={here ? "page" : undefined}
       {...named}
