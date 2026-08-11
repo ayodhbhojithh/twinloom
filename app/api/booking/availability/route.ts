@@ -56,38 +56,23 @@ export async function POST(request: Request) {
     );
   }
 
-  let body: { from?: unknown; to?: unknown };
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json(
-      { ok: false, problem: "That did not arrive as we expected it to." },
-      { status: 400 },
-    );
-  }
+  /* The window, decided here rather than sent from the browser.
 
-  const from = new Date(String(body.from));
-  const to = new Date(String(body.to));
+     It arrived in the request body until this line was written, computed from
+     whatever clock the reader's device was set to - which made the question a
+     different question from every timezone, and Google answered one of those
+     with a 400. It worked from London and failed from Colombo, and nothing about
+     the code said which timezones were safe.
 
-  if (
-    Number.isNaN(from.getTime()) ||
-    Number.isNaN(to.getTime()) ||
-    to <= from
-  ) {
-    return NextResponse.json(
-      { ok: false, problem: "That is not a window we can read." },
-      { status: 400 },
-    );
-  }
+     None of that was ever the reader's decision to make. Free/busy is a fact
+     about our diary; the diary is open for the same ninety-two days whoever is
+     asking, and the answer comes back as stretches in UTC that the browser
+     renders into its own clock. One window, one request, no variables.
 
-  /* Bounded, because the window is chosen by the browser and an unbounded one
-     is a way to make us do arbitrary work. */
-  if (to.getTime() - from.getTime() > MOST_DAYS * 86_400_000 + SLACK) {
-    return NextResponse.json(
-      { ok: false, problem: "That window is longer than the diary is open." },
-      { status: 400 },
-    );
-  }
+     From now rather than from midnight, because a stretch of this morning that
+     has already gone is not availability anybody can book. */
+  const from = new Date();
+  const to = new Date(from.getTime() + MOST_DAYS * 86_400_000);
 
   try {
     const busy = await busyBetween(w, from, to);
