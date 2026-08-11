@@ -4,6 +4,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import {
+  CalendarDays,
   CircleHelp,
   Hammer,
   Route,
@@ -40,6 +41,7 @@ const MARKS: Record<string, LucideIcon> = {
   [ROUTES.contact]: Mail,
   [ROUTES.faq]: CircleHelp,
   [ROUTES.insights]: Newspaper,
+  [ROUTES.book]: CalendarDays,
 };
 
 /**
@@ -250,21 +252,26 @@ function Row({
     >
       {/* The mark holds its column whether it has a drawing in it or not, so a
           page without one still starts its words where every other page does.
-          A sub page has neither: it is indented past the column entirely. */}
-      {nested ? null : (
-        <span
-          aria-hidden
-          className="flex flex-none items-center justify-center"
-          style={{ width: MARK, height: MARK }}
-        >
-          {Mark ? (
-            <Mark
-              className={cn(menu ? "size-[17px]" : "size-[17px]")}
-              strokeWidth={here && menu ? 2.2 : 1.9}
-            />
-          ) : null}
-        </span>
-      )}
+
+          Sub pages too, and they did not. The argument was that a sub page is
+          indented past the column entirely, so it needs no place in it - which
+          is true of the indent and false of the row: "Book a meeting" came out
+          as the one line in a list of eight with no drawing beside it, which
+          reads as an icon that failed to load rather than as a page one level
+          in. The indent is what says it is nested; the mark is what makes it
+          look like the rest of the list. */}
+      <span
+        aria-hidden
+        className="flex flex-none items-center justify-center"
+        style={{ width: MARK, height: MARK }}
+      >
+        {Mark ? (
+          <Mark
+            className="size-[17px]"
+            strokeWidth={here && menu ? 2.2 : 1.9}
+          />
+        ) : null}
+      </span>
 
       {strip ? null : <span className="min-w-0 truncate">{page.label}</span>}
     </Link>

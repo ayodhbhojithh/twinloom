@@ -216,8 +216,37 @@ export function BookStage({
   children: React.ReactNode;
 }) {
   return (
-    <CutPanel
-      /* White, like the landing card and like every other panel on the site.
+    <>
+      {/* The run of steps, above the surface rather than standing in it.
+
+          It stood in a notch cut into the top edge, which is what this site does
+          with a control that belongs to a surface - the landing card's arrows,
+          the working stage's bar. This one does not belong to the surface. It is
+          about the whole booking: four steps, of which the panel below is
+          showing one, and it stays the same while everything under it changes.
+
+          A notch is also a hole, and a hole has to be big enough for what stands
+          in it. Four names plus the way back needed most of the top edge on a
+          desk and more than all of it on a phone, so the edge was being cut to
+          fit a row that was never part of the card.
+
+          Above it, the run is a line across the page and the card is a card:
+          the shape gets its edge back and the steps get whatever width they
+          want. */}
+      <div className="mb-3 flex items-center gap-2 max-sm:mb-2.5">
+        <Disc label="Previous step" onClick={onBack} disabled={at === 0}>
+          <ArrowLeft className="size-4" />
+        </Disc>
+
+        <div className="flex min-w-0 flex-1 justify-center">{rail}</div>
+
+        {/* The width of the disc, so the run is centred on the row rather than
+            on what the disc leaves. */}
+        <span aria-hidden className="size-9 flex-none" />
+      </div>
+
+      <CutPanel
+        /* White, like the landing card and like every other panel on the site.
          It was the canvas grey, which is also the page - so the shape was
          being drawn in one colour on the same colour, and the whole surface
          was invisible. The notch, the bite and the flared corners were all
@@ -226,76 +255,63 @@ export function BookStage({
          And a real floor. The two cuts along the bottom need room to be cuts,
          and a surface that shrinks to a short answer loses the shape it is
          drawn from. */
-      /* A floor, not a fill. Told to take the whole window it left a third of
+        /* A floor, not a fill. Told to take the whole window it left a third of
          itself empty under a short answer, which is worse than a smaller card:
          the corner disc ended up floating alone in a void. The floor is what
          the two cuts along the bottom need to be cuts, and the surface grows
          from there with whatever is asked. */
-      tone="field"
-      className={cn("min-h-[clamp(380px,46vh,520px)] w-full", className)}
-      bar="wide"
-      toolbar={
-        <div className="relative flex h-full w-full min-w-0 items-center">
-          <span className="absolute top-1/2 left-1 z-10 -translate-y-1/2">
-            <Disc label="Previous step" onClick={onBack} disabled={at === 0}>
-              <ArrowLeft className="size-4" />
-            </Disc>
-          </span>
+        tone="field"
+        className={cn("min-h-[clamp(380px,46vh,520px)] w-full", className)}
+        aside={
+          held ? (
+            <div className="flex size-full flex-col items-center justify-center px-1 text-center">
+              {held}
+            </div>
+          ) : undefined
+        }
+        foot={foot}
+        corner={
+          <button
+            type="button"
+            aria-label={last ? "Confirm the booking" : "Next step"}
+            title={last ? "Confirm the booking" : "Next step"}
+            onClick={onNext}
+            disabled={!canGoOn}
+            className={cn(
+              "flex size-11 items-center justify-center rounded-pill transition-opacity max-sm:size-10",
+              canGoOn
+                ? "cursor-pointer bg-ink text-white hover:opacity-85"
+                : "cursor-default bg-planned text-white/70",
+            )}
+          >
+            {last ? (
+              <Check className="size-[19px]" strokeWidth={2.6} />
+            ) : (
+              <ArrowRight className="size-[18px]" strokeWidth={2.2} />
+            )}
+          </button>
+        }
+      >
+        <div className="mx-auto mt-6 max-w-[1180px] text-center max-sm:mt-2">
+          <h2 className="mx-auto max-w-[24ch] text-[clamp(20px,1.9vw,27px)] leading-[1.08] font-extrabold tracking-[-0.032em] text-ink max-sm:text-[18px]">
+            {title}
+          </h2>
 
-          <div className="flex min-w-0 flex-1 justify-center px-11 max-sm:px-9">
-            {rail}
-          </div>
+          {note ? (
+            <p className="mx-auto mt-2 max-w-[62ch] text-[13.5px] leading-[1.5] text-quiet max-sm:mt-1.5 max-sm:text-[12.5px] sm:text-[14px]">
+              {note}
+            </p>
+          ) : null}
         </div>
-      }
-      aside={
-        held ? (
-          <div className="flex size-full flex-col items-center justify-center px-1 text-center">
-            {held}
-          </div>
-        ) : undefined
-      }
-      foot={foot}
-      corner={
-        <button
-          type="button"
-          aria-label={last ? "Confirm the booking" : "Next step"}
-          title={last ? "Confirm the booking" : "Next step"}
-          onClick={onNext}
-          disabled={!canGoOn}
-          className={cn(
-            "flex size-11 items-center justify-center rounded-pill transition-opacity max-sm:size-10",
-            canGoOn
-              ? "cursor-pointer bg-ink text-white hover:opacity-85"
-              : "cursor-default bg-planned text-white/70",
-          )}
-        >
-          {last ? (
-            <Check className="size-[19px]" strokeWidth={2.6} />
-          ) : (
-            <ArrowRight className="size-[18px]" strokeWidth={2.2} />
-          )}
-        </button>
-      }
-    >
-      <div className="mx-auto mt-6 max-w-[1180px] text-center max-sm:mt-2">
-        <h2 className="mx-auto max-w-[24ch] text-[clamp(20px,1.9vw,27px)] leading-[1.08] font-extrabold tracking-[-0.032em] text-ink max-sm:text-[18px]">
-          {title}
-        </h2>
 
-        {note ? (
-          <p className="mx-auto mt-2 max-w-[62ch] text-[13.5px] leading-[1.5] text-quiet max-sm:mt-1.5 max-sm:text-[12.5px] sm:text-[14px]">
-            {note}
-          </p>
-        ) : null}
-      </div>
-
-      {/* One inset, one measure. The step's own content sits on the same
+        {/* One inset, one measure. The step's own content sits on the same
           centre line as its heading rather than running the full surface, so
           three cards and four chips read as one block instead of two rows that
           happen to start in the same place. */}
-      <div className="mx-auto mt-8 w-full max-w-[1180px] max-sm:mt-5">
-        {children}
-      </div>
-    </CutPanel>
+        <div className="mx-auto mt-8 w-full max-w-[1180px] max-sm:mt-5">
+          {children}
+        </div>
+      </CutPanel>
+    </>
   );
 }
