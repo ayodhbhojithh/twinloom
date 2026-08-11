@@ -120,7 +120,19 @@ function Ways({
     <div className={className}>
       <div
         className={cn(
-          "flex flex-wrap items-center gap-2.5 max-sm:gap-2",
+          /* A row on a screen, a column on a phone.
+
+             Wrapped, the first pill took the whole width and the two under it
+             split what was left - and they do not divide evenly: "Give us a
+             call" is three short words and "Book a meeting" is three longer
+             ones, so at half the width the second wrapped to two lines and the
+             pair came out at two different heights beside each other. Three ways
+             of doing one thing, drawn as one wide button and two uneven ones.
+
+             Stacked, all three are the same width and the same height, which is
+             what a set of alternatives should look like and what every other
+             pair of doors on this site already does below `sm`. */
+          "flex flex-wrap items-center gap-2.5 max-sm:flex-col max-sm:gap-2",
           center && "justify-center",
         )}
       >
@@ -138,7 +150,7 @@ function Ways({
 
         <a
           href={CONTACT_INFO.phoneHref}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-pill bg-canvas px-4 py-2.5 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair max-sm:px-3 max-sm:text-[12.5px]"
+          className="inline-flex flex-1 items-center justify-center gap-2 rounded-pill bg-canvas px-4 py-2.5 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair max-sm:w-full max-sm:flex-none max-sm:px-4 max-sm:text-[12.5px]"
         >
           <Phone aria-hidden className="size-4" strokeWidth={1.9} />
           Give us a call
@@ -146,7 +158,7 @@ function Ways({
 
         <Link
           href={ROUTES.book}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-pill bg-canvas px-4 py-2.5 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair max-sm:px-3 max-sm:text-[12.5px]"
+          className="inline-flex flex-1 items-center justify-center gap-2 rounded-pill bg-canvas px-4 py-2.5 text-[13.5px] font-semibold text-ink transition-colors hover:bg-hair max-sm:w-full max-sm:flex-none max-sm:px-4 max-sm:text-[12.5px]"
         >
           <CalendarClock aria-hidden className="size-4" strokeWidth={1.9} />
           Book a meeting
