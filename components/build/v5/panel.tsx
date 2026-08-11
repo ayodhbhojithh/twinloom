@@ -1,13 +1,7 @@
 "use client";
 
 import { STATES } from "@/lib/build/v5";
-import {
-  assumed,
-  pagesFrom,
-  readiness,
-  told,
-  zonesFrom,
-} from "@/lib/build/v5-derive";
+import { pagesFrom, readiness, told, zonesFrom } from "@/lib/build/v5-derive";
 import { type Answers } from "@/lib/build/v5-store";
 import { cn } from "@/lib/utils";
 
@@ -45,14 +39,10 @@ export function Panel({
   const { state } = readiness(answers);
   const [stateName, stateNote] = STATES[state];
   const lines = told(answers);
-  const takenAsRead = assumed(answers);
 
   return (
     <aside
-      className={cn(
-        "min-w-0",
-        bare ? "" : "glass-pane rounded-[18px] p-5",
-      )}
+      className={cn("min-w-0", bare ? "" : "glass-pane rounded-[18px] p-5")}
     >
       {bare ? null : <Kicker className="block">Your site, so far</Kicker>}
 
@@ -137,18 +127,20 @@ export function Panel({
         </div>
       ) : null}
 
-      {takenAsRead.length ? (
-        <div className="mt-4 border-t border-hair pt-4">
-          <Kicker>Taken as read</Kicker>
-          <ul className="mt-2 flex flex-col gap-1.5">
-            {takenAsRead.map((sentence) => (
-              <li key={sentence} className="text-[12px] leading-[1.5] text-label">
-                {sentence}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
+      {/* No list of assumptions here any more.
+
+          It was a dozen sentences beginning "We assume", under a heading called
+          "Taken as read" - and on a panel that is meant to show what somebody
+          has built, the longest thing on it was a list of what they had not.
+          Early on, when almost nothing has been answered, it was the whole
+          panel: four pages, one line of explanation, and then twelve statements
+          about the site they had not described yet.
+
+          The assumptions are not lost and they are not decoration. `assumed`
+          still runs, and every one of those sentences is written into the
+          submission - see `lib/build/submit` - so what we would take as read
+          arrives in writing with the brief, where it can be argued with, rather
+          than sitting beside a form nobody has finished. */}
     </aside>
   );
 }

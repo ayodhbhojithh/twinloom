@@ -331,7 +331,7 @@ function DeskBody({
             instead, which is at the foot of this panel.
           </p>
 
-          <div className="mt-5">
+          <div className="mt-5 max-sm:mt-4">
             <Panel answers={answers} bare />
           </div>
         </>

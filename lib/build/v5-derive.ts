@@ -13,8 +13,10 @@ import {
   ASSUMPTIONS,
   FEELS,
   GROUPS,
+  ORG_KINDS,
   PAY_WAYS,
   REQUIRED,
+  SECTORS,
   SELL_KINDS,
   STEPS,
   ZONES,
@@ -157,9 +159,7 @@ export function readiness(a: Answers): Readiness {
         const action = ACTION_BY[key];
         return action && action.pre !== "fix" && action.pre !== "tick";
       }),
-    sell: !isOn(a, "do", "buy")
-      ? ("na" as Met)
-      : picked(a, "sell").length > 0,
+    sell: !isOn(a, "do", "buy") ? ("na" as Met) : picked(a, "sell").length > 0,
     you: REQUIRED.every((field) => askDone(a, field)),
   };
 
@@ -170,6 +170,26 @@ export function readiness(a: Answers): Readiness {
 /** What has actually been said, as lines. `true` marks a ticked one. */
 export function told(a: Answers): { tick: boolean; line: string }[] {
   const out: { tick: boolean; line: string }[] = [];
+
+  /* The first step, which this did not read.
+
+     It asks two questions - what kind of organisation, and the trade - and
+     neither adds a page, so nothing about either reached this panel: somebody
+     answered the first screen of the run and the panel beside it showed exactly
+     what it had shown before they started. A panel that reports only the answers
+     with consequences is a panel that ignores the ones it was given first.
+
+     Named rather than counted. There is one organisation kind, and a trade is a
+     word somebody chose - "Womenswear" says more than "1 field" ever could. */
+  const kind = chipsIn(a, "orgkind")
+    .map((key) => ORG_KINDS[key] ?? key)
+    .join(", ");
+  if (kind) out.push({ tick: true, line: kind });
+
+  const trades = picked(a, "sector").map((key) => SECTORS[key] ?? key);
+  if (trades.length) {
+    out.push({ tick: true, line: `Working in: ${trades.join(", ")}` });
+  }
 
   const groups = picked(a, "who").map((key) => GROUP_BY[key]?.n ?? key);
   if (groups.length) out.push({ tick: true, line: `For ${groups.join(", ")}` });
@@ -222,7 +242,10 @@ export function told(a: Answers): { tick: boolean; line: string }[] {
   }
 
   if (a.short) {
-    out.push({ tick: true, line: "You sent it as a quick submission, on purpose." });
+    out.push({
+      tick: true,
+      line: "You sent it as a quick submission, on purpose.",
+    });
   }
 
   return out;
