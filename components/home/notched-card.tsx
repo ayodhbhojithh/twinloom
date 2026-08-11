@@ -1348,20 +1348,24 @@ export function NotchedCard({ className }: { className?: string }) {
                that cut and came out sliced by the outline with the arrow sitting
                on top of it. Measured from the cut rather than guessed, so it
                follows if the corner ever changes size. */
-            /* The notch's depth at both ends, so the column is centred on the
-               card rather than in what is left after clearing a corner.
+            /* Clear of the corner, because the last thing in here stands on the
+               floor and the floor is where the cut is.
 
-               It was the drop cut plus twelve - about seventy-five points - held
-               against thirty at the top, so `justify-center` was centring the
-               words in a box whose floor was a hand's depth above the card's.
-               What that looked like was a screen sitting high with a band of
-               empty card under the last line.
+               This was the notch's depth at both ends for a while, on the
+               argument that the column should be centred on the card rather than
+               in what is left after clearing a corner. The argument was right
+               and the number was wrong: the line along the floor runs the width
+               of the card, the cut for the way down the page is taken out of the
+               same edge, and at thirty the line's right end was inside the cut
+               with the disc drawn over it.
 
-               The corner still has to be cleared, but only by the one thing that
-               reaches it: the line along the floor is inset from the right by
-               the width of the cut - see below - and everything above it is
-               narrower than the card and never gets near it. */
-            paddingBottom: size.w < TIGHT ? cut.barDepth : 14,
+               Cleared by the cut's own height, so it follows if the corner is
+               ever resized. What it costs is that the block above centres in the
+               room left over rather than in the card - which is a few points of
+               difference now that the column actually fills its parent, and it
+               is the difference between a centred screen and a clipped
+               sentence. */
+            paddingBottom: size.w < TIGHT ? cut.dropHeight + 10 : 14,
             paddingLeft: pad,
             paddingRight: pad,
           }}
