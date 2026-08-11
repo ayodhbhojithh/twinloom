@@ -1182,14 +1182,32 @@ export function NotchedCard({ className }: { className?: string }) {
               transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
               className="text-center"
             >
-              <h1 className="text-[clamp(38px,6.6vw,104px)] leading-[1] font-extrabold tracking-[-0.05em] text-ink">
+              {/* Two sizes, not one, and the jump is the whole of it.
+
+                  Set at one size the pair is a sentence broken over two lines,
+                  which is a headline that happens to wrap. At two - the first
+                  about two fifths of the second - they become an instruction and
+                  the thing it is about: small "Get creative.", enormous "Your
+                  canvas." The eye lands on the noun and picks up the rest on the
+                  way back, which is how a poster is read and not how a paragraph
+                  is. It is the same device the film titles use, and this is the
+                  other screen with nothing on it but words.
+
+                  The gradient stays on the second, so the largest thing on the
+                  card is also the one thing carrying the mark's colour - and it
+                  is the word that names what the field under it is. */}
+              <span className="block text-[clamp(15px,2.6vw,40px)] leading-[1.05] font-extrabold tracking-[-0.03em] text-quiet">
                 {shown.claim[0]}
-                <span className="thread-text">{shown.claim[1]}</span>
+              </span>
+
+              <h1 className="thread-text mt-1 block text-[clamp(38px,6.6vw,104px)] leading-[0.95] font-extrabold tracking-[-0.05em] sm:mt-1.5">
+                {shown.claim[1]}
               </h1>
 
-              <p className="mx-auto mt-4 max-w-[34ch] text-[13.5px] leading-[1.6] text-quiet sm:mt-5 sm:text-[15px] lg:text-[16px]">
-                {shown.lead}
-              </p>
+              {/* And nothing under it. A line explaining a field that explains
+                  itself is a caption on a picture nobody needs captioned - the
+                  points move when the pointer does, and that is the whole of
+                  what this screen has to say. */}
             </motion.div>
           </AnimatePresence>
         </div>

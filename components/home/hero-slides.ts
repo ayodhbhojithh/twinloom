@@ -243,14 +243,21 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
   {
     id: "hero-7",
     view: "particles",
-    /* Split at the last syllable rather than in the middle.
+    /* Two words about the screen they are standing on, not a name.
 
-       It was "Twin" and "CoreTech", which colours more of the name than it
-       leaves - and half a word tinted is a word somebody has highlighted. Only
-       "Tech" carries the gradient now: the eye reads one name with an accent on
-       its end, which is the same weight the header gives "Loom". */
-    claim: ["TwinCore", "Tech"],
-    lead: "The software company behind TwinLoom.",
+       It was "TwinCoreTech" set across the middle with "The software company
+       behind TwinLoom." under it - a second company introduced on a field of
+       points that has nothing to do with either of them, on the one screen of
+       five where the card actually answers to a hand. The sister company is
+       named in the paragraph on the first screen and again on the line at the
+       foot of it; a third setting, at the largest size on the card, made the
+       landing page introduce somebody else.
+
+       What the screen is is a canvas that moves when you move. So that is what
+       the words say, and they are an invitation rather than a statement - the
+       only screen here where the right response is to do something rather than
+       to read on. */
+    claim: ["Get creative.", "Your canvas."],
     name: "A field that answers the pointer",
     kind: "Motion",
     year: "2026",
