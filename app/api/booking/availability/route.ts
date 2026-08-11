@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { busyBetween, wiring } from "@/lib/booking/google";
+import { busyBetween, CalendarError, wiring } from "@/lib/booking/google";
 
 /* ---------------------------------------------------------------------------
    When the diary is not free.
@@ -93,13 +93,29 @@ export async function POST(request: Request) {
     const busy = await busyBetween(w, from, to);
     return NextResponse.json({ ok: true, busy });
   } catch (wrong) {
-    /* Logged in full, answered in one sentence. What went wrong with an API
-       credential is ours to fix and not something to put on a booking page. */
-    console.error("[booking availability]", wrong);
+    /* Logged in full, answered in one sentence and a number.
+
+       What went wrong with an API credential is ours to fix and not something to
+       put on a booking page - but "we could not read the diary" covers an
+       outage, a refused token, a calendar that is not shared with the mailbox
+       and a malformed window, and told apart they need four different fixes.
+       Nobody looking at the page, and nobody being asked about it over the
+       phone, could say which of the four they were seeing.
+
+       The status Google gave is passed on. It says which door was shut, not
+       what is behind it: 401 or 403 is ours to fix and nothing to retry, 400 is
+       a request we built wrongly, 5xx is Google and worth trying again. */
+    const status = wrong instanceof CalendarError ? wrong.status : 0;
+
+    console.error("[booking availability]", status, wrong);
+
     return NextResponse.json(
       {
         ok: false,
-        problem: "We could not read the diary just now. Try again in a moment.",
+        problem: status
+          ? `We could not read the diary just now (${status}). Try again in a moment.`
+          : "We could not reach the diary just now. Try again in a moment.",
+        code: status || undefined,
       },
       { status: 502 },
     );

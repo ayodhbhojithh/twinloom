@@ -65,15 +65,63 @@ export function wiring(): Wiring | null {
   };
 }
 
-/** A client acting as the mailbox, not as the service account. */
+/**
+ * A client acting as the mailbox, not as the service account.
+ *
+ * Held rather than rebuilt. `JWT` caches the access token it fetches and reuses
+ * it until it expires, which is the whole reason it is an object - and a new one
+ * per call threw that away every time: every request to this module signed a
+ * fresh assertion, went to Google's token endpoint, waited for the round trip,
+ * and then used the token once.
+ *
+ * That is two calls to Google for every one we wanted, a token quota spent at
+ * twice the rate, and a second thing that can fail on every read of the diary.
+ * The availability check runs on every visit to the booking page.
+ *
+ * Keyed by the wiring, so a change of credentials in development makes a new
+ * client rather than reusing one signed with the old key.
+ */
+const CLIENTS = new Map<string, JWT>();
+
 function client(w: Wiring) {
-  return new JWT({
+  const key = `${w.email}|${w.calendarId}`;
+  const had = CLIENTS.get(key);
+  if (had) return had;
+
+  const made = new JWT({
     email: w.email,
     key: w.key,
     scopes: SCOPES,
     /* The impersonation. Without it Google refuses to send invitations. */
     subject: w.calendarId,
   });
+
+  CLIENTS.set(key, made);
+  return made;
+}
+
+/**
+ * What went wrong, in a form the outside can be told about.
+ *
+ * A failed call to Google says something specific - the token was refused, the
+ * calendar is not shared with this mailbox, the window was malformed - and all
+ * of it was going to a server log nobody reading the page can see. The page
+ * said "we could not read the diary just now" for every one of them, which is
+ * true and useless: it cannot tell an outage from a misconfiguration, and
+ * neither can anybody being asked about it.
+ *
+ * The status travels with the error so the route can pass a number to the
+ * browser. A number is not a leak - it says which door was shut, not what is
+ * behind it.
+ */
+export class CalendarError extends Error {
+  readonly status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "CalendarError";
+    this.status = status;
+  }
 }
 
 async function call<T>(
@@ -97,7 +145,10 @@ async function call<T>(
 
   if (!sent.ok) {
     const said = body?.error?.message ?? body?.error ?? sent.statusText;
-    throw new Error(typeof said === "string" ? said : "Calendar refused it.");
+    throw new CalendarError(
+      typeof said === "string" ? said : "Calendar refused it.",
+      sent.status,
+    );
   }
 
   return body as T;
