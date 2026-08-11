@@ -1,13 +1,10 @@
 "use client";
 
-import { useState } from "react";
-
 import dynamic from "next/dynamic";
 
 import { NearView } from "./near-view";
-import { cn } from "@/lib/utils";
 
-import { LoomWave, type WaveVariant } from "./loom-wave";
+import { LoomStrings } from "./loom-strings";
 
 /* The tool, fetched when somebody is on their way to it.
 
@@ -25,30 +22,15 @@ const BuildFlow = dynamic(
   { ssr: false },
 );
 
-/**
- * The drawings, and what each is called on the switch.
- *
- * Named by number rather than by what they are, because "sheaf" and "bars"
- * are the words for how they are built and nobody choosing between them is
- * choosing a construction - they are looking at two pictures.
- *
- * There are two, and one of them is not offered.
- *
- * `sheaf` is sixty smooth curves redrawn every frame, and however much came off
- * it - one flat stroke colour with the ramp laid over the lot, six draw calls
- * instead of sixty, no trigonometry in the inner loop - it is still an order of
- * magnitude more work than a field of bars, and on the page it still drags. A
- * switch offering a version that stutters is a switch inviting people to find
- * the slow one.
- *
- * Commented rather than deleted, because the drawing is not the problem: it is
- * the nicest of the two and the cost is understood. `WaveVariant` still carries
- * `sheaf`, `drawSheaf` is untouched, and putting it back is this line.
- */
-const VERSIONS: readonly { id: WaveVariant; label: string }[] = [
-  // { id: "sheaf", label: "Version 1" },
-  { id: "bars", label: "Version 2" },
-];
+/* The two wave drawings and the switch between them are gone.
+
+   `LoomWave` drew the site's name as a field - sixty curves in one version, a
+   few hundred bars in the other - and it was a picture of the idea rather than
+   the idea: a wave that happens to be here, with no way in and nothing to do.
+   What stands here now is the loom itself, which is the same name made of
+   strings you can play. `loom-wave.tsx` is untouched and `home-v2` still
+   renders it.
+--------------------------------------------------------------------------- */
 
 /**
  * The build screen, on the landing page.
@@ -63,8 +45,6 @@ const VERSIONS: readonly { id: WaveVariant; label: string }[] = [
  * this page already has one, so the same words are set as an `h2` instead.
  */
 export function BuildSection() {
-  const [version, setVersion] = useState<WaveVariant>(VERSIONS[0].id);
-
   /* The landing hero's down arrow points at this section's id, so it carries a
      scroll margin: without one the anchor lands the heading underneath the
      sticky header rather than under it. */
@@ -103,68 +83,50 @@ export function BuildSection() {
             exactly the gutter, so the field takes the whole width without
             having to know what the width is - a field of threads meant to carry
             on past the window must not stop where a paragraph stops. */}
-        {/* The switch, over the drawing it switches.
+        {/* The name, woven and playable.
 
-            A `radiogroup` rather than two buttons: they are two states of one
-            thing and only one can be on, which is what a radio group is and
-            what a pair of buttons is not - a screen reader reading two buttons
-            has no way to say that pressing one turns the other off.
+            It was a wave - the same word drawn as a field of curves, arriving
+            on the scroll and then drifting on its own. A picture of a loom
+            rather than one: nothing to do, nowhere to press, and a switch above
+            it offering a second version of the same picture.
 
-            Above the wave rather than below it, because it is the label on
-            what follows: a control under a picture reads as belonging to
-            whatever comes next. */}
-        {/* The switch and the wave arrive together, and first.
+            This is the claim itself, strung. It was the name for a moment -
+            which put the site's own name on the page a third time, four inches
+            under the heading that said the same thing in words. Weaving the
+            claim instead means the sentence and the picture are one object:
+            moving across it plucks the strings the words are made of and each
+            sounds its own note, so the line at the head of the section that asks
+            people to describe a website is a line they have to touch to find out
+            about. The arrow keys do it too,
+            and the label says so, because a picture that only answers a pointer
+            is a picture half the readers cannot reach.
 
-            The heading below already came in on the scroll and these did not,
-            so the section half-appeared: a picture and a control sitting there
-            fully drawn while the words under them faded up. Nought is the step
-            because this is the top of the section - the heading is one, the
-            tool takes none, and the order down the page is the order in time.
+            Nothing plays until somebody moves across it. An `AudioContext` that
+            starts on its own is the reason browsers stopped letting them - see
+            `loom-strings`, which builds one on the first real gesture and closes
+            it on the way out.
 
-            A wrapper rather than the class on each. `.reveal` carries
-            `will-change: transform`, and putting that on the box the canvas
-            measures itself in is asking for the measurement and the animation
-            to disagree. Here the canvas is a child, and nothing it reads
-            changes: the reveal moves it vertically and both its width and its
-            left edge are what they were. */}
-        <div className="reveal [--step:0]">
-          {/* Hidden while there is one of them.
+            The reveal is on the wrapper rather than the instrument: `.reveal`
+            carries `will-change: transform`, and putting that on the box a
+            canvas measures itself in is asking for the measurement and the
+            animation to disagree. */}
+        {/* Off on a phone, and the words are set as words instead.
 
-              A radio group with a single radio in it is not a choice, it is a
-              label that looks pressable - and the one thing worse than a
-              control nobody needs is a control that appears to do something and
-              does not. It comes back with the second version. */}
-          <div
-            role="radiogroup"
-            aria-label="Wave version"
-            className={cn(
-              "mb-4 justify-center gap-1 rounded-pill",
-              VERSIONS.length > 1 ? "flex" : "hidden",
-            )}
-          >
-            {VERSIONS.map((entry) => {
-              const on = entry.id === version;
-              return (
-                <button
-                  key={entry.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={on}
-                  onClick={() => setVersion(entry.id)}
-                  className={cn(
-                    "cursor-pointer rounded-pill px-3 py-1 font-mono text-[9.5px] font-bold tracking-[0.14em] uppercase transition-colors sm:px-4 sm:py-1.5 sm:text-[11px] sm:tracking-[0.16em]",
-                    on
-                      ? "bg-ink text-white"
-                      : "bg-field text-quiet hover:text-ink",
-                  )}
-                >
-                  {entry.label}
-                </button>
-              );
-            })}
-          </div>
+            The weave sizes the sentence to the width it is given, so at three
+            hundred points eight words came out as a line of hairlines about a
+            centimetre tall - illegible as type and too fine to be a picture,
+            with strings a finger cannot separate. There is no version of this
+            that works at that width: it is a wide object, and a phone is not
+            wide.
 
-          <LoomWave className="-mx-(--page-gutter) w-auto" variant={version} />
+            What it was for is still delivered on a phone - the claim, said once,
+            at a size somebody can read. The instrument belongs to the screens
+            that have room for it. */}
+        <div className="reveal [--step:0] max-sm:hidden">
+          <LoomStrings
+            word="Weave your digital presence."
+            className="-mx-(--page-gutter)"
+          />
         </div>
 
         {/* Centred, and the only centred thing in this section.
@@ -177,29 +139,19 @@ export function BuildSection() {
             that stood in for the canvas. A picture is not a heading however many
             letters were woven into it, and now that there are none at all there
             is nothing to argue about. */}
-        <div className="reveal mt-8 flex flex-col items-center text-center [--step:1]">
-          {/* No eyebrow over it, and no rule under that.
+        {/* The heading: read out everywhere, seen where the weave is not.
 
-              The word TwinLoom stood here in small caps with a short rule below
-              it, which is a lockup: a name, a mark and then a heading. The name
-              is in the bar at the top of every page and again at the foot of it,
-              and a third setting of it four inches above the second is a page
-              introducing itself to somebody who has been reading it for a
-              while. */}
-          <h2 className="max-w-[22ch] text-[clamp(34px,4.4vw,64px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
-            Weave your digital presence.
-          </h2>
-          {/* Nothing follows it. The tool below is what it introduces, and the
-              gap to that is set by the tool's own surface rather than by a
-              paragraph that is no longer here. */}
+            From `sm` up the weave above says these eight words as a picture, so
+            setting them again as type is the claim printed twice. There it is
+            `sr-only` - read out, counted in the document outline, and not drawn
+            a second time.
 
-          {/* The claim stands on its own.
-
-              A line restating it in longer words sat here, and the whole of what
-              it added was the list - website, brand, the systems behind them -
-              which the tool underneath asks about one at a time. Four words are
-              a claim; the same claim at twenty is a claim being explained. */}
-        </div>
+            Below `sm` the weave is gone, so this is the claim. `not-sr-only`
+            puts it back into the page and the sizes beside it make it the
+            heading it always was in the markup. */}
+        <h2 className="sr-only max-sm:not-sr-only max-sm:block max-sm:text-center max-sm:text-[min(27px,7vw)] max-sm:leading-[1.06] max-sm:font-extrabold max-sm:tracking-[-0.042em] max-sm:text-ink">
+          Weave your digital presence.
+        </h2>
 
         {/* The run-through itself, not a shorter version of it. It reads the
             same answers as the build page, so somebody who starts here and
