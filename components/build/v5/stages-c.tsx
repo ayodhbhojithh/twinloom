@@ -555,7 +555,20 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
           which read as three unrelated notes rather than as one way out. One
           centred column, one measure, and the words under the control they are
           about. */}
-      <div className="mx-auto mt-8 flex max-w-[52ch] flex-col items-center text-center">
+      {/* Wider than the type in it wants, because of what is in it.
+
+          Fifty-two characters is a reading measure - right for a paragraph
+          somebody reads down, and wrong for this block. What is here is a
+          button, then two footnotes set at twelve pixels: at 52ch those broke
+          over three and four lines, so the foot of the run was a narrow column
+          of small print under a wide surface, with the button looking like it
+          belonged to a different page.
+
+          Eighty-four is about two lines for each of them, and it is still a
+          measure rather than the whole card - the surface is 1100 wide and type
+          this small running the full width of it would be unreadable in the
+          other direction. */}
+      <div className="mx-auto mt-8 flex max-w-[84ch] flex-col items-center text-center">
         {missing.length ? (
           <p className="text-[13px] leading-[1.6] text-quiet">
             Before this can go we need {missing.join(", ").toLowerCase()}. They

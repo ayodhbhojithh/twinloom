@@ -642,7 +642,18 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
             onBack={back}
             onNext={next}
           >
-            <div className="grid max-w-[46rem] gap-5 max-sm:gap-3.5 sm:grid-cols-2">
+            {/* Centred, like everything else on this run.
+
+                It was the only block on the four steps without `mx-auto`, so a
+                form held to 46rem sat against the left of a surface eleven
+                hundred wide, under a heading and a step rail that are both
+                centred on the card. Three things on one screen, two of them on
+                the card's centre line and one of them not.
+
+                The measure stays: a name and an email side by side want about
+                that much, and a form running the width of this surface would be
+                two fields a foot apart. */}
+            <div className="mx-auto grid max-w-[46rem] gap-5 max-sm:gap-3.5 sm:grid-cols-2">
               <Field
                 id="book-name"
                 label="Your name"
@@ -894,11 +905,21 @@ function Finished({
         </button>
       }
     >
-      <h2 className="max-w-[20ch] text-[clamp(26px,3vw,38px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink">
+      {/* Centred, as the four steps that led here are.
+
+          The headline and the paragraph were left against the edge while the
+          list of what was booked - the one thing on this screen anybody came
+          back to read - was centred in the middle of it. Three blocks, two
+          alignments, on the screen that closes the run.
+
+          Every step before this one is centred on the card, so the last one
+          being different reads as a page from somewhere else rather than as the
+          end of the same run. */}
+      <h2 className="mx-auto max-w-[20ch] text-center text-[clamp(26px,3vw,38px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink max-sm:text-[24px]">
         The time is yours.
       </h2>
 
-      <p className="mt-4 max-w-[58ch] text-[15px] leading-[1.6] text-body">
+      <p className="mx-auto mt-4 max-w-[58ch] text-center text-[15px] leading-[1.6] text-body max-sm:mt-3 max-sm:text-[13.5px] max-sm:leading-[1.55]">
         It is in the diary, and a calendar invitation is on its way to{" "}
         {email || "your email address"}. Accepting it puts the meeting in your
         own calendar; moving or cancelling it there tells us straight away.
