@@ -1804,10 +1804,30 @@ export function NotchedCard({ className }: { className?: string }) {
                     variants={HERO_RISE}
                     className="mx-auto mt-3 max-w-[26ch] text-[clamp(28px,3.4vw,62px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink max-sm:mt-3 max-sm:max-w-none max-sm:text-[28px] max-sm:leading-[1.06] max-sm:tracking-[-0.042em] sm:mt-4 lg:mx-0 lg:mt-5"
                   >
-                    {shown.claim?.[0]}
-                    <span className="thread-text block">
-                      {shown.claim?.[1]}
-                    </span>
+                    {/* A line each, and the last one coloured.
+
+                        The parts were two - an ink half that wrapped wherever
+                        the measure put it, and a gradient half on its own line.
+                        "Your website. Your brand." is two sentences, so wrapping
+                        it as one line made two claims share a line and read as a
+                        list; broken by the measure rather than by the full stop,
+                        where they broke depended on the width.
+
+                        Every part is a block now, so the break is where the
+                        sentence ends at every width, and the last of them is the
+                        one in the mark's own gradient however many there
+                        are. */}
+                    {shown.claim?.map((part, n) => (
+                      <span
+                        key={part}
+                        className={cn(
+                          "block",
+                          n === (shown.claim?.length ?? 0) - 1 && "thread-text",
+                        )}
+                      >
+                        {part}
+                      </span>
+                    ))}
                   </motion.h1>
 
                   <motion.p
@@ -1995,7 +2015,16 @@ export function NotchedCard({ className }: { className?: string }) {
                         set in, because it is a clause rather than a brand
                         standing on its own. */}
                     <span className="text-[13px] leading-[1.4] font-semibold tracking-[-0.01em] text-quiet max-sm:text-center max-sm:text-[12px] lg:text-[13.5px]">
-                      TwinLoom is a trading name of TwinCoreTech Ltd
+                      {/* The name in the ink, the rest in the quiet grey.
+
+                          The sentence is about the two companies, and the one it
+                          is on is TwinLoom - so that word is the subject and the
+                          rest is what is being said about it. Weight rather than
+                          a second colour: the line stands on the card's own
+                          floor beside a logo, and a third colour down there
+                          would be an ornament. */}
+                      <b className="font-bold text-ink">TwinLoom</b> is a
+                      trading name of TwinCoreTech Ltd
                     </span>
                     {/* The arrow travels with the name on a phone, where the
                         sentence is on its own line under both - left at the end

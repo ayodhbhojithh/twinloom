@@ -77,13 +77,21 @@ export type SlideView = "balls" | "film" | "particles" | "blank" | "mark";
  * The words are optional because only the first screen has any. A screen waiting
  * for its own design should not be carrying copy written for somebody else's.
  *
- * `claim` is in halves because the card sets the second in the mark's own
+ * `claim` is in parts because the card sets the last of them in the mark's own
  * gradient. Split at the full stop in the view instead, and every claim would
  * have to be one sentence with exactly one stop in it.
  */
 export interface HeroSlide extends Project {
   view: SlideView;
-  claim?: [string, string];
+  /**
+   * Two parts or three, and the last is the one set in the gradient.
+   *
+   * Two is the usual shape: a statement and the half of it that lands. Three is
+   * for a claim whose first half is itself two sentences - "Your website. Your
+   * brand." set as one line reads as a list, and set as two it reads as two
+   * things being named before the third says what happens to them.
+   */
+  claim?: readonly [string, string] | readonly [string, string, string];
   lead?: string;
   /** The line above the claim, set as a list. Only the mark screen has one. */
   kicker?: readonly string[];
@@ -146,7 +154,7 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
       "Digital presence",
       "Digital services",
     ],
-    claim: ["Your website. Your brand.", "Connected to your systems."],
+    claim: ["Your website.", "Your brand.", "Connected to your systems."],
     lead: "We build digital experiences that move you forward.",
     note: "TwinLoom designs and builds websites, digital presence and brand-led experiences that connect the dots and deliver results. When you need more than a website, our sister company TwinCoreTech builds the custom software around your business, your systems and your future.",
     image: "",
