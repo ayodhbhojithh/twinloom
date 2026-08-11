@@ -321,16 +321,29 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
           on it or standing in a piece cut out of it, which is the rule the
           landing card states and the rest of the site follows. */}
       <div className="page-frame w-full shrink-0 text-center">
+        {/* The page's own name, and nothing dressed up.
+
+            It read "Pick a time that suits you." over "Four questions, nothing
+            to prepare, and real availability - so a time you can pick is a time
+            you can have." - a headline and three lines of copy above a tool that
+            asks four questions and shows real availability. Everything the copy
+            promised was demonstrated by the thing directly under it, and on a
+            phone the pair took the whole first screen before the first question
+            appeared.
+
+            What is left is the name of the page. The one line that still says
+            something the steps do not is the one for somebody arriving from a
+            submission, and it is only shown to them. */}
         <h1 className="section-head mx-auto max-w-[22ch] text-ink [text-wrap:pretty] max-sm:text-[24px]">
-          Pick a time
-          <span className="text-quiet"> that suits you.</span>
+          Book a<span className="text-quiet"> meeting.</span>
         </h1>
 
-        <p className="mx-auto mt-4 max-w-[68ch] text-[15px] leading-[1.6] text-quiet max-sm:mt-2.5 max-sm:text-[13.5px]">
-          {carried
-            ? "Set to go through the requirements you have just sent us. Pick a time and the rest is already filled in."
-            : "Four questions, nothing to prepare, and real availability - so a time you can pick is a time you can have."}
-        </p>
+        {carried ? (
+          <p className="mx-auto mt-4 max-w-[68ch] text-[15px] leading-[1.6] text-quiet max-sm:mt-2.5 max-sm:text-[13.5px]">
+            Set to go through the requirements you have just sent us. Pick a
+            time and the rest is already filled in.
+          </p>
+        ) : null}
 
         {/* Which submission this is about, said on every screen.
 
@@ -357,8 +370,6 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
           <BookStage
             rail={<StepRail at={at} reached={reached} onGo={setAt} />}
             at={at}
-            title="What kind of meeting?"
-            note="Three to choose from. None of them commits you to anything."
             canGoOn={canGoOn}
             last={false}
             onBack={back}
@@ -494,8 +505,6 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
           <BookStage
             rail={<StepRail at={at} reached={reached} onGo={setAt} />}
             at={at}
-            title="When suits you?"
-            note="Pick a day, then a time. Every time is shown in your own clock."
             held={
               meeting ? (
                 <>
@@ -616,8 +625,6 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
           <BookStage
             rail={<StepRail at={at} reached={reached} onGo={setAt} />}
             at={at}
-            title="Who are we meeting?"
-            note="Two things we need, and one you can leave blank."
             held={
               when ? (
                 <>
@@ -689,12 +696,6 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
           <BookStage
             rail={<StepRail at={at} reached={reached} onGo={setAt} />}
             at={at}
-            title="Check it over."
-            note={
-              sending
-                ? "Booking it now."
-                : "Nothing is booked until you press the tick."
-            }
             held={
               <>
                 <b className="font-mono text-[15px] leading-none font-bold text-ink tabular-nums">
@@ -886,7 +887,6 @@ function Finished({
         <button
           type="button"
           aria-label="Start again"
-          title="Start again"
           onClick={onRestart}
           className="flex size-11 cursor-pointer items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
         >

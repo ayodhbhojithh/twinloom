@@ -82,71 +82,83 @@ export function StepRail({
   onGo: (step: number) => void;
 }) {
   return (
-    /* The run of four, standing in the notch the surface was cut for.
+    /* Four marks on one rail, and the rail is the width it is given.
 
-       Four fixed-width steps with a rule between each pair: a mark and the
-       step's name, and nothing else.
+       It was four fixed-width steps with a fixed rule between each pair, which
+       is a run of a known length dropped into a container of an unknown one: on
+       a wide card it sat in the middle with air either side, and on a phone it
+       was wider than the notch it stood in and scrolled. The connectors are
+       `flex-1` now, so the run is exactly as wide as the row and the marks
+       divide it evenly at any width.
 
-       Fixed widths rather than four equal parts. Every step then sits at the
-       same distance from the next whatever its name is, which is what makes
-       the rules between them read as one line rather than as three different
-       lines. */
-    <nav
-      aria-label="Booking steps"
-      className="quiet-scroll flex max-w-full justify-center overflow-x-auto py-1.5"
-    >
-      <ol className="flex w-max items-start justify-center">
+       Numbered rather than dotted. Four identical dots say only how many there
+       are and where you are; a number says which one this is, and the tick that
+       replaces it says that one is behind you. The count was the thing four
+       dots could not carry.
+
+       Three states, and they read without the labels: behind you is the mark's
+       colour with a tick in it, here is ink with a ring, ahead is an outline.
+       That is what makes the labels optional rather than load-bearing. */
+    <nav aria-label="Booking steps" className="w-full">
+      <ol className="flex w-full items-start">
         {STEPS.map((label, n) => {
           const here = n === at;
           const done = n < reached;
           const open = n <= reached;
 
           return (
-            <li key={label} className="flex items-start">
+            <li key={label} className="contents">
+              {n > 0 ? (
+                /* The line between two marks, at the height of the marks rather
+                   than under the labels, so the four read as one run. It is
+                   filled as far as you have been. */
+                <span
+                  aria-hidden
+                  className={cn(
+                    "mt-3.5 h-0.5 min-w-4 flex-1 rounded-pill transition-colors max-sm:mt-3",
+                    n <= reached ? "bg-mark" : "bg-hair",
+                  )}
+                />
+              ) : null}
+
               <button
                 type="button"
                 disabled={!open}
                 aria-current={here ? "step" : undefined}
                 onClick={() => onGo(n)}
                 className={cn(
-                  "group/step flex w-[104px] flex-col items-center gap-2.5 px-1 max-sm:w-7 max-sm:gap-0 max-sm:px-0 sm:w-[132px]",
+                  "group/step flex w-[86px] flex-none flex-col items-center gap-2 px-1 max-sm:w-[62px] max-sm:gap-1.5 sm:w-[104px]",
                   open ? "cursor-pointer" : "cursor-default",
                 )}
               >
-                {/* The mark. A ring round the one you are on rather than a
-                    larger dot, so the line through them all stays straight. */}
                 <span
                   aria-hidden
                   className={cn(
-                    "flex size-3 items-center justify-center rounded-pill transition-all max-sm:size-2.5 max-sm:ring-[3px]",
+                    "flex size-7 items-center justify-center rounded-pill font-mono text-[10px] font-bold tabular-nums transition-all max-sm:size-6 max-sm:text-[9px]",
                     here
-                      ? "bg-ink ring-4 ring-ink/15"
+                      ? "bg-ink text-white ring-4 ring-ink/12"
                       : done
-                        ? "bg-mark"
-                        : "bg-planned group-hover/step:bg-idx",
+                        ? "bg-mark text-white"
+                        : "border border-hair bg-field text-idx group-hover/step:border-quiet",
                   )}
-                />
+                >
+                  {done ? (
+                    <Check className="size-3.5 max-sm:size-3" strokeWidth={3} />
+                  ) : (
+                    String(n + 1).padStart(2, "0")
+                  )}
+                </span>
 
-                {/* The name, and nothing under it - and on a phone, not
-                    even the name.
+                {/* The name, and it fits again.
 
-                    Four names side by side want four hundred points and the
-                    notch has two hundred and fifty, so the run either scrolled
-                    sideways or ran under the arrow standing at the left of the
-                    same bar. Neither is a progress line. The marks alone still
-                    carry the order, the position and how far along it is, and
-                    the name of the step somebody is on is the heading directly
-                    underneath - it was being said twice.
-
-                    There were two lines here: the state of the step, and then
-                    what had been chosen for it. Both went. The state is what
-                    the mark and its colour already say, and the choice is
-                    already on the surface below - once in the answer itself,
-                    and again in the bite when it matters. A run of steps that
-                    repeats the whole booking is not a run of steps. */}
+                    It was hidden below `sm` because four names at fixed widths
+                    ran past the notch they stood in. The run is fluid now and
+                    the rail is above the card rather than inside a cut, so
+                    there is room for them at every width - and a step called
+                    "Details" is worth more than a dot. */}
                 <b
                   className={cn(
-                    "block max-w-full truncate text-[13px] leading-[1.2] font-bold tracking-[-0.01em] transition-colors max-sm:hidden",
+                    "block max-w-full truncate font-mono text-[9.5px] font-bold tracking-[0.12em] uppercase transition-colors max-sm:text-[8px] max-sm:tracking-[0.08em]",
                     here
                       ? "text-ink"
                       : open
@@ -157,19 +169,6 @@ export function StepRail({
                   {label}
                 </b>
               </button>
-
-              {n < STEPS.length - 1 ? (
-                /* The line between two marks, and it is the line: it sits at
-                   the height of the marks rather than under the labels, so the
-                   four of them read as one run. */
-                <span
-                  aria-hidden
-                  className={cn(
-                    "mt-[5px] -mx-6 h-0.5 w-12 rounded-pill transition-colors max-sm:mx-0 max-sm:w-4 sm:w-16",
-                    n < reached ? "bg-mark" : "bg-hair",
-                  )}
-                />
-              ) : null}
             </li>
           );
         })}
@@ -187,8 +186,6 @@ export function StepRail({
  */
 export function BookStage({
   at,
-  title,
-  note,
   rail,
   held,
   foot,
@@ -200,8 +197,6 @@ export function BookStage({
   children,
 }: {
   at: number;
-  title: string;
-  note?: React.ReactNode;
   /** The four steps, which stand in the notch. */
   rail?: React.ReactNode;
   /** What is settled so far, standing in the bite. */
@@ -292,17 +287,16 @@ export function BookStage({
           </button>
         }
       >
-        <div className="mx-auto mt-6 max-w-[1180px] text-center max-sm:mt-2">
-          <h2 className="mx-auto max-w-[24ch] text-[clamp(20px,1.9vw,27px)] leading-[1.08] font-extrabold tracking-[-0.032em] text-ink max-sm:text-[18px]">
-            {title}
-          </h2>
+        {/* No heading over the step.
 
-          {note ? (
-            <p className="mx-auto mt-2 max-w-[62ch] text-[13.5px] leading-[1.5] text-quiet max-sm:mt-1.5 max-sm:text-[12.5px] sm:text-[14px]">
-              {note}
-            </p>
-          ) : null}
-        </div>
+          Each one carried its own - "What kind of meeting?" over "Three to
+          choose from. None of them commits you to anything." - and the run of
+          four directly above says which step this is in one word. What the
+          heading added was the same fact asked as a question, and what the line
+          under it added was a reassurance about three cards that are visibly
+          three cards, none of which is a form.
+
+          The step is its contents now, which is what the rail is for. */}
 
         {/* One inset, one measure. The step's own content sits on the same
           centre line as its heading rather than running the full surface, so
