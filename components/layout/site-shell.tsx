@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import type { Face } from "@/components/build/v5/dock";
 import { ROUTES } from "@/lib/site";
 
+import { CookieNotice } from "./cookie-notice";
 import { SiteFooter } from "./site-footer";
 import { SiteHeader } from "./site-header";
 // import { SiteRail } from "./site-rail";
@@ -234,6 +235,14 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           `floating && !past` is exactly that state, and it is already worked out
           for the header - see `underHeader`. One measurement, two things that
           depend on it. */}
+      {/* What is stored on the reader's device, and their answer about it.
+
+          Last in the markup and highest in z: it is the only thing on screen
+          asking a question, and it should be over the desk and the header rather
+          than under either. It renders nothing at all once answered - see
+          `CookieNotice`. */}
+      <CookieNotice />
+
       {ready ? (
         <DeskDock
           face={face}
