@@ -181,12 +181,99 @@ function keep() {
   }
 }
 
+/* --------------------------------------------------------------- the place
+
+   Which of the two routes is open, and which step is on screen.
+
+   Kept for the same reason the answers are, and it was the half that was
+   missing: with the answers restored and the place forgotten, a reload put
+   somebody back at the two doors with eight steps of work behind a screen they
+   had to find their way to again. Restoring what was typed and losing where they
+   were is arguably worse than losing both, because the run looks untouched.
+
+   Held here rather than in the components that read it - the tab lives in
+   `flow`, the route in `quick`, and the step in `flow` again - because it is one
+   fact about one visit, and three pieces of component state cannot be written to
+   one record without something owning it.
+
+   A separate key from the answers. They change at different rates: a step
+   changes on every press of an arrow and the answers do not, and one record
+   rewritten for both means the larger of the two is serialised every time
+   somebody moves.
+--------------------------------------------------------------------------- */
+
+/** Which route is open, and how far along it. */
+export interface Place {
+  tab: "quick" | "full";
+  /** Whether the quick pane is showing the two doors or the writing box. */
+  route: "choose" | "quick";
+  step: number;
+}
+
+const PLACE: Place = { tab: "quick", route: "choose", step: 0 };
+const PLACE_KEY = "twinloom.build.place";
+
+function loadPlace(): Place {
+  if (typeof window === "undefined") return PLACE;
+
+  try {
+    const raw = window.sessionStorage.getItem(PLACE_KEY);
+    if (!raw) return PLACE;
+
+    const held = JSON.parse(raw) as Partial<Place>;
+
+    return {
+      tab: held.tab === "full" ? "full" : "quick",
+      route: held.route === "quick" ? "quick" : "choose",
+      step: typeof held.step === "number" && held.step >= 0 ? held.step : 0,
+    };
+  } catch {
+    return PLACE;
+  }
+}
+
+let place: Place = loadPlace();
+const placeListeners = new Set<() => void>();
+
+export const getPlace = () => place;
+export const getServerPlace = () => PLACE;
+
+export function subscribePlace(listener: () => void) {
+  placeListeners.add(listener);
+  return () => {
+    placeListeners.delete(listener);
+  };
+}
+
+export function setPlace(change: Partial<Place>) {
+  const next = { ...place, ...change };
+
+  if (
+    next.tab === place.tab &&
+    next.route === place.route &&
+    next.step === place.step
+  ) {
+    return;
+  }
+
+  place = next;
+
+  try {
+    window.sessionStorage.setItem(PLACE_KEY, JSON.stringify(place));
+  } catch {
+    /* As with the answers: the visit carries on, only the reload is lost. */
+  }
+
+  for (const listener of placeListeners) listener();
+}
+
 /** Empty the kept run. Called once a submission has landed - see `submit`. */
 export function forgetAnswers() {
   if (typeof window === "undefined") return;
 
   try {
     window.sessionStorage.removeItem(KEY);
+    window.sessionStorage.removeItem(PLACE_KEY);
   } catch {
     /* Nothing to do, and nothing depends on it: what is in memory is what the
        page is showing. */

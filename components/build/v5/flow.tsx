@@ -17,9 +17,13 @@ import {
 import { STEP_ORDER } from "@/lib/build/v5-derive";
 import {
   getAnswers,
+  getPlace,
   getServerAnswers,
+  getServerPlace,
+  setPlace,
   setShort,
   subscribeAnswers,
+  subscribePlace,
   type Where,
 } from "@/lib/build/v5-store";
 
@@ -51,11 +55,22 @@ export function BuildFlow() {
     getServerAnswers,
   );
 
-  /* The short way round is what opens. It is first in the pill and it is what
+  /* Where the reader is, read from the store rather than held here.
+
+     The short way round is what opens - it is first in the pill and it is what
      most people want, and a page that lists the quick route first then starts
-     you on the long one is telling you two different things. */
-  const [tab, setTab] = useState<"quick" | "full">("quick");
-  const [step, setStep] = useState(0);
+     you on the long one is telling you two different things. That is the
+     starting place, and it stopped being the only place the moment the answers
+     began surviving a reload: eight steps of work restored behind a screen
+     somebody has to navigate back to is worse than losing the lot, because the
+     run looks untouched.
+
+     `useSyncExternalStore` for the same reason the answers use it - see
+     `lib/build/v5-store`, which keeps this beside them for the visit. */
+  const place = useSyncExternalStore(subscribePlace, getPlace, getServerPlace);
+  const { tab, step } = place;
+
+  const setTab = (next: "quick" | "full") => setPlace({ tab: next });
 
   /* Where the reader is standing, so anything written on the desk files under
      the answer behind it rather than in a pile at the end. */
@@ -65,7 +80,7 @@ export function BuildFlow() {
   );
 
   const goStep = (at: number) =>
-    setStep(Math.max(0, Math.min(STEPS.length - 1, at)));
+    setPlace({ step: Math.max(0, Math.min(STEPS.length - 1, at)) });
 
   const goKey = (key: string) => {
     const at = STEP_ORDER.indexOf(key);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -29,14 +29,18 @@ import {
   addRef,
   chipOn,
   dropRef,
+  getPlace,
+  getServerPlace,
   setAsk,
   setDelivered,
   setLike,
   setProblem,
   setSending,
+  setPlace,
   setSent,
   setShort,
   setText,
+  subscribePlace,
   toggleChip,
   type Answers,
 } from "@/lib/build/v5-store";
@@ -94,7 +98,18 @@ export function QuickPane({
      There is no `full` here. Choosing the structured journey leaves this pane
      for the run-through, which the flow above owns - so this only has to know
      whether the choice has been made and whether it fell this way. */
-  const [route, setRoute] = useState<"choose" | "quick">("choose");
+  /* Which of the two doors is open, kept for the visit like everything else.
+
+     It was component state, so a reload on the writing screen put somebody back
+     at the choice - with what they had written still in the store and nothing on
+     screen to say so. See `lib/build/v5-store`. */
+  const route = useSyncExternalStore(
+    subscribePlace,
+    getPlace,
+    getServerPlace,
+  ).route;
+
+  const setRoute = (next: "choose" | "quick") => setPlace({ route: next });
   const [kind, setKind] = useState<string>("note");
   const [files, setFiles] = useState<Attached[]>([]);
   /* Opened by pressing send with something still missing, and never closed
