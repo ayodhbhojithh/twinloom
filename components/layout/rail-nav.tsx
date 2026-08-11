@@ -204,7 +204,19 @@ function Row({
         strip
           ? undefined
           : menu
-            ? { paddingInlineStart: (nested ? NEST : 0) + 14 }
+            ? /* One left edge for the whole list.
+
+                 A sub page used to step in by `NEST`, which is what an indent is
+                 for: saying this one belongs under that one. In a list of eight
+                 rows with one indented, what it actually says is that a row
+                 slipped - there is no second or third level for it to be the
+                 start of, and the page it belongs to is the row directly above
+                 whether it is indented or not.
+
+                 Now that sub pages carry their mark like everything else, the
+                 marks make a column, and a column with one row out of it is the
+                 thing the eye catches. */
+              { paddingInlineStart: 14 }
             : { paddingInlineStart: HANG - 2 + (nested ? NEST : 0) }
       }
       className={cn(
