@@ -15,6 +15,7 @@ import {
 
 import { CutPanel } from "@/components/layout/cut-panel";
 import { collect, drop } from "@/lib/build/handoff";
+import { setBooked } from "@/lib/build/v5-store";
 import { ROUTES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -278,6 +279,24 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
 
       setMeet(typeof body.meet === "string" ? body.meet : null);
       setDone(true);
+
+      /* Told to the run this came from, where there is one.
+
+         Somebody returning to the submit step should find the question about
+         when to talk already answered - by them, a minute ago, on this page.
+         Without this the run has no idea a meeting exists and offers to book a
+         second one against the same submission.
+
+         Written as words rather than as an instant, because this page has the
+         reader's locale, clock and zone and the run does not. */
+      if (carried) {
+        setBooked({
+          what: meeting.name,
+          minutes,
+          when: `${whenLong}, ${whenTime} in ${zone}`,
+          ref: carried.ref,
+        });
+      }
       /* The handover is spent. Left behind, the next booking made in this tab
          would attach itself to a submission it has nothing to do with. */
       drop();

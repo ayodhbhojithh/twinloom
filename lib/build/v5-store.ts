@@ -74,6 +74,36 @@ export interface Answers {
   problem: string | null;
   /** The reference that came back, so the sent screen can quote it. */
   ref: string | null;
+  /**
+   * The meeting, once one has been booked from inside this run.
+   *
+   * Written by the booking page and read back here, which is the only way round
+   * that works: the two are separate routes, and by the time the run is on
+   * screen again the booking page has gone. It travels in the answers because
+   * the answers are what survive the trip - see the keeping below.
+   *
+   * Formatted rather than an instant. What this is for is being read back on the
+   * submit step, and the page that booked it has the reader's own locale, clock
+   * and zone in front of it; this one would have to work all three out again to
+   * say the same sentence.
+   */
+  booked: {
+    /** The meeting's name, as its own screen said it. */
+    what: string;
+    minutes: number;
+    /** The date and time, already written for the reader who booked it. */
+    when: string;
+    /**
+     * The submission this meeting was booked against.
+     *
+     * The same reference the receipt and the invitation both carry, so the three
+     * can be put side by side. It comes from the handover rather than from the
+     * desk, because the handover is what the meeting was actually booked
+     * against - if the two ever differed, the one the calendar knows about is
+     * the true one.
+     */
+    ref: string;
+  } | null;
 }
 
 const EMPTY: Answers = {
@@ -92,6 +122,7 @@ const EMPTY: Answers = {
   sending: false,
   problem: null,
   ref: null,
+  booked: null,
 };
 
 /* ------------------------------------------------------------------ keeping
@@ -265,6 +296,17 @@ export function setPlace(change: Partial<Place>) {
   }
 
   for (const listener of placeListeners) listener();
+}
+
+/**
+ * A meeting was booked against this run.
+ *
+ * Called from the booking page, which is a different route in the same tab -
+ * the store is a module, so it is the same store, and what it writes is kept
+ * for the visit like everything else.
+ */
+export function setBooked(booked: Answers["booked"]) {
+  updateAnswers((current) => ({ ...current, booked }));
 }
 
 /** Empty the kept run. Called once a submission has landed - see `submit`. */

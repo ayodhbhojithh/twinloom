@@ -368,71 +368,125 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
 
       <section className="mt-7 mx-auto max-w-[720px]">
         <SubTitle className="mt-0">{talk.title}</SubTitle>
-        <p className="mt-0.5 text-[12.5px] leading-[1.45] text-label">
-          {talk.note}
-        </p>
-        <div className="mt-2 flex flex-col gap-1">
-          {talk.rows.map((row) => (
-            <TickRow
-              key={row.k}
-              single
-              on={isOn(answers, row.scope, row.k)}
-              name={row.n}
-              note={row.sub}
-              onToggle={() => {
-                setPick(row.scope, row.k, true, true);
-                touchStep("submit");
-              }}
-            />
-          ))}
-        </div>
 
-        {/* Choosing to book a time has to be able to book a time. The question
+        {/* Once there is a meeting, this stops being a question.
+
+            Somebody comes back from the booking page having chosen a slot, and
+            what stood here was the three options again - "Book a time now" still
+            ticked, "Choose a time" still offered. A question already answered,
+            and an invitation to book a second meeting about the same submission.
+
+            What replaces it is the answer: what was booked and when. The
+            invitation is the place to move or cancel it, so there is nothing to
+            press here and nothing is offered. */}
+        {answers.booked ? (
+          /* The mark's green rather than the canvas grey, and a tick standing in
+             it. Every other confirmed thing on this site is drawn this way - the
+             ticked rows above, the booked notch on the calendar - and a meeting
+             that is in the diary is the most confirmed thing on the page. */
+          <div className="mt-3 rounded-[14px] bg-mark/[0.07] p-4 max-sm:p-3.5">
+            <p className="flex items-center gap-2.5">
+              <span
+                aria-hidden
+                className="flex size-6 flex-none items-center justify-center rounded-pill bg-mark text-white"
+              >
+                <Check className="size-3.5" strokeWidth={3} />
+              </span>
+              <b className="text-[13.5px] font-bold text-ink">
+                Booked, and in the diary
+              </b>
+            </p>
+
+            <p className="mt-3 text-[14px] leading-[1.4] font-bold tracking-[-0.015em] text-ink max-sm:text-[13.5px]">
+              {answers.booked.when}
+            </p>
+
+            <p className="mt-1 text-[12.5px] leading-[1.5] text-quiet">
+              {answers.booked.what}, {answers.booked.minutes} minutes
+            </p>
+
+            {/* The reference, set as the receipt and the invitation set it, so
+                the three read as one piece of work rather than three
+                notifications about different things. */}
+            <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-mark/15 pt-3 text-[12px] leading-[1.55] text-label">
+              Booked against
+              <b className="font-mono text-[11.5px] font-bold text-quiet">
+                {answers.booked.ref}
+              </b>
+            </p>
+
+            <p className="mt-2 text-[12px] leading-[1.55] text-label">
+              The invitation is in your inbox. Moving or cancelling it there
+              tells us straight away.
+            </p>
+          </div>
+        ) : (
+          <>
+            <p className="mt-0.5 text-[12.5px] leading-[1.45] text-label">
+              {talk.note}
+            </p>
+            <div className="mt-2 flex flex-col gap-1">
+              {talk.rows.map((row) => (
+                <TickRow
+                  key={row.k}
+                  single
+                  on={isOn(answers, row.scope, row.k)}
+                  name={row.n}
+                  note={row.sub}
+                  onToggle={() => {
+                    setPick(row.scope, row.k, true, true);
+                    touchStep("submit");
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Choosing to book a time has to be able to book a time. The question
             was asked and the answer recorded, and then nothing happened - which
             is the one thing a booking question must not do. */}
-        {/* How long to hold, asked here so the diary opens with it already
+            {/* How long to hold, asked here so the diary opens with it already
             chosen. A quarter of an hour to an hour: the shortest that is worth
             anyone's diary, and the longest we will hold without knowing what it
             is for. */}
-        {isOn(answers, "talk", "book") || isOn(answers, "talk", "times") ? (
-          <div className="mt-4">
-            <b className="block text-[13px] font-semibold text-ink">
-              How long shall we hold
-            </b>
+            {isOn(answers, "talk", "book") || isOn(answers, "talk", "times") ? (
+              <div className="mt-4">
+                <b className="block text-[13px] font-semibold text-ink">
+                  How long shall we hold
+                </b>
 
-            <div
-              role="radiogroup"
-              aria-label="How long shall we hold"
-              className="mt-2 flex flex-wrap gap-2"
-            >
-              {[15, 30, 45, 60].map((length) => (
-                <button
-                  key={length}
-                  type="button"
-                  role="radio"
-                  aria-checked={chipOn(answers, "talk.len", String(length))}
-                  onClick={() => {
-                    toggleChip("talk.len", String(length), true, "submit");
-                  }}
-                  className={cn(
-                    "cursor-pointer rounded-pill px-4 py-1.5 text-[13px] font-semibold tabular-nums transition-colors",
-                    chipOn(answers, "talk.len", String(length))
-                      ? "bg-ink text-white"
-                      : "bg-canvas text-body hover:bg-hair hover:text-ink",
-                  )}
+                <div
+                  role="radiogroup"
+                  aria-label="How long shall we hold"
+                  className="mt-2 flex flex-wrap gap-2"
                 >
-                  {length} min
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : null}
+                  {[15, 30, 45, 60].map((length) => (
+                    <button
+                      key={length}
+                      type="button"
+                      role="radio"
+                      aria-checked={chipOn(answers, "talk.len", String(length))}
+                      onClick={() => {
+                        toggleChip("talk.len", String(length), true, "submit");
+                      }}
+                      className={cn(
+                        "cursor-pointer rounded-pill px-4 py-1.5 text-[13px] font-semibold tabular-nums transition-colors",
+                        chipOn(answers, "talk.len", String(length))
+                          ? "bg-ink text-white"
+                          : "bg-canvas text-body hover:bg-hair hover:text-ink",
+                      )}
+                    >
+                      {length} min
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : null}
 
-        {isOn(answers, "talk", "book") ? (
-          <>
-            <Link
-              href={`${ROUTES.book}?mins=${heldFor(answers)}`}
-              /* Everything the booking screen would otherwise ask twice, put
+            {isOn(answers, "talk", "book") ? (
+              <>
+                <Link
+                  href={`${ROUTES.book}?mins=${heldFor(answers)}`}
+                  /* Everything the booking screen would otherwise ask twice, put
                  down on the way out.
 
                  The two were separate journeys before this: somebody answered
@@ -442,53 +496,57 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
                  email address that were already on the desk. The reference goes
                  with it so the meeting that comes out refers to the submission
                  rather than to nothing. */
-              onClick={() =>
-                carry({
-                  ref: deskRef(),
-                  about: "requirements",
-                  minutes: heldFor(answers),
-                  name: answers.ask.name?.trim() || undefined,
-                  email: answers.ask.email?.trim() || undefined,
-                  company: answers.ask.company?.trim() || undefined,
-                })
-              }
-              className="group/book mt-3 inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85"
-            >
-              Choose a time
-              <ArrowUpRight
-                aria-hidden
-                className="size-4 transition-transform group-hover/book:translate-x-0.5 group-hover/book:-translate-y-0.5"
-              />
-            </Link>
+                  onClick={() =>
+                    carry({
+                      ref: deskRef(),
+                      about: "requirements",
+                      minutes: heldFor(answers),
+                      name: answers.ask.name?.trim() || undefined,
+                      email: answers.ask.email?.trim() || undefined,
+                      company: answers.ask.company?.trim() || undefined,
+                    })
+                  }
+                  className="group/book mt-3 inline-flex items-center gap-2 rounded-pill bg-ink px-4.5 py-2 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-85"
+                >
+                  Choose a time
+                  <ArrowUpRight
+                    aria-hidden
+                    className="size-4 transition-transform group-hover/book:translate-x-0.5 group-hover/book:-translate-y-0.5"
+                  />
+                </Link>
 
-            <p className="mt-2.5 max-w-[64ch] text-[12px] leading-[1.55] text-label">
-              It opens on the calendar, already set to go through this scope.
-              The meeting will be booked against{" "}
-              <b className="font-mono font-semibold text-quiet">{deskRef()}</b>,
-              which is the reference this submission comes back with.
-            </p>
+                <p className="mt-2.5 max-w-[64ch] text-[12px] leading-[1.55] text-label">
+                  It opens on the calendar, already set to go through this
+                  scope. The meeting will be booked against{" "}
+                  <b className="font-mono font-semibold text-quiet">
+                    {deskRef()}
+                  </b>
+                  , which is the reference this submission comes back with.
+                </p>
+              </>
+            ) : null}
+
+            {isOn(answers, "talk", "times") ? (
+              <div className="mt-3">
+                <p className="mb-2 max-w-[58ch] text-[12.5px] leading-[1.5] text-label">
+                  Days and time bands rather than a slot, and anything from two
+                  working days out - that is the first day our diary opens.
+                </p>
+                <AddRow
+                  placeholder="Mornings, or Tuesday and Thursday after two"
+                  label="The times that suit you"
+                  onAdd={(value) =>
+                    addRef({
+                      kind: "Times that suit",
+                      text: value,
+                      where: { stepKey: "submit", step: "Submit" },
+                    })
+                  }
+                />
+              </div>
+            ) : null}
           </>
-        ) : null}
-
-        {isOn(answers, "talk", "times") ? (
-          <div className="mt-3">
-            <p className="mb-2 max-w-[58ch] text-[12.5px] leading-[1.5] text-label">
-              Days and time bands rather than a slot, and anything from two
-              working days out - that is the first day our diary opens.
-            </p>
-            <AddRow
-              placeholder="Mornings, or Tuesday and Thursday after two"
-              label="The times that suit you"
-              onAdd={(value) =>
-                addRef({
-                  kind: "Times that suit",
-                  text: value,
-                  where: { stepKey: "submit", step: "Submit" },
-                })
-              }
-            />
-          </div>
-        ) : null}
+        )}
       </section>
 
       {/* No map of the thirteen steps here.
