@@ -405,7 +405,7 @@ export function SiteHeader({
               edges of the sheet. */}
               <nav
                 aria-label="All pages, mobile"
-                className="flex-1 overflow-x-hidden overflow-y-auto px-3 pt-3 pb-8 sm:px-6"
+                className="quiet-scroll flex-1 overflow-x-hidden overflow-y-auto px-3 pt-2 pb-5 sm:px-6"
               >
                 <RailNav
                   size="menu"
@@ -427,12 +427,20 @@ export function SiteHeader({
               under them the phone number and the address, because a menu open on
               a phone is the one place on this site where the fastest thing to do
               is press a number. */}
-              <div className="border-t border-border px-5 py-4 sm:px-8">
-                <div className="flex gap-2.5">
+              <div className="border-t border-border px-5 py-3.5 sm:px-8">
+                {/* Stacked below `sm`, side by side above it.
+
+                    Two pills sharing a row at `flex-1` are each half the sheet
+                    less the gap - about a hundred and thirty points on a
+                    handset - and "Build your website" is `whitespace-nowrap`,
+                    so it did not wrap, it ran out of the sheet. Either the
+                    words break or the row does; the row is the cheaper of the
+                    two. */}
+                <div className="flex gap-2.5 max-sm:flex-col max-sm:gap-2">
                   <Link
                     href={ROUTES.book}
                     onClick={() => setOpen(false)}
-                    className="group/way inline-flex flex-1 items-center justify-center gap-2 rounded-pill bg-canvas px-4 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:bg-hair"
+                    className="group/way inline-flex flex-1 items-center justify-center gap-2 rounded-pill bg-canvas px-4 py-3 text-[14.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:bg-hair max-sm:w-full max-sm:flex-none max-sm:py-2.5 max-sm:text-[13.5px]"
                   >
                     Book a meeting
                     <ArrowUpRight
@@ -444,7 +452,7 @@ export function SiteHeader({
                   <Link
                     href={HEADER_CTA.href}
                     onClick={() => setOpen(false)}
-                    className="group/way thread-fill inline-flex flex-1 items-center justify-center gap-2 rounded-pill px-4 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+                    className="group/way thread-fill inline-flex flex-1 items-center justify-center gap-2 rounded-pill px-4 py-3 text-[14.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:w-full max-sm:flex-none max-sm:py-2.5 max-sm:text-[13.5px]"
                   >
                     {HEADER_CTA.label}
                     <ArrowUpRight
@@ -454,10 +462,10 @@ export function SiteHeader({
                   </Link>
                 </div>
 
-                <div className="mt-3.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5">
+                <div className="mt-3.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 max-sm:mt-3 max-sm:gap-x-3">
                   <a
                     href={CONTACT_INFO.phoneHref}
-                    className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-body transition-colors hover:text-ink"
+                    className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-body transition-colors hover:text-ink max-sm:text-[12px]"
                   >
                     <Phone aria-hidden className="size-3.5 text-label" />
                     {CONTACT_INFO.phone}
@@ -465,7 +473,7 @@ export function SiteHeader({
 
                   <a
                     href={`mailto:${CONTACT_INFO.primaryEmail}`}
-                    className="inline-flex items-center gap-1.5 text-[13px] text-quiet transition-colors hover:text-ink"
+                    className="inline-flex items-center gap-1.5 text-[13px] text-quiet transition-colors hover:text-ink max-sm:text-[12px]"
                   >
                     <Mail aria-hidden className="size-3.5 text-label" />
                     {CONTACT_INFO.primaryEmail}

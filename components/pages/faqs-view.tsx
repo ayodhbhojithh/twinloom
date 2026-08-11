@@ -37,7 +37,6 @@ const S = {
   money: { id: "money", title: "Money" },
   after: { id: "after", title: "Hosting, care and after launch" },
   data: { id: "data", title: "Your data, and the law" },
-  rules: { id: "rules", title: "The rules the run-through follows" },
 } satisfies Record<string, PageSection>;
 
 export const FAQ_SECTIONS: readonly PageSection[] = Object.values(S);
@@ -103,8 +102,8 @@ const BEFORE: readonly Ask[] = [
     a: (
       <>
         Yes. <A href={ROUTES.book}>Book a meeting</A> and come with the
-        run-through done or with nothing at all. Or ring{" "}
-        {CONTACT_INFO.phone}, {CONTACT_INFO.hours.toLowerCase()}.
+        run-through done or with nothing at all. Or ring {CONTACT_INFO.phone},{" "}
+        {CONTACT_INFO.hours.toLowerCase()}.
       </>
     ),
   },
@@ -281,9 +280,9 @@ const MONEY: readonly Ask[] = [
     q: "What about third-party costs?",
     a: (
       <>
-        The proposal identifies the foreseeable ones. Platforms you own - domain,
-        email, e-commerce, booking, CRM, advertising - are normally paid by you
-        directly, so you keep control of them and can leave with them.
+        The proposal identifies the foreseeable ones. Platforms you own -
+        domain, email, e-commerce, booking, CRM, advertising - are normally paid
+        by you directly, so you keep control of them and can leave with them.
       </>
     ),
   },
@@ -407,67 +406,13 @@ const DATA: readonly Ask[] = [
   },
 ];
 
-/**
- * The thirteen rules the run-through itself follows.
- *
- * Not questions, so they are not set as questions. They are the constitution of
- * the scoping tool, and they are on this page for the reason the draft gives:
- * a rule you can read is a rule you can hold us to.
- */
-const RULES: readonly { n: string; sub: string }[] = [
-  {
-    n: "Three layers, and no more",
-    sub: "A list of options. Detail behind one of them. And, only in the shop, the back of the shop.",
-  },
-  {
-    n: "An area can be left alone",
-    sub: "Picking nothing is an answer. We say what we assumed instead, rather than blocking your way forward.",
-  },
-  {
-    n: "Every open list ends the same way",
-    sub: "Something else, told in your own words, captured word for word and never rewritten into ours.",
-  },
-  {
-    n: "Open lists and closed lists",
-    sub: "A list is open when the answer is about your business, and you may add to it. It is closed when the answer is about our build.",
-  },
-  {
-    n: "What you add carries no weight",
-    sub: "A row you write yourself never puts a page on the sitemap by itself. It goes on the list of things to talk about, in your words.",
-  },
-  {
-    n: "An option opens detail only when it has to",
-    sub: "Only when a further answer changes the build, the sitemap, or what we have to ask you for. Symmetry is not a reason.",
-  },
-  {
-    n: "One box per layer, not one per option",
-    sub: "The exception is an answer that is honestly a file or a link. Those carry their own attach.",
-  },
-  {
-    n: "Everything attached lands in the side panel",
-    sub: "Tied to the answer it came from. Anything with nothing to tie it to sits under General.",
-  },
-  {
-    n: "Unanswered means assumed, and it says so",
-    sub: "Line by line, in the document. Touching a question makes it answered.",
-  },
-  {
-    n: "One home",
-    sub: "Where two answers imply the same screen, the first keeps it and the second says where it went.",
-  },
-  {
-    n: "Nothing on screen is a number we price with",
-    sub: "No days, no scores, no levels, no tiers. Questions, and a growing description of your own site.",
-  },
-  {
-    n: "Every layer ends in the same fork",
-    sub: "Use this scope, or give more detail. Both are finished states.",
-  },
-  {
-    n: "The question asks the fact",
-    sub: "The detail asks the consequences. Where the same fact would reach us twice, it is asked once, and the second place says where it went.",
-  },
-];
+/* The thirteen rules the run-through follows are no longer on this page.
+
+   They were its last panel, and they went with it: they are the tool's own
+   constitution rather than a question anybody has asked, which is what the
+   rest of this file is. The words are in git if they are wanted somewhere
+   they belong - the build page, most likely, where the run they govern
+   actually is. */
 
 /**
  * One question.
@@ -549,75 +494,16 @@ export function FaqsView() {
       <Group s={S.after} asks={AFTER} />
       <Group s={S.data} asks={DATA} />
 
-      {/* The thirteen. Not questions, so not set as questions. */}
-      <section
-        id={S.rules.id}
-        aria-labelledby={`${S.rules.id}-h`}
-        className="mt-14 scroll-mt-[calc(var(--nav-height)+24px)]"
-      >
-        <CutPanel
-          tone="field"
-          className="w-full"
-          aside={
-            <div className="flex size-full flex-col items-center justify-center">
-              <b className="font-mono text-[22px] leading-none font-bold text-ink tabular-nums">
-                13
-              </b>
-              <span className="mt-1.5 font-mono text-[8px] font-bold tracking-[0.1em] text-label uppercase">
-                Rules
-              </span>
-            </div>
-          }
-          toolbar={
-            <span className="flex h-10 w-full items-center justify-center font-mono text-[9px] font-bold tracking-[0.16em] text-label uppercase">
-              Written down on purpose
-            </span>
-          }
-          corner={
-            <Link
-              href={ROUTES.build}
-              aria-label="Build your website"
-              title="Build your website"
-              className="flex size-11 items-center justify-center rounded-pill bg-ink text-white transition-opacity hover:opacity-85"
-            >
-              <ArrowUpRight className="size-[18px]" strokeWidth={2.2} />
-            </Link>
-          }
-        >
-          <h2
-            id={`${S.rules.id}-h`}
-            className="mx-auto mt-8 max-w-[26ch] text-center text-[clamp(20px,1.8vw,26px)] leading-[1.14] font-extrabold tracking-[-0.032em] text-ink"
-          >
-            {S.rules.title}
-          </h2>
+      {/* No panel of rules at the foot.
 
-          <p className="mx-auto mt-3 max-w-[64ch] text-center text-[15px] leading-[1.65] text-quiet">
-            The scoping run has thirteen rules of its own. They are published
-            for one reason: a rule you can read is a rule you can hold us to.
-          </p>
+          Thirteen rules for the scoping run, published on the argument that
+          a rule you can read is a rule you can hold us to - which is true,
+          and this was the wrong page for it. Everything above is a question
+          somebody asked and an answer to it; the rules are neither, and they
+          are about one tool rather than about working with us.
 
-          <ol className="mx-auto mt-10 grid w-full max-w-[1440px] gap-x-8 gap-y-5 sm:grid-cols-2 xl:grid-cols-3">
-            {RULES.map((rule, n) => (
-              <li key={rule.n} className="flex min-w-0 gap-3.5">
-                <span
-                  aria-hidden
-                  className="mt-px flex size-6 flex-none items-center justify-center rounded-pill bg-canvas font-mono text-[9.5px] font-bold text-idx tabular-nums"
-                >
-                  {String(n + 1).padStart(2, "0")}
-                </span>
-                <span className="min-w-0">
-                  <b className="block text-[14px] leading-[1.3] font-extrabold tracking-[-0.02em] text-ink">
-                    {rule.n}
-                  </b>
-                  <span className="mt-1 block text-[13px] leading-[1.55] text-quiet">
-                    {rule.sub}
-                  </span>
-                </span>
-              </li>
-            ))}
-          </ol>
-        </CutPanel>
-      </section>
+          `S.rules` goes with it, so the section index down the side of the
+          page stops listing a heading that is not there. */}
 
       {/* What to do when the answer is not here. */}
       <section className="mt-10">

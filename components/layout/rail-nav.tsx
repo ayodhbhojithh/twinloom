@@ -220,8 +220,13 @@ function Row({
            what a thumb is aiming at. */
         menu &&
           cn(
-            "gap-3 rounded-[12px] pe-3 leading-[1.35]",
-            nested ? "py-2 text-[14.5px]" : "py-2.5 text-[15.5px]",
+            /* Tighter than it was: the rows were 10 and 8 of padding at 15.5
+                and 14.5, which on a phone is eight rows and most of a screen
+                for a list of eight words. A row is still a thumb's target at
+                these numbers - 15px of type plus 14 of padding is a 36 point
+                row, which is the floor rather than something near it. */
+            "gap-2.5 rounded-[10px] pe-3 leading-[1.3]",
+            nested ? "py-1.5 text-[13.5px]" : "py-2 text-[14.5px]",
             here
               ? "bg-well font-semibold text-ink"
               : "text-body hover:bg-canvas hover:text-ink",
@@ -254,7 +259,7 @@ function Row({
         >
           {Mark ? (
             <Mark
-              className={cn(menu ? "size-[18px]" : "size-[17px]")}
+              className={cn(menu ? "size-[17px]" : "size-[17px]")}
               strokeWidth={here && menu ? 2.2 : 1.9}
             />
           ) : null}
