@@ -1296,14 +1296,14 @@ export function NotchedCard({ className }: { className?: string }) {
                left a hand's depth of empty card above the mark and pushed
                everything into the bottom half of the screen.
 
-               Twenty past the notch rather than forty-four. The screen is
-               centred in what is left, so this is not a gap above the mark - it
-               is a floor the whole column is measured from, and every pixel of
-               it is one the column cannot use. Forty-four was set when the claim
-               was two lines and the mark was ninety per cent of the card; the
-               claim is three lines now, and what the column wants is the room,
-               not the air above it. */
-            paddingTop: size.w < TIGHT ? cut.barDepth + 20 : head,
+               The notch and nothing on top of it. It was the notch plus
+               forty-four, then plus twenty - a floor the whole column is
+               measured from, and every pixel of it is one the column cannot
+               use. There is nothing up there to clear but the cut itself, and
+               the mark below it is a drawing in the middle of a square file with
+               its own air on every side: what looked like a gap above the logo
+               was mostly the file, and the padding was being paid twice. */
+            paddingTop: size.w < TIGHT ? cut.barDepth : head,
             /* Almost nothing at the foot on a desk. It used to clear the
                notch's depth, which was right while the notch was in the top edge
                and one number did both ends - the notch is in the corner now and
@@ -1413,7 +1413,7 @@ export function NotchedCard({ className }: { className?: string }) {
                   restore. The desktop screen is then provably untouched: there
                   is no shared value to get wrong, and reading any line tells you
                   which width it is for. */}
-              <div className="flex flex-1 flex-col items-center justify-center gap-6 pb-6 max-sm:gap-4 max-sm:pb-0 sm:pb-10 lg:flex-row lg:items-center lg:gap-8 2xl:gap-12">
+              <div className="flex flex-1 flex-col items-center justify-center gap-6 pb-6 max-sm:gap-1 max-sm:pb-0 sm:pb-10 lg:flex-row lg:items-center lg:gap-8 2xl:gap-12">
                 {/* Drawn wider than the room it takes, and grown leftward.
 
                     At a straight 52 per cent the mark was half the row and the
@@ -1477,10 +1477,18 @@ export function NotchedCard({ className }: { className?: string }) {
                 >
                   {/* The trades, as a list rather than a sentence. Dots between
                     them, because a comma would make it a sentence and it is a
-                    label. */}
+                    label.
+
+                    Off on a phone. Four trades set in caps with letter-spacing
+                    is a line about three hundred and fifty points long, so on a
+                    handset it wrapped - and a label that takes two lines has
+                    stopped being a label. The headline directly under it names
+                    the same ground in words somebody reads rather than scans,
+                    and on a screen that has to earn every line, one of the two
+                    goes. */}
                   <motion.ul
                     variants={HERO_RISE}
-                    className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 font-mono text-[10px] font-bold tracking-[0.15em] text-idx uppercase max-sm:gap-x-1.5 max-sm:gap-y-1 max-sm:text-[7.5px] max-sm:tracking-[0.1em] lg:justify-start lg:gap-x-3.5 lg:text-[11px] 2xl:text-[11.5px]"
+                    className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 font-mono text-[10px] font-bold tracking-[0.15em] text-idx uppercase max-sm:hidden lg:justify-start lg:gap-x-3.5 lg:text-[11px] 2xl:text-[11.5px]"
                   >
                     {shown.kicker?.map((trade, n) => (
                       <li
