@@ -6,7 +6,6 @@ import Link from "next/link";
 import { ASK_PARTS, MIN_MAP, STATES } from "@/lib/build/v5";
 import { readiness } from "@/lib/build/v5-derive";
 import { OPTION_LISTS } from "@/lib/build/v5-options";
-import { HOW_WE_WORK } from "@/lib/build/v5-work";
 import { deskRef } from "@/lib/build/desk";
 import { carry } from "@/lib/build/handoff";
 import { sendScope, whatIsMissing } from "@/lib/build/submit";
@@ -492,58 +491,18 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
         ) : null}
       </section>
 
-      <section className="mt-8 mx-auto max-w-[1100px]">
-        <SubTitle className="mt-0">Where you are in how we work</SubTitle>
-        <p className="mt-0.5 text-[12.5px] leading-[1.45] text-label">
-          Thirteen steps, from this run-through to the end of early life
-          support. Sending it puts you on the second one.
-        </p>
+      {/* No map of the thirteen steps here.
 
-        <ol className="mt-3 grid gap-x-10 sm:grid-cols-2">
-          {HOW_WE_WORK.map((entry) => (
-            <li
-              key={entry.ix}
-              className="flex items-start gap-3 border-b border-hair py-2 last:border-b-0 sm:[&:nth-last-child(2)]:border-b-0"
-            >
-              <span
-                className={cn(
-                  "w-6 flex-none font-mono text-[10px] font-bold tabular-nums",
-                  entry.state === "done"
-                    ? "text-mark"
-                    : entry.state === "here"
-                      ? "text-ink"
-                      : "text-idx",
-                )}
-              >
-                {entry.ix}
-              </span>
-              <span className="min-w-0 flex-1">
-                <b
-                  className={cn(
-                    "block text-[13px] leading-[1.3] font-semibold",
-                    entry.state === "ahead" ? "text-quiet" : "text-ink",
-                  )}
-                >
-                  {entry.n}
-                </b>
-                <span className="mt-0.5 block text-[11.5px] leading-[1.4] text-label">
-                  {entry.sub}
-                </span>
-              </span>
-              {entry.mark ? (
-                <span
-                  className={cn(
-                    "flex-none font-mono text-[8.5px] font-bold tracking-[0.1em] uppercase",
-                    entry.state === "done" ? "text-mark" : "text-ink",
-                  )}
-                >
-                  {entry.mark}
-                </span>
-              ) : null}
-            </li>
-          ))}
-        </ol>
-      </section>
+          It listed the whole of how we work - from this run-through to the
+          end of early life support - on the screen somebody has reached by
+          answering ten questions and is about to press send on. Thirteen
+          things to read at the moment there is one thing to do.
+
+          It is not lost: `/how-we-work` is that run in full, with a surface
+          per zone and room to say what each step means, and it is in the bar
+          at the top of this page. A summary of another page, printed above
+          the only button on this one, is a summary competing with the
+          button. */}
 
       {/* What is stopping it, or what went wrong, said above the button rather
           than after it is pressed. A control that refuses without saying why is
@@ -596,11 +555,13 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
           {answers.sending ? "Sending it" : "Send my scoping request"}
         </Pill>
 
-        <p className="mt-4 text-[12px] leading-[1.55] text-label">
-          What you have made is a scope, not a quote - the price comes at step
-          seven, against this document, in writing. And the document stays
-          yours.
-        </p>
+        {/* No line about scopes and quotes.
+
+            It said the price comes later, against this document, in writing -
+            which is true, and is the same promise the terms make and the
+            proposal keeps. Under the send button it was reassurance against a
+            worry nobody arriving there has: pressing send does not ask for
+            money, and saying so raises the question. */}
 
         {/* Beside the button that sends it, not only in the footer.
 
