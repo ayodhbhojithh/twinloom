@@ -345,21 +345,19 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
           </p>
         ) : null}
 
-        {/* Which submission this is about, said on every screen.
+        {/* The reference is no longer shown here.
 
-            Somebody who came here from the scoping run has to be able to see
-            that the two are the same piece of work - otherwise this is a
-            booking page they happen to have been sent to, and the reference on
-            their receipt and the reference on their invitation appear to be
-            about different things. */}
-        {carried ? (
-          <p className="mx-auto mt-3 inline-flex items-center gap-2 rounded-pill bg-canvas px-3.5 py-1.5 text-[12px] text-quiet">
-            Against your scoping request
-            <b className="font-mono text-[11.5px] font-bold text-ink">
-              {carried.ref}
-            </b>
-          </p>
-        ) : null}
+            It read "Against your scoping request TL-20260810-P9MEE", and the
+            case for it was that somebody arriving from the scoping run should
+            see that the two are the same piece of work. That is true of the
+            reference on their receipt and the reference on their invitation -
+            both of which they will read side by side later - and not true of a
+            code printed at the top of a page they are on because they just
+            pressed a button on the previous one.
+
+            What it actually did was put a thing to memorise above a booking
+            form. The line under the heading already says this booking is set
+            against what they have just sent us, in words. */}
       </div>
 
       {/* The surface, filling what the head leaves - the landing page's own
