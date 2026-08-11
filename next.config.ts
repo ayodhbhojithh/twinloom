@@ -1,6 +1,22 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  /**
+   * Where a build is written.
+   *
+   * `.next` by default, which is also where `next dev` keeps its own compiled
+   * output - and the two cannot share it. A production build empties that
+   * directory and writes a different set of manifests into it; the dev server is
+   * watching those files, finds them replaced under it, and recompiles and
+   * reloads the browser. What that looks like from the terminal is the page
+   * being fetched over and over with nobody touching it.
+   *
+   * So anything that builds only to check the build - a type check, a
+   * verification pass, CI - sets `NEXT_DIST_DIR` and gets its own directory,
+   * and the dev server keeps `.next` to itself.
+   */
+  distDir: process.env.NEXT_DIST_DIR || ".next",
+
   /* `/partners` became `/services`, and `/services` has become a section of
      the home page rather than a page of its own.
 

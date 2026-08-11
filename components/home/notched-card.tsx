@@ -16,7 +16,6 @@ import {
   PencilLine,
 } from "lucide-react";
 
-import { SisterSentence } from "@/components/blocks";
 import { ROUTES, SISTER } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -1827,27 +1826,19 @@ export function NotchedCard({ className }: { className?: string }) {
                       section rather than the company whose name had just been
                       pressed. Two copies of a link is two addresses, and one of
                       them is wrong the day the other is fixed. */}
-                  <motion.p
-                    variants={HERO_RISE}
-                    /* Off the phone entirely.
+                  {/* No paragraph under the claim.
 
-                       It was clamped to three lines there, on the argument that
-                       a paragraph which vanishes below a breakpoint is one
-                       nobody knows they are missing. Three lines ending in an
-                       ellipsis is worse than either: it is a paragraph somebody
-                       can see has been cut and cannot finish, on the screen the
-                       site opens with.
+                      It ran to four lines and said at length what the two lines
+                      above it say in eight words - the offer, then the offer
+                      again with the sister company named a second time. It had
+                      already been taken off the phone for being the fourth block
+                      of type in a column that had three; what that left was a
+                      paragraph carried on a desk because there was room for one,
+                      which is the wrong reason to keep any words.
 
-                       What it says is the only thing here that repeats - the
-                       lead above states the offer and this restates it at
-                       length, with the sister company named a second time. On a
-                       desk that is a paragraph earning its place under a
-                       headline; on a phone it is the fourth block of type in a
-                       column that already has three. */
-                    className="pointer-events-auto mx-auto mt-4 max-w-[62ch] text-[13.5px] leading-[1.68] text-quiet max-sm:hidden sm:mt-5 sm:text-[14.5px] lg:mx-0 lg:mt-6 lg:text-[15.5px] lg:leading-[1.75] 2xl:mt-7 2xl:text-[16.5px]"
-                  >
-                    <SisterSentence say={shown.note ?? ""} />
-                  </motion.p>
+                      The screen now reads: the trades, the claim, the line under
+                      it, and three doors. Everything on it is a thing to read or
+                      a thing to press. */}
 
                   {/* Three doors, one row, and the first one filled. Where they
                     all look the same there is no first choice, and a row of
@@ -1978,7 +1969,7 @@ export function NotchedCard({ className }: { className?: string }) {
                   rel="noreferrer"
                   className="group/sister pointer-events-auto flex items-center gap-3.5 max-sm:flex-col max-sm:gap-1"
                 >
-                  <span className="flex items-center gap-3.5 max-sm:gap-2">
+                  <span className="flex items-center gap-2.5 max-sm:gap-2">
                     <Image
                       src="/assets/logo.png"
                       alt=""
@@ -1989,8 +1980,22 @@ export function NotchedCard({ className }: { className?: string }) {
                       sizes="64px"
                       className="size-7 flex-none object-contain max-sm:size-6"
                     />
-                    <span className="text-[14px] font-bold tracking-[-0.02em] text-ink lg:text-[15px]">
-                      {SISTER.name}
+                    {/* One sentence, and it is the only thing this line has
+                        ever needed to say.
+
+                        It was the sister company's name set bold, a rule, and a
+                        description of what that company does - a lockup for
+                        TwinCoreTech at the foot of TwinLoom's own front page,
+                        which reads as somebody else's advertisement on it.
+
+                        What a reader wants at that point is the answer to the
+                        question the two names raise: which is which. The
+                        relationship is the fact, so the fact is the line. The
+                        name is in it, in the ink the rest of the sentence is
+                        set in, because it is a clause rather than a brand
+                        standing on its own. */}
+                    <span className="text-[13px] leading-[1.4] font-semibold tracking-[-0.01em] text-quiet max-sm:text-center max-sm:text-[12px] lg:text-[13.5px]">
+                      TwinLoom is a trading name of TwinCoreTech Ltd
                     </span>
                     {/* The arrow travels with the name on a phone, where the
                         sentence is on its own line under both - left at the end
@@ -2000,22 +2005,6 @@ export function NotchedCard({ className }: { className?: string }) {
                       aria-hidden
                       className="hidden size-3.5 flex-none text-idx max-sm:block"
                     />
-                  </span>
-                  {/* A rule between them, not a bullet. The two are a name and a
-                      description of it, which is a caption - and a caption is
-                      set off by a line. */}
-                  <span
-                    aria-hidden
-                    className="h-5 w-px flex-none bg-hair max-sm:hidden"
-                  />
-                  {/* Wide enough for the whole sentence on one line where there
-                      is room for one. At forty-six characters it broke after
-                      "more than", which puts "a website." alone on a second
-                      line - a two word orphan under a caption that is one
-                      sentence long. Seventy-six is the sentence. */}
-                  <span className="max-w-[76ch] text-[12.5px] leading-[1.5] text-quiet max-sm:max-w-[34ch] max-sm:text-center max-sm:text-[11.5px] max-sm:leading-[1.45] lg:text-[13.5px]">
-                    Custom software development for businesses that need more
-                    than a website.
                   </span>
                   {/* The one mark that says this goes somewhere, and now the
                       only one. A tinted pill grew behind the row on hover, and
