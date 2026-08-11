@@ -87,6 +87,22 @@ export function OverviewOpen() {
             </span>
           </div>
 
+          {/* One line under the name, and it is the one the card outside is
+              already set on.
+
+              The panel had a headline and a standfirst and both came off - a
+              claim and a restatement of it, above six cards that say what they
+              do. What was missing after that was any sentence at all: a mark, a
+              name, and straight into a grid. This is the sentence the hero
+              opens with, so somebody who pressed through from the card arrives
+              at the same words rather than at a second way of saying them.
+
+              Small, and in the quiet grey. It is a line under a name, not a
+              heading over a list. */}
+          <p className="mt-2 max-w-[42ch] text-[13px] leading-[1.5] text-quiet max-sm:mt-1.5 max-sm:text-[12px]">
+            We build digital experiences that move you forward.
+          </p>
+
           {/* No headline and no standfirst over the six.
 
               "Connecting ideas. Building presence." and the line under it were
