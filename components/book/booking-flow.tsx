@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
-import Link from "next/link";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   CalendarDays,
@@ -724,6 +724,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
               </>
             }
             canGoOn={!sending}
+            busy={sending}
             last
             onBack={back}
             onNext={sendIt}
@@ -897,6 +898,18 @@ function Finished({
   back: string | null;
   onRestart: () => void;
 }) {
+  const router = useRouter();
+
+  /* The return, once the confirmation has been read rather than the moment it
+     appears. A page that changes under somebody mid-sentence is a page that has
+     decided they were not reading it. */
+  useEffect(() => {
+    if (!back) return;
+
+    const going = setTimeout(() => router.push(back), 4000);
+    return () => clearTimeout(going);
+  }, [back, router]);
+
   return (
     <CutPanel
       tone="field"
@@ -970,24 +983,26 @@ function Finished({
         ) : null}
       </dl>
 
-      {/* The way back into the run, where this booking was made from one.
+      {/* Back into the run on its own, where this booking was made from one.
 
-          It is the last thing on the screen and the loudest, because it is the
-          thing still outstanding: the meeting is booked and the document it is
-          about has not been sent. Somebody who stops here has a slot in the
-          diary and nothing to talk about at it. */}
+          A button was here first, and it was the wrong shape for the situation:
+          somebody who pressed "Choose a time" from inside the run has not
+          finished it - the meeting is one answer on step ten and the document
+          still has to be sent - so returning is not a decision they are making,
+          it is the rest of what they were already doing.
+
+          A few seconds first, and the line says so. Long enough to read that it
+          is booked and see when; not so long that anybody wonders what to press.
+          Everything on this panel is in the invitation as well, so nothing is
+          lost by moving on.
+
+          The run is exactly where they left it - the answers and the step are
+          both kept for the visit; see `lib/build/v5-store`. */}
       {back ? (
-        <Link
-          href={back}
-          className="group/back thread-fill mx-auto mt-7 inline-flex items-center justify-center gap-2 rounded-pill px-5 py-3 text-[14px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:mt-5 max-sm:w-full max-sm:px-4 max-sm:py-2.5 max-sm:text-[13px]"
-        >
-          Back to your requirements
-          <ArrowRight
-            aria-hidden
-            className="size-4 shrink-0 transition-transform group-hover/back:translate-x-0.5"
-            strokeWidth={2.4}
-          />
-        </Link>
+        <p className="mt-7 flex items-center justify-center gap-2.5 text-[13px] leading-[1.5] text-quiet max-sm:mt-5 max-sm:text-[12px]">
+          <span aria-hidden className="turning size-3.5 text-idx" />
+          Taking you back to your requirements.
+        </p>
       ) : null}
     </CutPanel>
   );

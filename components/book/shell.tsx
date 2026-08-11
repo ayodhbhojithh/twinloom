@@ -190,6 +190,7 @@ export function BookStage({
   held,
   foot,
   canGoOn,
+  busy,
   last,
   onBack,
   onNext,
@@ -204,6 +205,16 @@ export function BookStage({
   /** The band along the very bottom, between the two cuts. */
   foot?: React.ReactNode;
   canGoOn: boolean;
+  /**
+   * The booking is being written and has not come back.
+   *
+   * The disc in the corner is the only control on this step, so it is the only
+   * place the wait can be shown. Greyed out it said "you cannot press this",
+   * which is true and is also what it says when a required field is empty -
+   * two different states drawn the same way, on the one screen where the
+   * difference is whether anything is happening at all.
+   */
+  busy?: boolean;
   last: boolean;
   onBack: () => void;
   onNext: () => void;
@@ -279,18 +290,29 @@ export function BookStage({
         corner={
           <button
             type="button"
-            aria-label={last ? "Confirm the booking" : "Next step"}
-            title={last ? "Confirm the booking" : "Next step"}
+            aria-label={
+              busy ? "Booking it" : last ? "Confirm the booking" : "Next step"
+            }
+            title={
+              busy ? "Booking it" : last ? "Confirm the booking" : "Next step"
+            }
             onClick={onNext}
             disabled={!canGoOn}
+            aria-busy={busy || undefined}
             className={cn(
               "flex size-11 items-center justify-center rounded-pill transition-opacity max-sm:size-10",
               canGoOn
                 ? "cursor-pointer bg-ink text-white hover:opacity-85"
                 : "cursor-default bg-planned text-white/70",
+              /* Ink while it works rather than the disabled grey. It cannot be
+                 pressed either way; what it is saying is "this is happening",
+                 not "this is unavailable". */
+              busy && "bg-ink text-white",
             )}
           >
-            {last ? (
+            {busy ? (
+              <span aria-hidden className="turning size-[17px]" />
+            ) : last ? (
               <Check className="size-[19px]" strokeWidth={2.6} />
             ) : (
               <ArrowRight className="size-[18px]" strokeWidth={2.2} />
