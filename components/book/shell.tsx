@@ -115,7 +115,7 @@ export function StepRail({
                 <span
                   aria-hidden
                   className={cn(
-                    "mt-3.5 h-0.5 min-w-4 flex-1 rounded-pill transition-colors max-sm:mt-3",
+                    "mt-3.5 h-0.5 min-w-3 flex-1 rounded-pill transition-colors max-sm:mt-3",
                     n <= reached ? "bg-mark" : "bg-hair",
                   )}
                 />
@@ -127,7 +127,7 @@ export function StepRail({
                 aria-current={here ? "step" : undefined}
                 onClick={() => onGo(n)}
                 className={cn(
-                  "group/step flex w-[86px] flex-none flex-col items-center gap-2 px-1 max-sm:w-[62px] max-sm:gap-1.5 sm:w-[104px]",
+                  "group/step flex w-[72px] flex-none flex-col items-center gap-2 px-1 max-sm:w-[58px] max-sm:gap-1.5",
                   open ? "cursor-pointer" : "cursor-default",
                 )}
               >
@@ -228,15 +228,26 @@ export function BookStage({
           Above it, the run is a line across the page and the card is a card:
           the shape gets its edge back and the steps get whatever width they
           want. */}
-      <div className="mb-3 flex items-center gap-2 max-sm:mb-2.5">
+      {/* Held to a measure, and centred on the card under it.
+
+          The connectors are `flex-1`, which is what makes the run fit any width
+          - and given the whole page it fitted the whole page: four marks a foot
+          apart joined by three hairlines a foot long, which reads as a rule
+          somebody drew across the top rather than as four steps. A run of four
+          wants to be read in one look, and 520 is about the width that takes.
+
+          The row is the same measure plus the disc either side of it, so the
+          marks are centred on the card rather than on what the back arrow
+          leaves. */}
+      <div className="mx-auto mb-5 flex w-full max-w-[600px] items-center gap-1 max-sm:mb-4">
         <Disc label="Previous step" onClick={onBack} disabled={at === 0}>
           <ArrowLeft className="size-4" />
         </Disc>
 
-        <div className="flex min-w-0 flex-1 justify-center">{rail}</div>
+        <div className="min-w-0 flex-1">{rail}</div>
 
-        {/* The width of the disc, so the run is centred on the row rather than
-            on what the disc leaves. */}
+        {/* The width of the disc, so the run is centred between the two ends of
+            the row rather than pushed off by the one control on it. */}
         <span aria-hidden className="size-9 flex-none" />
       </div>
 

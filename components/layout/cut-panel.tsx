@@ -206,14 +206,18 @@ export function CutPanel({
 
     /* One size for both bottom cuts. Two cuts of different sizes on one
        surface read as two decisions rather than one. */
-    /* Both bottom cuts. The floor is the control standing in one: `flare * 2`
-       is where the two arcs meet, and what is added to it is the air round a
-       target a thumb has to hit - which is less air on a phone, because there
-       the whole edge is only three hundred points wide and every pixel given to
-       a corner is one taken off the band between them. */
+    /* Both bottom cuts. The floor is the control standing in one: `flare * 2` is
+       where the two arcs meet, and what is added to it is the air round the
+       target that stands there.
+
+       Ten was too little of it. A 44px disc in a 54px cut is five pixels of card
+       either side of a circle, which does not read as a control standing in a
+       corner - it reads as a circle that did not fit and is hanging out of one.
+       Eighteen, with a ceiling of seventy-two rather than sixty-two, so the disc
+       has air on both sides at the widths where the cut is smallest. */
     const nook = Math.max(
-      flare * 2 + (tight ? 10 : 20),
-      Math.min(w * 0.07, tight ? 62 : 92),
+      flare * 2 + (tight ? 18 : 20),
+      Math.min(w * 0.07, tight ? 72 : 92),
     );
 
     return {
