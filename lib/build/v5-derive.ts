@@ -24,6 +24,7 @@ import {
   type Group,
   type SellKind,
 } from "./v5";
+import { STEP_COPY } from "./v5-copy";
 import { chipsIn, isOn, picked, type Answers } from "./v5-store";
 
 export const ACTION_BY: Record<string, Action> = Object.fromEntries(
@@ -168,6 +169,18 @@ export function readiness(a: Answers): Readiness {
 }
 
 /** What has actually been said, as lines. `true` marks a ticked one. */
+/**
+ * What each free-text field is called, by the id it writes under.
+ *
+ * Built from the copy the steps themselves render, so there is one place a
+ * question is named and this is not it.
+ */
+const OWN_LABELS: Record<string, string> = Object.fromEntries(
+  Object.values(STEP_COPY).flatMap((copy) =>
+    copy.miss.map((box) => [box.id, box.label] as const),
+  ),
+);
+
 export function told(a: Answers): { tick: boolean; line: string }[] {
   const out: { tick: boolean; line: string }[] = [];
 
@@ -223,9 +236,26 @@ export function told(a: Answers): { tick: boolean; line: string }[] {
     });
   }
 
+  /* What somebody wrote, and which question they wrote it against.
+
+     Every one of these read "<what they typed> - in your words", which says the
+     same four words about all of them and nothing about any: three different
+     steps take free text, so a panel of them was a list of loose sentences with
+     no way to tell whether one was about the organisation, a widget or a system
+     it has to talk to. Written down and then detached from the question - which
+     is worse than not showing them, because it looks like a record.
+
+     The label is the one the field itself carries, read from the same copy the
+     step renders - so a question renamed is renamed here too, and the two cannot
+     drift. */
   for (const listId of Object.keys(a.own)) {
+    const asked = OWN_LABELS[listId];
+
     for (const said of a.own[listId]) {
-      out.push({ tick: false, line: `${said} - in your words` });
+      out.push({
+        tick: false,
+        line: asked ? `${asked}: ${said}` : `${said} - in your words`,
+      });
     }
   }
 
