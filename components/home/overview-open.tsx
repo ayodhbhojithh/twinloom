@@ -4,7 +4,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   CalendarDays,
-  Info,
   PencilLine,
 } from "lucide-react";
 
@@ -80,14 +79,18 @@ export function OverviewOpen() {
             </span>
           </div>
 
-          <h2 className="mt-5 max-w-[16ch] text-[clamp(22px,2.4vw,34px)] leading-[1.08] font-extrabold tracking-[-0.038em] text-ink max-sm:mt-3.5 max-sm:text-[20px]">
-            Connecting ideas. Building presence.
-          </h2>
+          {/* No headline and no standfirst over the six.
 
-          <p className="mt-3 max-w-[46ch] text-[13px] leading-[1.6] text-quiet max-sm:mt-2 max-sm:text-[12px] max-sm:leading-[1.5]">
-            Websites that perform. Software that powers. Digital services that
-            move you forward.
-          </p>
+              "Connecting ideas. Building presence." and the line under it were
+              a claim and a restatement of the claim, and neither said anything
+              the six cards below them do not say by existing: websites,
+              software, digital services, each with its own sentence. The name
+              and the mark are directly above, so the panel is already
+              introduced; what followed was two more blocks of type before the
+              first thing anybody came to read.
+
+              What it buys on a phone is the whole of the first card on the
+              opening screen instead of a third of it. */}
 
           {/* Three across, two down, and each card centred on its own drawing.
 
@@ -159,35 +162,14 @@ export function OverviewOpen() {
             ))}
           </div>
 
-          {/* The seventh, said as a line rather than drawn as a card - it is
-            what the six above add up to, and a sum set beside its own parts
-            reads as a seventh part. */}
-          <div className="mt-6 flex items-center justify-center gap-5 max-sm:mt-4 max-sm:gap-3">
-            <Image
-              src="/assets/logo.png"
-              alt=""
-              width={128}
-              height={128}
-              aria-hidden
-              draggable={false}
-              sizes="128px"
-              className="size-12 flex-none object-contain max-sm:size-9"
-            />
-            {/* Both lines the one grey, at the one weight. They are a single
-              sentence broken over two, and setting the first darker made it a
-              heading with a caption under it - which is two things where the
-              reference has one. */}
-            {/* Left within itself, though the column around it is centred.
-                It is one sentence broken over two lines beside a mark, and
-                two centred lines next to a picture are ragged on both sides
-                with nothing holding them to it. */}
-            <p className="text-left text-[15.5px] leading-[1.55] text-quiet max-sm:text-[12.5px] max-sm:leading-[1.45]">
-              One partner. Every part connected.
-              <span className="block">
-                From the first idea to long-term growth.
-              </span>
-            </p>
-          </div>
+          {/* And no line summing the six up.
+
+              "One partner. Every part connected. / From the first idea to
+              long-term growth." was the seventh thing on a panel that already
+              held six, and what it said was that the six belong together - which
+              is what putting them in one grid on one panel says without a
+              sentence. It also repeated the mark, so the panel opened and closed
+              on the same logo. */}
         </div>
       </div>
 
@@ -203,28 +185,30 @@ export function OverviewOpen() {
             size.
           </h3>
 
-          {/* One paragraph, not two lines.
+          {/* And nothing between the heading and the list.
 
-              The second sentence was in a `block` span, which held it to its own
-              line whatever the measure was - so a wider cap changed nothing and
-              the pair sat as two short lines under a heading running the full
-              width of the column. They are a statement and the illustration of
-              it, which is a paragraph. Set as one it fills the column the
-              heading already sets. */}
-          <p className="mt-3 max-w-[78ch] text-[13.5px] leading-[1.6] text-quiet max-sm:mt-2 max-sm:text-[12px] max-sm:leading-[1.5]">
-            Not a tier, not an upgrade, and not something to ask for. A five
-            page site gets the list. A fifty page site gets the list.
-          </p>
+              "Not a tier, not an upgrade, and not something to ask for. A five
+              page site gets the list. A fifty page site gets the list." was
+              three sentences arguing for a claim the heading above it has
+              already made - "whatever its size" is the same point in three
+              words. The eleven rows are what somebody opened this half of the
+              panel to read, and they start where the heading ends. */}
 
           {/* The rule between rows is the faintest one the palette has. Eleven
             of them stacked is eleven lines of furniture against eleven lines
             of type, and at the hairline weight they separate the rows without
-            being read as part of them. */}
+            being read as part of them.
+
+            Ten rules for eleven rows: `last:border-b-0`. A rule belongs between
+            two things, and under the last row there is nothing to be between -
+            what it drew was a line across the foot of the list with the two
+            buttons under it, which reads as a divider somebody put there on
+            purpose to separate the list from its own doors. */}
           <ol className="mt-5 max-sm:mt-3.5">
             {INCLUDED.map((line, n) => (
               <li
                 key={line.say}
-                className="flex min-w-0 items-center gap-4 border-b border-hair/50 py-2 max-sm:gap-2.5 max-sm:py-1.5"
+                className="flex min-w-0 items-center gap-4 border-b border-hair/50 py-2 last:border-b-0 max-sm:gap-2.5 max-sm:py-1.5"
               >
                 <span
                   aria-hidden
@@ -244,20 +228,12 @@ export function OverviewOpen() {
             ))}
           </ol>
 
-          {/* What happens next, which is the one thing this panel does not
-            already answer. */}
-          <p className="mt-4 flex items-start gap-2.5 rounded-card bg-canvas px-4 py-2.5 text-[12px] leading-[1.55] text-quiet max-sm:mt-3 max-sm:gap-2 max-sm:px-3 max-sm:py-2 max-sm:text-[11.5px]">
-            <Info
-              aria-hidden
-              className="mt-px size-3.5 flex-none text-idx"
-              strokeWidth={2}
-            />
-            <span>
-              You will be given the option to book a meeting with us as part of
-              your submission, or you can provide us with some time slots that
-              work for you, and we will reach out to you to set up the meeting.
-            </span>
-          </p>
+          {/* And no note about what happens after a submission.
+
+              It described the two ways out of this panel in a paragraph, and the
+              two ways out are the two buttons directly under it. A sentence
+              explaining a door somebody is already looking at is a door
+              described rather than opened. */}
 
           {/* And the two ways out of it.
 
