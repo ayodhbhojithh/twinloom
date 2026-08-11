@@ -693,7 +693,7 @@ export function BookingFlow({ wanted }: { wanted?: number }) {
                   onChange={(event) =>
                     setDetails((was) => ({ ...was, notes: event.target.value }))
                   }
-                  placeholder="A link, a competitor you like, or what you are stuck on."
+                  placeholder="Tell us a little about what you want to discuss."
                   className="w-full resize-y rounded-field border border-border bg-field px-3.5 py-2.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-label focus:border-mark"
                 />
               </div>
