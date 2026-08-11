@@ -1480,7 +1480,7 @@ export function NotchedCard({ className }: { className?: string }) {
                      The room for it came from the clearance above, which was
                      reserving space for a row of links a phone does not
                      have. */
-                  className="pointer-events-none w-[84%] max-w-[320px] shrink-0 max-sm:w-[74%] max-sm:max-w-[248px] lg:order-2 lg:-ml-[12%] lg:w-[54%] lg:max-w-none"
+                  className="pointer-events-none w-[84%] max-w-[320px] shrink-0 max-sm:w-[66%] max-sm:max-w-[212px] lg:order-2 lg:-ml-[12%] lg:w-[54%] lg:max-w-none"
                 >
                   <MarkStage />
                 </motion.div>
@@ -1560,7 +1560,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       right at 62px of headline is mean at 32. */}
                   <motion.h1
                     variants={HERO_RISE}
-                    className="mx-auto mt-3 max-w-[26ch] text-[clamp(28px,3.2vw,88px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink max-sm:mt-3 max-sm:max-w-none max-sm:text-[min(25px,6.4vw)] max-sm:leading-[1.08] max-sm:tracking-[-0.045em] sm:mt-4 lg:mx-0 lg:mt-5"
+                    className="mx-auto mt-3 max-w-[26ch] text-[clamp(28px,3.2vw,88px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink max-sm:mt-3 max-sm:max-w-none max-sm:text-[min(23px,5.9vw)] max-sm:leading-[1.08] max-sm:tracking-[-0.045em] sm:mt-4 lg:mx-0 lg:mt-5"
                   >
                     {/* Larger where there is room to be larger.
 
@@ -1589,11 +1589,18 @@ export function NotchedCard({ className }: { className?: string }) {
                         onto a fourth, which is the one thing a claim set in three
                         cannot afford.
 
-                        Twenty-five is the size on an ordinary handset and the
-                        `vw` half is what handles the narrow ones: below about
-                        390 points the line would wrap again at a fixed size, so
-                        it comes down with the screen instead. Above `sm` neither
-                        half is read.
+                        The `vw` half is what handles the narrow ones: below
+                        about 390 points a fixed size wraps that last line again,
+                        so it comes down with the screen instead. Above `sm`
+                        neither half is read.
+
+                        Both halves came down a step - 25 and 6.4vw were set
+                        against a claim of two lines and a card with more room
+                        above it, and on a real handset at 411 points the three
+                        lines were most of the screen before the doors. Every
+                        number on this screen is now a ceiling with a `vw` under
+                        it, so a 360 or a 320 gets a smaller card rather than the
+                        same card with less of it visible.
 
                         A line each, and the last one coloured.
 
@@ -1623,7 +1630,7 @@ export function NotchedCard({ className }: { className?: string }) {
 
                   <motion.p
                     variants={HERO_RISE}
-                    className="mx-auto mt-4 max-w-[44ch] text-[clamp(15px,1.3vw,24px)] leading-[1.4] font-bold tracking-[-0.022em] text-ink max-sm:mt-2.5 max-sm:max-w-[34ch] max-sm:text-[13.5px] max-sm:leading-[1.45] sm:mt-5 lg:mx-0 lg:mt-6 2xl:mt-7"
+                    className="mx-auto mt-4 max-w-[44ch] text-[clamp(15px,1.3vw,24px)] leading-[1.4] font-bold tracking-[-0.022em] text-ink max-sm:mt-2 max-sm:max-w-[34ch] max-sm:text-[min(13px,3.4vw)] max-sm:leading-[1.45] sm:mt-5 lg:mx-0 lg:mt-6 2xl:mt-7"
                   >
                     {shown.lead}
                   </motion.p>
@@ -1688,11 +1695,11 @@ export function NotchedCard({ className }: { className?: string }) {
                        another measure inside it is a second margin nobody
                        asked for. They run to the card's own padding now, which
                        is the edge everything else on this screen runs to. */
-                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 max-sm:mx-auto max-sm:mt-4 max-sm:w-full max-sm:flex-col max-sm:gap-2 sm:mt-8 lg:mt-9 lg:flex-nowrap lg:justify-start lg:gap-2.5 2xl:mt-10"
+                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 max-sm:mx-auto max-sm:mt-3.5 max-sm:w-full max-sm:flex-col max-sm:gap-1.5 sm:mt-8 lg:mt-9 lg:flex-nowrap lg:justify-start lg:gap-2.5 2xl:mt-10"
                   >
                     <Link
                       href={ROUTES.build}
-                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:justify-center max-sm:gap-2 max-sm:px-4 max-sm:py-2.5 max-sm:text-[13.5px] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]"
+                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:justify-center max-sm:gap-2 max-sm:px-3.5 max-sm:py-2 max-sm:text-[min(13px,3.4vw)] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]"
                     >
                       <PencilLine aria-hidden className="size-4 shrink-0" />
                       Scope your website
@@ -1716,7 +1723,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       },
                     ].map((way) => {
                       const className =
-                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:justify-center max-sm:gap-2 max-sm:px-4 max-sm:py-2.5 max-sm:text-[13.5px] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]";
+                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:justify-center max-sm:gap-2 max-sm:px-3.5 max-sm:py-2 max-sm:text-[min(13px,3.4vw)] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]";
                       const body = (
                         <>
                           <way.icon
@@ -1798,7 +1805,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       aria-hidden
                       draggable={false}
                       sizes="64px"
-                      className="size-7 flex-none object-contain max-sm:size-6"
+                      className="size-7 flex-none object-contain max-sm:size-5"
                     />
                     {/* One sentence, and it is the only thing this line has
                         ever needed to say.
@@ -1814,7 +1821,7 @@ export function NotchedCard({ className }: { className?: string }) {
                         name is in it, in the ink the rest of the sentence is
                         set in, because it is a clause rather than a brand
                         standing on its own. */}
-                    <span className="text-[13px] leading-[1.4] font-semibold tracking-[-0.01em] text-quiet max-sm:text-center max-sm:text-[12px] lg:text-[13.5px]">
+                    <span className="text-[13px] leading-[1.4] font-semibold tracking-[-0.01em] text-quiet max-sm:text-center max-sm:text-[min(11.5px,3vw)] lg:text-[13.5px]">
                       {/* The name in the ink, the rest in the quiet grey.
 
                           The sentence is about the two companies, and the one it
