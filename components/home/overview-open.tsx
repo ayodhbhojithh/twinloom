@@ -63,8 +63,8 @@ export function OverviewOpen() {
             column had two left edges - one for the type and one for the grid
             under it. `items-center` puts the capped blocks on the same axis
             the grid is already on. */}
-        <div className="flex min-h-full flex-col items-center justify-center px-6 py-5 text-center sm:px-9 sm:py-6 lg:px-11 lg:py-7">
-          <div className="flex items-center gap-3.5">
+        <div className="flex min-h-full flex-col items-center justify-center px-6 py-5 text-center max-sm:px-4 max-sm:py-4 sm:px-9 sm:py-6 lg:px-11 lg:py-7">
+          <div className="flex items-center gap-3.5 max-sm:gap-2.5">
             <Image
               src="/assets/logo.png"
               alt=""
@@ -73,18 +73,18 @@ export function OverviewOpen() {
               aria-hidden
               draggable={false}
               sizes="192px"
-              className="size-16 flex-none object-contain"
+              className="size-16 flex-none object-contain max-sm:size-11"
             />
             <span className="text-[clamp(22px,2.2vw,32px)] leading-none font-extrabold tracking-[-0.03em] text-ink">
               TwinLoom
             </span>
           </div>
 
-          <h2 className="mt-5 max-w-[16ch] text-[clamp(22px,2.4vw,34px)] leading-[1.08] font-extrabold tracking-[-0.038em] text-ink">
+          <h2 className="mt-5 max-w-[16ch] text-[clamp(22px,2.4vw,34px)] leading-[1.08] font-extrabold tracking-[-0.038em] text-ink max-sm:mt-3.5 max-sm:text-[20px]">
             Connecting ideas. Building presence.
           </h2>
 
-          <p className="mt-3 max-w-[46ch] text-[13px] leading-[1.6] text-quiet">
+          <p className="mt-3 max-w-[46ch] text-[13px] leading-[1.6] text-quiet max-sm:mt-2 max-sm:text-[12px] max-sm:leading-[1.5]">
             Websites that perform. Software that powers. Digital services that
             move you forward.
           </p>
@@ -97,11 +97,26 @@ export function OverviewOpen() {
             differently. Three lines is what the tallest of them takes. */}
           {/* `w-full` because the column centres its children now, and a grid
               left to size itself would shrink to its contents. */}
-          <div className="mt-6 grid w-full grid-cols-2 gap-3 sm:grid-cols-3">
+          {/* Two across on a screen, one down on a phone - and on a phone each
+              card turns on its side.
+
+              As a tile the drawing is the width of the card and the sentence is
+              set under it, which at half a phone's width is a measure of about
+              eighteen characters: "From a handful of pages through to online
+              shops, booking systems, and sites that connect to the software you
+              already run." came out as nine ragged lines under a picture three
+              times its width. The picture was not the problem - the column
+              was.
+
+              Turned, the drawing is a mark at the left and the words take the
+              rest of the row, which is a measure they can actually be read at,
+              and six rows down one column is a list somebody can run an eye
+              down instead of a grid they have to read in two directions. */}
+          <div className="mt-6 grid w-full grid-cols-2 gap-3 max-sm:mt-4 max-sm:grid-cols-1 max-sm:gap-2 sm:grid-cols-3">
             {CARDS.map((card) => (
               <div
                 key={card.name}
-                className="flex min-w-0 flex-col items-center rounded-card border border-hair/40 bg-field px-4 py-4 text-center"
+                className="flex min-w-0 flex-col items-center rounded-card border border-hair/40 bg-field px-4 py-4 text-center max-sm:flex-row max-sm:items-center max-sm:gap-3 max-sm:px-3 max-sm:py-2.5 max-sm:text-left"
               >
                 {/* A square box, and the drawing fitted inside it.
 
@@ -119,22 +134,27 @@ export function OverviewOpen() {
                     aria-hidden
                     draggable={false}
                     sizes="220px"
-                    className="size-28 flex-none object-contain sm:size-30 lg:size-32"
+                    className="size-28 flex-none object-contain max-sm:size-14 sm:size-30 lg:size-32"
                   />
                 ) : null}
 
-                <b className="mt-2.5 block text-[12.5px] leading-[1.25] font-bold tracking-[-0.02em] text-ink">
-                  {card.name}
-                </b>
-                {/* No clamp on the one card that carries a link.
+                {/* The name and the sentence are one block on a phone, so the
+                    row has two parts rather than three and the words keep a
+                    single left edge. */}
+                <span className="min-w-0 max-sm:flex-1">
+                  <b className="mt-2.5 block text-[12.5px] leading-[1.25] font-bold tracking-[-0.02em] text-ink max-sm:mt-0 max-sm:text-[13px]">
+                    {card.name}
+                  </b>
+                  {/* No clamp on the one card that carries a link.
 
                     Three lines is what the longest of these sentences takes,
                     and the sentence naming the sister company ends on the
                     fourth - so the clamp was cutting the card's only control
                     off the bottom of it. */}
-                <p className="mt-1 text-[11px] leading-[1.45] text-quiet">
-                  <SisterSentence say={card.say} />
-                </p>
+                  <p className="mt-1 text-[11px] leading-[1.45] text-quiet max-sm:text-[11.5px] max-sm:leading-[1.5]">
+                    <SisterSentence say={card.say} />
+                  </p>
+                </span>
               </div>
             ))}
           </div>
@@ -142,7 +162,7 @@ export function OverviewOpen() {
           {/* The seventh, said as a line rather than drawn as a card - it is
             what the six above add up to, and a sum set beside its own parts
             reads as a seventh part. */}
-          <div className="mt-6 flex items-center justify-center gap-5">
+          <div className="mt-6 flex items-center justify-center gap-5 max-sm:mt-4 max-sm:gap-3">
             <Image
               src="/assets/logo.png"
               alt=""
@@ -151,7 +171,7 @@ export function OverviewOpen() {
               aria-hidden
               draggable={false}
               sizes="128px"
-              className="size-12 flex-none object-contain"
+              className="size-12 flex-none object-contain max-sm:size-9"
             />
             {/* Both lines the one grey, at the one weight. They are a single
               sentence broken over two, and setting the first darker made it a
@@ -161,7 +181,7 @@ export function OverviewOpen() {
                 It is one sentence broken over two lines beside a mark, and
                 two centred lines next to a picture are ragged on both sides
                 with nothing holding them to it. */}
-            <p className="text-left text-[15.5px] leading-[1.55] text-quiet">
+            <p className="text-left text-[15.5px] leading-[1.55] text-quiet max-sm:text-[12.5px] max-sm:leading-[1.45]">
               One partner. Every part connected.
               <span className="block">
                 From the first idea to long-term growth.
@@ -174,10 +194,10 @@ export function OverviewOpen() {
       {/* The eleven. Numbered rather than ticked: a column of eleven ticks
           says the same thing eleven times, and the count is the actual claim. */}
       <div className="quiet-scroll min-h-0 lg:overflow-y-auto">
-        <div className="flex min-h-full flex-col justify-center px-6 py-5 sm:px-9 sm:py-6 lg:px-11 lg:py-7">
+        <div className="flex min-h-full flex-col justify-center px-6 py-5 max-sm:px-4 max-sm:py-4 sm:px-9 sm:py-6 lg:px-11 lg:py-7">
           <h3
             id="project-open-name"
-            className="max-w-[34ch] text-[clamp(19px,1.9vw,27px)] leading-[1.15] font-extrabold tracking-[-0.032em] text-ink"
+            className="max-w-[34ch] text-[clamp(19px,1.9vw,27px)] leading-[1.15] font-extrabold tracking-[-0.032em] text-ink max-sm:text-[17.5px]"
           >
             Every site we build gets the same eleven inclusions, whatever its
             size.
@@ -191,7 +211,7 @@ export function OverviewOpen() {
               width of the column. They are a statement and the illustration of
               it, which is a paragraph. Set as one it fills the column the
               heading already sets. */}
-          <p className="mt-3 max-w-[78ch] text-[13.5px] leading-[1.6] text-quiet">
+          <p className="mt-3 max-w-[78ch] text-[13.5px] leading-[1.6] text-quiet max-sm:mt-2 max-sm:text-[12px] max-sm:leading-[1.5]">
             Not a tier, not an upgrade, and not something to ask for. A five
             page site gets the list. A fifty page site gets the list.
           </p>
@@ -200,24 +220,24 @@ export function OverviewOpen() {
             of them stacked is eleven lines of furniture against eleven lines
             of type, and at the hairline weight they separate the rows without
             being read as part of them. */}
-          <ol className="mt-5">
+          <ol className="mt-5 max-sm:mt-3.5">
             {INCLUDED.map((line, n) => (
               <li
                 key={line.say}
-                className="flex min-w-0 items-center gap-4 border-b border-hair/50 py-2"
+                className="flex min-w-0 items-center gap-4 border-b border-hair/50 py-2 max-sm:gap-2.5 max-sm:py-1.5"
               >
                 <span
                   aria-hidden
-                  className="flex size-8 flex-none items-center justify-center rounded-full bg-canvas font-mono text-[10px] font-bold text-ink tabular-nums"
+                  className="flex size-8 flex-none items-center justify-center rounded-full bg-canvas font-mono text-[10px] font-bold text-ink tabular-nums max-sm:size-6 max-sm:text-[9px]"
                 >
                   {String(n + 1).padStart(2, "0")}
                 </span>
                 <line.icon
                   aria-hidden
-                  className="size-5 flex-none text-quiet"
+                  className="size-5 flex-none text-quiet max-sm:size-4"
                   strokeWidth={1.5}
                 />
-                <span className="min-w-0 text-[13.5px] leading-[1.45] text-body">
+                <span className="min-w-0 text-[13.5px] leading-[1.45] text-body max-sm:text-[12.5px]">
                   {line.say}
                 </span>
               </li>
@@ -226,7 +246,7 @@ export function OverviewOpen() {
 
           {/* What happens next, which is the one thing this panel does not
             already answer. */}
-          <p className="mt-4 flex items-start gap-2.5 rounded-card bg-canvas px-4 py-2.5 text-[12px] leading-[1.55] text-quiet">
+          <p className="mt-4 flex items-start gap-2.5 rounded-card bg-canvas px-4 py-2.5 text-[12px] leading-[1.55] text-quiet max-sm:mt-3 max-sm:gap-2 max-sm:px-3 max-sm:py-2 max-sm:text-[11.5px]">
             <Info
               aria-hidden
               className="mt-px size-3.5 flex-none text-idx"
@@ -257,10 +277,13 @@ export function OverviewOpen() {
               The doors this card sets, at this card's sizes. Filled first and
               outlined second, so the pair reads as one choice with a default
               rather than two buttons of equal weight. */}
-          <div className="mt-5 flex flex-wrap justify-center gap-2.5">
+          {/* Full width on a phone, and stacked. Sized to their own words they
+              are two pills of different length read one under the other, which
+              is the same fault the doors on every other surface here had. */}
+          <div className="mt-5 flex flex-wrap justify-center gap-2.5 max-sm:mt-4 max-sm:flex-col max-sm:gap-2">
             <Link
               href={ROUTES.build}
-              className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90"
+              className="group/way thread-fill inline-flex items-center justify-center gap-2 rounded-pill px-5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:w-full max-sm:px-4 max-sm:py-2.5 max-sm:text-[12.5px]"
             >
               <PencilLine aria-hidden className="size-4 shrink-0" />
               Scope your website
@@ -273,7 +296,7 @@ export function OverviewOpen() {
 
             <Link
               href={ROUTES.book}
-              className="group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink"
+              className="group/way inline-flex items-center justify-center gap-2 rounded-pill border border-hair bg-field px-5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:w-full max-sm:px-4 max-sm:py-2.5 max-sm:text-[12.5px]"
             >
               <CalendarDays aria-hidden className="size-4 shrink-0 text-idx" />
               Book a meeting

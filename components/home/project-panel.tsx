@@ -115,8 +115,15 @@ export function ProjectPanel({
                    scrolling inside a fixed height is right side by side and
                    wrong one above the other: it splits a phone into two short
                    windows and puts the foot of each out of reach. */
+                /* `quiet-scroll` on the one that actually scrolls.
+
+                   Stacked, this grid is the scroller - the two halves inside it
+                   only take their own scroll from `lg` up, and both of those
+                   carry the class already. So on a phone the panel was the one
+                   surface on the site still drawing a bar down its right edge,
+                   a few pixels in from a rounded corner it does not follow. */
                 project.overview
-                  ? "auto-rows-min overflow-y-auto lg:auto-rows-auto lg:grid-cols-2 lg:grid-rows-1 lg:overflow-hidden"
+                  ? "quiet-scroll auto-rows-min overflow-y-auto lg:auto-rows-auto lg:grid-cols-2 lg:grid-rows-1 lg:overflow-hidden"
                   : "grid-rows-[minmax(0,34svh)_minmax(0,1fr)] overflow-hidden lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:grid-rows-1",
               )}
             >
