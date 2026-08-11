@@ -641,7 +641,21 @@ export function NotchedCard({ className }: { className?: string }) {
          the card to stretch it, or it sits at the top with the rest of the
          height empty underneath. Everything else here is `absolute` and out of
          the flow, so a flex column changes nothing for any of them. */
-      className={cn("relative max-sm:flex max-sm:flex-col", className)}
+      /* `justify-center` on a phone, and it is a belt to the braces above it.
+
+         The screen inside is told to fill the card - a floor of its own and
+         `flex-1` on top of it - and where that works this does nothing, because
+         a child filling its parent has nothing left to be centred in. Where it
+         does not, the alternative is what the screenshots kept showing: the card
+         at its own floor, the screen at its content height, and the difference
+         piled up under the last line.
+
+         One line, and the outcome stops depending on which of two heights wins.
+         Above `sm` the card is a fixed screenful and this is not read. */
+      className={cn(
+        "relative max-sm:flex max-sm:flex-col max-sm:justify-center",
+        className,
+      )}
     >
       {/* The slide, cut to the card's outline, and the one before it still
           drawn underneath while they cross.
@@ -1334,7 +1348,20 @@ export function NotchedCard({ className }: { className?: string }) {
                that cut and came out sliced by the outline with the arrow sitting
                on top of it. Measured from the cut rather than guessed, so it
                follows if the corner ever changes size. */
-            paddingBottom: size.w < TIGHT ? cut.dropHeight + 12 : 14,
+            /* The notch's depth at both ends, so the column is centred on the
+               card rather than in what is left after clearing a corner.
+
+               It was the drop cut plus twelve - about seventy-five points - held
+               against thirty at the top, so `justify-center` was centring the
+               words in a box whose floor was a hand's depth above the card's.
+               What that looked like was a screen sitting high with a band of
+               empty card under the last line.
+
+               The corner still has to be cleared, but only by the one thing that
+               reaches it: the line along the floor is inset from the right by
+               the width of the cut - see below - and everything above it is
+               narrower than the card and never gets near it. */
+            paddingBottom: size.w < TIGHT ? cut.barDepth : 14,
             paddingLeft: pad,
             paddingRight: pad,
           }}
@@ -1794,9 +1821,9 @@ export function NotchedCard({ className }: { className?: string }) {
                   href={SISTER.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="group/sister pointer-events-auto flex items-center gap-3.5 max-sm:flex-col max-sm:gap-1"
+                  className="group/sister pointer-events-auto flex items-center gap-3.5 max-sm:flex-col max-sm:gap-0.5"
                 >
-                  <span className="flex items-center gap-2.5 max-sm:gap-2">
+                  <span className="flex items-center gap-2.5 max-sm:gap-1.5">
                     <Image
                       src="/assets/logo.png"
                       alt=""
@@ -1805,7 +1832,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       aria-hidden
                       draggable={false}
                       sizes="64px"
-                      className="size-7 flex-none object-contain max-sm:size-5"
+                      className="size-7 flex-none object-contain max-sm:size-4"
                     />
                     {/* One sentence, and it is the only thing this line has
                         ever needed to say.
@@ -1821,7 +1848,7 @@ export function NotchedCard({ className }: { className?: string }) {
                         name is in it, in the ink the rest of the sentence is
                         set in, because it is a clause rather than a brand
                         standing on its own. */}
-                    <span className="text-[13px] leading-[1.4] font-semibold tracking-[-0.01em] text-quiet max-sm:text-center max-sm:text-[min(11.5px,3vw)] lg:text-[13.5px]">
+                    <span className="text-[13px] leading-[1.4] font-semibold tracking-[-0.01em] text-quiet max-sm:max-w-[30ch] max-sm:text-center max-sm:text-[min(10.5px,2.8vw)] lg:text-[13.5px]">
                       {/* The name in the ink, the rest in the quiet grey.
 
                           The sentence is about the two companies, and the one it
