@@ -575,6 +575,7 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
         <Pill
           tone="ink"
           arrow
+          busy={answers.sending}
           className="mt-5"
           disabled={answers.sending || missing.length > 0}
           onClick={send}
@@ -605,7 +606,6 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
           .
         </p>
       </div>
-
     </StageStep>
   );
 }

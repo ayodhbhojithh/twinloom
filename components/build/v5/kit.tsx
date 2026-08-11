@@ -115,6 +115,7 @@ export function SubTitle({
 export function Pill({
   tone = "quiet",
   arrow,
+  busy,
   onClick,
   disabled,
   className,
@@ -123,6 +124,14 @@ export function Pill({
   tone?: "quiet" | "ink";
   /** The diagonal arrow the home page puts on a way somewhere. */
   arrow?: boolean;
+  /**
+   * Something is happening and it is not over.
+   *
+   * The arrow is replaced by a turning ring rather than joined by one: an arrow
+   * points at a place this press is about to take you, and while it is being
+   * sent there is nowhere to point. One mark at a time.
+   */
+  busy?: boolean;
   onClick: () => void;
   disabled?: boolean;
   className?: string;
@@ -133,6 +142,7 @@ export function Pill({
       type="button"
       onClick={onClick}
       disabled={disabled}
+      aria-busy={busy || undefined}
       className={cn(
         "group/pill inline-flex cursor-pointer items-center gap-2 rounded-pill px-4.5 py-2 text-[14px] font-semibold transition-colors",
         tone === "ink"
@@ -143,7 +153,10 @@ export function Pill({
       )}
     >
       {children}
-      {arrow ? (
+
+      {busy ? (
+        <span aria-hidden className="turning size-3.5 flex-none" />
+      ) : arrow ? (
         <ArrowUpRight
           aria-hidden
           className="size-4 transition-transform group-hover/pill:translate-x-0.5 group-hover/pill:-translate-y-0.5"

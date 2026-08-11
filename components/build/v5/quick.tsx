@@ -513,6 +513,7 @@ export function QuickPane({
               <Pill
                 tone="ink"
                 arrow
+                busy={answers.sending}
                 className="justify-center"
                 disabled={answers.sending}
                 onClick={send}

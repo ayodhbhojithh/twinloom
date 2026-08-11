@@ -829,6 +829,30 @@
     animation: blank-blink 1.1s steps(1) infinite;
   }
 
+  /* A ring with a quarter missing, turning.
+
+     For the one moment on this site where somebody has to wait for us: a scoping
+     request is uploaded, written into a calendar and mailed, and none of that is
+     instant. A button that only changes its label has said what is happening;
+     one that also moves says it is still happening, which is the thing somebody
+     watching a slow connection actually wants to know.
+
+     Drawn from a border rather than an SVG or a background image - three sides
+     in the current colour and one transparent - so it takes the colour of
+     whatever it is standing on and costs one element. */
+  .turning {
+    border-radius: 999px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    animation: turn 0.7s linear infinite;
+  }
+
+  @keyframes turn {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
   @keyframes blank-blink {
     0%,
     50% {
