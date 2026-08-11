@@ -927,7 +927,21 @@ export function NotchedCard({ className }: { className?: string }) {
         {shown.view === "balls" ? (
           <Ballpit
             className="absolute inset-0"
-            count={220}
+            /* How many, read off the card rather than fixed at two hundred
+               and twenty.
+
+               The physics is every ball against every ball behind it, which is
+               `n²/2` pairs a frame: 24,000 at 220, 9,800 at 140, 4,000 at 90.
+               There is an early exit on one axis that rejects almost all of
+               them, but the loop itself still runs, and on a phone that loop is
+               the frame.
+
+               And a phone does not want two hundred anyway. The field is read as
+               a density rather than counted, and the density that fills a
+               window-wide card is a wall on a screen a quarter of the size -
+               fewer balls on a smaller card is the same picture, not a poorer
+               one. */
+            count={size.w < 640 ? 90 : size.w < 1100 ? 140 : 200}
             gravity={0}
             friction={1}
             wallBounce={0.95}
@@ -947,7 +961,12 @@ export function NotchedCard({ className }: { className?: string }) {
             minSize={0.3}
             maxSize={0.7}
             size0={1.1}
-            maxVelocity={0.05}
+            /* Half again as quick. The field is meant to be moving when
+               somebody arrives at it rather than settling into motion, and at
+               0.05 it drifted at about the rate of a clock hand - now that the
+               step is scaled by real time, this is the same number on every
+               display rather than whatever the refresh rate made of it. */
+            maxVelocity={0.075}
             maxZ={1.6}
           />
         ) : null}

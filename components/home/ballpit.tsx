@@ -444,14 +444,37 @@ class Physics {
       still.set(0, 0, 0).toArray(velocityData, 0);
     }
 
+    /* One frame's worth of time, as a multiple of a sixtieth of a second.
+     *
+     * The step below used to be `here.add(drift)` - the velocity applied once
+     * per frame, unscaled. That ties the speed of the whole field to how often
+     * the browser paints: at 120Hz everything moves twice as fast as it was
+     * drawn to, at 45 it crawls, and any frame that takes longer than the last
+     * is a visible change of pace. What reads as stutter in a scene like this is
+     * usually not a dropped frame at all - it is the motion changing speed
+     * because a frame took longer.
+     *
+     * Scaled by the real elapsed time, a fast display and a slow one show the
+     * same drift at the same rate, and a frame that runs late covers the ground
+     * it missed instead of pausing.
+     *
+     * Clamped at a thirtieth, because the other direction is worse: a tab left
+     * in the background and returned to hands over a delta of several seconds,
+     * and a step that size puts every ball through a wall. Late frames catch up;
+     * absent ones are given up. */
+    const step = Math.min(beat.delta, 1 / 30) * 60;
+
     for (let i = first; i < config.count; i += 1) {
       const at = 3 * i;
       here.fromArray(positionData, at);
       drift.fromArray(velocityData, at);
       drift.y -= beat.delta * config.gravity * sizeData[i];
-      drift.multiplyScalar(config.friction);
+      /* Friction raised to the step rather than multiplied by it: it is a
+         proportion kept per frame, so at half the frame rate it has to be
+         applied twice over, not doubled. */
+      drift.multiplyScalar(Math.pow(config.friction, step));
       drift.clampLength(0, config.maxVelocity);
-      here.add(drift);
+      here.addScaledVector(drift, step);
       here.toArray(positionData, at);
       drift.toArray(velocityData, at);
     }
@@ -720,7 +743,19 @@ class Beads extends Group {
     /* Enough bands to carry a gradient. The default sphere has sixteen from
        pole to pole, and a ramp laid over sixteen is a ramp you can count. One
        geometry for both meshes, because it is the same ball. */
-    const geometry = new SphereGeometry(1, 32, 28);
+    /* Sixteen by twelve, and it was thirty-two by twenty-eight.
+
+       That is about eighteen hundred triangles a ball against three hundred and
+       fifty, and there are two hundred of them: four hundred thousand triangles
+       a frame to draw spheres that are forty pixels across. A sphere's
+       silhouette is the only place tessellation shows, and at forty pixels a
+       sixteen-segment equator puts a vertex every two and a half pixels of
+       outline - past the point where another one moves anything.
+
+       The shading is per pixel and unchanged, which is what these actually look
+       like: the gloss, the clearcoat and the light through the back are all
+       fragment work and none of it cares how the ball was built. */
+    const geometry = new SphereGeometry(1, 16, 12);
 
     const skin = (colors: number[]) => {
       const material = new MeshPhysicalMaterial({
@@ -857,7 +892,19 @@ function createBallpit(canvas: HTMLCanvasElement, config: Partial<PitConfig>) {
      physically-shaded material with a scattering term is expensive per pixel.
      Three quarters of the density is a bit over half the shading, and side by
      side the difference is not findable. */
-  stage.maxPixelRatio = 1.5;
+  /* And a quarter, where it was a half.
+
+     The fragment cost of this screen is the whole card at whatever density this
+     asks for, shaded by a physical material with a scattering term in it - so
+     the number is squared and then multiplied by the most expensive shader on
+     the site. 1.5 is two and a quarter times the pixels of a plain buffer;
+     1.25 is a little over one and a half, which is a third off the most
+     expensive thing here for an edge nobody can find on a sphere at this size.
+
+     Antialiasing stays on, and does the work the density is no longer doing:
+     every edge in this picture is a curve, and MSAA is cheaper per edge than
+     shading the whole card again. */
+  stage.maxPixelRatio = 1.25;
   stage.resize();
 
   /* The measured box, handed over before the spheres are placed rather than
