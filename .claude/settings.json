@@ -177,7 +177,8 @@
       "Bash(grep -n \"motion.div\\\\|<a$\\\\|href={SISTER\\\\|<Image\\\\|className=\\\\|Custom software\")",
       "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/floor.py\")",
       "Bash(node -e \"console.log\\(JSON.stringify\\(require\\('./package.json'\\).scripts,null,2\\)\\)\")",
-      "Bash(NEXT_DIST_DIR=.next-check npm run check)"
+      "Bash(NEXT_DIST_DIR=.next-check npm run check)",
+      "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/revert-doors.py\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\prave\\Desktop\\PROJECTS\\very-good-websites\\components\\home",
