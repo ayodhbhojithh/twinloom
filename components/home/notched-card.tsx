@@ -1721,16 +1721,25 @@ export function NotchedCard({ className }: { className?: string }) {
                      was. At 84 per cent it took half the height of the card and
                      pushed the last button off the bottom; at 52 it had gone
                      from being the thing the screen opens on to a badge above
-                     some type. Ninety per cent, capped at 310, is near enough
-                     the full width of the card - which it can afford, because
-                     the picture is a mark in the middle of a square file with a
-                     good deal of air round it. The drawing grows; the ink stops
+                     some type.
+
+                     Seventy-four per cent, capped at 248, and it was ninety
+                     capped at 310. The screen has gained a third line of
+                     headline since that number was chosen, and between them the
+                     mark and the words were taking the whole card - the first
+                     thing on a screen does not have to be the largest thing on
+                     it, and this one shares the height with the trades, three
+                     lines of claim, a line under them and three doors.
+
+                     What still holds is why it can be as large as it is: the
+                     picture is a mark in the middle of a square file with a good
+                     deal of air round it, so the drawing grows and the ink stops
                      well short of either edge.
 
                      The room for it came from the clearance above, which was
                      reserving space for a row of links a phone does not
                      have. */
-                  className="pointer-events-none w-[84%] max-w-[320px] shrink-0 max-sm:w-[90%] max-sm:max-w-[310px] lg:order-2 lg:-ml-[12%] lg:w-[54%] lg:max-w-none"
+                  className="pointer-events-none w-[84%] max-w-[320px] shrink-0 max-sm:w-[74%] max-sm:max-w-[248px] lg:order-2 lg:-ml-[12%] lg:w-[54%] lg:max-w-none"
                 >
                   <MarkStage />
                 </motion.div>
@@ -1802,9 +1811,32 @@ export function NotchedCard({ className }: { className?: string }) {
                       right at 62px of headline is mean at 32. */}
                   <motion.h1
                     variants={HERO_RISE}
-                    className="mx-auto mt-3 max-w-[26ch] text-[clamp(28px,3.4vw,62px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink max-sm:mt-3 max-sm:max-w-none max-sm:text-[28px] max-sm:leading-[1.06] max-sm:tracking-[-0.042em] sm:mt-4 lg:mx-0 lg:mt-5"
+                    className="mx-auto mt-3 max-w-[26ch] text-[clamp(28px,3.2vw,88px)] leading-[1.05] font-extrabold tracking-[-0.042em] text-ink max-sm:mt-3 max-sm:max-w-none max-sm:text-[28px] max-sm:leading-[1.06] max-sm:tracking-[-0.042em] sm:mt-4 lg:mx-0 lg:mt-5"
                   >
-                    {/* A line each, and the last one coloured.
+                    {/* Larger where there is room to be larger.
+
+                        The ceiling was what was wrong, not the slope. It was
+                        3.4vw capped at 62 - a headline sized for a laptop and
+                        then held there however wide the window gets, so on a 2K
+                        screen it was the same 62 pixels with twice as much white
+                        either side, which reads as type left behind rather than
+                        as a headline.
+
+                        Raising the slope instead was the wrong fix and it showed
+                        at once: at 3.8 the longest of the three lines no longer
+                        fitted the column the words have - the mark takes the
+                        right half of the card - so "Connected to your systems."
+                        wrapped and the claim came out in four lines.
+
+                        3.2 capped at 88 sits a shade under the width that was
+                        already fitting, so nothing wraps that did not wrap
+                        before, and the cap is high enough that a window past
+                        about two thousand keeps growing instead of stopping.
+
+                        The floor stays at 28 and the phone has its own number
+                        below `sm`, so nothing about a small screen moves.
+
+                        A line each, and the last one coloured.
 
                         The parts were two - an ink half that wrapped wherever
                         the measure put it, and a gradient half on its own line.
@@ -1888,11 +1920,11 @@ export function NotchedCard({ className }: { className?: string }) {
                        column gives the screen a single left and right edge, and
                        it is what a control at the foot of a phone looks like
                        everywhere else. */
-                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 max-sm:mx-auto max-sm:mt-5 max-sm:w-full max-sm:max-w-[268px] max-sm:flex-col max-sm:gap-2 sm:mt-8 lg:mt-9 lg:flex-nowrap lg:justify-start lg:gap-2.5 2xl:mt-10"
+                    className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2 max-sm:mx-auto max-sm:mt-4 max-sm:w-full max-sm:max-w-[236px] max-sm:flex-col max-sm:gap-1.5 sm:mt-8 lg:mt-9 lg:flex-nowrap lg:justify-start lg:gap-2.5 2xl:mt-10"
                   >
                     <Link
                       href={ROUTES.build}
-                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:justify-center max-sm:gap-2 max-sm:px-3.5 max-sm:py-2.5 max-sm:text-[13px] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]"
+                      className="group/way thread-fill inline-flex items-center gap-2 rounded-pill px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 max-sm:justify-center max-sm:gap-1.5 max-sm:px-3 max-sm:py-2 max-sm:text-[12px] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]"
                     >
                       <PencilLine aria-hidden className="size-4 shrink-0" />
                       Scope your website
@@ -1916,7 +1948,7 @@ export function NotchedCard({ className }: { className?: string }) {
                       },
                     ].map((way) => {
                       const className =
-                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:justify-center max-sm:gap-2 max-sm:px-3.5 max-sm:py-2.5 max-sm:text-[13px] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]";
+                        "group/way inline-flex items-center gap-2 rounded-pill border border-hair bg-field px-4.5 py-2.5 text-[13.5px] font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink max-sm:justify-center max-sm:gap-1.5 max-sm:px-3 max-sm:py-2 max-sm:text-[12px] lg:px-5 lg:py-3 lg:text-[14.5px] 2xl:px-5.5 2xl:py-3.5 2xl:text-[15.5px]";
                       const body = (
                         <>
                           <way.icon
