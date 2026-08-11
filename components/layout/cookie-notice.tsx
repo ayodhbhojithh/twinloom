@@ -8,6 +8,10 @@ import { Cookie } from "lucide-react";
 import { OPTIONAL, setConsent, useConsent } from "@/lib/consent";
 import { ROUTES } from "@/lib/site";
 
+/** Nothing to subscribe to: the answer to "are we in a browser" never changes
+ *  within a page's life. */
+const stay = () => () => {};
+
 /**
  * What this website stores, and the reader's answer about it.
  *
@@ -28,10 +32,6 @@ import { ROUTES } from "@/lib/site";
  * asks the question anyway, because the answer is what an analytics script would
  * have to check before it could ever load. See `lib/consent`.
  */
-/** Nothing to subscribe to: the answer to "are we in a browser" never changes
- *  within a page's life. */
-const stay = () => () => {};
-
 export function CookieNotice() {
   const choice = useConsent();
 

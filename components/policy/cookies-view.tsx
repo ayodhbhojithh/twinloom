@@ -44,18 +44,26 @@ export function CookiesView() {
         title="Cookies and similar technologies"
         updated={POLICY_UPDATED}
         scope="Covers everything that stores information on, or reads information from, your browser or device when you use this website. Not only items technically named cookies."
-        note="Where a technology is not strictly necessary and consent is required, it is not activated before you choose."
+        note="This website sets no cookies and loads no third-party content on arrival. Where a technology is not strictly necessary and consent is required, it is not activated before you choose."
       />
 
       <Clause s={S.choice}>
         <P>
-          The consent banner offers three options: accept optional technologies,
-          reject optional technologies, or choose by category. Accepting and
-          rejecting are presented with equal prominence.
+          This website sets no cookies. What it stores is what you type - a
+          brief, a booking - kept on your own device so you can come back to it,
+          and one note of the choice you make below. None of it is shared, and
+          none of it follows you anywhere.
         </P>
         <P>
-          You can change your choice at any time through{" "}
-          <b>Cookie settings</b> in the footer.
+          The notice on your first visit offers two answers, presented with
+          equal prominence: keep to what is needed, or allow the optional as
+          well. There are no optional technologies in use today, so the two
+          behave alike - the answer is recorded now because anything optional
+          added later has to read it before it can run.
+        </P>
+        <P>
+          You can change your answer at any time through <b>Cookie settings</b>{" "}
+          in the footer, which asks the question again.
         </P>
       </Clause>
 
