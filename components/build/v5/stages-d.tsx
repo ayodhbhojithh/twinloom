@@ -3,10 +3,17 @@
 import { useMemo, useState } from "react";
 import { Check, Search } from "lucide-react";
 
-import { ORG_KINDS, SECTORS, SECTOR_TAGS, TYPE_NAMES } from "@/lib/build/v5";
+import {
+  ORG_KINDS,
+  SECTORS,
+  SECTOR_TAGS,
+  SYS_LINKS,
+  TYPE_NAMES,
+} from "@/lib/build/v5";
 import { SYSTEM_LINKS } from "@/lib/build/v5-systems";
 import {
   chipOn,
+  chipsIn,
   isOn,
   picked,
   toggleChip,
@@ -16,7 +23,7 @@ import {
 import { cn } from "@/lib/utils";
 
 import { StageStep } from "./frame";
-import { H, Kicker, OwnList, Sub, SubTitle, TickRow } from "./kit";
+import { Chosen, H, Kicker, OwnList, Sub, SubTitle, TickRow } from "./kit";
 
 /* ---------------------------------------------------------------------------
    The three steps v5.4 added: the organisation, the working parts inside a
@@ -335,6 +342,17 @@ export function StageWidgets({ at, answers, onGo }: StepProps) {
  * something, and starting from nothing.
  */
 export function StageSystems({ at, answers, onGo }: StepProps) {
+  /* Everything ticked, plus everything typed into the box under the list.
+
+     Both, because both are answers to the same question. A summary that read
+     back the ticks and quietly dropped the three systems somebody named
+     themselves would be worse than no summary: it would look like a record and
+     be missing the part nobody else could have told us. */
+  const talking = [
+    ...chipsIn(answers, "syslink").map((key) => SYS_LINKS[key] ?? key),
+    ...(answers.own["systems-own"] ?? []),
+  ].filter(Boolean);
+
   return (
     <StageStep at={at} answers={answers} onGo={onGo}>
       <H>What does it have to talk to?</H>
@@ -377,6 +395,8 @@ export function StageSystems({ at, answers, onGo }: StepProps) {
         answers={answers}
         stepKey="systems"
       />
+
+      <Chosen title="What it has to talk to" groups={[{ items: talking }]} />
     </StageStep>
   );
 }

@@ -625,6 +625,87 @@ export function RefRow({
   );
 }
 
+/**
+ * What this step has been told, read back at the foot of it.
+ *
+ * A list of thirteen or sixteen rows is answered by scrolling, and by the time
+ * somebody reaches the bottom of one the top of it is two screens away. The
+ * panel beside the tool carries the whole run and this does not - it says only
+ * what this one question now holds, in the words the rows use, in one place
+ * the eye can check before moving on.
+ *
+ * Set in columns, not run together as a sentence. Sixteen names joined by
+ * commas is a paragraph nobody reads to the end of - and the one thing anybody
+ * checks a list like this for is whether a particular name is in it, which is
+ * a scan down a column and not a read along a line.
+ *
+ * Not chips either. Everything tickable in this tool is a chip, so a row of
+ * chips under a list of them reads as more of the list - another set to choose
+ * from, or worse, the same set duplicated. A dot and a name is a record of
+ * something, and nothing on it can be pressed.
+ *
+ * Nothing at all until something is chosen. An empty box headed "what you have
+ * chosen" is a box telling somebody off for not having started.
+ */
+export function Chosen({
+  title,
+  groups,
+}: {
+  title: string;
+  /** One line each. A group with nothing in it is left out rather than shown
+      empty, so a step where only one of three answers was used says one thing
+      rather than three, two of them blank. */
+  groups: { label?: string; items: string[] }[];
+}) {
+  const kept = groups.filter((group) => group.items.length > 0);
+  const total = kept.reduce((sum, group) => sum + group.items.length, 0);
+
+  if (!total) return null;
+
+  return (
+    <section className="mx-auto mt-8 w-full max-w-[860px] rounded-[16px] bg-canvas p-5 max-sm:mt-6 max-sm:p-4">
+      <div className="flex items-baseline gap-2.5">
+        <Kicker className="text-ink">{title}</Kicker>
+        <span className="font-mono text-[10px] font-bold text-idx tabular-nums">
+          {total}
+        </span>
+      </div>
+
+      <div className="mt-3.5 flex flex-col gap-4 max-sm:mt-3 max-sm:gap-3.5">
+        {kept.map((group, at) => (
+          <div key={group.label ?? at}>
+            {group.label ? (
+              <b className="block text-[12.5px] leading-[1.3] font-semibold text-ink">
+                {group.label}
+              </b>
+            ) : null}
+
+            <ul
+              className={cn(
+                "grid gap-x-7 gap-y-1.5 sm:grid-cols-2 lg:grid-cols-3 max-sm:gap-y-1",
+                group.label && "mt-2",
+              )}
+            >
+              {group.items.map((item, n) => (
+                <li
+                  key={`${item}-${n}`}
+                  className="flex items-start gap-2 text-[12.5px] leading-[1.45] text-body"
+                >
+                  <span
+                    aria-hidden
+                    className="mt-[7px] size-1 flex-none rounded-pill bg-idx"
+                  />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 /** A field with an Add beside it, for anything that grows a list. */
 export function AddRow({
   placeholder,

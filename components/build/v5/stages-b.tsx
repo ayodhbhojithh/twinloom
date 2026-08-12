@@ -28,6 +28,7 @@ import {
   AddRow,
   AttachChip,
   Chip,
+  Chosen,
   H,
   Kicker,
   Misses,
@@ -325,6 +326,17 @@ export function StageStyle({ at, answers, onGo }: StepProps) {
 export function StageHave({ at, answers, onGo }: StepProps) {
   const [open, setOpen] = useState(false);
 
+  /* The thirteen rows read back by answer, not by row.
+
+     "You would like help with a logo and photographs of your own" is a
+     sentence about the job. Thirteen lines each saying which of three boxes a
+     row is in is the list again, and the list is directly above. */
+  const rows = HAVE_GROUPS.flatMap((group) => group.rows);
+  const had = (answer: string) =>
+    rows
+      .filter((row) => chipsIn(answers, row.q)[0] === answer)
+      .map((row) => row.title.toLowerCase());
+
   if (open) {
     return (
       <StageStep at={at} answers={answers} onGo={onGo} scrollKey="dw-have">
@@ -424,6 +436,15 @@ export function StageHave({ at, answers, onGo }: StepProps) {
           {CARD_BY["dw-have"].title}
         </button>
       </div>
+
+      <Chosen
+        title="What you have said"
+        groups={[
+          { label: "You already have", items: had("have") },
+          { label: "Needs tidying", items: had("tidy") },
+          { label: "You would like help with", items: had("help") },
+        ]}
+      />
     </StageStep>
   );
 }
