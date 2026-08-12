@@ -232,7 +232,13 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
       onGo={onGo}
       corner={
         <Disc
-          label={answers.sending ? "Sending" : "Send my scoping request"}
+          label={
+            answers.sending
+              ? "Sending"
+              : answers.ref
+                ? "Send the updated version"
+                : "Send my scoping request"
+          }
           tone="ink"
           disabled={answers.sending || missing.length > 0}
           onClick={send}
@@ -241,11 +247,42 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
         </Disc>
       }
     >
-      <H>Send it.</H>
-      <Sub>
-        You can send at any point - what changes is what we can do with what
-        arrives. No bar, no percentage, no grade.
-      </Sub>
+      {/* Sent once already, or not yet - and the screen has to know which.
+
+          It said "Send it." either way. Somebody who had sent, pressed "Keep
+          answering", changed two answers and come back was invited to send a
+          scoping request as though the first one had not happened - no mention
+          of it, no reference, and a button whose words promised a new
+          submission.
+
+          What actually happens is a second version under the same reference:
+          `deskRef` does not change after a send, and `sendScope` marks the
+          payload as a follow-up. The screen was the only part of that chain
+          that did not know. */}
+      {answers.ref ? (
+        <>
+          <H>Send the updated version.</H>
+          <Sub>
+            You have already sent this one. Anything you have changed since goes
+            under the same reference, and the newer version is the one we read.
+          </Sub>
+
+          <p className="mx-auto mt-4 flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
+            <Kicker>Your reference</Kicker>
+            <b className="font-mono text-[13.5px] font-bold tracking-[0.06em] text-ink tabular-nums">
+              {answers.ref}
+            </b>
+          </p>
+        </>
+      ) : (
+        <>
+          <H>Send it.</H>
+          <Sub>
+            You can send at any point - what changes is what we can do with what
+            arrives. No bar, no percentage, no grade.
+          </Sub>
+        </>
+      )}
 
       {/* Who is asking, on the step that sends rather than on one of its own.
 

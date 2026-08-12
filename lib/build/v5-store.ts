@@ -316,6 +316,10 @@ export function forgetAnswers() {
   try {
     window.sessionStorage.removeItem(KEY);
     window.sessionStorage.removeItem(PLACE_KEY);
+    /* And the reference the answers were filed under. It is kept in its own
+       module because uploads need it before there are any answers, but it has
+       the same lifetime as they do - see `lib/build/desk`. */
+    window.sessionStorage.removeItem("twinloom.build.desk");
   } catch {
     /* Nothing to do, and nothing depends on it: what is in memory is what the
        page is showing. */
