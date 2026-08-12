@@ -183,12 +183,30 @@ export function scopeReceipt({
      heading over nothing reads as a message that failed to load. */
   if (!sent.length) sent.push("Your answers to the questions");
 
+  /* Where the meeting stands, in their words rather than ours.
+
+     "The invitation is in your inbox" rather than "attached": the calendar sends
+     its own invitation when the event is written, and this message carries no
+     `.ics` of its own. Telling somebody to look for an attachment that is not
+     there is a worse failure than not mentioning it - they go looking, find
+     nothing, and now doubt the booking as well. */
   const talk =
     meeting.kind === "booked" && meeting.when
-      ? `You booked a call for ${meeting.when}.`
+      ? `You booked ${meeting.when}. The invitation is in your inbox.`
       : meeting.kind === "slots"
-        ? "You gave us some times that suit you. We will confirm one of them."
+        ? "You gave us the times that work for you. We will confirm a slot, or come back with alternatives."
         : "We will be in touch to arrange a time.";
+
+  /* "your answers, 3 attachments and 2 notes" - a list read as a sentence.
+
+     It was a bulleted block under its own heading, which is a manifest, and a
+     manifest invites the reader to audit it. Set into the line that introduces
+     the request it does the one job it is for: letting somebody notice that
+     something they meant to attach is not in the count. */
+  const listOf = (parts: string[]) =>
+    parts.length > 1
+      ? `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`
+      : (parts[0] ?? "");
 
   const item = (text: string) =>
     `<div style="margin:6px auto 0;max-width:380px;font-family:${SANS};font-size:13px;line-height:1.6;color:${BODY}">${text}</div>`;
@@ -223,14 +241,9 @@ export function scopeReceipt({
 
     ${rule}
 
-    ${heading("What you sent")}
-    ${sent.map((line) => item(esc(line))).join("")}
-
-    ${rule}
-
     ${heading("What happens next")}
     ${p(
-      "We read it in full. Then we talk it through with you properly - your requirements in more depth, how we work, and what the next steps look like.",
+      "We read what you have sent, and will talk through your requirements, how we work and the next steps in more depth when we meet.",
     )}
     ${p("Nothing you have sent commits you to anything, and nothing in it is priced.")}
     ${p(`<b style="color:${INK};font-weight:600">${esc(talk)}</b>`)}
@@ -240,7 +253,7 @@ export function scopeReceipt({
         ? `${rule}
            ${heading("Your request, as we have it")}
            ${p(
-             "Everything below is what arrived. If any of it is wrong or missing, say so in a reply.",
+             `Everything below is what arrived: ${listOf(sent)}. If any of it is wrong or missing, say so in a reply.`,
              12,
            )}
            <div style="margin:4px 0 0;text-align:left">${setDocument(document, {
@@ -257,8 +270,8 @@ export function scopeReceipt({
       addTo
         ? `Reply to this message, or ${link(
             addTo,
-            "add to your request",
-          )} - it goes under the same reference.`
+            "open your request",
+          )} to add to it.`
         : "Reply to this message and it goes under the same reference.",
     )}
     ${p(
