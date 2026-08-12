@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useSyncExternalStore } from "react";
+import { ArrowLeft } from "lucide-react";
 
 import { STEPS } from "@/lib/build/v5";
 import { adoptDesk } from "@/lib/build/desk";
@@ -294,6 +295,32 @@ export function BuildFlow() {
             />
           ) : (
             <>
+              {/* Back to the two ways in, from the long one as well.
+
+                  The short route has carried this since it was built - a
+                  route somebody can only leave by sending is a route they
+                  were pushed down rather than chose - and the guided one,
+                  which is the harder of the two to be in by accident, had
+                  nothing. Pressing "Start the guided journey" was a door that
+                  locked behind you: ten steps, a strip, and no way back to
+                  the pair of cards you had just been looking at.
+
+                  It leaves the answers alone. Both routes write into the same
+                  set, so this changes which screen is in front of them and
+                  nothing else - and `route` is put back to the choice
+                  deliberately, or the way out would land on the other form
+                  rather than on the two doors. */}
+              <div className="mb-4 flex justify-center max-sm:mb-3">
+                <button
+                  type="button"
+                  onClick={() => setPlace({ tab: "quick", route: "choose" })}
+                  className="inline-flex cursor-pointer items-center gap-2 font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase transition-colors hover:text-ink"
+                >
+                  <ArrowLeft aria-hidden className="size-3.5" />
+                  Both ways in
+                </button>
+              </div>
+
               <StepStrip step={step} answers={answers} onGo={goStep} />
 
               {/* One column. The running answer is the panel beside this now
