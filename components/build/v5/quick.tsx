@@ -59,7 +59,7 @@ import {
   H,
   Kicker,
   Pill,
-  RefText,
+  RefRow,
   TickSet,
 } from "./kit";
 import { FIELDS } from "./stages-c";
@@ -394,31 +394,13 @@ export function QuickPane({
               {answers.refs.length ? (
                 <ul className="mt-3 flex flex-col gap-1.5 max-sm:mt-2.5">
                   {answers.refs.map((ref) => (
-                    <li
+                    <RefRow
                       key={ref.n}
-                      className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[10px] bg-canvas px-3 py-1.5 max-sm:gap-x-2 max-sm:px-2.5 max-sm:py-2"
-                    >
-                      <Kicker className="w-[64px] flex-none">{ref.kind}</Kicker>
-                      <span className="min-w-[12ch] flex-1 text-[13px] leading-[1.35] text-ink">
-                        <RefText text={ref.text} />
-                      </span>
-                      <input
-                        value={answers.like[ref.n] ?? ""}
-                        placeholder="What you like about it"
-                        onChange={(event) => setLike(ref.n, event.target.value)}
-                        className={cn(
-                          "h-7 w-full rounded-field border border-border bg-field px-2.5 text-[12px] text-ink outline-none transition-colors",
-                          "placeholder:text-label focus:border-ink sm:w-[200px]",
-                        )}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => dropRef(ref.n)}
-                        className="flex-none cursor-pointer font-mono text-[9px] font-bold tracking-[0.12em] text-label uppercase transition-colors hover:text-ink"
-                      >
-                        Remove
-                      </button>
-                    </li>
+                      item={ref}
+                      like={answers.like[ref.n] ?? ""}
+                      onLike={(words) => setLike(ref.n, words)}
+                      onDrop={() => dropRef(ref.n)}
+                    />
                   ))}
                 </ul>
               ) : null}

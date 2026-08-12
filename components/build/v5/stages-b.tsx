@@ -19,7 +19,6 @@ import {
   touchStep,
   type Answers,
 } from "@/lib/build/v5-store";
-import { cn } from "@/lib/utils";
 
 import { isPicture, type Attached } from "@/lib/build/upload";
 
@@ -32,7 +31,7 @@ import {
   H,
   Kicker,
   Misses,
-  RefText,
+  RefRow,
   Sub,
   SubTitle,
   TickInline,
@@ -513,31 +512,13 @@ export function StageRefs({ at, answers, onGo }: StepProps) {
         {answers.refs.length ? (
           <ul className="mt-4 flex flex-col gap-1.5">
             {answers.refs.map((ref) => (
-              <li
+              <RefRow
                 key={ref.n}
-                className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[10px] bg-canvas px-3 py-1.5"
-              >
-                <Kicker className="w-[64px] flex-none">{ref.kind}</Kicker>
-                <span className="min-w-[12ch] flex-1 text-[13px] leading-[1.35] text-ink">
-                  <RefText text={ref.text} />
-                </span>
-                <input
-                  value={answers.like[ref.n] ?? ""}
-                  placeholder="What you like about it"
-                  onChange={(event) => setLike(ref.n, event.target.value)}
-                  className={cn(
-                    "h-7 w-full rounded-field border border-border bg-field px-2.5 text-[12px] text-ink outline-none transition-colors",
-                    "placeholder:text-label focus:border-ink sm:w-[220px]",
-                  )}
-                />
-                <button
-                  type="button"
-                  onClick={() => dropRef(ref.n)}
-                  className="flex-none cursor-pointer font-mono text-[9px] font-bold tracking-[0.12em] text-label uppercase transition-colors hover:text-ink"
-                >
-                  Remove
-                </button>
-              </li>
+                item={ref}
+                like={answers.like[ref.n] ?? ""}
+                onLike={(words) => setLike(ref.n, words)}
+                onDrop={() => dropRef(ref.n)}
+              />
             ))}
           </ul>
         ) : (

@@ -207,9 +207,23 @@ export function NotesBody({
                         <Kicker>{ref.kind}</Kicker>
                       </div>
 
+                      {/* What it was written against, above what it says.
+
+                          Same reason as the row on the step: a card reading
+                          "Attach a few" is a card about nothing until you know
+                          which question asked for it. */}
+                      {ref.where?.q ? (
+                        <p className="text-[12.5px] leading-[1.35] font-semibold text-ink">
+                          {ref.where.q}
+                        </p>
+                      ) : null}
+
                       <p
                         className={cn(
-                          "text-[13px] leading-[1.5] text-ink",
+                          ref.where?.q && "mt-0.5",
+                          ref.where?.q
+                            ? "text-[12px] leading-[1.45] text-quiet"
+                            : "text-[13px] leading-[1.5] text-ink",
                           written
                             ? "font-medium"
                             : "font-mono text-[12px] break-all",
@@ -225,7 +239,11 @@ export function NotesBody({
                       {!written || liked ? (
                         <input
                           value={liked}
-                          placeholder="What you like about it"
+                          placeholder={
+                            ref.tie
+                              ? "Anything to say about it"
+                              : "What you like about it"
+                          }
                           onChange={(event) =>
                             setLike(ref.n, event.target.value)
                           }

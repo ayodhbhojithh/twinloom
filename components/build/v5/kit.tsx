@@ -14,6 +14,7 @@ import {
   dropOwn,
   dropRefTied,
   type Answers,
+  type Ref,
   type Where,
 } from "@/lib/build/v5-store";
 import { cn } from "@/lib/utils";
@@ -534,6 +535,93 @@ export function Field({
         <p className="mt-1 text-[12px] leading-[1.4] text-label">{why}</p>
       ) : null}
     </div>
+  );
+}
+
+/**
+ * One thing on the desk, as a row: what it belongs to, what it is, and a line
+ * about it.
+ *
+ * The question comes first and the promise is written under it, which is the
+ * way round it was not. A row said "Attach a few" and nothing else - and five
+ * rows in a column read "Attach the original files", "Attach it", "Attach a
+ * few", "Attach a few", "Link or attach", which is a list of five instructions
+ * with no subjects. Two of them were the same words from two different
+ * questions. The reader had pressed those buttons ten minutes and two steps
+ * ago; the button's own label is the last thing they need to be told.
+ *
+ * Nothing new is stored for this. Every one of these already knew the question
+ * it came from - `where.q`, set when the control put it on the desk - and the
+ * list simply was not showing it.
+ *
+ * Defined here because three screens draw this list: the step, the quick pane
+ * and the desk. Three copies of a row is three rows that disagree by the second
+ * edit, and this one had already drifted by twenty pixels of field width.
+ */
+export function RefRow({
+  item,
+  like,
+  onLike,
+  onDrop,
+}: {
+  item: Ref;
+  like: string;
+  onLike: (words: string) => void;
+  onDrop: () => void;
+}) {
+  /* What it was written against, where it was written against anything. A note
+     typed straight onto the desk has no question behind it and gets the single
+     line it has always had. */
+  const asked = item.where?.q;
+
+  return (
+    <li className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[10px] bg-canvas px-3 py-1.5 max-sm:gap-x-2 max-sm:px-2.5 max-sm:py-2">
+      <Kicker className="w-[64px] flex-none">{item.kind}</Kicker>
+
+      <span className="min-w-[12ch] flex-1">
+        {asked ? (
+          <>
+            <b className="block text-[13px] leading-[1.3] font-semibold text-ink">
+              {asked}
+            </b>
+            <span className="mt-0.5 block text-[12px] leading-[1.35] text-quiet">
+              <RefText text={item.text} />
+            </span>
+          </>
+        ) : (
+          <span className="block text-[13px] leading-[1.35] text-ink">
+            <RefText text={item.text} />
+          </span>
+        )}
+      </span>
+
+      {/* The prompt fits what the row is.
+
+          "What you like about it" is the right question about a website
+          somebody has shown us and a strange one to ask about their own logo.
+          A promise to send something is answered with anything that needs
+          saying about it, which is what the owner reads under "Said about it"
+          when the file arrives. */}
+      <input
+        value={like}
+        placeholder={
+          item.tie ? "Anything to say about it" : "What you like about it"
+        }
+        onChange={(event) => onLike(event.target.value)}
+        className={cn(
+          "h-7 w-full rounded-field border border-border bg-field px-2.5 text-[12px] text-ink outline-none transition-colors",
+          "placeholder:text-label focus:border-ink sm:w-[210px]",
+        )}
+      />
+
+      <button
+        type="button"
+        onClick={onDrop}
+        className="flex-none cursor-pointer font-mono text-[9px] font-bold tracking-[0.12em] text-label uppercase transition-colors hover:text-ink"
+      >
+        Remove
+      </button>
+    </li>
   );
 }
 

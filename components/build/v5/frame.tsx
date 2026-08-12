@@ -118,15 +118,18 @@ export function StageStep({
           </span>
         </div>
       }
-      corner={
-        corner !== undefined ? (
-          corner
-        ) : !last ? (
-          <Disc label="Next step" tone="ink" onClick={() => onGo(at + 1)}>
-            <ArrowRight className="size-[18px]" strokeWidth={2.2} />
-          </Disc>
-        ) : null
-      }
+      /* Only where a step brings one. The way on used to live here as an ink
+         disc standing in the bottom right cut, and it was the wrong place for
+         it twice over: it is a round arrow with no words, so it said "next"
+         only to somebody who already knew, and it sat in the one corner of a
+         very wide surface furthest from the last thing they answered. On a
+         phone that is a thumb reaching across the screen.
+
+         It is written down in the middle of the floor now, beside the way out.
+         The cut closes with it - see `Stage`, which collapses the corner when
+         nothing stands in it, so what is left is a plain edge rather than a
+         bite taken out of the card for a control that is not there. */
+      corner={corner}
       foot={
         last ? undefined : (
           /* The way out, on the floor of every step.
@@ -146,7 +149,7 @@ export function StageStep({
 
              No rule above it. The surface already ends a few pixels below, and
              a line drawn to say so is a second edge inside the first one. */
-          <div className="flex flex-col items-center gap-3.5">
+          <div className="flex flex-col items-center gap-3.5 max-sm:gap-3">
             {/* Off on a phone. The foot is held to the span between the two
                 bottom cuts, and on a narrow surface that span is barely wider
                 than the button - a sentence set in it wraps to five lines and
@@ -157,18 +160,46 @@ export function StageStep({
               is written down as an assumption, not as a gap.
             </p>
 
-            <button
-              type="button"
-              onClick={() => onGo(STEPS.length - 1)}
-              className="group flex cursor-pointer items-center gap-2 rounded-pill bg-ink px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-85 max-sm:gap-1.5 max-sm:px-3 max-sm:py-1.5 max-sm:text-[12px] max-sm:leading-[1.3]"
-            >
-              Send what you have so far
-              <ArrowUpRight
-                aria-hidden
-                className="size-4 transition-transform group-hover:-translate-y-px group-hover:translate-x-px"
-                strokeWidth={2.4}
-              />
-            </button>
+            {/* The ordinary way on first, and the way out beside it.
+
+                Filled, because it is what all but one reader does next and the
+                thing that carries the run. The send is the exception - it is
+                offered on every step and taken on few - so it steps back to
+                the quiet weight it should always have had next to it. Two
+                filled pills side by side is two firsts.
+
+                The next step is named rather than pointed at. "Next" is a
+                direction; "Next: The words" is somewhere to go, and it is the
+                one thing the bar at the top of the card cannot say because it
+                only knows where you are. */}
+            <div className="flex flex-wrap items-center justify-center gap-2.5 max-sm:gap-2">
+              <button
+                type="button"
+                onClick={() => onGo(at + 1)}
+                className="group flex cursor-pointer items-center gap-2 rounded-pill bg-ink px-4.5 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-85 max-sm:gap-1.5 max-sm:px-3.5 max-sm:py-1.5 max-sm:text-[12px] max-sm:leading-[1.3]"
+              >
+                <span className="max-sm:hidden">Next: {STEPS[at + 1].n}</span>
+                <span className="sm:hidden">Next step</span>
+                <ArrowRight
+                  aria-hidden
+                  className="size-4 transition-transform group-hover:translate-x-0.5"
+                  strokeWidth={2.4}
+                />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onGo(STEPS.length - 1)}
+                className="group flex cursor-pointer items-center gap-2 rounded-pill bg-well px-4.5 py-2 text-[13px] font-semibold text-ink transition-colors hover:bg-hair max-sm:gap-1.5 max-sm:px-3.5 max-sm:py-1.5 max-sm:text-[12px] max-sm:leading-[1.3]"
+              >
+                Send what you have so far
+                <ArrowUpRight
+                  aria-hidden
+                  className="size-4 transition-transform group-hover:-translate-y-px group-hover:translate-x-px"
+                  strokeWidth={2.4}
+                />
+              </button>
+            </div>
           </div>
         )
       }

@@ -190,12 +190,23 @@ export function scopeDocument(answers: Answers) {
     "NOTES AND LINKS",
     notes.length
       ? notes
-          .map(
-            (ref) =>
-              `- [${ref.kind}] ${ref.text}${
-                answers.like[ref.n] ? ` - ${answers.like[ref.n]}` : ""
-              }\n  Written at: ${whereOf(ref.where)}`,
-          )
+          .map((ref) => {
+            const said = answers.like[ref.n] ? ` - ${answers.like[ref.n]}` : "";
+
+            /* The question first where the desk knows one.
+
+               It read "[To send] Attach a few" with the question demoted to a
+               "Written at" line underneath, which put the instruction we wrote
+               above the subject they chose - and made two promises from two
+               different questions identical for the length of a line. Where
+               there is no question behind it, nothing is lost: a note typed
+               onto the desk keeps the line saying where it was written. */
+            return ref.where?.q
+              ? `- [${ref.kind}] ${ref.where.q}: ${ref.text}${said}`
+              : `- [${ref.kind}] ${ref.text}${said}\n  Written at: ${whereOf(
+                  ref.where,
+                )}`;
+          })
           .join("\n")
       : "- None added",
     "",
