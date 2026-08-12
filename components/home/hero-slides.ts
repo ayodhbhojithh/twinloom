@@ -61,12 +61,9 @@ import type { Project } from "./projects";
  *
  * `wave` has gone: a claim set over a horizon of dots, making the same argument
  * as a screen two along from it on a drawing that takes a moment to resolve into
- * anything - a moment a card in the middle of a turn does not have. `wave-dots`
- * is still on disk for whatever wants a field of dots next.
+ * anything - a moment a card in the middle of a turn does not have.
  */
-/* `balls` has gone with the screen it drew - see the note in the run below.
-   `ballpit.tsx` still exists and `home-v4` still renders it, so the type does
-   not name it and nothing here reaches it. */
+/* `balls` has gone with the screen it drew - see the note in the run below. */
 export type SlideView = "film" | "particles" | "blank" | "mark";
 
 /**
@@ -192,7 +189,8 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
      What it said is said elsewhere: the design is agreed before anything is
      built, which is step six of how we work and a line in the panel that opens
      off this card. The words are in git if a lighter version of the idea is ever
-     wanted - `ballpit.tsx` is untouched and `home-v4` still renders it.
+     wanted. What is not kept is the code: two hundred spheres, a physics step
+     and three quarters of a megabyte of WebGL, imported by nothing.
   */
 
   /* The fourth: a film, and what it is doing there.

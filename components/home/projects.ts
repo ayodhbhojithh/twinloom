@@ -7,9 +7,10 @@
    describe kinds of work, which is true of every one of them.
 
    Three, and each one has artwork of its own. There were five, and the two that
-   have gone were pointing at `/work-shop.png` and `/work-trade.png` - pictures
-   made for another part of the site and borrowed to make the list longer. A
-   portfolio padded with the wrong pictures is worse than a short one.
+   have gone were pointing at a pair of pictures made for another part of the
+   site and borrowed to make the list longer. A portfolio padded with the wrong
+   pictures is worse than a short one. The two files went with them - thirteen
+   megabytes of PNG that nothing had rendered since.
 
    The `tone` is the colour a card sits on while its picture is still loading, so
    the shape is there before the image is. It is read from the artwork rather than

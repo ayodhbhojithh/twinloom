@@ -41,6 +41,65 @@ const nextConfig: NextConfig = {
     ];
   },
 
+  /* What the browser is told about this site before it renders any of it.
+
+     None of these were set, which means every one of them was at the browser's
+     default - and the defaults are permissive because they have to keep 1998
+     working. Five headers, each closing one thing that has never been wanted
+     here.
+
+     No `Content-Security-Policy` among them, deliberately and not by oversight.
+     A real one needs a per-request nonce on every inline script, which means
+     giving up the static rendering that makes these pages arrive as fast as
+     they do; a fake one - `unsafe-inline` in `script-src` - is the header
+     without the protection, and worth less than nothing because it reads as
+     done. `frame-ancestors` is the one part of CSP that has nothing to do with
+     scripts, so it is set on its own below. */
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          /* No sniffing. Without it a browser may decide a file we served as
+             text is really a script, and run it. */
+          { key: "X-Content-Type-Options", value: "nosniff" },
+
+          /* The path leaks, the query string does not. A referrer carrying the
+             full URL of the build page would hand whatever is in it to every
+             site somebody clicks through to. */
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+
+          /* Nobody frames this. Clickjacking a page whose main control sends a
+             scoping request is a real thing to want to do, and the two headers
+             are both here because the older one is what older browsers read. */
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Content-Security-Policy", value: "frame-ancestors 'self'" },
+
+          /* Everything off that this site does not do. The one exception is
+             screen capture, which the colour studio asks for to take a colour
+             off whatever is on the screen - so it is granted to this origin and
+             to nothing embedded in it. */
+          {
+            key: "Permissions-Policy",
+            value:
+              "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=(), display-capture=(self)",
+          },
+
+          /* Two years, subdomains included. A host usually sets this; setting
+             it here means it holds wherever this is deployed rather than only
+             where somebody remembered to tick the box. */
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+        ],
+      },
+    ];
+  },
+
   images: {
     /**
      * Next 16 requires every quality used anywhere in the app to be listed here.

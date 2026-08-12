@@ -1,6 +1,19 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
+/* No `@import "shadcn/tailwind.css"` here any more.
+
+   It stopped resolving - the package is a CLI, the stylesheet lives inside its
+   `dist` folder, and which subpaths a package will answer to is the package's
+   business and changes between releases. A build that depends on the internal
+   file layout of a command-line tool is a build that breaks on an install
+   nobody thought was a change.
+
+   Nothing was lost with it. What that file defines is nine named data
+   variants (`data-open:`, `data-checked:`, and so on), the accordion
+   keyframes, a shimmer and a scroll reveal - and not one of them appears
+   anywhere in this site. The `has-data-[...]` and `in-data-[...]` forms the
+   button uses are Tailwind v4's own arbitrary data variants and need nothing
+   declared. */
 
 /* Light only. Keeping the class based dark variant means the `dark:` utilities
    inside shadcn components still compile, but never match, because `.dark` is

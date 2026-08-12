@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { within } from "@/lib/api/guard";
+
 import { LEAD_MS } from "@/components/book/diary";
 
 import { book, busyBetween, clashes, send, wiring } from "@/lib/booking/google";
@@ -40,6 +42,24 @@ const LENGTHS = new Set([15, 30, 45, 60]);
    one comparison, and the offer matches the answer. */
 
 export async function POST(request: Request) {
+  /* Four in an hour. A booking writes into a real diary and sends a real
+     invitation, so the cost of an unbounded one is a calendar nobody can use
+     and an address that has to be untangled by hand. */
+  const allowed = within(request, "booking", {
+    every: 4,
+    window: 60 * 60 * 1000,
+  });
+
+  if (!allowed.ok) {
+    return NextResponse.json(
+      {
+        ok: false,
+        problem: `That has been sent a few times already. Try again in ${allowed.after > 60 ? `${Math.ceil(allowed.after / 60)} minutes` : `${allowed.after} seconds`}, or email us.`,
+      },
+      { status: 429, headers: { "retry-after": String(allowed.after) } },
+    );
+  }
+
   const w = wiring();
 
   if (!w) {

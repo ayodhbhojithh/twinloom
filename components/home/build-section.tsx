@@ -28,8 +28,9 @@ const BuildFlow = dynamic(
    few hundred bars in the other - and it was a picture of the idea rather than
    the idea: a wave that happens to be here, with no way in and nothing to do.
    What stands here now is the loom itself, which is the same name made of
-   strings you can play. `loom-wave.tsx` is untouched and `home-v2` still
-   renders it.
+   strings you can play. The wave is gone from the tree entirely - a thousand
+   lines nothing imported, and `three` in the dependency list to draw it - and
+   it is in git if the idea is ever wanted back.
 --------------------------------------------------------------------------- */
 
 /**

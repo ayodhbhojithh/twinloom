@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { CAPS, text, within } from "@/lib/api/guard";
+
 import { send, wiring } from "@/lib/booking/google";
 import { scopeNotice, scopeReceipt, type Meeting } from "@/lib/mail/templates";
 import { isReference, makeReference } from "@/lib/build/reference";
@@ -56,6 +58,27 @@ function meetingFrom(answers: unknown): Meeting {
 }
 
 export async function POST(request: Request) {
+  /* Five sends an hour from one address.
+
+     Somebody genuinely editing their answers sends twice, maybe three times -
+     the run is built to be sent half-answered and added to. Five is past any
+     honest use of it and a long way short of what a script would want, which
+     is the only shape a limit like this can have. See `within`. */
+  const allowed = within(request, "scope", {
+    every: 5,
+    window: 60 * 60 * 1000,
+  });
+
+  if (!allowed.ok) {
+    return NextResponse.json(
+      {
+        ok: false,
+        problem: `That has been sent a few times already. Try again in ${allowed.after > 60 ? `${Math.ceil(allowed.after / 60)} minutes` : `${allowed.after} seconds`}, or email us.`,
+      },
+      { status: 429, headers: { "retry-after": String(allowed.after) } },
+    );
+  }
+
   let body: {
     desk?: unknown;
     follow?: unknown;
@@ -86,7 +109,21 @@ export async function POST(request: Request) {
     );
   }
 
-  const ask = body.ask ?? {};
+  /* Every field cut to a length an answer could actually be.
+
+     All of this is forwarded by email, and a name is a name whether or not
+     somebody pasted a novel into the box. See `CAPS`, and note that the
+     document has a cap of its own two hundred times the size: it is written by
+     the tool rather than typed, and a full run-through with thirteen steps
+     answered is a long piece of text honestly arrived at. */
+  const ask = Object.fromEntries(
+    Object.entries(body.ask ?? {}).map(([field, value]) => [
+      field,
+      text(value),
+    ]),
+  );
+
+  const document = text(body.document, CAPS.document);
   const missing = REQUIRED_FIELDS.filter((field) => !ask[field]?.trim());
 
   if (missing.length) {
@@ -103,7 +140,7 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!body.document?.trim()) {
+  if (!document) {
     return NextResponse.json(
       { ok: false, problem: "The request arrived empty." },
       { status: 422 },
@@ -135,7 +172,7 @@ export async function POST(request: Request) {
      forwarded is still a scope that arrived. */
   console.info(
     `[scope ${ref}${follow ? " follow-up" : ""}] from ${ask.name} at ${ask.company} <${ask.email}>
-${body.document}`,
+${document}`,
   );
 
   /* Then the inbox. Sent as the same account the diary belongs to, so there is
@@ -199,7 +236,7 @@ ${body.document}`,
       company: ask.company!.trim(),
       email: ask.email!.trim(),
       phone: ask.phone?.trim(),
-      document: body.document,
+      document,
       attached: attachments.length,
       skipped,
       folder: files ? mediaFolder(ref) : undefined,
@@ -253,7 +290,7 @@ ${body.document}`,
          record - and putting it in the message is the better answer regardless:
          it is then in whatever they use to keep mail, and it is still there the
          day a link would have rotted. */
-      document: body.document,
+      document,
       /* With the reference on it, or the link is a new blank request wearing
          the words "add to your request". See the effect that reads it. */
       addTo: absolute(`${ROUTES.build}?add=${ref}`),

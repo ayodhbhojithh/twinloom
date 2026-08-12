@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+
+import { within } from "@/lib/api/guard";
 import { v2 as cloudinary } from "cloudinary";
 
 import { isReference } from "@/lib/build/reference";
@@ -30,6 +32,25 @@ import { isReference } from "@/lib/build/reference";
 const RESOURCE = new Set(["auto", "image", "raw", "video"]);
 
 export async function POST(request: Request) {
+  /* One signature per file, so this is the loosest of the three - forty in an
+     hour is a heavy but real submission. What it stops is somebody minting
+     signatures in a loop to fill the account, which is the only thing a
+     signing endpoint can be used for that its owner did not intend. */
+  const allowed = within(request, "sign", {
+    every: 40,
+    window: 60 * 60 * 1000,
+  });
+
+  if (!allowed.ok) {
+    return NextResponse.json(
+      {
+        ok: false,
+        problem: `That has been sent a few times already. Try again in ${allowed.after > 60 ? `${Math.ceil(allowed.after / 60)} minutes` : `${allowed.after} seconds`}, or email us.`,
+      },
+      { status: 429, headers: { "retry-after": String(allowed.after) } },
+    );
+  }
+
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   const apiKey = process.env.CLOUDINARY_API_KEY;
   const apiSecret = process.env.CLOUDINARY_API_SECRET;
