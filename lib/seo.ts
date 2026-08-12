@@ -337,6 +337,19 @@ export const breadcrumbLd = (
 });
 
 /**
+ * The trail to a page one level in, which is every page here but the articles.
+ *
+ * A shorthand for the pair, because the first step is always the same and a
+ * home entry written out fourteen times is fourteen chances to name it
+ * differently on one of them.
+ */
+export const trailLd = (name: string, path: string) =>
+  breadcrumbLd([
+    { name: SITE.name, path: ROUTES.home },
+    { name, path },
+  ]);
+
+/**
  * Everything readable in a tree of elements, as one line of text.
  *
  * The FAQ answers are written as JSX - they contain links to the clause each

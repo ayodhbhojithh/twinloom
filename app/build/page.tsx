@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import { BuildView } from "@/components/build";
 import { pageMeta } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
+import { trailLd } from "@/lib/seo";
 import { ROUTES } from "@/lib/site";
 
 export const metadata: Metadata = pageMeta({
@@ -12,5 +14,10 @@ export const metadata: Metadata = pageMeta({
 });
 
 export default function BuildPage() {
-  return <BuildView />;
+  return (
+    <>
+      <JsonLd data={trailLd("Build your website", ROUTES.build)} />
+      <BuildView />
+    </>
+  );
 }
