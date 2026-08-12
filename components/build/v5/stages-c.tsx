@@ -325,7 +325,14 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
                 the two emails are the record - so it would have been a promise
                 the site cannot keep, printed next to the button that throws the
                 answers away. */}
-            <p className="mx-auto mt-4 max-w-[62ch] text-[12.5px] leading-[1.6] text-quiet">
+            {/* The block's own width, not a narrower one inside it.
+
+                It was capped at 62 characters while everything above it runs to
+                76, which put a third edge on a screen that had settled on one -
+                and at three lines with the last one a two-word orphan, a
+                centred paragraph reads as ragged on both sides. Given the width
+                the rest of the receipt has, it sets in two. */}
+            <p className="mt-4 text-[12.5px] leading-[1.6] text-quiet">
               {left
                 ? `${left} ${left === 1 ? "area is" : "areas are"} still unanswered, and anything you change goes into the same request.`
                 : "Anything you change goes into the same request."}{" "}

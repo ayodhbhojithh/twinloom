@@ -67,14 +67,9 @@ import { HERO_SLIDES } from "./hero-slides";
  * scene starts from its first frame.
  */
 const LOAD = {
-  balls: () => import("./ballpit"),
   particles: () => import("@/components/ui/ParticleCanvas"),
   film: () => import("./film-stage"),
 } as const;
-
-const Ballpit = dynamic(() => LOAD.balls().then((m) => m.Ballpit), {
-  ssr: false,
-});
 
 const ParticleCanvas = dynamic(
   () => LOAD.particles().then((m) => m.ParticleCanvas),
@@ -923,84 +918,6 @@ export function NotchedCard({ className }: { className?: string }) {
             nothing plays - and every path that read them already fell back to
             what is wanted, which is a still field in the light set. */}
         {shown.view === "particles" ? <ParticleCanvas /> : null}
-
-        {shown.view === "balls" ? (
-          <Ballpit
-            className="absolute inset-0"
-            /* How many, read off the card rather than fixed at two hundred
-               and twenty.
-
-               The physics is every ball against every ball behind it, which is
-               `n²/2` pairs a frame: 24,000 at 220, 9,800 at 140, 4,000 at 90.
-               There is an early exit on one axis that rejects almost all of
-               them, but the loop itself still runs, and on a phone that loop is
-               the frame.
-
-               And a phone does not want two hundred anyway. The field is read as
-               a density rather than counted, and the density that fills a
-               window-wide card is a wall on a screen a quarter of the size -
-               fewer balls on a smaller card is the same picture, not a poorer
-               one. */
-            count={size.w < 640 ? 90 : size.w < 1100 ? 140 : 200}
-            gravity={0}
-            friction={1}
-            wallBounce={0.95}
-            followCursor={false}
-            colors={[0x2a98fe, 0x06dbaf]}
-            accents={[
-              [0xf5c518, 0xffa41a],
-              [0xff8a1a, 0xff4d1a],
-              [0xff5a5a, 0xe11d38],
-              [0x3ddc84, 0x0f9d58],
-              [0x4aa8ff, 0x1663d6],
-            ]}
-            accentShare={0.18}
-            ambientColor={0xffffff}
-            ambientIntensity={1}
-            lightIntensity={2.4}
-            minSize={0.3}
-            maxSize={0.7}
-            size0={1.1}
-            /* Half again as quick. The field is meant to be moving when
-               somebody arrives at it rather than settling into motion, and at
-               0.05 it drifted at about the rate of a clock hand - now that the
-               step is scaled by real time, this is the same number on every
-               display rather than whatever the refresh rate made of it. */
-            maxVelocity={0.075}
-            maxZ={1.6}
-          />
-        ) : null}
-
-        {/* And the middle taken back for the type. Light ground, dark words,
-            white wash - the pit is a field of pale glass and the one thing it is
-            not is a surface you can read small type off.
-
-            Only as large as the words, though.
-
-            It was a radius of sixty-eight per cent of the width, which is an
-            ellipse most of the card across - so the pit was a border of balls
-            round a white middle, and the picture the screen is made of was
-            pushed out to the edges. The block it exists for is a headline, two
-            lines of paragraph and one button: about a sixth of the card wide and
-            a seventh of it tall.
-
-            Thirty-six by thirty is that block with room to fade in. The stops
-            matter as much as the size - the wash holds near full strength to
-            most of its own radius and does all of its fading in the last
-            quarter, so the type sits on white rather than on the shoulder of a
-            gradient, and the balls come back within a hand's width of it.
-
-            No edge, still. Anything harder here would be a panel drawn round the
-            words, and the whole point is that there is no panel. */}
-        {shown.view === "balls" ? (
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "radial-gradient(ellipse 36% 30% at 50% 47%, color-mix(in oklab, var(--color-field) 94%, transparent) 0%, color-mix(in oklab, var(--color-field) 90%, transparent) 46%, color-mix(in oklab, var(--color-field) 52%, transparent) 74%, transparent 100%)",
-            }}
-          />
-        ) : null}
       </div>
 
       <AnimatePresence initial={false}>
@@ -1323,44 +1240,6 @@ export function NotchedCard({ className }: { className?: string }) {
           pictures, and the day either wants its own measure or a second way on,
           that is an edit here rather than a condition threaded through a block
           serving both. */}
-      {shown.view === "balls" ? (
-        <div
-          className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
-          style={{
-            paddingTop: head,
-            paddingBottom: cut.barDepth + 12,
-            paddingLeft: pad,
-            paddingRight: pad,
-          }}
-        >
-          <div className="w-full text-center">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={shown.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
-              >
-                <h1 className="mx-auto max-w-[20ch] text-[clamp(32px,5.4vw,92px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
-                  {shown.claim?.[0]}
-                  <span className="thread-text block">{shown.claim?.[1]}</span>
-                </h1>
-
-                {/* The claim, and nothing under it.
-
-                    A paragraph and a button stood here. Both were explaining a
-                    screen that explains itself: the beads answer to the pointer,
-                    so the invitation to play with the design is the field, not a
-                    sentence about the field. And the card already carries every
-                    way on it needs - four of them on the first screen, three on
-                    the fourth - so a fifth here was the same door offered
-                    again. */}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
-      ) : null}
 
       {/* The first screen: the mark staged, with the whole offer beside it.
 

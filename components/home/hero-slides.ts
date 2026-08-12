@@ -48,7 +48,7 @@ import type { Project } from "./projects";
  * so this is the switch the card branches on, and adding the next one is a name
  * here and a case there.
  *
- * `balls` is the pit. `mark` is the logo at
+ * `mark` is the logo at
  * the size of the card with the words beside it, and it is the only screen that
  * is not centred - the whole of it is the asymmetry.
  *
@@ -64,7 +64,10 @@ import type { Project } from "./projects";
  * anything - a moment a card in the middle of a turn does not have. `wave-dots`
  * is still on disk for whatever wants a field of dots next.
  */
-export type SlideView = "balls" | "film" | "particles" | "blank" | "mark";
+/* `balls` has gone with the screen it drew - see the note in the run below.
+   `ballpit.tsx` still exists and `home-v4` still renders it, so the type does
+   not name it and nothing here reaches it. */
+export type SlideView = "film" | "particles" | "blank" | "mark";
 
 /**
  * A slide, which is a `Project` and a few more things.
@@ -176,29 +179,21 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
      something serious over a field somebody was already playing with, which is
      a page arguing with its own picture.
 
-     It follows the mark rather than the water because it is the answer to the
-     question the mark leaves: a front door that has just said what it does
-     should say next how it does it, not change the subject to who we are. */
-  {
-    id: "hero-3",
-    view: "balls",
-    name: "Have fun with your design",
-    kind: "The look",
-    year: "2026",
-    summary:
-      "Colour, shape and motion are the parts nobody can specify in a document. Push them around until it feels like you, and we build whatever you land on.",
-    facts: [
-      { term: "Colour", value: "Yours to choose" },
-      { term: "Rounds", value: "As many as it takes" },
-      { term: "Signed off", value: "Before a line is built" },
-    ],
-    claim: ["Have fun", "with your design."],
-    lead: "Colour, shape, motion - the parts nobody can specify in a document. Push them around until it feels like you, and we will build whatever you land on.",
-    image: "",
-    alt: "",
-    tone: "#ffffff",
-    overview: true,
-  },
+  /* The pit is gone, and with it the screen it drew.
+
+     Two hundred glossy spheres, a physics step of every ball against every ball,
+     and three quarters of a megabyte of WebGL to draw them. It was optimised
+     twice - a fifth of the triangles, a smaller buffer, the count read off the
+     card, the step scaled by real time, the chunk warmed before the arrow that
+     reaches it - and on a mid-range machine it still arrived late and moved
+     unevenly. A screen whose whole argument is "push it around until it feels
+     like you" cannot be the one that stutters.
+
+     What it said is said elsewhere: the design is agreed before anything is
+     built, which is step six of how we work and a line in the panel that opens
+     off this card. The words are in git if a lighter version of the idea is ever
+     wanted - `ballpit.tsx` is untouched and `home-v4` still renders it.
+  */
 
   /* The fourth: a film, and what it is doing there.
 
