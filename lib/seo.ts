@@ -25,15 +25,25 @@ import { LEGAL, ROUTES, SITE } from "./site";
  * the origin has none, and one stray slash turns every absolute URL on the site
  * into a double-slashed variant of itself.
  *
- * `www` is a decision, not a detail. To a crawler `www.host` and `host` are two
- * different sites, and if both answer, every page on this one exists twice with
- * neither named as the original. Everything here names the `www` form, so that
- * is the one that ranks - but a canonical is a hint, not a rule. The bare host
- * still has to answer with a 301 to this one, and that is a redirect on the
- * server rather than anything this file can do.
+ * No `www`, and that is the fix rather than the preference.
+ *
+ * It named `www.twinloom.twincoretech.com`, on the reasoning that `www.host` and
+ * `host` are two sites to a crawler and one of them has to be named as the
+ * original. That reasoning is right for an apex domain and wrong here: this site
+ * is already a subdomain, so the `www` form is a fourth-level host that nobody
+ * has ever pointed anywhere. It does not resolve.
+ *
+ * What it cost was not a ranking. Every absolute URL this file makes goes into
+ * the emails somebody gets after sending us their requirements - the link back
+ * into their answers, the privacy notice - and all of them landed on a host that
+ * does not exist. The one link in the message that invites somebody to carry on
+ * was the one link that could not be followed.
+ *
+ * `NEXT_PUBLIC_SITE_URL` still wins where it is set, which is how a preview
+ * deployment describes itself rather than claiming to be production.
  */
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.twinloom.twincoretech.com"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://twinloom.twincoretech.com"
 ).replace(/\/+$/, "");
 
 /** A path, as the absolute URL a crawler is given. */

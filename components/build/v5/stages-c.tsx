@@ -187,17 +187,26 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
       >
         {/* The receipt.
 
-            One column, left aligned, read top to bottom: it arrived, where the
-            copy went, the number to quote, what happens next, the meeting, and
-            then the two things there are left to do. Centred it was four short
-            lines with a ragged edge on both sides; a receipt is a document
-            rather than a poster.
+            Centred and held to a narrow measure, which is what it was not: left
+            aligned in a 720 column, the tick sat in one corner, the sentences
+            ran two thirds of the way across, and the two buttons at the foot
+            were a stack against the left edge with a paragraph beside each. Six
+            blocks, one edge, and nothing to say which of them mattered.
 
-            The meeting reads from the answers, so the three states are the same
+            Down the middle, everything shares an axis and the reference - the
+            one thing on here worth keeping - is the widest object on it. The
+            Sixty characters rather than forty-six. At the shorter measure an
+            email address broke across two lines mid-word - a thing somebody has
+            to read to check it is theirs, hyphenated in the middle - and the
+            three lines at the foot came out as a narrow column under two
+            buttons wider than it. Sixty holds an address on one line and still
+            reads as a receipt rather than a page.
+
+            The meeting reads from the answers, so its three states are the same
             three the receipt in their inbox carries - see `meetingFrom` in the
             scope route. A screen and an email disagreeing about whether a
             meeting exists is worse than neither mentioning it. */}
-        <div className="mx-auto w-full max-w-[62ch] py-4 text-left max-sm:py-1">
+        <div className="mx-auto flex w-full max-w-[60ch] flex-col items-center py-4 text-center max-sm:py-1">
           <span
             aria-hidden
             className="flex size-11 items-center justify-center rounded-pill bg-mark text-white max-sm:size-10"
@@ -205,122 +214,118 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
             <Check className="size-[22px] max-sm:size-5" strokeWidth={2.8} />
           </span>
 
-          <h2 className="mt-5 text-[clamp(26px,2.6vw,36px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink max-sm:mt-4 max-sm:text-[24px]">
+          <h2 className="mt-5 text-[clamp(26px,2.6vw,34px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink max-sm:mt-4 max-sm:text-[24px]">
             Thank you
           </h2>
 
-          <p className="mt-4 text-[15px] leading-[1.6] text-body max-sm:mt-3 max-sm:text-[13.5px]">
+          <p className="mt-3 text-[14.5px] leading-[1.6] text-body max-sm:text-[13.5px]">
             Your scoping request is with us.
+            {answers.ask.email?.trim() ? (
+              <>
+                {" "}
+                We have emailed a copy to{" "}
+                <b className="font-semibold break-all text-ink">
+                  {answers.ask.email.trim()}
+                </b>
+                .
+              </>
+            ) : null}
           </p>
 
-          {answers.ask.email?.trim() ? (
-            <p className="mt-2 text-[15px] leading-[1.6] text-body max-sm:text-[13.5px]">
-              We have emailed a copy to{" "}
-              <b className="font-semibold break-all text-ink">
-                {answers.ask.email.trim()}
-              </b>
-              .
-            </p>
-          ) : null}
-
           {answers.ref ? (
-            <div className="mt-7 rounded-[14px] bg-canvas p-4 max-sm:mt-5 max-sm:p-3.5">
+            <div className="mt-6 w-full rounded-[14px] bg-canvas px-5 py-4 max-sm:mt-5 max-sm:px-4">
               <Kicker className="block">Your reference</Kicker>
 
-              <b className="mt-1.5 block font-mono text-[17px] leading-none font-bold tracking-[0.06em] text-ink tabular-nums select-all max-sm:text-[15px]">
+              <b className="mt-2 block font-mono text-[18px] leading-none font-bold tracking-[0.06em] text-ink tabular-nums select-all max-sm:text-[16px]">
                 {answers.ref}
               </b>
 
-              <p className="mt-2.5 text-[12.5px] leading-[1.55] text-quiet">
+              <p className="mt-2.5 text-[12px] leading-[1.5] text-quiet">
                 Quote it in any reply. Anything you add later is filed under it.
               </p>
             </div>
           ) : null}
 
-          <p className="mt-6 text-[13.5px] leading-[1.65] text-quiet max-sm:mt-5 max-sm:text-[13px]">
-            We read what you have sent, and will talk through your requirements,
-            how we work and the next steps in more depth when we meet.
+          {/* The meeting, in whichever of its three states it is in. Labelled
+              rather than headed: a heading over one sentence is a section with
+              nothing in it. */}
+          <p className="mt-6 text-[13px] leading-[1.6] text-quiet max-sm:mt-5">
+            <Kicker className="mb-1.5 block">Your meeting</Kicker>
+
+            {answers.booked ? (
+              <>
+                You booked{" "}
+                <b className="font-semibold text-ink">{answers.booked.when}</b>.
+                The invitation is in your inbox.
+              </>
+            ) : times.length ? (
+              <>
+                You gave us{" "}
+                <b className="font-semibold text-ink">{times.join("; ")}</b> as
+                times that work for you. We will confirm a slot, or come back
+                with alternatives.
+              </>
+            ) : (
+              <>
+                No meeting yet. We will read it and be in touch within two
+                working days.
+              </>
+            )}
           </p>
 
-          {/* The meeting, in whichever of its three states it is in. */}
-          <div className="mt-7 max-sm:mt-6">
-            <SubTitle className="mt-0">Your meeting</SubTitle>
+          {/* And the two things left to do, as a row of two rather than a
+              column of four.
 
-            <p className="mt-2 text-[13.5px] leading-[1.6] text-body max-sm:text-[13px]">
-              {answers.booked ? (
-                <>
-                  You booked{" "}
-                  <b className="font-semibold text-ink">
-                    {answers.booked.when}
-                  </b>
-                  . The invitation is in your inbox.
-                </>
-              ) : times.length ? (
-                <>
-                  You gave us{" "}
-                  <b className="font-semibold text-ink">{times.join("; ")}</b>{" "}
-                  as times that work for you. We will confirm a slot, or come
-                  back with alternatives.
-                </>
-              ) : (
-                <>
-                  No meeting yet. We will be in touch when we have read through
-                  your request.
-                </>
-              )}
-            </p>
-          </div>
+              Each was a button with a paragraph under it, which made the foot of
+              the screen taller than everything above it put together - and the
+              longer of the two paragraphs was the one under the button that
+              throws the answers away. One line each, under both, saying the one
+              thing that is not obvious from the label. */}
+          <div className="mt-8 w-full border-t border-hair pt-6 max-sm:mt-6 max-sm:pt-5">
+            <div className="flex flex-wrap justify-center gap-2.5 max-sm:gap-2">
+              {/* Ink on the one that ends it.
 
-          {/* And the two things left to do. */}
-          <div className="mt-8 border-t border-hair pt-6 max-sm:mt-6 max-sm:pt-5">
-            <SubTitle className="mt-0">Before you go</SubTitle>
+                  Two quiet pills side by side made a pair of equals, and they
+                  are not: one goes back into the answers and can be pressed all
+                  day, the other clears them and cannot be taken back. The filled
+                  one is the last thing you do, and it should look like the last
+                  thing you do. */}
+              <Pill onClick={() => setSent(false)}>Edit your answers</Pill>
 
-            <div className="mt-3 flex flex-col gap-5">
-              <div>
-                <Pill onClick={() => setSent(false)}>Edit your answers</Pill>
-
-                <p className="mt-2.5 max-w-[58ch] text-[12.5px] leading-[1.6] text-quiet">
-                  {left
-                    ? `${left} ${left === 1 ? "area is" : "areas are"} still unanswered, and you can change anything you have already said. It all goes into the same request.`
-                    : "You can change anything you have already said. It all goes into the same request."}{" "}
-                  Your answers stay open in this window until you close it, or
-                  press Close below.
-                </p>
-              </div>
-
-              <div>
-                <Pill
-                  onClick={() => {
-                    /* Confirmed, because it cannot be undone: the answers are
-                       gone from this device the moment it runs, and what was
-                       sent lives only in the two emails. */
-                    if (
-                      window.confirm(
-                        "Close this and clear your answers? What you have already sent stays with us.",
-                      )
-                    ) {
-                      startOver();
-                    }
-                  }}
-                >
-                  Close
-                </Pill>
-
-                {/* What this actually promises, and no more.
-
-                    The line offered here said they could reopen their answers
-                    from a link in the email. There is no such link and nothing
-                    is stored anywhere to reopen - the answers live in this
-                    window and the two emails are the record - so it would have
-                    been a promise the site cannot keep, printed next to the
-                    button that throws the answers away. Replying to the email
-                    does work, and is what is offered. */}
-                <p className="mt-2.5 max-w-[58ch] text-[12.5px] leading-[1.6] text-quiet">
-                  You can still make changes afterwards: reply to the email we
-                  sent you and we will add it to the same request.
-                </p>
-              </div>
+              <Pill
+                tone="ink"
+                onClick={() => {
+                  /* Confirmed, because it cannot be undone: the answers are
+                     gone from this device the moment it runs, and what was sent
+                     lives only in the two emails. */
+                  if (
+                    window.confirm(
+                      "Close this and clear your answers? What you have already sent stays with us.",
+                    )
+                  ) {
+                    startOver();
+                  }
+                }}
+              >
+                Close
+              </Pill>
             </div>
+
+            {/* What this actually promises, and no more.
+
+                The line offered here first said they could reopen their answers
+                from a link in the email. There is no such link and nothing is
+                stored anywhere to reopen - the answers live in this window and
+                the two emails are the record - so it would have been a promise
+                the site cannot keep, printed next to the button that throws the
+                answers away. */}
+            <p className="mt-3.5 text-[12px] leading-[1.6] text-quiet">
+              {left
+                ? `${left} ${left === 1 ? "area is" : "areas are"} still unanswered, and anything you change goes into the same request.`
+                : "Anything you change goes into the same request."}{" "}
+              Your answers stay in this window until you close it. Afterwards,
+              reply to the email and we will add it.
+            </p>
           </div>
         </div>
       </StageStep>
