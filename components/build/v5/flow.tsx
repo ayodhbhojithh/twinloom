@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useSyncExternalStore } from "react";
 
 import { STEPS } from "@/lib/build/v5";
+import { adoptDesk } from "@/lib/build/desk";
+import { isReference } from "@/lib/build/reference";
 import {
   askDeskFace,
   clearDeskContext,
@@ -10,6 +12,7 @@ import {
 } from "@/lib/build/desk-context";
 import { STEP_ORDER } from "@/lib/build/v5-derive";
 import {
+  adoptRef,
   getAnswers,
   getPlace,
   getServerAnswers,
@@ -82,6 +85,35 @@ export function BuildFlow() {
     setTab("full");
     goStep(at);
   };
+
+  /* Opened from the link in a receipt.
+
+     "Add to your request" used to be a link to this page and nothing else,
+     which meant a blank run: the answers live in the `sessionStorage` of the
+     tab they were written in, and a link opened out of a mail client is a new
+     tab. Whatever they added went out as a separate request under a new
+     reference - while the email they had clicked said, in as many words, that
+     it would go under the same one.
+
+     The answers cannot be brought back; nothing is stored anywhere to bring
+     back. What can be joined is the reference, and joining it is what makes
+     the addition an addition: `follow` goes true, the subject line says more
+     detail, the attachments land in the folder the first lot are in, and the
+     submit step says it is a second version rather than a first.
+
+     The query goes as soon as it is read. It has done its work, a reference
+     sitting in the address bar is a reference that gets shared by somebody
+     copying the URL, and a reload after starting over would otherwise adopt
+     it a second time. */
+  useEffect(() => {
+    const add = new URLSearchParams(window.location.search).get("add");
+
+    if (isReference(add) && adoptDesk(add)) adoptRef(add);
+
+    if (add !== null) {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, []);
 
   /* What the desk needs to know while this is on screen.
 

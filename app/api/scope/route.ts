@@ -254,7 +254,9 @@ ${body.document}`,
          it is then in whatever they use to keep mail, and it is still there the
          day a link would have rotted. */
       document: body.document,
-      addTo: absolute(ROUTES.build),
+      /* With the reference on it, or the link is a new blank request wearing
+         the words "add to your request". See the effect that reads it. */
+      addTo: absolute(`${ROUTES.build}?add=${ref}`),
       contactEmail: CONTACT_INFO.primaryEmail,
       phone: CONTACT_INFO.phone,
       privacyUrl: absolute(ROUTES.privacy),

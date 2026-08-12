@@ -551,6 +551,19 @@ export function setKeep(keep: boolean) {
   updateAnswers((current) => ({ ...current, keep }));
 }
 
+/**
+ * A reference from somewhere other than a send.
+ *
+ * Set when somebody opens the link in their receipt: it puts the run into the
+ * state it would be in after a send - `ref` set, `stamp` null - so the submit
+ * step reads as a second version of something rather than a first submission,
+ * and what goes out is marked as a follow-up. See `adoptDesk`, which is the
+ * other half: this is what the reader sees, that is what the payload carries.
+ */
+export function adoptRef(ref: string) {
+  updateAnswers((current) => ({ ...current, ref, sent: false, stamp: null }));
+}
+
 export function setSent(sent: boolean) {
   updateAnswers((current) => ({ ...current, sent }));
 }

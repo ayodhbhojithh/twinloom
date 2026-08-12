@@ -76,6 +76,34 @@ export function hasDeskRef(): boolean {
 }
 
 /**
+ * Take over one that already exists.
+ *
+ * For somebody arriving from the link in their receipt. Their answers are not
+ * here - they were in the tab they sent from, in `sessionStorage`, and a link
+ * opened out of a mail client is a new tab with none of it - so what this can
+ * do is file whatever they add next under the reference they already have,
+ * which is the whole of what the email promises.
+ *
+ * Refuses a desk that is already in use. Somebody with a run in progress who
+ * pastes that link into the same tab would otherwise have their work filed
+ * under a stranger's reference, or their own earlier one.
+ */
+export function adoptDesk(ref: string): boolean {
+  if (hasDeskRef()) return false;
+
+  desk = ref;
+  read = true;
+
+  try {
+    window.sessionStorage.setItem(KEY, ref);
+  } catch {
+    /* Holds for this page either way. */
+  }
+
+  return true;
+}
+
+/**
  * Start a new one.
  *
  * After a successful send, so that somebody who carries straight on into a
