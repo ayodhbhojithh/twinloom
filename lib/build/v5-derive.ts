@@ -19,12 +19,14 @@ import {
   SECTORS,
   SELL_KINDS,
   STEPS,
+  SYS_LINKS,
   ZONES,
   type Action,
   type Group,
   type SellKind,
 } from "./v5";
 import { STEP_COPY } from "./v5-copy";
+import { HAVE_GROUPS } from "./v5-have";
 import { chipsIn, isOn, picked, type Answers } from "./v5-store";
 
 export const ACTION_BY: Record<string, Action> = Object.fromEntries(
@@ -169,6 +171,9 @@ export function readiness(a: Answers): Readiness {
 }
 
 /** What has actually been said, as lines. `true` marks a ticked one. */
+/** Every row of the have step, flattened out of its four groups. */
+const HAVE_ROWS = HAVE_GROUPS.flatMap((group) => group.rows);
+
 /**
  * Which question a free-text answer belongs to, by the id it writes under.
  *
@@ -246,6 +251,55 @@ export function told(a: Answers): { tick: boolean; line: string }[] {
     out.push({
       tick: true,
       line: `It should feel: ${feel.map((key) => FEELS[key] ?? key).join(", ")}`,
+    });
+  }
+
+  /* How they will be paid, where anything was ticked. Its own line rather
+     than folded into what is sold: what is sold decides the pages, and how the
+     money is taken decides what has to be joined to. */
+  const paying = picked(a, "pay")
+    .map((key) => PAY_BY[key]?.n ?? key)
+    .filter(Boolean);
+  if (paying.length) {
+    out.push({ tick: true, line: `Paid by: ${paying.join(", ")}` });
+  }
+
+  /* What they already have, in the three answers the step offers.
+
+     Thirteen rows of have / needs tidying / would like help, and not one of
+     them reached this panel. Somebody worked through the longest list in the
+     run and the panel beside it showed exactly what it had shown before -
+     which reads as a step that recorded nothing, and it is the step whose
+     answers decide the most about what the work actually is.
+
+     Grouped by the answer rather than listed row by row: "we would like help
+     with" is a sentence about the job, and thirteen separate lines saying
+     which of three boxes each row is in is a table, not a summary. */
+  const HAD: [string, string][] = [
+    ["have", "You already have"],
+    ["tidy", "Needs tidying"],
+    ["help", "You would like help with"],
+  ];
+
+  for (const [answer, said] of HAD) {
+    const rows = HAVE_ROWS.filter((row) => chipsIn(a, row.q)[0] === answer).map(
+      (row) => row.title.toLowerCase(),
+    );
+
+    if (rows.length)
+      out.push({ tick: true, line: `${said}: ${rows.join(", ")}` });
+  }
+
+  /* And what it has to talk to. Ticking one of these is not a promise that it
+     connects - it is what sends somebody to go and find out - so the line says
+     it plainly rather than claiming the join is agreed. */
+  const links = chipsIn(a, "syslink")
+    .map((key) => SYS_LINKS[key] ?? key)
+    .filter(Boolean);
+  if (links.length) {
+    out.push({
+      tick: true,
+      line: `It has to talk to: ${links.join(", ")} - to be checked, not assumed`,
     });
   }
 
