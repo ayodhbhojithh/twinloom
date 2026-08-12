@@ -51,7 +51,17 @@ import { isPicture, type Attached } from "@/lib/build/upload";
 
 import { DropZone } from "./drop";
 import { CardFlourish } from "./flourish";
-import { AddRow, Chip, Field, H, Kicker, Pill, RefText, TickSet } from "./kit";
+import {
+  AddRow,
+  Chip,
+  Confirm,
+  Field,
+  H,
+  Kicker,
+  Pill,
+  RefText,
+  TickSet,
+} from "./kit";
 import { FIELDS } from "./stages-c";
 import { Stage } from "./stage";
 
@@ -591,6 +601,9 @@ function Delivered({
   const reference = answers.ref ?? "";
   const [copied, setCopied] = useState(false);
 
+  /* Whether the question about clearing the answers is up. See `Confirm`. */
+  const [clearing, setClearing] = useState(false);
+
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(reference);
@@ -733,19 +746,21 @@ function Delivered({
           three and the only one that throws work away. */}
       <button
         type="button"
-        onClick={() => {
-          if (
-            window.confirm(
-              "Start a new submission? Your answers here will be cleared. What you have already sent stays with us.",
-            )
-          ) {
-            startOver();
-          }
-        }}
+        onClick={() => setClearing(true)}
         className="mt-6 cursor-pointer text-[12.5px] font-semibold text-quiet underline decoration-planned decoration-1 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink"
       >
         Start a new submission instead
       </button>
+
+      <Confirm
+        open={clearing}
+        title="Start a new submission?"
+        note="This clears the answers in this window and files the next lot under a reference of their own. What you have already sent stays with us."
+        yes="Clear and start again"
+        no="Keep these answers"
+        onYes={startOver}
+        onNo={() => setClearing(false)}
+      />
     </div>
   );
 }

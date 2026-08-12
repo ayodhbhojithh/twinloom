@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { ArrowUpRight, Check, Send } from "lucide-react";
 import Link from "next/link";
 
@@ -31,6 +32,7 @@ import { cn } from "@/lib/utils";
 import { StageStep } from "./frame";
 import {
   AddRow,
+  Confirm,
   Field,
   H,
   Kicker,
@@ -132,6 +134,8 @@ const MINIMUMS = [
 ] as const;
 
 export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
+  /* Whether the question about clearing the answers is up. See `Confirm`. */
+  const [asking, setAsking] = useState(false);
   const { met, state } = readiness(answers);
   const missing = whatIsMissing(answers);
 
@@ -298,23 +302,22 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
                   thing you do. */}
               <Pill onClick={() => setSent(false)}>Edit your answers</Pill>
 
-              <Pill
-                tone="ink"
-                onClick={() => {
-                  /* Confirmed, because it cannot be undone: the answers are
-                     gone from this device the moment it runs, and what was sent
-                     lives only in the two emails. */
-                  if (
-                    window.confirm(
-                      "Close this and clear your answers? What you have already sent stays with us.",
-                    )
-                  ) {
-                    startOver();
-                  }
-                }}
-              >
+              {/* Asked, because it cannot be undone: the answers are gone
+                  from this device the moment it runs, and what was sent lives
+                  only in the two emails. */}
+              <Pill tone="ink" onClick={() => setAsking(true)}>
                 Close
               </Pill>
+
+              <Confirm
+                open={asking}
+                title="Close this and clear your answers?"
+                note="What you have already sent stays with us, under the same reference. What goes is the copy in this window - there is nowhere else on this device it is kept."
+                yes="Clear and close"
+                no="Keep them"
+                onYes={startOver}
+                onNo={() => setAsking(false)}
+              />
             </div>
 
             {/* What this actually promises, and no more.

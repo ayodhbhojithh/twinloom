@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { ArrowUpRight, Check } from "lucide-react";
 
 import { ASSUMPTIONS, ORG_KINDS, STEPS } from "@/lib/build/v5";
@@ -113,6 +114,7 @@ export function SubTitle({
 
 /** The landing page's pill, as a button. */
 export function Pill({
+  ref,
   tone = "quiet",
   arrow,
   busy,
@@ -121,6 +123,8 @@ export function Pill({
   className,
   children,
 }: {
+  /** So a dialog can put focus on the answer that changes nothing. */
+  ref?: React.Ref<HTMLButtonElement>;
   tone?: "quiet" | "ink";
   /** The diagonal arrow the home page puts on a way somewhere. */
   arrow?: boolean;
@@ -139,6 +143,7 @@ export function Pill({
 }) {
   return (
     <button
+      ref={ref}
       type="button"
       onClick={onClick}
       disabled={disabled}
@@ -163,6 +168,116 @@ export function Pill({
         />
       ) : null}
     </button>
+  );
+}
+
+/**
+ * Are you sure.
+ *
+ * There are two presses in this tool that cannot be taken back - both of them
+ * clear the answers - and both used to ask with `window.confirm`. That box is
+ * drawn by the browser, so it arrives in Arial with square buttons and the
+ * words "twinloom.twincoretech.com says" above them, which is the phrasing a
+ * browser uses for a page that might be lying to you. Nothing else on the site
+ * looks like it, and the one moment somebody is deciding whether to throw away
+ * an hour's work is a poor moment to hand them to a stranger.
+ *
+ * It also blocks the main thread while it is up, which means the run behind it
+ * stops painting - and on a phone it is pinned to the top of the window, a long
+ * way from the button that opened it.
+ *
+ * Through a portal, because a step's content sits in a stacking context of its
+ * own and the surface it stands on is cut to an SVG path. A `fixed` layer
+ * rendered inside that is clipped by it - see the studio, which learned the
+ * same thing.
+ */
+export function Confirm({
+  open,
+  title,
+  note,
+  yes,
+  no = "Cancel",
+  onYes,
+  onNo,
+}: {
+  open: boolean;
+  title: string;
+  /** What is actually lost, and what is not. */
+  note: string;
+  /** The words on the press that does it. Never "OK": a label that says what
+      it does is the difference between reading the question and not. */
+  yes: string;
+  no?: string;
+  onYes: () => void;
+  onNo: () => void;
+}) {
+  const safe = useRef<HTMLButtonElement>(null);
+
+  /* Escape closes, and the safe answer takes focus.
+
+     Focus goes to the one that changes nothing, deliberately. A dialog that
+     opens with the destructive button focused turns a stray Enter - and on this
+     screen the reader has just been typing - into a cleared run. */
+  useEffect(() => {
+    if (open) safe.current?.focus();
+  }, [open]);
+
+  /* Its own effect, and not joined to the one above. `onNo` is an arrow written
+     at the call site, so it is a new function every render and this runs again
+     each time - which is nothing for a listener and would be a focus stolen
+     back off whichever button the reader had just tabbed to. */
+  useEffect(() => {
+    if (!open) return;
+
+    const key = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onNo();
+    };
+
+    window.addEventListener("keydown", key);
+    return () => window.removeEventListener("keydown", key);
+  }, [open, onNo]);
+
+  if (!open) return null;
+
+  return createPortal(
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+      className="fixed inset-0 z-[90] flex items-center justify-center p-4"
+    >
+      {/* The scrim answers too. Anywhere outside the question is the way out of
+          it, and the way out is the answer that changes nothing. */}
+      <div
+        aria-hidden
+        onClick={onNo}
+        className="absolute inset-0 bg-ink/55 backdrop-blur-[3px]"
+      />
+
+      <div className="relative w-full max-w-[420px] rounded-[20px] bg-field p-6 text-left shadow-[0_28px_70px_-18px_rgba(17,24,39,0.45)] max-sm:p-5">
+        <h2 className="text-[17px] leading-[1.25] font-bold tracking-[-0.02em] text-ink max-sm:text-[16px]">
+          {title}
+        </h2>
+
+        <p className="mt-2.5 text-[13px] leading-[1.6] text-body max-sm:text-[12.5px]">
+          {note}
+        </p>
+
+        {/* The safe one first, and the one that ends it last - the order they
+            are read in on this side of the world, and the order the eye leaves
+            them in. */}
+        <div className="mt-6 flex flex-wrap justify-end gap-2.5 max-sm:mt-5 max-sm:gap-2">
+          <Pill ref={safe} onClick={onNo}>
+            {no}
+          </Pill>
+
+          <Pill tone="ink" onClick={onYes}>
+            {yes}
+          </Pill>
+        </div>
+      </div>
+    </div>,
+    document.body,
   );
 }
 
