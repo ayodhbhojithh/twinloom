@@ -75,6 +75,20 @@ export interface Answers {
   /** The reference that came back, so the sent screen can quote it. */
   ref: string | null;
   /**
+   * A print of the answers as they were when they were last sent.
+   *
+   * What it is for: telling an edit from a re-read. Somebody who sends, presses
+   * "Edit your submission" and then changes nothing has nothing to send - and
+   * pressing send anyway puts a second identical document in the inbox under
+   * the same reference, which is a duplicate whichever way it is read.
+   *
+   * A print rather than a flag, because "changed" is not a thing that can be
+   * observed at the moment of change: an answer ticked and unticked again is
+   * two changes and no difference. Comparing what is there now against what
+   * went is the only test that gets that right.
+   */
+  stamp: string | null;
+  /**
    * The meeting, once one has been booked from inside this run.
    *
    * Written by the booking page and read back here, which is the only way round
@@ -122,6 +136,7 @@ const EMPTY: Answers = {
   sending: false,
   problem: null,
   ref: null,
+  stamp: null,
   booked: null,
 };
 
@@ -211,6 +226,8 @@ function keep() {
        there is nothing useful to say about that at this moment. */
   }
 }
+
+import { newDesk } from "./desk";
 
 /* --------------------------------------------------------------- the place
 
@@ -559,5 +576,90 @@ export function setDelivered(ref: string) {
     sent: true,
     sending: false,
     problem: null,
+    /* Taken from the answers as they are at this instant, which is what was
+       sent. Anything that happens after this makes the print stale, and stale is
+       exactly what "there is something new to send" means. */
+    stamp: printOf(current),
   }));
+}
+
+/**
+ * The answers, as one string, for comparing one moment against another.
+ *
+ * Only the parts somebody can change. `sent`, `sending`, `problem`, `ref` and
+ * the print itself are all facts about sending rather than about the answers,
+ * and including any of them would make every send look like a change.
+ *
+ * Keys are sorted at every level. Object key order in JavaScript is insertion
+ * order, so two identical sets of answers reached by different routes -
+ * ticking A then B, or B then A - serialise differently and would read as an
+ * edit. Sorting makes the string a function of the content and nothing else.
+ */
+function printOf(a: Answers): string {
+  const stable = (value: unknown): unknown => {
+    if (Array.isArray(value)) return value.map(stable);
+
+    if (value && typeof value === "object") {
+      const held = value as Record<string, unknown>;
+      return Object.fromEntries(
+        Object.keys(held)
+          .sort()
+          .map((key) => [key, stable(held[key])]),
+      );
+    }
+
+    return value;
+  };
+
+  return JSON.stringify(
+    stable({
+      pick: a.pick,
+      chip: a.chip,
+      text: a.text,
+      own: a.own,
+      ask: a.ask,
+      refs: a.refs,
+      order: a.order,
+      like: a.like,
+      short: a.short,
+      keep: a.keep,
+      booked: a.booked,
+    }),
+  );
+}
+
+/**
+ * Whether there is anything to send that has not been sent.
+ *
+ * True where nothing has gone yet - a first submission is always worth
+ * sending - and after that only where the answers differ from the print taken
+ * when they last went.
+ */
+export function unsent(a: Answers): boolean {
+  if (!a.ref || !a.stamp) return true;
+  return printOf(a) !== a.stamp;
+}
+
+/**
+ * Put everything back, and start a new piece of work.
+ *
+ * Not a reset of the form: a new reference as well, because the reference is
+ * what says one desk is one submission. Carrying the old one into a fresh set
+ * of answers would file a second piece of work under the first one's number,
+ * which is the fault this is the opposite of.
+ */
+export function startOver() {
+  seq = 0;
+  answers = EMPTY;
+
+  newDesk();
+  setPlace({ tab: "quick", route: "choose", step: 0 });
+
+  try {
+    window.sessionStorage.removeItem(KEY);
+  } catch {
+    /* The memory is already empty, which is what the page is drawing from. */
+  }
+
+  for (const listener of listeners) listener();
 }
