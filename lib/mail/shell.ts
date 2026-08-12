@@ -26,6 +26,8 @@
    edge for type to sit against either.
 --------------------------------------------------------------------------- */
 
+import { SITE_URL } from "@/lib/seo";
+
 const INK = "#111827";
 const BODY = "#4b5563";
 const QUIET = "#6b7280";
@@ -218,14 +220,20 @@ export function shell({
              entity on it is a message that reads as a mailshot. -->
         <tr>
           <td align="center" style="padding:36px 0 0">
-            <div style="margin:0 auto;max-width:380px;font-family:${SANS};font-size:10.5px;line-height:1.7;color:${LABEL}">
+            <div style="margin:0 auto;max-width:440px;font-family:${SANS};font-size:10.5px;line-height:1.7;color:${LABEL}">
               TwinLoom is a trading name of TwinCoreTech Ltd, registered in
-              England and Wales, company number 15997244.
+              England and Wales, company number 15997244. Registered office:
+              Bromley Old Town Hall, 30 Tweedy Road, Bromley BR1 3FE.
             </div>
+            <!-- Off the site's own address rather than the trading name as a
+                 domain. twinloom.com is not ours and never has been: every
+                 message sent from here has carried two links to somebody
+                 else's parked page, in the one part of a message a reader
+                 goes to when they want to know who wrote it. -->
             <div style="margin-top:10px;font-family:${SANS};font-size:10.5px;line-height:1.7;color:${LABEL}">
-              <a href="https://twinloom.com/privacy" style="color:${QUIET};text-decoration:none">Privacy notice</a>
+              <a href="${SITE_URL}/privacy" style="color:${QUIET};text-decoration:none">Privacy notice</a>
               &nbsp;&nbsp;·&nbsp;&nbsp;
-              <a href="https://twinloom.com/contact" style="color:${QUIET};text-decoration:none">Contact us</a>
+              <a href="${SITE_URL}/contact" style="color:${QUIET};text-decoration:none">Contact us</a>
             </div>
           </td>
         </tr>

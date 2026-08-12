@@ -1,3 +1,4 @@
+import { SITE_URL } from "@/lib/seo";
 import {
   button,
   esc,
@@ -171,17 +172,12 @@ export function scopeReceipt({
      they can act on if a count is wrong. What a count does is let them notice
      that something they meant to attach is not in it. */
   const sent = [
-    described ? "Your description, in your own words" : "",
+    described ? "your answers and description" : "your answers",
     attachments > 0
       ? `${attachments} ${attachments === 1 ? "attachment" : "attachments"}`
       : "",
     notes > 0 ? `${notes} ${notes === 1 ? "note" : "notes"}` : "",
   ].filter(Boolean);
-
-  /* Never an empty list. A request with no description, no file and no note is
-     four contact fields and a set of answers, which is still a request - and a
-     heading over nothing reads as a message that failed to load. */
-  if (!sent.length) sent.push("Your answers to the questions");
 
   /* Where the meeting stands, in their words rather than ours.
 
@@ -208,11 +204,36 @@ export function scopeReceipt({
       ? `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`
       : (parts[0] ?? "");
 
-  const item = (text: string) =>
-    `<div style="margin:6px auto 0;max-width:380px;font-family:${SANS};font-size:13px;line-height:1.6;color:${BODY}">${text}</div>`;
+  /* The frame takes the window; what is written in it stays down the middle.
+
+     Two things wanted different widths and the old shape gave them one. The
+     note is four sentences and reads as a note, which is a centred thing; the
+     request underneath is eight sections of label and value, which needs the
+     room. So the column goes to the edge of the pane and every written block
+     inside it is centred on that pane rather than on a 460 strip sitting off
+     to one side of it - `margin:auto` on each, because Outlook centres a table
+     cell and then loses the thread the moment there is a `div` in it.
+
+     The measure holds at 620. A centred line longer than that is one the eye
+     has to find the start of twice, and the only thing allowed to be as wide
+     as the window is the document, which is read down its own left edge. */
+  const MEASURE = 620;
+
+  const say = (text: string, size = 13, top = 10) =>
+    `<div style="margin:${top}px auto 0;max-width:${MEASURE}px;font-family:${SANS};font-size:${size}px;line-height:1.65;color:${BODY};text-align:center">${text}</div>`;
+
+  const title = (text: string) =>
+    `<h1 style="margin:11px auto 0;max-width:22ch;font-family:${SANS};font-size:23px;line-height:1.16;font-weight:700;letter-spacing:-0.026em;color:${INK};text-align:center">${esc(
+      text,
+    )}</h1>`;
+
+  /* A gap of twenty rather than the twenty-six a note is broken with. Six
+     pixels a section over five sections is a screenful, and every one of them
+     is between two things that belong together. */
+  const gap = `<div style="height:20px;line-height:20px;font-size:0">&nbsp;</div>`;
 
   const heading = (text: string) =>
-    `<div style="font-family:${SANS};font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:${LABEL};line-height:1">${esc(
+    `<div style="font-family:${SANS};font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:${LABEL};line-height:1;text-align:center">${esc(
       text,
     )}</div>`;
 
@@ -221,60 +242,89 @@ export function scopeReceipt({
       text,
     )}</a>`;
 
+  /* The reference, with the sentence about it inside the plate rather than
+     underneath. Two objects saying one thing became one.
+
+     Held to 460 and centred rather than run to the edge of the window: a
+     tinted band the width of a monitor with a ten-character code in the middle
+     of it is a banner, and this is the one object on the page the eye is meant
+     to land on. */
+  const reference = `
+    <table role="presentation" align="center" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:460px;margin:20px auto 0">
+      <tr>
+        <td align="center" style="padding:14px 16px;background:${CANVAS};border-radius:12px;text-align:center">
+          <div style="font-family:${MONO};font-size:8.5px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:${LABEL};line-height:1">Your reference</div>
+          <div style="margin-top:7px;font-family:${MONO};font-size:15px;font-weight:700;letter-spacing:0.02em;color:${INK};line-height:1.3;word-break:break-word">${esc(
+            ref,
+          )}</div>
+          <div style="margin:8px auto 0;max-width:44ch;font-family:${SANS};font-size:11.5px;line-height:1.55;color:${QUIET}">Quote it in any reply. Anything you add later is filed under it.</div>
+        </td>
+      </tr>
+    </table>`;
+
   const body = `
-    ${kicker(follow ? "More received" : "Received")}
-    ${h1(follow ? "We have the rest of it." : "We have your scoping request.")}
-    ${p(
+    <div style="text-align:center">${kicker(
+      follow ? "More received" : "Received",
+    )}</div>
+    ${title(follow ? "We have the rest of it." : "We have your scoping request.")}
+    ${say(
       follow
         ? `Thank you, ${esc(
             name,
           )}. This is the fuller answer to the request you sent earlier, under the same reference - it is the version we will read.`
         : `Hello ${esc(name)}.`,
-    )}
-
-    ${plate("Your reference", ref)}
-
-    ${p(
-      "Quote it in any reply, and anything you add later is filed under it rather than arriving as a second request.",
+      13,
       12,
     )}
 
-    ${rule}
+    ${reference}
+
+    ${gap}
 
     ${heading("What happens next")}
-    ${p(
+    ${say(
       "We read what you have sent, and will talk through your requirements, how we work and the next steps in more depth when we meet.",
+      13,
+      12,
     )}
-    ${p("Nothing you have sent commits you to anything, and nothing in it is priced.")}
-    ${p(`<b style="color:${INK};font-weight:600">${esc(talk)}</b>`)}
+    ${say("Nothing you have sent commits you to anything, and nothing in it is priced.")}
+    ${say(`<b style="color:${INK};font-weight:600">${esc(talk)}</b>`)}
 
     ${
       document
-        ? `${rule}
+        ? `${gap}
            ${heading("Your request, as we have it")}
-           ${p(
-             `Everything below is what arrived: ${listOf(sent)}. If any of it is wrong or missing, say so in a reply.`,
+           ${say(
+             `Everything below is what arrived: ${esc(
+               listOf(sent),
+             )}. If any of it is wrong or missing, say so in a reply.`,
+             12,
              12,
            )}
-           <div style="margin:4px 0 0;text-align:left">${setDocument(document, {
-             headings: THEIR_HEADINGS,
-             omit: OURS_ONLY,
-           })}</div>`
+           <div style="margin:14px 0 0;text-align:left">${setDocument(
+             document,
+             {
+               headings: THEIR_HEADINGS,
+               omit: OURS_ONLY,
+             },
+           )}</div>`
         : ""
     }
 
-    ${rule}
+    ${gap}
 
     ${heading("Forgotten something?")}
-    ${p(
+    ${say(
       addTo
         ? `Reply to this message, or ${link(
             addTo,
             "open your request",
           )} to add to it.`
         : "Reply to this message and it goes under the same reference.",
+      13,
+      12,
     )}
-    ${p(
+    ${say(
       phone
         ? `Anything else, email ${link(
             `mailto:${contactEmail}`,
@@ -295,16 +345,12 @@ export function scopeReceipt({
         ]
       : ["We have your scoping request."]),
     "",
-    `Your reference is ${ref}. Quote it in any reply, and anything you`,
-    "add later is filed under it rather than arriving as a second request.",
-    "",
-    "WHAT YOU SENT",
-    ...sent.map((line) => `  ${line}`),
+    `YOUR REFERENCE: ${ref}`,
+    "  Quote it in any reply. Anything you add later is filed under it.",
     "",
     "WHAT HAPPENS NEXT",
-    "  We read it in full. Then we talk it through with you properly - your",
-    "  requirements in more depth, how we work, and what the next steps look",
-    "  like.",
+    "  We read what you have sent, and will talk through your requirements,",
+    "  how we work and the next steps in more depth when we meet.",
     "",
     "  Nothing you have sent commits you to anything, and nothing in it is",
     "  priced.",
@@ -316,15 +362,24 @@ export function scopeReceipt({
        with the first, for a version of the message almost nobody reads, and the
        text part exists so that a client which cannot render HTML shows something
        complete rather than something polished. */
-    ...(document ? ["YOUR REQUEST, AS WE HAVE IT", "", document, ""] : []),
+    ...(document
+      ? [
+          "YOUR REQUEST, AS WE HAVE IT",
+          `  Everything below is what arrived: ${listOf(sent)}. If any of it`,
+          "  is wrong or missing, say so in a reply.",
+          "",
+          document,
+          "",
+        ]
+      : []),
     "FORGOTTEN SOMETHING?",
     /* The address on its own line rather than inside the sentence. A URL set
        mid-clause is a URL that wraps mid-clause, and the half of it on the
        second line stops being a link in every plain-text reader there is. */
     addTo
-      ? "Reply to this message, or add to your request - it goes under the"
+      ? "Reply to this message, or open your request to add to it:"
       : "Reply to this message and it goes under the same reference.",
-    ...(addTo ? ["same reference:", `  ${addTo}`] : []),
+    ...(addTo ? [`  ${addTo}`] : []),
     "",
     phone
       ? `Anything else, email ${contactEmail} or call ${phone}.`
@@ -350,13 +405,15 @@ export function scopeReceipt({
         ? `The rest of ${ref}. We read it in full, then we talk it through.`
         : `Your reference is ${ref}. We read it in full, then we talk it through.`,
       body,
-      /* Wider than the 460 a note is set at, because this one now carries the
-         request underneath it - two columns of label and value do not fit in a
-         measure chosen for four centred sentences. Still centred, though: the
-         note at the top is the message, and the document under it is set left
-         inside its own block rather than the whole thing being turned into a
-         file. */
-      width: document ? 560 : undefined,
+      /* The width of the pane once it carries the request, because the
+         request is a filled-in document and a document read through a 560px
+         letterbox wraps every value in it onto three lines.
+
+         Still centred - see the blocks above, which hold their own measure and
+         sit in the middle of whatever the window turns out to be. Without a
+         document there is nothing to be wide for, so it keeps the column. */
+      bleed: Boolean(document),
+      width: document ? undefined : 480,
     }),
   };
 }
@@ -432,7 +489,7 @@ export function bookingConfirmation({
         : ""
     }
 
-    ${button("https://twinloom.com/build", "Write down what you want first")}
+    ${button(`${SITE_URL}/build`, "Write down what you want first")}
 
     ${p(
       "You do not have to. Come with it done or come with nothing - both are a conversation we can have.",
@@ -452,7 +509,7 @@ export function bookingConfirmation({
     "meeting in your own calendar, and moving or cancelling it there tells us",
     "straight away.",
     "",
-    "If you would like to write down what you want first: https://twinloom.com/build",
+    `If you would like to write down what you want first: ${SITE_URL}/build`,
     "You do not have to - come with it done or come with nothing.",
     "",
     "TwinLoom is a trading name of TwinCoreTech Ltd, registered in England and",
