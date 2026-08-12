@@ -3,7 +3,7 @@
 import { ArrowUpRight, Check, Send } from "lucide-react";
 import Link from "next/link";
 
-import { ASK_PARTS, MIN_MAP, STATES } from "@/lib/build/v5";
+import { ASK_PARTS, MIN_MAP, STATES, STEPS } from "@/lib/build/v5";
 import { readiness } from "@/lib/build/v5-derive";
 import { OPTION_LISTS } from "@/lib/build/v5-options";
 import { deskRef } from "@/lib/build/desk";
@@ -36,6 +36,7 @@ import {
   Kicker,
   Pill,
   Sub,
+  stepStatus,
   SubTitle,
   TickRow,
   TickSet,
@@ -149,6 +150,21 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
      from what went. */
   const changed = unsent(answers);
 
+  /* The times somebody offered instead of booking, where they did. They are
+     filed as notes on the desk under one kind - see the step below - so this is
+     that kind read back rather than a second place to keep them. */
+  const times = answers.refs
+    .filter((ref) => ref.kind === "Times that suit")
+    .map((ref) => ref.text.trim())
+    .filter(Boolean);
+
+  /* How many steps have had nothing out of anybody, so the offer to carry on
+     can say what carrying on would be for. The last step is not counted: it is
+     the one they are standing on and it is not a question. */
+  const left = STEPS.filter(
+    (step) => step.k !== "submit" && stepStatus(step.k, answers).done === 0,
+  ).length;
+
   const [stateName, stateNote] = STATES[state];
   const talk = OPTION_LISTS.submit[0];
 
@@ -169,94 +185,142 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
         corner={null}
         scrollKey="sent"
       >
-        {/* A confirmation, and nothing else on it.
+        {/* The receipt.
 
-            It had six things: a badge, a headline, a paragraph about what we
-            read, the reference, a paragraph about the answers still being
-            yours, and a button back into the run. Every one of them was true
-            and only one of them was needed - somebody who has just pressed send
-            wants to know it arrived and to be given the number to quote.
+            One column, left aligned, read top to bottom: it arrived, where the
+            copy went, the number to quote, what happens next, the meeting, and
+            then the two things there are left to do. Centred it was four short
+            lines with a ragged edge on both sides; a receipt is a document
+            rather than a poster.
 
-            The rest was said at the wrong moment. What happens next is in the
-            receipt that is already on its way; that the answers are still there
-            is obvious the moment they press the one control on the screen.
+            The meeting reads from the answers, so the three states are the same
+            three the receipt in their inbox carries - see `meetingFrom` in the
+            scope route. A screen and an email disagreeing about whether a
+            meeting exists is worse than neither mentioning it. */}
+        <div className="mx-auto w-full max-w-[62ch] py-4 text-left max-sm:py-1">
+          <span
+            aria-hidden
+            className="flex size-11 items-center justify-center rounded-pill bg-mark text-white max-sm:size-10"
+          >
+            <Check className="size-[22px] max-sm:size-5" strokeWidth={2.8} />
+          </span>
 
-            Two lines and a number, centred, on a screen with room round them.
-            The mark says sent, the sentence thanks them, the reference is the
-            thing to keep. */}
-        <div className="mx-auto max-w-[46ch] py-6 text-center max-sm:py-2">
-          <div className="flex justify-center">
-            <span
-              aria-hidden
-              className="flex size-11 items-center justify-center rounded-pill bg-mark text-white max-sm:size-10"
-            >
-              <Check className="size-[22px] max-sm:size-5" strokeWidth={2.8} />
-            </span>
-          </div>
+          <h2 className="mt-5 text-[clamp(26px,2.6vw,36px)] leading-[1.06] font-extrabold tracking-[-0.038em] text-ink max-sm:mt-4 max-sm:text-[24px]">
+            Thank you
+          </h2>
 
-          {/* Air under the mark, which had none.
+          <p className="mt-4 text-[15px] leading-[1.6] text-body max-sm:mt-3 max-sm:text-[13.5px]">
+            Your scoping request is with us.
+          </p>
 
-              `H` carries no margin of its own - it is written to sit under
-              whatever introduces it - so the tick and the sentence were sharing
-              a line box and read as one lump rather than as a mark and the
-              thing it marks.
-
-              The rhythm down the screen is one step per relationship: five
-              between the tick and the sentence they belong to, nine before the
-              reference because that is a different thing, and ten before the
-              way out because that is a different thing again. Even spacing
-              would say all three were the same kind of break. */}
-          <div className="mt-5 max-sm:mt-4">
-            <H>Thank you for your submission.</H>
-          </div>
-
-          {/* The reference, quoted back. It is the one thing somebody wants
-              from a confirmation screen that they cannot work out for
-              themselves, and the one thing worth writing down. */}
-          {answers.ref ? (
-            <p className="mt-9 max-sm:mt-7">
-              <Kicker className="block">Your reference</Kicker>
-              <b className="mt-2.5 block font-mono text-[17px] leading-none font-bold tracking-[0.08em] text-ink tabular-nums max-sm:mt-2 max-sm:text-[15px]">
-                {answers.ref}
+          {answers.ask.email?.trim() ? (
+            <p className="mt-2 text-[15px] leading-[1.6] text-body max-sm:text-[13.5px]">
+              We have emailed a copy to{" "}
+              <b className="font-semibold break-all text-ink">
+                {answers.ask.email.trim()}
               </b>
+              .
             </p>
           ) : null}
 
-          {/* Two ways on, and they are different things.
+          {answers.ref ? (
+            <div className="mt-7 rounded-[14px] bg-canvas p-4 max-sm:mt-5 max-sm:p-3.5">
+              <Kicker className="block">Your reference</Kicker>
 
-              "Edit your submission" goes back into the same answers under the
-              same reference: what arrives is a second version of one piece of
-              work, which is what the run has always done and what the subject
-              line of the follow-up says.
+              <b className="mt-1.5 block font-mono text-[17px] leading-none font-bold tracking-[0.06em] text-ink tabular-nums select-all max-sm:text-[15px]">
+                {answers.ref}
+              </b>
 
-              "New submission" is the other one, and there was no way to do it at
-              all. Somebody scoping a second website had to clear the tab to get
-              a blank run - and if they did not, their second brief went out
-              under the first one's reference with the first one's answers still
-              in it. It empties the answers, the place and the reference
-              together, because a new piece of work is all three.
+              <p className="mt-2.5 text-[12.5px] leading-[1.55] text-quiet">
+                Quote it in any reply. Anything you add later is filed under it.
+              </p>
+            </div>
+          ) : null}
 
-              Both quiet. This screen is a receipt; a filled button on it would
-              be asking for something. */}
-          <div className="mt-10 flex flex-wrap justify-center gap-2.5 max-sm:mt-8 max-sm:gap-2">
-            <Pill onClick={() => setSent(false)}>Edit your submission</Pill>
+          <p className="mt-6 text-[13.5px] leading-[1.65] text-quiet max-sm:mt-5 max-sm:text-[13px]">
+            We read what you have sent, and will talk through your requirements,
+            how we work and the next steps in more depth when we meet.
+          </p>
 
-            <Pill
-              onClick={() => {
-                /* Confirmed, because it cannot be undone: the answers are gone
-                   from this device the moment it runs, and the sent copy lives
-                   only in the two emails. */
-                if (
-                  window.confirm(
-                    "Start a new submission? Your answers here will be cleared. What you have already sent stays with us.",
-                  )
-                ) {
-                  startOver();
-                }
-              }}
-            >
-              New submission
-            </Pill>
+          {/* The meeting, in whichever of its three states it is in. */}
+          <div className="mt-7 max-sm:mt-6">
+            <SubTitle className="mt-0">Your meeting</SubTitle>
+
+            <p className="mt-2 text-[13.5px] leading-[1.6] text-body max-sm:text-[13px]">
+              {answers.booked ? (
+                <>
+                  You booked{" "}
+                  <b className="font-semibold text-ink">
+                    {answers.booked.when}
+                  </b>
+                  . The invitation is in your inbox.
+                </>
+              ) : times.length ? (
+                <>
+                  You gave us{" "}
+                  <b className="font-semibold text-ink">{times.join("; ")}</b>{" "}
+                  as times that work for you. We will confirm a slot, or come
+                  back with alternatives.
+                </>
+              ) : (
+                <>
+                  No meeting yet. We will be in touch when we have read through
+                  your request.
+                </>
+              )}
+            </p>
+          </div>
+
+          {/* And the two things left to do. */}
+          <div className="mt-8 border-t border-hair pt-6 max-sm:mt-6 max-sm:pt-5">
+            <SubTitle className="mt-0">Before you go</SubTitle>
+
+            <div className="mt-3 flex flex-col gap-5">
+              <div>
+                <Pill onClick={() => setSent(false)}>Edit your answers</Pill>
+
+                <p className="mt-2.5 max-w-[58ch] text-[12.5px] leading-[1.6] text-quiet">
+                  {left
+                    ? `${left} ${left === 1 ? "area is" : "areas are"} still unanswered, and you can change anything you have already said. It all goes into the same request.`
+                    : "You can change anything you have already said. It all goes into the same request."}{" "}
+                  Your answers stay open in this window until you close it, or
+                  press Close below.
+                </p>
+              </div>
+
+              <div>
+                <Pill
+                  onClick={() => {
+                    /* Confirmed, because it cannot be undone: the answers are
+                       gone from this device the moment it runs, and what was
+                       sent lives only in the two emails. */
+                    if (
+                      window.confirm(
+                        "Close this and clear your answers? What you have already sent stays with us.",
+                      )
+                    ) {
+                      startOver();
+                    }
+                  }}
+                >
+                  Close
+                </Pill>
+
+                {/* What this actually promises, and no more.
+
+                    The line offered here said they could reopen their answers
+                    from a link in the email. There is no such link and nothing
+                    is stored anywhere to reopen - the answers live in this
+                    window and the two emails are the record - so it would have
+                    been a promise the site cannot keep, printed next to the
+                    button that throws the answers away. Replying to the email
+                    does work, and is what is offered. */}
+                <p className="mt-2.5 max-w-[58ch] text-[12.5px] leading-[1.6] text-quiet">
+                  You can still make changes afterwards: reply to the email we
+                  sent you and we will add it to the same request.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </StageStep>
