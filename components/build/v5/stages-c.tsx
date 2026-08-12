@@ -195,18 +195,24 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
 
             Down the middle, everything shares an axis and the reference - the
             one thing on here worth keeping - is the widest object on it. The
-            Sixty characters rather than forty-six. At the shorter measure an
-            email address broke across two lines mid-word - a thing somebody has
-            to read to check it is theirs, hyphenated in the middle - and the
-            three lines at the foot came out as a narrow column under two
-            buttons wider than it. Sixty holds an address on one line and still
-            reads as a receipt rather than a page.
+            Seventy-six characters, arrived at twice. Forty-six broke an email
+            address across two lines mid-word, which is a thing somebody has to
+            read to check it is theirs. Sixty fixed that and left the block
+            looking narrow against the surface it stands on - a card eleven
+            hundred wide with a column of type down the middle of it, and the
+            widest object on the screen a grey box a third of the way across.
+
+            Seventy-six is still a measure - the sentences are readable and the
+            reference is still the thing the eye lands on - and it is enough of
+            the surface that the panel reads as the screen rather than as
+            something sitting on it. The type comes up a step with it, since a
+            wider column at the same size reads as a smaller one.
 
             The meeting reads from the answers, so its three states are the same
             three the receipt in their inbox carries - see `meetingFrom` in the
             scope route. A screen and an email disagreeing about whether a
             meeting exists is worse than neither mentioning it. */}
-        <div className="mx-auto flex w-full max-w-[60ch] flex-col items-center py-4 text-center max-sm:py-1">
+        <div className="mx-auto flex w-full max-w-[76ch] flex-col items-center py-4 text-center max-sm:py-1">
           <span
             aria-hidden
             className="flex size-11 items-center justify-center rounded-pill bg-mark text-white max-sm:size-10"
@@ -218,7 +224,7 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
             Thank you
           </h2>
 
-          <p className="mt-3 text-[14.5px] leading-[1.6] text-body max-sm:text-[13.5px]">
+          <p className="mt-3 text-[15.5px] leading-[1.6] text-body max-sm:text-[13.5px]">
             Your scoping request is with us.
             {answers.ask.email?.trim() ? (
               <>
@@ -233,14 +239,14 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
           </p>
 
           {answers.ref ? (
-            <div className="mt-6 w-full rounded-[14px] bg-canvas px-5 py-4 max-sm:mt-5 max-sm:px-4">
+            <div className="mt-7 w-full rounded-[16px] bg-canvas px-6 py-5 max-sm:mt-5 max-sm:rounded-[14px] max-sm:px-4 max-sm:py-4">
               <Kicker className="block">Your reference</Kicker>
 
-              <b className="mt-2 block font-mono text-[18px] leading-none font-bold tracking-[0.06em] text-ink tabular-nums select-all max-sm:text-[16px]">
+              <b className="mt-2.5 block font-mono text-[21px] leading-none font-bold tracking-[0.06em] text-ink tabular-nums select-all max-sm:text-[16px]">
                 {answers.ref}
               </b>
 
-              <p className="mt-2.5 text-[12px] leading-[1.5] text-quiet">
+              <p className="mt-3 text-[12.5px] leading-[1.5] text-quiet">
                 Quote it in any reply. Anything you add later is filed under it.
               </p>
             </div>
@@ -249,7 +255,7 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
           {/* The meeting, in whichever of its three states it is in. Labelled
               rather than headed: a heading over one sentence is a section with
               nothing in it. */}
-          <p className="mt-6 text-[13px] leading-[1.6] text-quiet max-sm:mt-5">
+          <p className="mt-7 text-[13.5px] leading-[1.6] text-quiet max-sm:mt-5 max-sm:text-[13px]">
             <Kicker className="mb-1.5 block">Your meeting</Kicker>
 
             {answers.booked ? (
@@ -319,7 +325,7 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
                 the two emails are the record - so it would have been a promise
                 the site cannot keep, printed next to the button that throws the
                 answers away. */}
-            <p className="mt-3.5 text-[12px] leading-[1.6] text-quiet">
+            <p className="mx-auto mt-4 max-w-[62ch] text-[12.5px] leading-[1.6] text-quiet">
               {left
                 ? `${left} ${left === 1 ? "area is" : "areas are"} still unanswered, and anything you change goes into the same request.`
                 : "Anything you change goes into the same request."}{" "}
