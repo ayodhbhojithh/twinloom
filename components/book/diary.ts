@@ -139,10 +139,40 @@ export const addDays = (date: Date, days: number) => {
 export const isWeekend = (date: Date) =>
   date.getDay() === 0 || date.getDay() === 6;
 
-/** The first day anybody can book, which is the lead time from today. */
+/**
+ * The first day anybody can book.
+ *
+ * Counted in dates once - today plus two, then forward past any weekend - and
+ * that left a day the calendar offered with nothing on it. The notice period is
+ * a stretch of time, so on the first date past it the morning is still inside
+ * the window: at two in the afternoon on Monday, every slot on Wednesday before
+ * half past one is under forty-eight hours away. The day was selectable, its
+ * eleven times were all greyed out, and the picker's answer to "why" was
+ * nothing at all.
+ *
+ * So the test is whether the day has anything left rather than how many dates
+ * away it is: the last slot of the day has to clear the notice period. A day
+ * that cannot be booked is not the first bookable day.
+ *
+ * Bounded, because a loop looking for a day that qualifies has to be able to
+ * stop. Sixty days is far past any notice period this could sensibly be set to,
+ * and reaching it means something is wrong with the numbers rather than with
+ * the calendar.
+ */
 export function firstBookable(): Date {
-  let day = addDays(startOfToday(), LEAD_DAYS);
-  while (isWeekend(day)) day = addDays(day, 1);
+  const last = SLOTS[SLOTS.length - 1];
+  const earliest = Date.now() + LEAD_MS;
+
+  let day = startOfToday();
+
+  for (let tries = 0; tries < 60; tries += 1) {
+    if (!isWeekend(day) && slotInstant(day, last).getTime() >= earliest) {
+      return day;
+    }
+
+    day = addDays(day, 1);
+  }
+
   return day;
 }
 
