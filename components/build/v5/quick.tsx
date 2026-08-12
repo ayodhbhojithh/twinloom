@@ -241,7 +241,7 @@ export function QuickPane({
             <button
               type="button"
               onClick={() => setRoute("choose")}
-              className="inline-flex cursor-pointer items-center gap-2 font-mono text-[9.5px] font-bold tracking-[0.16em] text-label uppercase transition-colors hover:text-ink"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-pill bg-ink px-3.5 py-2 font-mono text-[9.5px] font-bold tracking-[0.16em] text-white uppercase transition-opacity hover:opacity-85"
             >
               <ArrowLeft aria-hidden className="size-3.5" />
               Both ways in
