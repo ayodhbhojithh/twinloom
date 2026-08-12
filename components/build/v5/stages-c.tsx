@@ -19,6 +19,8 @@ import {
   setProblem,
   setSending,
   setSent,
+  startOver,
+  unsent,
   toggleChip,
   touchStep,
   type Answers,
@@ -142,6 +144,11 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
     if (result.ok) setDelivered(result.ref);
     else setProblem(result.problem);
   };
+  /* Whether there is anything to send that has not been sent - see `unsent`.
+     True on a first submission, and after that only where the answers differ
+     from what went. */
+  const changed = unsent(answers);
+
   const [stateName, stateNote] = STATES[state];
   const talk = OPTION_LISTS.submit[0];
 
@@ -215,10 +222,41 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
             </p>
           ) : null}
 
-          {/* One way on, and it is quiet. The screen is a receipt; a filled
-              button on it would be asking for something. */}
-          <div className="mt-10 flex justify-center max-sm:mt-8">
-            <Pill onClick={() => setSent(false)}>Keep answering</Pill>
+          {/* Two ways on, and they are different things.
+
+              "Edit your submission" goes back into the same answers under the
+              same reference: what arrives is a second version of one piece of
+              work, which is what the run has always done and what the subject
+              line of the follow-up says.
+
+              "New submission" is the other one, and there was no way to do it at
+              all. Somebody scoping a second website had to clear the tab to get
+              a blank run - and if they did not, their second brief went out
+              under the first one's reference with the first one's answers still
+              in it. It empties the answers, the place and the reference
+              together, because a new piece of work is all three.
+
+              Both quiet. This screen is a receipt; a filled button on it would
+              be asking for something. */}
+          <div className="mt-10 flex flex-wrap justify-center gap-2.5 max-sm:mt-8 max-sm:gap-2">
+            <Pill onClick={() => setSent(false)}>Edit your submission</Pill>
+
+            <Pill
+              onClick={() => {
+                /* Confirmed, because it cannot be undone: the answers are gone
+                   from this device the moment it runs, and the sent copy lives
+                   only in the two emails. */
+                if (
+                  window.confirm(
+                    "Start a new submission? Your answers here will be cleared. What you have already sent stays with us.",
+                  )
+                ) {
+                  startOver();
+                }
+              }}
+            >
+              New submission
+            </Pill>
           </div>
         </div>
       </StageStep>
@@ -240,7 +278,7 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
                 : "Send my scoping request"
           }
           tone="ink"
-          disabled={answers.sending || missing.length > 0}
+          disabled={answers.sending || missing.length > 0 || !changed}
           onClick={send}
         >
           <Send className="size-4" strokeWidth={2.2} />
@@ -654,10 +692,16 @@ export function StageSubmit({ at, answers, onGo, onGoKey }: StepProps) {
           arrow
           busy={answers.sending}
           className="mt-5"
-          disabled={answers.sending || missing.length > 0}
+          disabled={answers.sending || missing.length > 0 || !changed}
           onClick={send}
         >
-          {answers.sending ? "Sending it" : "Send my scoping request"}
+          {answers.sending
+            ? "Sending it"
+            : !changed
+              ? "Nothing new to send"
+              : answers.ref
+                ? "Send the updated version"
+                : "Send my scoping request"}
         </Pill>
 
         {/* No line about scopes and quotes.

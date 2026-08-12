@@ -38,6 +38,7 @@ import {
   setSending,
   setPlace,
   setSent,
+  startOver,
   setShort,
   setText,
   subscribePlace,
@@ -719,6 +720,32 @@ function Delivered({
           </div>
         </div>
       </div>
+
+      {/* And the third thing, which is neither of those.
+
+          Both cards above add to this submission. Somebody scoping a second
+          website wants the opposite - an empty run under a reference of its own -
+          and without this the only way to get one was to close the tab. If they
+          did not, the second brief went out under the first one's number with
+          the first one's answers still in it.
+
+          Set as a line rather than a third card, because it is the rarest of the
+          three and the only one that throws work away. */}
+      <button
+        type="button"
+        onClick={() => {
+          if (
+            window.confirm(
+              "Start a new submission? Your answers here will be cleared. What you have already sent stays with us.",
+            )
+          ) {
+            startOver();
+          }
+        }}
+        className="mt-6 cursor-pointer text-[12.5px] font-semibold text-quiet underline decoration-planned decoration-1 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink"
+      >
+        Start a new submission instead
+      </button>
     </div>
   );
 }
