@@ -22,11 +22,51 @@ import { NOINDEX, SITE_URL } from "@/lib/seo";
  * business decision, and it belongs here where it can be made rather than
  * assumed either way.
  */
+/**
+ * The crawlers that read a site in order to answer a question about it.
+ *
+ * Named rather than left to the `*` rule they already match, because "allowed
+ * by omission" and "allowed on purpose" look identical in a file and are not
+ * the same decision. Anybody who later wants one of these gone can delete a
+ * line here instead of working out what the wildcard was doing.
+ *
+ * Two kinds, and both are wanted. The training crawlers - GPTBot,
+ * ClaudeBot, Google-Extended, Applebot-Extended, CCBot - read to learn, and
+ * being in what a model knows is how this site gets named at all when somebody
+ * asks a question it has spent twenty pages answering. The fetchers -
+ * OAI-SearchBot, ChatGPT-User, Claude-User, PerplexityBot - read live, at the
+ * moment somebody asks, and they cite. Blocking either is a decision to be
+ * absent from the place people now ask first.
+ */
+const ANSWER_ENGINES = [
+  "GPTBot",
+  "OAI-SearchBot",
+  "ChatGPT-User",
+  "ClaudeBot",
+  "Claude-User",
+  "Claude-SearchBot",
+  "anthropic-ai",
+  "PerplexityBot",
+  "Perplexity-User",
+  "Google-Extended",
+  "Applebot-Extended",
+  "Amazonbot",
+  "Meta-ExternalAgent",
+  "DuckAssistBot",
+  "CCBot",
+  "cohere-ai",
+];
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
         userAgent: "*",
+        allow: "/",
+        disallow: [...NOINDEX],
+      },
+      {
+        userAgent: ANSWER_ENGINES,
         allow: "/",
         disallow: [...NOINDEX],
       },

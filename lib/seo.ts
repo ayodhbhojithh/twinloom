@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { LEGAL, ROUTES, SITE } from "./site";
+import { CONTACT_INFO, LEGAL, ROUTES, SITE } from "./site";
 
 /* ---------------------------------------------------------------------------
    The site, as search engines and social cards see it.
@@ -202,13 +202,32 @@ export function pageMeta({
    with no questions on it yet; the schema goes in the day the questions do.
 --------------------------------------------------------------------------- */
 
-/** Who this is, said once, for the knowledge panel and for every AI reading it. */
+/**
+ * Who this is, said once, for the knowledge panel and for every AI reading it.
+ *
+ * Two types rather than one. `Organization` is what the website and every
+ * article point their publisher at; `ProfessionalService` is what makes the
+ * address, the phone number and the hours mean something - on a bare
+ * `Organization` they are properties nothing reads, and on a local business
+ * they are the answer to "who does this near me, and are they open".
+ *
+ * The registered details are on it because they are checkable. A company
+ * number and a VAT registration are the difference between a claim and a
+ * company: anything reading this can verify both against Companies House,
+ * which is worth more than any adjective on the page.
+ *
+ * `knowsAbout` is not keyword stuffing and should not be allowed to become it.
+ * It is the list of things this site actually writes about at length, and every
+ * entry has a page behind it. A subject named here with nothing written about
+ * it is a claim to expertise nobody made.
+ */
 export const organisationLd = () => ({
   "@context": "https://schema.org",
-  "@type": "Organization",
+  "@type": ["Organization", "ProfessionalService"],
   "@id": `${SITE_URL}/#organisation`,
   name: SITE.name,
   legalName: LEGAL.entity,
+  alternateName: LEGAL.entity,
   url: SITE_URL,
   description: SITE.description,
   slogan: SITE.tagline,
@@ -216,7 +235,64 @@ export const organisationLd = () => ({
     "@type": "ImageObject",
     url: absolute("/opengraph-image"),
   },
-  areaServed: "GB",
+  image: absolute("/opengraph-image"),
+  email: CONTACT_INFO.primaryEmail,
+  telephone: CONTACT_INFO.phone,
+  vatID: LEGAL.vat,
+  identifier: {
+    "@type": "PropertyValue",
+    name: "Company number",
+    value: LEGAL.number,
+  },
+  address: {
+    "@type": "PostalAddress",
+    name: CONTACT_INFO.address.name,
+    streetAddress: `${CONTACT_INFO.address.name}, ${CONTACT_INFO.address.street}`,
+    addressLocality: CONTACT_INFO.address.town,
+    postalCode: CONTACT_INFO.address.postcode,
+    addressCountry: "GB",
+  },
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      contactType: "sales",
+      email: CONTACT_INFO.primaryEmail,
+      telephone: CONTACT_INFO.phone,
+      areaServed: "GB",
+      availableLanguage: "English",
+    },
+  ],
+  openingHoursSpecification: {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    opens: "09:00",
+    closes: "17:00",
+  },
+  areaServed: {
+    "@type": "Country",
+    name: "United Kingdom",
+  },
+  knowsAbout: [
+    "Website design and build",
+    "Ecommerce and selling online",
+    "Search engine optimisation",
+    "Web accessibility",
+    "Custom software development",
+    "Website hosting and care",
+  ],
+  /* The way in, as a thing that can be done rather than a page that exists.
+     What it costs is on it because "free" is the single most asked question
+     about a scope, and a price of zero stated in the data is an answer a model
+     can give without having to trust a sentence it read on a page. */
+  makesOffer: {
+    "@type": "Offer",
+    name: "A written scope for your website",
+    description:
+      "Answer the questions at your own pace and we write back what the site is, what is in it, and what we would build. Not a quote, and it commits you to nothing.",
+    url: absolute(ROUTES.build),
+    price: 0,
+    priceCurrency: "GBP",
+  },
 });
 
 /** The site itself, which is what carries the search box into a rich result. */
@@ -257,6 +333,60 @@ export const breadcrumbLd = (
     position: at + 1,
     name: step.name,
     item: absolute(step.path),
+  })),
+});
+
+/**
+ * Everything readable in a tree of elements, as one line of text.
+ *
+ * The FAQ answers are written as JSX - they contain links to the clause each
+ * one rests on, which is the whole argument of that page - and structured data
+ * wants plain sentences. The alternative was a second copy of all twenty-nine
+ * answers written out as strings, which is twenty-nine chances for the page and
+ * the markup to say different things, on the one page whose subject is that we
+ * do not say different things in different places.
+ *
+ * Elements are not rendered, only walked: `children` is read straight off the
+ * props, so a client component in the tree costs nothing and needs no renderer.
+ */
+export function plainOf(node: React.ReactNode): string {
+  if (node === null || node === undefined || typeof node === "boolean") {
+    return "";
+  }
+
+  if (typeof node === "string" || typeof node === "number") return String(node);
+
+  if (Array.isArray(node)) return node.map(plainOf).join("");
+
+  if (typeof node === "object" && "props" in node) {
+    const props = (node as { props?: { children?: React.ReactNode } }).props;
+    return plainOf(props?.children);
+  }
+
+  return "";
+}
+
+/**
+ * The questions, as questions.
+ *
+ * This is the one piece of structured data on the site that can be shown
+ * instead of the site: a model answering "does TwinLoom own the code it
+ * writes" can quote the answer rather than send somebody to look for it. That
+ * is a fair trade only where the answer is complete and true on its own, which
+ * is why the answers on that page are written from the clauses they rest on.
+ */
+export const faqLd = (asks: readonly { q: string; a: React.ReactNode }[]) => ({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": `${absolute(ROUTES.faq)}#faq`,
+  inLanguage: LOCALE.tag,
+  mainEntity: asks.map((ask) => ({
+    "@type": "Question",
+    name: ask.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: plainOf(ask.a).replace(/\s+/g, " ").trim(),
+    },
   })),
 });
 

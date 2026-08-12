@@ -467,6 +467,22 @@ function Group({ s, asks }: { s: PageSection; asks: readonly Ask[] }) {
   );
 }
 
+/**
+ * Every question on the page, in the order it is asked.
+ *
+ * Exported so the route can turn it into `FAQPage` data without a second copy
+ * of the answers - the markup and the page are then provably the same words.
+ * See `faqLd`.
+ */
+export const FAQ_ASKS: readonly Ask[] = [
+  ...BEFORE,
+  ...RUNNING,
+  ...GETTING,
+  ...MONEY,
+  ...AFTER,
+  ...DATA,
+];
+
 export function FaqsView() {
   return (
     <PageShell sections={FAQ_SECTIONS}>
