@@ -1006,11 +1006,28 @@ function createBallpit(
 
 interface BallpitProps extends Partial<typeof BALLPIT> {
   className?: string;
+  /**
+   * Built, but not moving yet.
+   *
+   * The fifth change to the published file, and the reason for it is the
+   * screen this sits on. Everything expensive here happens on mount - the
+   * context, the environment map, the shader link - so the scene is mounted
+   * while the reader is still a screen away and that cost is paid out of sight.
+   * Left running, the balls would have fallen and settled by the time anybody
+   * arrived, and what they would turn onto is a still pile.
+   *
+   * Paused, the physics holds at the scatter it starts in and begins the moment
+   * the screen is theirs. The renderer keeps drawing either way: it is what
+   * keeps the pipeline warm, and a static scene is the cheapest frame it will
+   * ever draw.
+   */
+  paused?: boolean;
 }
 
 const Ballpit: React.FC<BallpitProps> = ({
   className = "",
   followCursor = true,
+  paused = false,
   ...props
 }) => {
   /* A host to hang a canvas in, rather than the canvas itself.
@@ -1031,6 +1048,9 @@ const Ballpit: React.FC<BallpitProps> = ({
   const hostRef = useRef<HTMLDivElement>(null);
   const spheresInstanceRef = useRef<CreateBallpitReturn | null>(null);
   const isFirstRender = useRef(true);
+  /* What the scene's own flag is, since the published API only offers a toggle
+     and a toggle called against an unknown state is a coin flip. */
+  const wasPaused = useRef(false);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -1042,10 +1062,10 @@ const Ballpit: React.FC<BallpitProps> = ({
     canvas.style.height = "100%";
     host.appendChild(canvas);
 
-    spheresInstanceRef.current = createBallpit(canvas, {
-      followCursor,
-      ...props,
-    });
+    const made = createBallpit(canvas, { followCursor, ...props });
+    if (paused) made.togglePause();
+    wasPaused.current = paused;
+    spheresInstanceRef.current = made;
 
     return () => {
       spheresInstanceRef.current?.dispose();
@@ -1054,6 +1074,13 @@ const Ballpit: React.FC<BallpitProps> = ({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const scene = spheresInstanceRef.current;
+    if (!scene || wasPaused.current === paused) return;
+    scene.togglePause();
+    wasPaused.current = paused;
+  }, [paused]);
 
   useEffect(() => {
     if (isFirstRender.current) {

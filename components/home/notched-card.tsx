@@ -969,6 +969,10 @@ export function NotchedCard({ className }: { className?: string }) {
           >
             <Ballpit
               className="absolute inset-0"
+              /* Held still until this screen is the one being looked at, so
+                 the balls drop on arrival rather than having dropped while
+                 nobody was here. */
+              paused={shown.view !== "balls"}
               /* react-bits' own settings for this scene, as published.
 
                What was here instead was the previous implementation's config,
