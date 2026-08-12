@@ -224,7 +224,18 @@
       "Bash(node \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/page-chunks.js\" build)",
       "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/split.py\")",
       "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/guard.py\")",
-      "Bash(rm -rf .next-check)"
+      "Bash(rm -rf .next-check)",
+      "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/pit-back.py\")",
+      "Bash(python \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/card-back.py\")",
+      "Bash(awk 'NR>=1326 && NR<=1450 && /^      \\\\\\) : null\\\\}/ {print NR\": \"$0}')",
+      "Bash(node \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/shader.mjs\")",
+      "Bash(cp \"C:/Users/prave/AppData/Local/Temp/claude/c--Users-prave-Desktop-PROJECTS-very-good-websites/2d858a67-9841-4389-9ebb-acb3fed19bd5/scratchpad/shader.mjs\" ./_shader.mjs)",
+      "Bash(node ./_shader.mjs)",
+      "Bash(ls \"/c/Program Files/Google/Chrome/Application/chrome.exe\" \"/c/Program Files \\(x86\\)/Google/Chrome/Application/chrome.exe\" \"/c/Program Files/Microsoft/Edge/Application/msedge.exe\" 2>/dev/null | head -3)",
+      "Read(//c/Program Files/Google/Chrome/Application/**)",
+      "Bash(\"/c/Program Files/Google/Chrome/Application/chrome.exe\" --headless=new --disable-gpu --enable-unsafe-swiftshader --virtual-time-budget=15000 --dump-dom \"http://127.0.0.1:8899/probe.html\")",
+      "Bash(pkill -f \"http.server 8899\")",
+      "Bash(rm -rf .shadertest)"
     ],
     "additionalDirectories": [
       "c:\\Users\\prave\\Desktop\\PROJECTS\\very-good-websites\\components\\home",

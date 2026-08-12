@@ -66,8 +66,32 @@ import { HERO_SLIDES } from "./hero-slides";
  * effect below - and by the time an arrow is pressed the code is local and the
  * scene starts from its first frame.
  */
+/* Which screen the pit is on, and how far the card is from it.
+
+   The module is warmed a screen ahead already - see the effect that walks
+   `LOAD` - but fetching the code is the cheap half. The expensive half is what
+   happens the moment it mounts: a WebGL context is created, `PMREMGenerator`
+   bakes an environment map by rendering a cubemap and compiling its own
+   shaders, and then the patched physical shader is linked on the first frame.
+   All of it synchronous, all of it on the main thread, and all of it on the
+   one frame the reader has just turned onto - which is the frame the words are
+   trying to animate in on. That is the stall.
+
+   So the pit is mounted while the reader is still a screen away, and only made
+   visible when they arrive. By then the context exists, the map is baked, the
+   shader is linked and the balls are already falling. */
+const BALLS_AT = HERO_SLIDES.findIndex((slide) => slide.view === "balls");
+
+/** Whether the card is on the pit's screen or standing next to it. */
+const nearBalls = (at: number) => {
+  if (BALLS_AT < 0) return false;
+  const gap = Math.abs(at - BALLS_AT);
+  return Math.min(gap, HERO_SLIDES.length - gap) <= 1;
+};
+
 const LOAD = {
   particles: () => import("@/components/ui/ParticleCanvas"),
+  balls: () => import("./ballpit"),
   film: () => import("./film-stage"),
 } as const;
 
@@ -75,6 +99,17 @@ const ParticleCanvas = dynamic(
   () => LOAD.particles().then((m) => m.ParticleCanvas),
   { ssr: false },
 );
+
+/* The pit, on the screen that argues a design is yours to push about.
+
+   Loaded on the turn onto it like every other scene here - see `LOAD` above,
+   which is also what the neighbour-warming effect reaches for. It is the
+   heaviest of the three by a distance: three.js, an environment map and two
+   hundred instanced spheres, so the one thing it must not do is arrive with
+   the first screen. */
+const Ballpit = dynamic(() => LOAD.balls().then((m) => m.default), {
+  ssr: false,
+});
 
 const FilmStage = dynamic(() => LOAD.film().then((m) => m.FilmStage), {
   ssr: false,
@@ -917,6 +952,60 @@ export function NotchedCard({ className }: { className?: string }) {
             Both are gone rather than installed - there is one palette here and
             nothing plays - and every path that read them already fell back to
             what is wanted, which is a still field in the light set. */}
+        {nearBalls(at) ? (
+          /* Mounted a screen early, shown on arrival.
+
+             Hidden with opacity rather than by not being rendered: it has to
+             be in the tree, and in the layout, for the context to be made and
+             the shader to be linked before anybody sees it. It keeps drawing
+             while it is invisible, which is the price - one scene of a hundred
+             spheres at a capped pixel ratio, for the length of one screen. */
+          <div
+            aria-hidden={shown.view !== "balls"}
+            className={cn(
+              "absolute inset-0 transition-opacity duration-500",
+              shown.view === "balls" ? "opacity-100" : "opacity-0",
+            )}
+          >
+            <Ballpit
+              className="absolute inset-0"
+              /* react-bits' own settings for this scene, as published.
+
+               What was here instead was the previous implementation's config,
+               restored out of git with the screen: two hundred balls, no
+               gravity and no friction, so they drifted forever and the pair
+               loop - every ball against every ball, n2/2 of them every frame -
+               ran twenty thousand times a frame. At a hundred it runs five
+               thousand. That is the whole of the difference between this
+               moving and this stuttering, and it was never a rendering
+               problem.
+
+               Gravity and friction change the picture as well as the cost:
+               they fall and settle rather than hanging in the middle of the
+               card, which is what the scene is meant to look like.
+
+               Everything not named here is the published default. The colours
+               are ours and they are the component's own default now - see
+               BALLPIT - so they are not repeated at the call site. */
+              count={100}
+              gravity={0.01}
+              friction={0.9975}
+              wallBounce={0.95}
+              followCursor={false}
+            />
+          </div>
+        ) : null}
+
+        {shown.view === "balls" ? (
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "radial-gradient(ellipse 36% 30% at 50% 47%, color-mix(in oklab, var(--color-field) 94%, transparent) 0%, color-mix(in oklab, var(--color-field) 90%, transparent) 46%, color-mix(in oklab, var(--color-field) 52%, transparent) 74%, transparent 100%)",
+            }}
+          />
+        ) : null}
+
         {shown.view === "particles" ? <ParticleCanvas /> : null}
       </div>
 
@@ -1004,6 +1093,45 @@ export function NotchedCard({ className }: { className?: string }) {
           Under the buttons, which are `z-10`. They are the only things on this
           screen that take a press, and a scroller over them is a scroller that
           eats it. */}
+      {shown.view === "balls" ? (
+        <div
+          className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
+          style={{
+            paddingTop: head,
+            paddingBottom: cut.barDepth + 12,
+            paddingLeft: pad,
+            paddingRight: pad,
+          }}
+        >
+          <div className="w-full text-center">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={shown.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.34, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <h1 className="mx-auto max-w-[20ch] text-[clamp(32px,5.4vw,92px)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
+                  {shown.claim?.[0]}
+                  <span className="thread-text block">{shown.claim?.[1]}</span>
+                </h1>
+
+                {/* The claim, and nothing under it.
+
+                    A paragraph and a button stood here. Both were explaining a
+                    screen that explains itself: the beads answer to the pointer,
+                    so the invitation to play with the design is the field, not a
+                    sentence about the field. And the card already carries every
+                    way on it needs - four of them on the first screen, three on
+                    the fourth - so a fifth here was the same door offered
+                    again. */}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+      ) : null}
+
       {shown.view === "film" && shown.reel ? (
         <div
           className="absolute inset-0 z-[5]"
