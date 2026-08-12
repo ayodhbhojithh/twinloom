@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { send, wiring } from "@/lib/booking/google";
-import { scopeNotice, scopeReceipt } from "@/lib/mail/templates";
+import { scopeNotice, scopeReceipt, type Meeting } from "@/lib/mail/templates";
 import { isReference, makeReference } from "@/lib/build/reference";
 import { attachedFrom } from "@/lib/build/attachments";
 import { fetchFiles } from "@/lib/build/fetch-files";
@@ -28,6 +28,33 @@ const REQUIRED_FIELDS = ["name", "company", "email"] as const;
 /** Enough to catch a typo, not enough to argue with a real address. */
 const LOOKS_LIKE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
+/**
+ * Which of the three things is true about talking it through.
+ *
+ * Read from the answers the browser posted, and read defensively: this is a
+ * public endpoint, so everything here is checked rather than assumed. Anything
+ * that does not look like a booking falls through to `none`, which is the one
+ * of the three that promises the least - the safe direction to be wrong in is
+ * telling somebody we will be in touch when a meeting already exists, not
+ * telling them a meeting exists when it does not.
+ */
+function meetingFrom(answers: unknown): Meeting {
+  const held = answers as {
+    pick?: Record<string, Record<string, boolean>>;
+    booked?: { when?: unknown };
+  } | null;
+
+  const booked = held?.booked;
+
+  if (booked && typeof booked.when === "string" && booked.when.trim()) {
+    return { kind: "booked", when: booked.when.trim() };
+  }
+
+  if (held?.pick?.talk?.times) return { kind: "slots" };
+
+  return { kind: "none" };
+}
+
 export async function POST(request: Request) {
   let body: {
     desk?: unknown;
@@ -43,6 +70,10 @@ export async function POST(request: Request) {
       }[];
       text?: unknown;
       like?: unknown;
+      /* What was chosen about talking it through, and the meeting where one was
+         booked. Read rather than trusted - see `meetingFrom`. */
+      pick?: unknown;
+      booked?: unknown;
     };
   };
 
@@ -202,14 +233,18 @@ ${body.document}`,
       described,
       attachments: files,
       notes,
-      /* `none` for now, and it is the honest one of the three.
+      /* Which of the three is true, read from the answers.
 
-         The other two - a call already booked, or times offered for us to
-         confirm - are real states this message is written to carry, and neither
-         can happen yet: nothing in the run-through asks for either, so a
-         submission carries no meeting at all. When that step exists it sets
-         this, and the wording for all three is already here. */
-      meeting: { kind: "none" },
+         It was hard-coded to `none`, on the grounds that nothing in the run
+         asked about a meeting. That stopped being true: the last step asks, and
+         somebody who books gets a calendar invitation - so the receipt was
+         telling them we would be in touch to arrange a call they had already
+         confirmed, in the same minute the invitation arrived.
+
+         `booked` where they booked one and `slots` where they gave us times to
+         confirm; `none` covers both "neither, for now" and not answering, which
+         are the same promise from us either way. */
+      meeting: meetingFrom(body.answers),
       /* The request itself, sent back to the person who wrote it.
 
          The same document our own copy carries, under headings written to them

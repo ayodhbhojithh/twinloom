@@ -10,7 +10,8 @@ import { attachedFrom, whereOf } from "./attachments";
 import { deskRef } from "./desk";
 import { getPalette, ROLES } from "./v5-palette";
 import { assumed, askDone, pagesFrom, told, zonesFrom } from "./v5-derive";
-import { chipsIn, type Answers } from "./v5-store";
+import { OPTION_LISTS } from "./v5-options";
+import { chipsIn, isOn, type Answers } from "./v5-store";
 
 /* ---------------------------------------------------------------------------
    Sending the scoping request.
@@ -47,6 +48,20 @@ export function whatIsMissing(answers: Answers): string[] {
  * less than a list of six colours where one is the background at sixty per cent
  * and one is an accent at three.
  */
+/**
+ * Which of the three ways of talking it through was chosen, in the run's own
+ * words.
+ *
+ * Read from the same list the step renders, so the document quotes the option
+ * rather than a key, and a rewording of the question rewords this too.
+ */
+function talkChoice(answers: Answers): string {
+  const rows = OPTION_LISTS.submit?.[0]?.rows ?? [];
+  const chosen = rows.find((row) => isOn(answers, row.scope, row.k));
+
+  return chosen?.n ?? "Not answered";
+}
+
 function colours(): string[] {
   const palette = getPalette().filter((swatch) => swatch.hex);
   if (!palette.length) return [];
@@ -128,6 +143,35 @@ export function scopeDocument(answers: Answers) {
       `${zone.title}:`,
       ...zone.pages.map((page) => `  ${page.index}. ${page.name}`),
     ]),
+    "",
+    /* What was said about talking it through, and what came of it.
+
+       None of this reached the document before. The run asks a question with
+       three answers - book a time, send us your times, or neither - and the
+       scope that arrived said nothing about which was chosen. Where somebody had
+       booked, the meeting turned up as a calendar invitation with no connection
+       to the document it was about; where they had asked us to come back with
+       times, that was a note in a list of notes; and where they had said not yet,
+       nobody reading the scope could tell whether they had answered at all.
+
+       The booked line is written from the answers rather than from the calendar
+       because it is the reader's own words for it - their date, their clock,
+       their zone, as the screen that booked it showed them. */
+    "THE CONVERSATION",
+    /* "Asked for" rather than "They asked for", because this document is sent
+       twice: once to us and once, under headings rewritten to the second person,
+       to the person who wrote it. A neutral label reads correctly in both. */
+    line("Asked for", talkChoice(answers)),
+    ...(answers.booked
+      ? [
+          line(
+            "Booked",
+            `${answers.booked.what}, ${answers.booked.minutes} minutes`,
+          ),
+          line("When", answers.booked.when),
+          line("Against", answers.booked.ref),
+        ]
+      : []),
     "",
     "SYSTEMS TO JOIN TO",
     links.length
